@@ -79,13 +79,10 @@ export default function InfoSection({ userType }: InfoSectionProps) {
 
   return (
     <section className="mt-12">
+
       <br />
       <br />
-      <h2 className="mb-8 text-center text-5xl font-bold text-blue-700">
-        INFORMAÇÃO
-      </h2>
-      <br />
-      <br />
+          <br />
 
       <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
@@ -97,7 +94,7 @@ export default function InfoSection({ userType }: InfoSectionProps) {
             <img
               src={card.imageUrl}
               alt={card.title}
-              className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+              className="h-[500px] w-full object-contain"
             />
           </a>
         ))}
