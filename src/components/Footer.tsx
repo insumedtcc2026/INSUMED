@@ -24,8 +24,8 @@ export default function Footer() {
           <div className="footer-column">
             <a href="/">Início</a>
             <a href="/agendamentos">Agendamentos</a>
-            <a href="/meus-insumos">Meus Insumos</a>
-            <a href="/pontos-de-coleta">Pontos de Coleta</a>
+            <a href="/insumos">Meus Insumos</a>
+            <a href="/pontos-coleta">Pontos de Coleta</a>
             <a href="/perfil">Perfil</a>
           </div>
 

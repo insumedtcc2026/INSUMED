@@ -1,5 +1,7 @@
 import '../css/Sidebar.css';
 
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import logo from '../assets/logo.png';
 
 import { X } from 'lucide-react';
@@ -18,27 +20,35 @@ export default function Sidebar({
   isOpen,
   onClose,
 }: SidebarProps) {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
   const menuItems = [
     {
       icon: GoHomeFill,
       label: 'Início',
-      active: true,
+      path: '/',
     },
     {
       icon: BsCalendarCheckFill,
       label: 'Agendamentos',
+      path: '/agendamentos',
     },
     {
       icon: IoBandage,
       label: 'Meus Insumos',
+      path: '/insumos',
     },
     {
       icon: MdAddLocation,
       label: 'Pontos de Coleta',
+      path: '/pontos-coleta',
     },
     {
       icon: IoPersonSharp,
       label: 'Perfil',
+      path: '/perfil',
     },
   ];
 
@@ -79,11 +89,16 @@ export default function Sidebar({
 
         <nav className="sidebar-nav">
           {menuItems.map(
-            ({ icon: Icon, label, active }) => (
+            ({ icon: Icon, label, path }) => (
               <button
                 key={label}
+                onClick={() => {
+                  navigate(path);
+
+                  onClose();
+                }}
                 className={`sidebar-item ${
-                  active
+                  location.pathname === path
                     ? 'sidebar-item-active'
                     : ''
                 }`}

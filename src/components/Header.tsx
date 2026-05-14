@@ -1,8 +1,10 @@
 import '../css/Header.css';
 import { FaBell } from 'react-icons/fa';
-import { HiMiniBars3 } from "react-icons/hi2";
-import { IoPersonSharp } from "react-icons/io5";
+import { HiMiniBars3 } from 'react-icons/hi2';
+import { IoPersonSharp } from 'react-icons/io5';
+import { useState } from 'react';
 
+import NotificationDropdown from './NotificationDropdown';
 
 interface UserBadgeProps {
   name: string;
@@ -40,6 +42,9 @@ export default function Header({
   const firstName = userName.split(' ')[0];
   const secondName = userName.split(' ')[1] || '';
 
+  const [showNotifications, setShowNotifications] =
+    useState(false);
+
   return (
     <header className="header">
       <div className="header-left">
@@ -64,9 +69,17 @@ export default function Header({
           cpf={userCpf}
         />
 
-        <button className="notification-button">
-          <FaBell className="notification-icon" />
-        </button>
+        <div
+          className="notification-wrapper"
+          onMouseEnter={() => setShowNotifications(true)}
+          onMouseLeave={() => setShowNotifications(false)}
+        >
+          <button className="notification-button">
+            <FaBell className="notification-icon" />
+          </button>
+
+          {showNotifications && <NotificationDropdown />}
+        </div>
       </div>
     </header>
   );

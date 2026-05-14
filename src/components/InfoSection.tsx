@@ -22,13 +22,13 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
       id: 'coletas',
       title: 'Pontos de Coleta',
       imageUrl: coletasImg,
-      href: '/pontos-de-coleta',
+      href: '/pontos-coleta',
     },
     {
       id: 'insumos',
       title: 'Meus Insumos',
       imageUrl: calendarioImg,
-      href: '/meus-insumos',
+      href: '/insumos',
     },
     {
       id: 'agendamentos',
