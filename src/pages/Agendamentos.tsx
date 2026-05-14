@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import construcaoImage from '../assets/construcacao.png';
 
 export default function Agendamentos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function Agendamentos() {
         <h1 className="text-3xl font-semibold text-gray-900">Agendamentos</h1>
         <p className="mt-4 text-gray-600">
           Aqui você poderá ver e gerenciar seus agendamentos (ainda em construção).
+          <img src={construcaoImage} alt="Construção" width={350} />
         </p>
       </main>
 
