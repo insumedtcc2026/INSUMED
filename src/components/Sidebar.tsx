@@ -1,73 +1,101 @@
+import '../css/Sidebar.css';
+
 import logo from '../assets/logo.png';
-import {
-  Home,
-  CalendarDays,
-  Pill,
-  MapPin,
-  CircleUserRound,
-  X,
-} from 'lucide-react';
+
+import { X } from 'lucide-react';
+
+import { MdAddLocation } from 'react-icons/md';
+import { IoBandage, IoPersonSharp } from 'react-icons/io5';
+import { BsCalendarCheckFill } from 'react-icons/bs';
+import { GoHomeFill } from 'react-icons/go';
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+  isOpen,
+  onClose,
+}: SidebarProps) {
   const menuItems = [
-    { icon: Home, label: 'Início', active: true },
-    { icon: CalendarDays, label: 'Agendamentos' },
-    { icon: Pill, label: 'Meus Insumos' },
-    { icon: MapPin, label: 'Pontos de Coleta' },
-    { icon: CircleUserRound, label: 'Perfil' },
+    {
+      icon: GoHomeFill,
+      label: 'Início',
+      active: true,
+    },
+    {
+      icon: BsCalendarCheckFill,
+      label: 'Agendamentos',
+    },
+    {
+      icon: IoBandage,
+      label: 'Meus Insumos',
+    },
+    {
+      icon: MdAddLocation,
+      label: 'Pontos de Coleta',
+    },
+    {
+      icon: IoPersonSharp,
+      label: 'Perfil',
+    },
   ];
 
   return (
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+          className="sidebar-overlay"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 h-full w-80 transform bg-white p-6 shadow-2xl transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`sidebar ${
+          isOpen ? 'sidebar-open' : ''
         }`}
       >
-        <div className="mb-10 flex items-center justify-between">
-  <div className="flex items-center gap-3">
-    <img
-      src={logo}
-      alt="Logo Insumed"
-      className="h-12 w-auto"
-    />
-    <h2 className="text-3xl font-bold text-blue-700">INSUMED</h2>
-  </div>
+        <div className="sidebar-header">
+          <div className="sidebar-brand">
+            <img
+              src={logo}
+              alt="Logo Insumed"
+              className="sidebar-logo"
+            />
+
+            <h2 className="sidebar-title">
+              INSUMED
+            </h2>
+          </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 hover:bg-gray-100"
+            className="sidebar-close-button"
           >
-            <X className="h-6 w-6" />
+            <X className="sidebar-close-icon" />
           </button>
         </div>
 
-        <nav className="space-y-3">
-          {menuItems.map(({ icon: Icon, label, active }) => (
-            <button
-              key={label}
-              className={`flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-left transition ${
-                active
-                  ? 'bg-gradient-to-r from-blue-700 to-sky-400 text-white shadow-lg'
-                  : 'text-blue-700 hover:bg-blue-50'
-              }`}
-            >
-              <Icon className="h-6 w-6" />
-              <span className="text-2xl font-medium">{label}</span>
-            </button>
-          ))}
+        <nav className="sidebar-nav">
+          {menuItems.map(
+            ({ icon: Icon, label, active }) => (
+              <button
+                key={label}
+                className={`sidebar-item ${
+                  active
+                    ? 'sidebar-item-active'
+                    : ''
+                }`}
+              >
+                <Icon className="sidebar-item-icon" />
+
+                <span className="sidebar-item-text">
+                  {label}
+                </span>
+              </button>
+            )
+          )}
         </nav>
       </aside>
     </>

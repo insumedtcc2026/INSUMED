@@ -1,3 +1,5 @@
+import '../css/Banner.css';
+
 interface BannerProps {
   imageUrl: string;
   alt?: string;
@@ -10,12 +12,12 @@ export default function Banner({
   className = '',
 }: BannerProps) {
   return (
-    <section className={`w-full ${className}`}>
-      <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl">
+    <section className={`banner ${className}`}>
+      <div className="banner-container">
         <img
           src={imageUrl}
           alt={alt}
-          className="h-auto w-full object-cover"
+          className="banner-image"
         />
       </div>
     </section>

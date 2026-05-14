@@ -1,4 +1,9 @@
-import placeholderImg from '../assets/images/coletas.png';
+import '../css/InfoSection.css';
+
+import coletasImg from '../assets/images/coletas.png';
+import calendarioImg from '../assets/images/calendario.png';
+import notificacaoImg from '../assets/images/notificacao.png';
+
 
 interface InfoCard {
   id: string;
@@ -16,85 +21,84 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
     {
       id: 'coletas',
       title: 'Pontos de Coleta',
-      imageUrl: placeholderImg,
+      imageUrl: coletasImg,
       href: '/pontos-de-coleta',
     },
     {
       id: 'insumos',
       title: 'Meus Insumos',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/meus-insumos',
     },
     {
       id: 'agendamentos',
       title: 'Agendamentos',
-      imageUrl: placeholderImg,
+      imageUrl: notificacaoImg,
       href: '/agendamentos',
     },
   ],
+
   medico: [
     {
       id: 'pacientes',
       title: 'Pacientes',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/pacientes',
     },
     {
       id: 'solicitacoes',
       title: 'Solicitações',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/solicitacoes',
     },
     {
       id: 'agenda',
       title: 'Agenda Médica',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/agenda',
     },
   ],
+
   fornecedor: [
     {
       id: 'pedidos',
       title: 'Pedidos',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/pedidos',
     },
     {
       id: 'estoque',
       title: 'Estoque',
-      imageUrl: placeholderImg,
+      imageUrl: calendarioImg,
       href: '/estoque',
     },
     {
       id: 'entregas',
       title: 'Entregas',
-      imageUrl: placeholderImg,
+      imageUrl: notificacaoImg,
       href: '/entregas',
     },
   ],
 };
 
-export default function InfoSection({ userType }: InfoSectionProps) {
+export default function InfoSection({
+  userType,
+}: InfoSectionProps) {
   const cards = cardsByUser[userType];
 
   return (
-    <section className="mt-12">
-
-      <br />
-      <br />
-          <br />
-
-      <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+    <section className="info-section">
+      <div className="info-grid">
         {cards.map((card) => (
           <a
             key={card.id}
             href={card.href}
-            className="group overflow-hidden rounded-3xl shadow-xl transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            className="info-card"
           >
             <img
               src={card.imageUrl}
               alt={card.title}
-              className="h-[500px] w-full object-contain"
+              className="info-card-image"
             />
           </a>
         ))}

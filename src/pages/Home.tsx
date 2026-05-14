@@ -29,14 +29,13 @@ export default function Home() {
           alt="Banner Insumed"
           className="mb-10"
         />
-
+        <br />
+        <br />
         <InfoSection userType={userType} />
-
+      </main>
         <div className="mt-10">
           <TutorialSection />
         </div>
-      </main>
-
       <Footer />
     </div>
   );

@@ -1,0 +1,19 @@
+.banner {
+  width: 100%;
+}
+
+.banner-container {
+  overflow: hidden;
+  border-radius: 32px;
+  background: white;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
