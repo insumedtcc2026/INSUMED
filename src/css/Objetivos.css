@@ -1,19 +1,20 @@
 
-.info-section {
+.objectives-section {
   width: 100%;
-  padding: 0px 0px 0px 0px;
+  padding: 0;
 }
 
-.info-container {
+.objectives-container {
   display: flex;
   justify-content: center;
   gap: 70px;
   flex-wrap: wrap;
 }
 
-.info-card {
+.objectives-card {
   width: 340px;
   min-height: 200px;
+
   border-radius: 24px;
 
   display: flex;
@@ -25,25 +26,33 @@
 
   padding: 32px 24px;
 
+  background: #ffffff;
+
   box-shadow:
     0 10px 25px rgba(0, 0, 0, 0.08),
     0 4px 10px rgba(0, 0, 0, 0.04);
 
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.info-card:hover {
+.objectives-card:hover {
   transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.12),
+    0 6px 14px rgba(0, 0, 0, 0.06);
 }
 
-.info-icon {
+.objectives-icon {
   font-size: 32px;
   color: #2f49f5;
 
   margin-bottom: 18px;
 }
 
-.info-card h3 {
+.objectives-title {
   font-size: 20px;
   font-weight: 700;
   color: #2f49f5;
@@ -52,8 +61,29 @@
   line-height: 1.2;
 }
 
-.info-card p {
+.objectives-description {
   font-size: 16px;
   color: #333;
+
   line-height: 1.5;
+}
+
+/* TABLET */
+@media (max-width: 1100px) {
+  .objectives-container {
+    gap: 32px;
+  }
+}
+
+/* CELULAR */
+@media (max-width: 768px) {
+  .objectives-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .objectives-card {
+    width: 100%;
+    max-width: 360px;
+  }
 }

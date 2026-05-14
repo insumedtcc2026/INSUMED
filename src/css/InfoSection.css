@@ -15,9 +15,13 @@
 }
 
 .info-card {
-  overflow: hidden;
+  width: 100%;
+  height: 500px;
 
+  overflow: hidden;
   border-radius: 28px;
+
+  background: white;
 
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.12);
@@ -25,11 +29,8 @@
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
-
-  display: block;
-
-  background: white;
 }
+
 
 .info-card:hover {
   transform: translateY(-8px);
@@ -40,7 +41,7 @@
 
 .info-card-image {
   width: 100%;
-  height: 500px;
+  height: 100%;
 
   object-fit: cover;
 

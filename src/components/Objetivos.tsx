@@ -28,17 +28,23 @@ const cards = [
   },
 ];
 
-export default function InfoCards() {
+export default function Objetivos() {
   return (
-    <section className="info-section">
-      <div className="info-container">
+    <section className="objectives-section">
+      <div className="objectives-container">
         {cards.map((card) => (
-          <div className="info-card" key={card.id}>
-            <div className="info-icon">{card.icon}</div>
+          <div className="objectives-card" key={card.id}>
+            <div className="objectives-icon">
+              {card.icon}
+            </div>
 
-            <h3>{card.title}</h3>
+            <h3 className="objectives-title">
+              {card.title}
+            </h3>
 
-            <p>{card.description}</p>
+            <p className="objectives-description">
+              {card.description}
+            </p>
           </div>
         ))}
       </div>
