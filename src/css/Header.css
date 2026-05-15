@@ -154,6 +154,12 @@ background: linear-gradient(to right, #0800ff, #3b82f6); -webkit-background-clip
     0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
+/* some em telas menores */
+@media (max-width: 850px) {
+  .user-badge {
+    display: none;
+  }
+}
 /* BRILHO GIRANDO */
 .user-badge::before {
   content: '';

@@ -20,7 +20,7 @@ export default function Insumos() {
       <main className="mx-auto max-w-7xl px-6 py-8">
         <h1 className="text-3xl font-semibold text-gray-900">Insumos</h1>
         <p className="mt-4 text-gray-600">
-          Aqui você poderá ver e gerenciar seus Insumos (ainda em construção).
+          Aqui você poderá ver seus Insumos (ainda em construção).
           <img src={construcaoImage} alt="Construção" width={350} />
         </p>
       </main>
