@@ -133,7 +133,7 @@ Autores:
 - Lucas Marcelo Liberato da Silva
 - Kayki da Silva
 - Sara Delespostis
-- 
+
 Instituição:
 
 Faetec ETE Amaury Cesar Vieira Volta Redonda
