@@ -123,7 +123,7 @@ Em desenvolvimento
 
 ## Desenvolvedores
 
-Projeto desenvolvido por estudantes do curso Técnico em Informática para Internet integrado ao Ensino Médio.
+Projeto em desenvolvimento por estudantes do curso Técnico em Informática para Internet integrado ao Ensino Médio.
 
 Autores:
 
