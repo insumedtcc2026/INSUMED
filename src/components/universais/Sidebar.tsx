@@ -2,7 +2,7 @@ import '../../css/universais/Sidebar.css';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import logo from '../../assets/logo.png';
+import logo from '../../assets/home/Logo.png';
 
 import { X } from 'lucide-react';
 
@@ -73,10 +73,6 @@ export default function Sidebar({
               alt="Logo Insumed"
               className="sidebar-logo"
             />
-
-            <h2 className="sidebar-title">
-              INSUMED
-            </h2>
           </div>
 
           <button

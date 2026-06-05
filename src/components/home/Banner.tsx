@@ -4,7 +4,7 @@ import banner from '../../assets/home/Banner.png';
  
 const Banner: React.FC = () => {
   return (
-    <section className="bannercontainner">
+    <section className="bannercontainer">
       <img
         src={banner}
         alt="Banner Insumed"
