@@ -1,4 +1,4 @@
-import '../css/NotificationDropdown.css';
+import '../../css/universais/NotificationDropdown.css';
 
 export default function NotificationDropdown() {
   return (

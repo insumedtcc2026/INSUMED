@@ -1,8 +1,8 @@
-import '../css/Sidebar.css';
+import '../../css/universais/Sidebar.css';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 import { X } from 'lucide-react';
 
@@ -28,7 +28,7 @@ export default function Sidebar({
     {
       icon: GoHomeFill,
       label: 'Início',
-      path: '/',
+      path: '/home',
     },
     {
       icon: BsCalendarCheckFill,

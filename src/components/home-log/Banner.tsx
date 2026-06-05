@@ -1,4 +1,4 @@
-import '../css/Banner.css';
+import '../../css/home-log/Banner.css';
 
 interface BannerProps {
   imageUrl: string;

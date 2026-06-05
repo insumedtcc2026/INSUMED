@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import Banner from '../components/Banner';
-import InfoSection from '../components/InfoSection.tsx';
-import TutorialSection from '../components/TutorialSection.tsx';
-import Footer from '../components/Footer';
-import bannerInsumed from '../assets/banners/banner-insumed.png';
+import Header from '../components/universais/Header';
+import Sidebar from '../components/universais/Sidebar.tsx';
+import Banner from '../components/home-log/Banner.tsx';
+import InfoSection from '../components/home-log/InfoSection.tsx';
+import TutorialSection from '../components/home-log/TutorialSection.tsx';
+import Footer from '../components/universais/Footer.tsx';
+import bannerInsumed from '../assets/home-log/banner-insumed.png';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

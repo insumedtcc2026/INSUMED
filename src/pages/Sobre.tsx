@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
+import Header from '../components/universais/Header';
+import Sidebar from '../components/universais/Sidebar';
+import Footer from '../components/universais/Footer';
 
-import BannerAbout from "../components/BannerAbout";
-import TeamCarousel from '../components/TeamCarousel';
-import InfoCards from '../components/Objetivos';
-import AboutHistory from '../components/AboutHistory';
+import BannerAbout from "../components/sobre/BannerAbout";
+import TeamCarousel from '../components/sobre/TeamCarousel';
+import InfoCards from '../components/sobre/Objetivos';
+import AboutHistory from '../components/sobre/AboutHistory';
 
 
 export default function Sobre() {

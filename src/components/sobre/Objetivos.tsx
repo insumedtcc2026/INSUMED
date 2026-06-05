@@ -5,7 +5,7 @@ import {
   FiPlus,
 } from "react-icons/fi";
 
-import "../css/Objetivos.css";
+import '../../css/sobre/Objetivos.css';
 
 const cards = [
   {

@@ -1,4 +1,4 @@
-import '../css/Footer.css';
+import '../../css/universais/Footer.css';
 import {
   FaInstagram,
   FaFacebookF,
@@ -6,7 +6,7 @@ import {
   FaYoutube,
 } from 'react-icons/fa';
 
-import logo from '../assets/logo-footer.png';
+import logo from '../../assets/logo-footer.png';
 
 export default function Footer() {
   return (

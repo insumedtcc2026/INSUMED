@@ -1,10 +1,10 @@
-import '../css/Header.css';
+import '../../css/universais/Header.css';
 import { FaBell } from 'react-icons/fa';
 import { HiMiniBars3 } from 'react-icons/hi2';
 import { IoPersonSharp } from 'react-icons/io5';
 import { useState } from 'react';
 
-import NotificationDropdown from './NotificationDropdown';
+import NotificationDropdown from './NotificationDropdown.tsx';
 
 interface UserBadgeProps {
   name: string;

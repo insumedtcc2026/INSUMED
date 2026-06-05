@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
+import Header from '../components/universais/Header';
+import Sidebar from '../components/universais/Sidebar';
+import Footer from '../components/universais/Footer';
 import construcaoImage from '../assets/construcacao.png';
 
 export default function Perfil() {

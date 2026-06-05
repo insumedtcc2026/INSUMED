@@ -1,8 +1,8 @@
 // AboutHistory.tsx
 
-import "../css/AboutHistory.css";
+import '../../css/sobre/AboutHistory.css';
 
-import TeamImage from "../assets/About/about-team.png";
+import TeamImage from '../../assets/sobre/about-team.png';
 
 export default function AboutHistory() {
   return (

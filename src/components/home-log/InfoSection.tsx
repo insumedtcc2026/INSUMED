@@ -1,8 +1,8 @@
-import '../css/InfoSection.css';
+import '../../css/home-log/InfoSection.css';
 
-import coletasImg from '../assets/images/coletas.png';
-import calendarioImg from '../assets/images/calendario.png';
-import notificacaoImg from '../assets/images/notificacao.png';
+import coletasImg from '../../assets/home-log/coletas.png';
+import calendarioImg from '../../assets/home-log/calendario.png';
+import notificacaoImg from '../../assets/home-log/notificacao.png';
 
 
 interface InfoCard {
