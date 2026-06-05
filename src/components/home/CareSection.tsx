@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "../../css/home/CareSection.css";
  
 import calendarIcon from "../../assets/home/calendar.png";
