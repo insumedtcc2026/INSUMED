@@ -1,0 +1,114 @@
+.footer {
+  background: linear-gradient(160deg, #1a3ed4 0%, #0d27a8 40%, #0a1e8f 100%);
+  color: #ffffff;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ── Top bar ── */
+.footer__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 3rem;
+  padding: 2rem 3rem;
+}
+
+/* Brand column */
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+
+.footer__logo {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.footer__social-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+}
+
+/* Nav columns */
+.footer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.footer__nav:last-child {
+  margin-left: 0;
+}
+
+.footer__link {
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.footer__link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* ── Wordmark bar ── */
+.footer__wordmark {
+  font-size: clamp(5rem, 15vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  padding: 0 1.5rem 0 1.5rem;
+  user-select: none;
+  color: #ffffff;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .footer__inner {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem 1.5rem;
+  }
+
+  .footer__brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .footer__nav {
+    margin-left: 0;
+  }
+
+  .footer__wordmark {
+    font-size: clamp(3.5rem, 20vw, 6rem);
+    padding: 0 1rem 0 1rem;
+  }
+}

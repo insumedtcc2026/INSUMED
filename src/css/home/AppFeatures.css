@@ -1,0 +1,240 @@
+/* =============================================
+   INSUMED - APP FEATURES
+   ============================================= */
+
+.app-features {
+  width: 100%;
+  background: #0b19b8;
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* =============================================
+   TELAS
+   ============================================= */
+
+.app-features__screen {
+  min-height: 105vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 8%;
+  box-sizing: border-box;
+}
+
+/* =============================================
+   PRIMEIRA TELA
+   ============================================= */
+
+.app-features__screen--top {
+  gap: 80px;
+}
+
+.app-features__phone {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.app-features__phone img {
+  width: 100%;
+  max-width: 500px;
+  display: block;
+}
+
+.app-features__content {
+  flex: 1;
+  max-width: 560px;
+}
+
+.app-features__content h2 {
+  color: #fff;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 32px;
+}
+
+.app-features__content p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.4rem;
+  line-height: 1.8;
+  max-width: 500px;
+  margin-bottom: 40px;
+}
+
+/* Botão */
+
+.button-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 180px;
+  height: 60px;
+
+  border: 2px solid #fff;
+  border-radius: 999px;
+
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+
+  transition: all 0.3s ease;
+}
+
+.button-home:hover {
+  background: #fff;
+  color: #0b19b8;
+  transform: translateY(-3px);
+}
+
+/* =============================================
+   SEGUNDA TELA
+   ============================================= */
+
+.app-features__screen--bottom {
+  align-items: flex-end;
+  gap: 80px;
+  padding-top: 20px;
+  padding-bottom: 0;
+}
+
+.app-features__left {
+  transform: translateY(-120px);
+  flex: 1;
+  max-width: 650px;
+}
+
+.app-features__left h2 {
+  color: #fff;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 50px;
+}
+
+/* =============================================
+   CARDS
+   ============================================= */
+
+.feature-card {
+  width: 100%;
+  max-width: 580px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  padding: 14px;
+
+  background: #09159f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+
+  margin-bottom: 22px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+
+  border-radius: 50%;
+
+  background: #1f67ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 1.3rem;
+}
+
+.feature-card p {
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* =============================================
+   IMAGEM DIREITA
+   ============================================= */
+
+.app-features__right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.app-features__right img {
+  width: 125%;
+  max-width: 860px;
+  display: block;
+}
+
+/* =============================================
+   RESPONSIVO
+   ============================================= */
+
+@media (max-width: 1100px) {
+  .app-features__screen {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .app-features__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-features__left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-card {
+    text-align: left;
+  }
+
+  .app-features__screen--bottom {
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-features {
+    border-radius: 24px;
+  }
+
+  .app-features__screen {
+    min-height: auto;
+    padding: 80px 24px;
+  }
+
+  .app-features__content h2,
+  .app-features__left h2 {
+    font-size: 2.5rem;
+  }
+
+  .app-features__content p {
+    font-size: 1.1rem;
+  }
+
+  .feature-card {
+    padding: 12px;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+  }
+}
