@@ -7,6 +7,7 @@ import Insumos from './pages/Insumos';
 import PontosColeta from './pages/PontosColeta';
 import Perfil from './pages/Perfil';
 import Sobre from './pages/Sobre'; 
+import Login from './components/home/Login';
 
 function App() {
   return (
@@ -18,6 +19,12 @@ function App() {
         path="/agendamentos"
         element={<Agendamentos />}
       />
+
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+      
 
       <Route
         path="/insumos"
