@@ -33,11 +33,23 @@ form {
 }
 
 input{
-    position: relative;
-    margin: 15px 0;
-    width: 100%;
-    border-radius: 8px;
-    border: 2px solid rgb(47, 0, 255);
+      width: 125%;
+    padding: 4px;
+    margin: 8px 0;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 16px;
+     background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+}
+
+.login-inputs{
+  margin-top: 130px;
+}
+label{
+ font-weight: 500;
+ margin-bottom: 90px;
 }
 .container {
   display: flex;
@@ -46,6 +58,20 @@ input{
   background: #fff;
   border-radius: 30px;
   overflow: hidden;
+}
+.login-left{
+  font-size: 41px;
+  position: relative;
+  padding-top: 60px;
+  font-family:'Inter', system-ui;
+background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+padding-left: 41px;
+font-weight:  500;
+
+  
+ 
 }
 
 
@@ -62,3 +88,46 @@ input{
   height: 100%;
   object-fit: cover;
 }
+h1{
+  font-family: 'Inter', system-ui;
+  position: top;
+ 
+}
+button{
+    width: 122%;
+    padding: 4px;
+    margin: 8px 0;
+    border: 1px solid transparent;
+    border-radius: 15px;
+    font-size: 17px;
+     background:
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+    color: #fff;
+}
+
+
+
+ .google-btn {
+  width: 122%;
+  height: 36px;
+  border-radius: 15px;
+  border: 1px solid color(black);
+  background: rgb(227, 228, 230);
+  color: white;
+  cursor: pointer;
+}
+.google-icon{
+  margin-top: -28px;
+}
+.paragrafo{
+  margin-left: 90px;
+  margin-top: 30px;
+  font-size: small;
+  font-weight: 500;
+}
+p{
+  font-size: small;
+  font-weight: 500;
+}
+
+
