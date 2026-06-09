@@ -55,7 +55,7 @@ const Header: React.FC = () => {
           </a>
         </nav>
  
-        <Link to="/home" className="header-cta">
+        <Link to="/login" className="header-cta">
           Entrar
         </Link>
       </div>

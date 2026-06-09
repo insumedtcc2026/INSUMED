@@ -1,14 +1,23 @@
 
 import "../../css/home/Loginteste.css"
 import{useState} from "react"
+import { useNavigate } from "react-router-dom"
 import bannerlogin from "../../assets/home-log/bannerlogin.png"
 import { FcGoogle } from "react-icons/fc";
 
 const Loginteste: React.FC = () => {
 const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    return(
-       <section className="container">
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aqui você pode adicionar validação de login
+    navigate("/home");
+  };
+
+  return(
+       <section className="login-container"><div className="container">
         <div className="banner">
     <img src={bannerlogin} alt="banner" />
   </div>
@@ -17,7 +26,7 @@ const [email, setEmail] = useState("");
         Cadastre-se
         
         </h1>
-<form>
+<form onSubmit={handleLogin}>
 <div className="login-inputs">
     
 
@@ -53,6 +62,7 @@ const [email, setEmail] = useState("");
 
 
 
+</div>
 </section> 
 
 

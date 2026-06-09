@@ -3,7 +3,7 @@ import Banner from "../components/home/Banner";
 import CareSection from "../components/home/CareSection";
 import AppFeatures from "../components/home/AppFeatures";
 import ExpansionMap from "../components/home/ExpansionMap";
-import Footer from "../components/home/Footer";
+import Footer from "../components/universais/Footer";
 
 import "../css/home/HomeHome.css";
 

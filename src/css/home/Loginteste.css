@@ -1,113 +1,98 @@
-* {
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
-   font-family: 'Inter', system-ui
+.login-container {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-
+.login-container .container {
+  position: relative;
+  width: 870px;
+  height: 550px;
+  background-color: #fff;
+  border-radius: 30px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+  display: flex;
+  overflow: hidden;
 }
 
-.container {
-    position: relative;
-    width: 870px;
-    height: 550px;
-    background-color: #fff;
-    border-radius: 30px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, .2);
-}
-form {
-    position: absolute;
-    right: 0%;
-    width: 50%;
-    height: 90%;
-    display: flex;
-    align-items: center;
-    
-
+.login-container form {
+  position: absolute;
+  right: 0%;
+  width: 50%;
+  height: 90%;
+  display: flex;
+  align-items: center;
 }
 
-input{
-      width: 125%;
-    padding: 4px;
-    margin: 8px 0;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    font-size: 16px;
-     background:
+.login-container input {
+  width: 125%;
+  padding: 4px;
+  margin: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 16px;
+  background:
     linear-gradient(white, white) padding-box,
     linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
 }
 
-.login-inputs{
+.login-container .login-inputs {
   margin-top: 130px;
 }
-label{
- font-weight: 500;
- margin-bottom: 90px;
+
+.login-container label {
+  font-weight: 500;
+  margin-bottom: 90px;
 }
-.container {
-  display: flex;
-  width: 850px;
-  height: 550px;
-  background: #fff;
-  border-radius: 30px;
-  overflow: hidden;
-}
-.login-left{
+
+.login-container .login-left {
   font-size: 41px;
   position: relative;
   padding-top: 60px;
-  font-family:'Inter', system-ui;
-background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-padding-left: 41px;
-font-weight:  500;
-
-  
- 
+  font-family: 'Inter', system-ui;
+  background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-left: 41px;
+  font-weight: 500;
 }
 
-
-.banner {
+.login-container .banner {
   width: 45%;
-  
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.banner img {
+.login-container .banner img {
   width: 200%;
   height: 100%;
   object-fit: cover;
 }
-h1{
+
+.login-container h1 {
   font-family: 'Inter', system-ui;
-  position: top;
- 
+  position: relative;
 }
-button{
-    width: 122%;
-    padding: 4px;
-    margin: 8px 0;
-    border: 1px solid transparent;
-    border-radius: 15px;
-    font-size: 17px;
-     background:
+
+.login-container button {
+  width: 122%;
+  padding: 4px;
+  margin: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  font-size: 17px;
+  background:
     linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
-    color: #fff;
+  color: #fff;
 }
 
-
-
- .google-btn {
+.login-container .google-btn {
   width: 122%;
   height: 36px;
   border-radius: 15px;
@@ -116,16 +101,19 @@ button{
   color: white;
   cursor: pointer;
 }
-.google-icon{
+
+.login-container .google-icon {
   margin-top: -28px;
 }
-.paragrafo{
+
+.login-container .paragrafo {
   margin-left: 90px;
   margin-top: 30px;
   font-size: small;
   font-weight: 500;
 }
-p{
+
+.login-container p {
   font-size: small;
   font-weight: 500;
 }
