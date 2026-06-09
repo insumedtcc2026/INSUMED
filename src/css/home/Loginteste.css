@@ -30,7 +30,7 @@
 }
 
 .login-container input {
-  width: 125%;
+  width: 120%;
   padding: 4px;
   margin: 8px 0;
   border: 1px solid transparent;
@@ -47,7 +47,9 @@
 
 .login-container label {
   font-weight: 500;
-  margin-bottom: 90px;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 14px;
 }
 
 .login-container .login-left {
@@ -81,7 +83,7 @@
 }
 
 .login-container button {
-  width: 122%;
+  width: 120%;
   padding: 4px;
   margin: 8px 0;
   border: 1px solid transparent;
@@ -93,7 +95,9 @@
 }
 
 .login-container .google-btn {
-  width: 122%;
+  width: 120%;
+  height: auto;
+  padding: 4px;
   height: 36px;
   border-radius: 15px;
   border: 1px solid color(black);
@@ -101,7 +105,6 @@
   color: white;
   cursor: pointer;
 }
-
 .login-container .google-icon {
   margin-top: -28px;
 }
