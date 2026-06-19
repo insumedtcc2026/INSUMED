@@ -27,7 +27,7 @@ function App() {
       
 
       <Route
-        path="/insumos"
+        path="/Insumos"
         element={<Insumos />}
       />
 

@@ -38,7 +38,7 @@ export default function Sidebar({
     {
       icon: IoBandage,
       label: 'Meus Insumos',
-      path: '/insumos',
+      path: '/Insumo',
     },
     {
       icon: MdAddLocation,
