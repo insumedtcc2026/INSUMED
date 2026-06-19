@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
-import construcaoImage from '../assets/construcacao.png';
+import Insumo from '../components/Insumos/Insumo';
 
 export default function Insumos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,11 +18,7 @@ export default function Insumos() {
       <Header onMenuClick={toggleSidebar} />
 
       <main className="mx-auto max-w-7xl px-6 py-8">
-        <h1 className="text-3xl font-semibold text-gray-900">Insumos</h1>
-        <p className="mt-4 text-gray-600">
-          Aqui você poderá ver seus Insumos (ainda em construção).
-          <img src={construcaoImage} alt="Construção" width={350} />
-        </p>
+        <Insumo />
       </main>
 
       <Footer />

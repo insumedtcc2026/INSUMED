@@ -1,0 +1,55 @@
+.insumo{
+      display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 500px;
+    padding: 25px;
+
+    background: #f5f5f5;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.insumos-container{
+   .insumo-info h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.insumo-info p {
+    margin: 2px 0;
+    color: #444;
+}
+}
+.status{
+    display: inline-block;
+    margin-top: 15px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 90px;
+}
+
+.disponivel {
+    background-color: #35d14f;
+}
+
+.indisponivel {
+    background-color: #d60000;
+}
+.insumo-imagem {
+    width: 110px;
+    height: auto;
+}
+.imagem{
+position: absolute;
+width: 173px;
+height: 173px;
+left: 444px;
+top: 210px;
+
+}
