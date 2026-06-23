@@ -1,0 +1,12 @@
+
+.banner-about {
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner-about img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}

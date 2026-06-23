@@ -1,0 +1,87 @@
+label, select {
+  margin: 0px;
+  padding: 8px;
+}
+
+
+.Cadastro-container input {
+  width: 20%;
+  padding: 4px;
+   margin: 0px;
+   margin-bottom: 0%;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 16px;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+    
+    margin-left: 300px;
+    
+}
+.Cadastro-container label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 4px;
+  margin-left: 300px;
+  display: block;
+  margin-top: 100px;
+  
+
+}
+.Cadastro-container{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Cadastro-container input:focus {
+  outline: none;
+  background:
+    linear-gradient(white, white) padding-box,
+    black border-box;
+}
+.Cadastro-container .option {
+  display: flex;
+  align-items: center;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+}
+  select {
+  
+  box-sizing: border-box;
+  
+
+  border: 1.5px solid #3b82f6;  
+  border-radius: 10px;          
+  padding: 4px;           
+  
+  /* Ajustes de fonte e fundo */
+  font-size: 16px;
+  background-color: #ffffff;
+  color: #000000;
+  
+  
+  /* Define uma largura padrão ou ajuste conforme seu layout */
+  width: 100%;
+  max-width: 320px; 
+}
+
+option:focus {
+  outline: none;
+  background:
+    linear-gradient(white, white) padding-box,
+    black border-box;
+}
+
+.campo {
+  margin-bottom: -90px;
+  display: absolute;
+  flex-direction: column;
+  gap: 2px; /* espaço entre label e input */
+  
+}
+  
+

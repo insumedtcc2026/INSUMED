@@ -1,0 +1,93 @@
+/* AboutHistory.css */
+
+.history-section {
+  width: 100%;
+  padding: 100px 40px;
+}
+
+.history-container {
+  max-width: 1300px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 70px;
+
+  flex-wrap: wrap;
+}
+
+.history-content {
+  flex: 1;
+  min-width: 320px;
+}
+
+.history-content h2 {
+  font-size: 70px;
+  font-weight: 700;
+  color: #2f49f5;
+
+  margin-bottom: 40px;
+  line-height: 1.1;
+}
+
+.history-content p {
+  font-size: 20px;
+  line-height: 1.7;
+  color: #222;
+  text-align: justify;
+  margin-bottom: 36px;
+
+  max-width: 650px;
+}
+
+.history-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.history-image img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 28px;
+  object-fit: contain;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 1024px) {
+  .history-container {
+    flex-direction: column;
+  }
+
+  .history-content h2 {
+    font-size: 54px;
+  }
+
+  .history-content p {
+    font-size: 18px;
+  }
+
+  .history-image {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .history-section {
+    padding: 70px 24px;
+  }
+
+  .history-content h2 {
+    font-size: 42px;
+  }
+
+  .history-content p {
+    font-size: 17px;
+  }
+}

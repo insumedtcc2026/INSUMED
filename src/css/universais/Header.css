@@ -1,0 +1,314 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 32px;
+
+  background: white;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.menu-button,
+.notification-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.menu-button:hover,
+.notification-button:hover {
+  color: #2563eb;
+}
+
+.menu-icon,
+.notification-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.header-title {
+  font-size: 38px;
+  font-weight: 320;
+  color: black;
+}
+
+.header-user-highlight {
+  position: relative;
+background: linear-gradient(to right, #0800ff, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 350; display: inline-block;
+
+  animation: geminiShine 2.0s ease-out forwards;
+}
+
+/* GLOW EXTERNO */
+.header-user-highlight::after {
+  content: '';
+
+  position: absolute;
+
+  inset: -10px;
+
+  background: radial-gradient(
+    circle,
+    rgba(0, 98, 255, 0.35) 0%,
+    rgba(0, 49, 128, 0.12) 35%,
+    transparent 70%
+  );
+
+  filter: blur(18px);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  animation: geminiGlow 2.8s ease-out forwards;
+}
+
+/* MOVIMENTO DO GRADIENTE */
+@keyframes geminiShine {
+  0% {
+    background-position: 200% center;
+
+    filter: brightness(1.35);
+  }
+
+  100% {
+    background-position: 0% center;
+
+    filter: brightness(1);
+  }
+}
+
+/* GLOW SE MOVENDO */
+@keyframes geminiGlow {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(100px)
+      translateY(-6px)
+      scale(0.7);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-60px)
+      translateY(4px)
+      scale(1.25);
+  }
+}
+
+.user-badge {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 10px 30px;
+
+  border-radius: 30px;
+
+  background: linear-gradient(
+    to right,
+    #0800ff,
+    #3b82f6
+  );
+
+  color: white;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* some em telas menores */
+@media (max-width: 850px) {
+  .user-badge {
+    display: none;
+  }
+}
+/* BRILHO GIRANDO */
+.user-badge::before {
+  content: '';
+
+  position: absolute;
+
+  width: 300%;
+  height: 300%;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%) rotate(0deg);
+
+  border-radius: 50%;
+
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 320deg,
+    rgba(255, 255, 255, 1) 338deg,
+    rgba(147, 197, 253, 0.95) 348deg,
+    rgba(59, 130, 246, 0.85) 356deg,
+    transparent 360deg
+  );
+
+  filter: blur(3px);
+
+  opacity: 0;
+
+  animation:
+    badgeLightSpin 2.4s ease-out forwards;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+/* FUNDO INTERNO */
+.user-badge::after {
+  content: '';
+
+  position: absolute;
+
+  inset: 2px;
+
+  border-radius: inherit;
+
+  background: linear-gradient(
+    to right,
+    #0800ff,
+    #3b82f6
+  );
+
+  z-index: 1;
+}
+
+/* CONTEÚDO ACIMA */
+.user-badge > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes badgeLightSpin {
+  0% {
+    transform:
+      translate(-50%, -50%)
+      rotate(0deg);
+
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
+
+    opacity: 0;
+  }
+}
+.user-badge-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0);
+}
+
+.user-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.user-cpf {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .header-title {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px;
+  }
+
+  .header-left {
+    gap: 16px;
+  }
+
+  .header-title {
+    font-size: 24px;
+  }
+
+  .user-badge {
+    padding: 10px 16px;
+  }
+
+  .menu-icon,
+  .notification-icon {
+    width: 28px;
+    height: 28px;
+  }
+}

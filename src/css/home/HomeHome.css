@@ -1,0 +1,15 @@
+.homehome-page {
+  overflow-x: hidden;
+}
+
+.homehome-section {
+  width: 100%;
+}
+
+html {
+  scroll-padding-top: 0;
+}
+
+main {
+  overflow-x: hidden;
+}

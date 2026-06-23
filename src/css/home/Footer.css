@@ -1,0 +1,161 @@
+.footer {
+  background:
+    radial-gradient(circle at top, rgba(91, 145, 255, 0.22), transparent 28%),
+    linear-gradient(160deg, #1839d1 0%, #1227a8 45%, #0c1c8d 100%);
+  color: #ffffff;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+  padding: 0 0 12px;
+}
+
+.footer__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2.5rem 3rem 1rem;
+  flex-wrap: wrap;
+}
+
+.footer__brand {
+  display: flex;
+  flex: 1 1 320px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 420px;
+}
+
+.footer__logo {
+  height: 54px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer__description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.5;
+  font-size: 0.98rem;
+  max-width: 320px;
+}
+
+.footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 10px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  transition: transform 0.16s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.footer__social-link:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #ffffff;
+}
+
+.footer__groups {
+  display: flex;
+  gap: 2rem;
+  flex: 1 1 420px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.footer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 180px;
+}
+
+.footer__nav-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 0.2rem;
+}
+
+.footer__link {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: color 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.footer__link:hover {
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.footer__wordmark {
+  font-size: clamp(4.4rem, 13vw, 8.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  padding: 0 1.5rem 0.35rem;
+  user-select: none;
+  color: rgba(255, 255, 255, 0.96);
+  text-transform: uppercase;
+}
+
+@media (max-width: 1024px) {
+  .footer__inner {
+    padding: 2rem 1.5rem 1rem;
+  }
+
+  .footer__groups {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer__inner {
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem 1rem 0.75rem;
+  }
+
+  .footer__brand,
+  .footer__groups {
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .footer__groups {
+    width: 100%;
+    gap: 1.25rem;
+  }
+
+  .footer__nav {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .footer__link {
+    white-space: normal;
+  }
+
+  .footer__wordmark {
+    font-size: clamp(3rem, 18vw, 5.2rem);
+    padding: 0 1rem 0.25rem;
+  }
+}
