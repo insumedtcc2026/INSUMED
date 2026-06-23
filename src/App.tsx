@@ -8,6 +8,7 @@ import PontosColeta from './pages/PontosColeta';
 import Perfil from './pages/Perfil';
 import Sobre from './pages/Sobre'; 
 import Login from './components/home/Login';
+import Cadastro from "./components/home/Cadastro"
 
 function App() {
   return (
@@ -44,6 +45,11 @@ function App() {
       <Route
         path="/sobre"
         element={<Sobre />}
+      />
+
+       <Route
+        path="/cadastro"
+        element={<Cadastro />}
       />
     </Routes>
   );

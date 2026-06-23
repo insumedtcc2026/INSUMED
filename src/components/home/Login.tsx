@@ -26,7 +26,7 @@ const Loginteste: React.FC = () => {
 
   const handleSignUp = () => {
     // Aqui depois  pode adicionar lógica de cadastro
-    console.log("Ir para página de cadastro");
+    navigate("/cadastro")
   };
 
   return (
