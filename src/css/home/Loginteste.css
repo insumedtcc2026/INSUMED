@@ -4,34 +4,25 @@
   box-sizing: border-box;
   font-family: 'Inter', system-ui;
   display: flex;
-  justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
 
-.login-container .container {
-  position: relative;
-  width: 870px;
-  height: 550px;
-  background-color: #fff;
-  border-radius: 30px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, .2);
-  display: flex;
-  overflow: hidden;
-}
+
 
 .login-container form {
-  position: absolute;
-  right: 0%;
-  width: 50%;
-  height: 90%;
+  position: relative;
+  right: 600%;
+  width: 100%;
+  height: 400%;
   display: flex;
-  align-items: center;
+  margin-right: -10%;
+
 }
 
 .login-container input {
-  width: 120%;
-  padding: 4px;
+  width: 180%;
+  padding: 9px;
   margin: 8px 0;
   border: 1px solid transparent;
   border-radius: 10px;
@@ -42,49 +33,60 @@
 }
 
 .login-container .login-inputs {
-  margin-top: 130px;
+  margin-top: -5%;
 }
 
 .login-container label {
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom:1%;
   display: block;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .login-container .login-left {
-  font-size: 41px;
+  font-size: 70px;
   position: relative;
-  padding-top: 60px;
+  margin-bottom: 40%;
+  
   font-family: 'Inter', system-ui;
   background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  padding-left: 41px;
+  padding-left: 195px;
   font-weight: 500;
 }
 
-.login-container .banner {
-  width: 45%;
+
+
+.login-container .images  {
+  width:55%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: scaleY(6)
+  
+
+  
 }
 
-.login-container .banner img {
-  width: 200%;
-  height: 100%;
-  object-fit: cover;
+.login-container .images img {
+  width:90%;
+  display: flex;
+  
+
+  
 }
+
+
 
 .login-container h1 {
   font-family: 'Inter', system-ui;
   position: relative;
+
 }
 
 .login-container button {
-  width: 120%;
-  padding: 4px;
+  width: 129%;
+  padding: 9px;
+  
   margin: 8px 0;
   border: 1px solid transparent;
   border-radius: 15px;

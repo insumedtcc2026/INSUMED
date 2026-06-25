@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import bannerlogin from "../../assets/home-log/bannerlogin.png"
 import { FcGoogle } from "react-icons/fc";
+import images from "../../assets/home-log/images.jpg"
 
 const Loginteste: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -31,9 +32,9 @@ const Loginteste: React.FC = () => {
 
   return (
     <section className="login-container">
-      <div className="container">
-        <div className="banner">
-          <img src={bannerlogin} alt="banner" />
+   
+        <div className="images">
+          <img src={images} alt="banner" />
         </div>
 
         <h1 className="login-left">Cadastre-se</h1>
@@ -80,7 +81,7 @@ const Loginteste: React.FC = () => {
             </button>
           </div>
         </form>
-      </div>
+      
     </section>
   );
 };
