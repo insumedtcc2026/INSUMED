@@ -1,10 +1,8 @@
-
-import "../../css/home/Loginteste.css"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import bannerlogin from "../../assets/home-log/bannerlogin.png"
+import "../../css/home/Loginteste.css";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import images from "../../assets/home-log/images.jpg"
+import images from "../../assets/home-log/images.jpg"; // Sua imagem da esquerda
 
 const Loginteste: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +11,6 @@ const Loginteste: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Validação básica
     if (email.trim() && password.trim()) {
       console.log("Login com:", { email, password });
       navigate("/home");
@@ -21,69 +18,66 @@ const Loginteste: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    // Aqui depois adicionar lógica de login com Google
     navigate("/home");
   };
 
   const handleSignUp = () => {
-    // Aqui depois  pode adicionar lógica de cadastro
-    navigate("/cadastro")
+    navigate("/cadastro");
   };
 
   return (
-    <section className="login-container">
-   
-        <div className="images">
-          <img src={images} alt="banner" />
-        </div>
-
-        <h1 className="login-left">Cadastre-se</h1>
-
-        <form onSubmit={handleLogin}>
-          <div className="login-inputs">
-            <label>Seu CPF ou Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Digite o seu CPF ou Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <label>Sua senha</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Digite a sua senha"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <p>Esqueceu sua senha?</p>
-
-            <button type="submit">Entrar</button>
-
-            <button
-              type="button"
-              className="google-btn"
-              onClick={handleGoogleLogin}
-            >
-              Continue with Google
-              <FcGoogle size={28} className="google-icon" />
-            </button>
-
-            <p className="paragrafo">Não tem uma conta? Cadastre-se</p>
-
-            <button type="button" onClick={handleSignUp}>
-              Cadastrar
-            </button>
-          </div>
-        </form>
+    <div className="login-fullscreen-container">
       
-    </section>
-  );
-};
+      
+      <div className="login-image-panel">
+        <img src={images} alt="Login Background" />
+      </div>
 
-export default Loginteste
+   
+      <div className="login-form-panel">
+        <div className="form-wrapper">
+          
+          <div className="login-left">Bem-vindo</div>
+          
+          <form onSubmit={handleLogin}>
+            <div className="login-inputs">
+              <label>Email</label>
+              <input 
+                type="email" 
+                placeholder="Digite seu email" 
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="login-inputs">
+              <label>Senha</label>
+              <input 
+                type="password" 
+                placeholder="Digite sua senha"
+                value={password}
+                required
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            
+            <button type="submit" className="btn-entrar">Entrar</button>
+            
+            <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+              <FcGoogle size={22} /> Entrar com Google
+            </button>
+            
+            <p className="register-text">
+              Ainda não tem conta? <span onClick={handleSignUp}>Cadastre-se</span>
+            </p>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+export default Loginteste;

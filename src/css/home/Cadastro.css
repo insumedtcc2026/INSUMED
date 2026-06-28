@@ -1,61 +1,70 @@
 label, select {
   margin: 0px;
-  padding: 8px;
+  padding: 8px 0;
 }
 .login-container form {
-  position: absolute;
-  right: 0%;
-  width: 50%;
-  height: 90%;
-  display: flex;
+  width: 90%;
+display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  padding: 40px;
+  position: relative;
 }
 .login-container .container {
   position: relative;
-  width: 870px;
-  height: 550px;
+  width: 90%;
+  max-width: 870px;
+  min-height: 550px;
+  
   background-color: #fff;
   border-radius: 30px;
   box-shadow: 0 0 30px rgba(0, 0, 0, .2);
   display: flex;
   overflow: hidden;
+  flex-direction: column; 
+  overflow: hidden;
+  margin: 20px auto; 
+  
 }
 
 
 .Cadastro-container input {
-  width: 200%;
-  padding: 4px;
-   margin: 0px;
-   margin-bottom: 0%;
-  border: 1px solid transparent;
+  width: 100%;
+  padding: 12px;
+  border: 2px solid transparent;
   border-radius: 10px;
   font-size: 16px;
+  outline: none;
   background:
     linear-gradient(white, white) padding-box,
     linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
-    
-    margin-left: 300px;
+    transition: background 0.3s;
+    margin-right: auto;
+   
     
 }
 .Cadastro-container label {
   font-size: 16px;
   font-weight: 500;
   color: #000000;
-  margin-bottom: 4px;
-  margin-left: 300px;
+  
   display: block;
-  margin-top: 100px;
+  
   
 
 }
 .Cadastro-container{
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  padding:  0 20px;
 }
 
 .Cadastro-container input:focus {
-  outline: none;
+  
   background:
     linear-gradient(white, white) padding-box,
     black border-box;
@@ -74,17 +83,21 @@ label, select {
 
   border: 1.5px solid #3b82f6;  
   border-radius: 10px;          
-  padding: 4px;           
+  padding: 12px;           
   
-  /* Ajustes de fonte e fundo */
+  
   font-size: 16px;
   background-color: #ffffff;
   color: #000000;
   
   
-  /* Define uma largura padrão ou ajuste conforme seu layout */
+  
   width: 100%;
-  max-width: 320px; 
+outline: none;
+}
+
+select:focus{
+  border-color: #000000;
 }
 
 option:focus {
@@ -95,11 +108,21 @@ option:focus {
 }
 
 .campo {
-  margin-bottom: -90px;
-  display: absolute;
+width: 100%;
+  display: flex;
   flex-direction: column;
-  gap: 2px; /* espaço entre label e input */
+  gap: 5px; 
   
+}
+
+@media (min-width: 768px) {
+  .login-container .container {
+    flex-direction: row; 
+  }
+  
+  .login-container form {
+    width: 50%;
+  }
 }
   
 
