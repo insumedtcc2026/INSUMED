@@ -32,6 +32,8 @@ display: flex;
 .Cadastro-container input {
   width: 100%;
   padding: 12px;
+
+  
   border: 2px solid transparent;
   border-radius: 10px;
   font-size: 16px;
@@ -57,10 +59,13 @@ display: flex;
 .Cadastro-container{
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   padding:  0 20px;
+  margin: auto;
+  margin-left: 25%;
+  margin-top: 5%;
 }
 
 .Cadastro-container input:focus {
@@ -123,6 +128,40 @@ width: 100%;
   .login-container form {
     width: 50%;
   }
+}
+
+.Alinha-campos {
+  display: flex;
+  gap: 30px; 
+  
+  flex-wrap: wrap;
+}
+
+.Alinha-campos .campo {
+  flex: 1;
+}
+
+.Text-Cadastro{
+  text-align: center;
+
+
+   margin-top: 30px;
+  font-size: 30px;
+  font-weight: 500;
+  margin-bottom:  auto;
+background: 
+linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgb(126, 179, 219) 100%) ;
+  
+  /* Faz o background acompanhar apenas o formato das letras */
+  -webkit-background-clip: text;
+  background-clip: text;
+  
+
+  color: transparent;
+  
+
+  font-weight: bold;
+
 }
   
 
