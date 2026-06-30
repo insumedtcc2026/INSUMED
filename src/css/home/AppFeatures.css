@@ -181,60 +181,131 @@
 }
 
 /* =============================================
-   RESPONSIVO
-   ============================================= */
+   RESPONSIVIDADE
+============================================= */
 
 @media (max-width: 1100px) {
+
   .app-features__screen {
+    min-height: auto;
     flex-direction: column;
     text-align: center;
+    padding: 80px 6%;
+    gap: 40px;
   }
 
-  .app-features__content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
+  .app-features__content,
   .app-features__left {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 100%;
   }
 
-  .feature-card {
-    text-align: left;
+  /* Esconde as imagens dos celulares */
+  .app-features__phone,
+  .app-features__right {
+    display: none;
+  }
+
+  .app-features__left {
+    transform: none;
   }
 
   .app-features__screen--bottom {
-    padding-bottom: 80px;
+    padding: 80px 6%;
   }
+
+  .feature-card {
+    max-width: 100%;
+  }
+
 }
 
 @media (max-width: 768px) {
+
   .app-features {
     border-radius: 24px;
   }
 
   .app-features__screen {
-    min-height: auto;
-    padding: 80px 24px;
+    padding: 70px 20px;
+    gap: 30px;
   }
 
   .app-features__content h2,
   .app-features__left h2 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
+    line-height: 1.15;
   }
 
   .app-features__content p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+  }
+
+  .feature-card {
+    padding: 14px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+
+  .feature-card p {
+    font-size: 0.9rem;
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     font-size: 1.1rem;
+  }
+
+  .button-home {
+    width: 170px;
+    height: 54px;
+    font-size: 1rem;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .app-features__screen {
+    padding: 60px 16px;
+  }
+
+  .app-features__content h2,
+  .app-features__left h2 {
+    font-size: 1.9rem;
+  }
+
+  .app-features__content p {
+    font-size: 0.95rem;
   }
 
   .feature-card {
     padding: 12px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .feature-card p {
     font-size: 0.85rem;
   }
+
+  .feature-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    font-size: 1rem;
+  }
+
+  .button-home {
+    width: 160px;
+    height: 50px;
+    font-size: 0.95rem;
+  }
+
 }

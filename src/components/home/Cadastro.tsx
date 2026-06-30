@@ -1,7 +1,6 @@
 import Login from "./Login"
 import { useState } from "react";
 import "../../css/home/Cadastro.css"
-import axios from 'axios'
 
   function Cadastro(){
       const [email, setEmail] = useState("");
