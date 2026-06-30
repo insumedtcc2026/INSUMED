@@ -9,6 +9,10 @@ import "../../css/home/Cadastro.css"
       const [date, setDate] = useState("");
       const [genero, setGenero] = useState("");
   const [tel, setTel] = useState("");
+   const [senha, setSenha] = useState(""); 
+   const [cor, setCor] = useState("");
+     const [cep, setCep] = useState("");
+     const [endereco, setEndereco] = useState("");
 return(
   <>
     <div className="Text-Cadastro">Cadastre-se</div>
@@ -46,10 +50,10 @@ return(
         <div className="campo">
           <label>Email</label>
           <input
-            type="tel"
-
-            value={tel}
-            onChange={(e) => setTel(e.target.value)} />
+            type="email"
+            placeholder="Digite o seu Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} />
         </div>
       </div>
 
@@ -77,19 +81,21 @@ return(
       <div className="campo">
         <label>Crie uma Senha</label>
         <input
-          type="tel"
+          type="text"
 
-          value={tel}
-          onChange={(e) => setTel(e.target.value)} />
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)} />
       </div>
 
+      
+
       <div className="campo">
-        <label>Confirme sua Senha</label>
+        <label>Cor</label>
         <input
-          type="tel"
-          placeholder="+00(00) 00000-0000"
-          value={tel}
-          onChange={(e) => setTel(e.target.value)} />
+          type="text"
+        
+          value={cor}
+          onChange={(e) => setCor(e.target.value)} />
       </div>
 
 
@@ -99,71 +105,31 @@ return(
       <div className="campo">
         <label>Endereço</label>
         <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
+          type="text"
+          placeholder=" Ex: rua blabla, n123 cidade, estado"
+          value={endereco}
+          onChange={(e) => setEndereco(e.target.value)} />
       </div>
 
-      <div className="campo">
-        <label>Numero</label>
-        <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-      </div>
-
+      
       <div className="campo">
         <label>CEP</label>
         <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
+          type="text"
+          placeholder="00000-000"
+          value={cep}
+          onChange={(e) => setCep(e.target.value)} />
       </div>
 
 
 
-      <div className="campo">
-        <label>Bairro</label>
-        <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-      </div>
 
 
 
-      <div className="campo">
-        <label>Complemento</label>
-        <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-      </div>
+
+      
 
 
-      <div className="campo">
-        <label>Cidade</label>
-        <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-      </div>
-
-
-      <div className="campo">
-        <label>Estado</label>
-        <input
-          type="email"
-          placeholder="Digite o seu Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-      </div>
 
     </div></>
 );
