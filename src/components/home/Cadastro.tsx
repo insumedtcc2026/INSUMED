@@ -1,15 +1,36 @@
+import axios from "axios"
 import Login from "./Login"
 import { useState } from "react";
 import "../../css/home/Cadastro.css"
 
   function Cadastro(){
+const handleCadastro = async () => {
+  
+  try {
+    const response = await axios.post('http://localhost:3344/pacientes', {
+  nome: text1,
+  email: email,
+  telefone: tel,
+  cpf: cpf,
+  data_nasc: date,
+  sexo: genero,
+  endereco: endereco,
+  raca: cor,
+  senha: password
+});
+
+    console.log(response.data);
+  } catch (error) {
+    console.error("Erro:", error);
+  }
+}
       const [email, setEmail] = useState("");
       const [cpf, setCpf] = useState("");
       const [text1, setText1] = useState("");
       const [date, setDate] = useState("");
       const [genero, setGenero] = useState("");
   const [tel, setTel] = useState("");
-   const [senha, setSenha] = useState(""); 
+   const [password, setPassword] = useState(""); 
    const [cor, setCor] = useState("");
      const [cep, setCep] = useState("");
      const [endereco, setEndereco] = useState("");
@@ -25,14 +46,16 @@ return(
           <input
             type="text"
             placeholder="Digite o seu nome completo"
-            value={text1}
+            name="text"
+            required
             onChange={(e) => setText1(e.target.value)} />
         </div>
         <div className="campo">
           <label>Numero de Telefone</label>
           <input
             type="tel"
-            placeholder="+00(00) 00000-0000"
+            placeholder=""
+            required
             value={tel}
             onChange={(e) => setTel(e.target.value)} />
         </div>
@@ -43,7 +66,8 @@ return(
           <label>Seu CPF</label>
           <input
             type="text"
-            placeholder="000.000.000-00"
+            placeholder=""
+            required
             value={cpf}
             onChange={(e) => setCpf(e.target.value)} />
         </div>
@@ -52,6 +76,7 @@ return(
           <input
             type="email"
             placeholder="Digite o seu Email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)} />
         </div>
@@ -63,6 +88,7 @@ return(
           type="date"
           placeholder="Digite sua Data de Nascimento"
           value={date}
+          required
           onChange={(e) => setDate(e.target.value)} />
       </div>
 
@@ -71,7 +97,7 @@ return(
         <select
       
           value={genero}
-          
+          required
           onChange={(e) => setGenero(e.target.value)}
         >
         
@@ -85,19 +111,21 @@ return(
       <div className="campo">
         <label>Crie uma Senha</label>
         <input
-          type="text"
+          type="password"
           placeholder="Crie sua senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)} />
+          pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
+          title="A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiuscula, uma letra minúscula, qualquer caractere especial e um número."
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} />
       </div>
 
       <div className="campo">
         <label>Confirme sua senha</label>
         <input
-          type="text"
+          type="password"
           placeholder="Confirme sua senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)} />
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} />
       </div>
 
       
@@ -107,7 +135,7 @@ return(
          <select
       
           value={cor}
-          
+          required
           onChange={(e) => setCor(e.target.value)}
         >
         
@@ -128,6 +156,7 @@ return(
         <label>Endereço</label>
         <input
           type="text"
+          required
           placeholder=" Ex: rua blabla, n123 cidade, estado"
           value={endereco}
           onChange={(e) => setEndereco(e.target.value)} />
@@ -139,22 +168,27 @@ return(
         <input
           type="text"
           placeholder="00000-000"
+          required
           value={cep}
           onChange={(e) => setCep(e.target.value)} />
       </div>
 
 
 
-
+    <button type="submit"
+    className="btn-login"
+    onClick={() => handleCadastro()}
+    > Cadastrar</button>
 
 
 
       
-
+ 
 
 
     </div></>
 );
 }
+  
 
 export default Cadastro;
