@@ -61,6 +61,7 @@ return(
         <label>Data de Nascimento</label>
         <input
           type="date"
+          placeholder="Digite sua Data de Nascimento"
           value={date}
           onChange={(e) => setDate(e.target.value)} />
       </div>
@@ -68,9 +69,12 @@ return(
       <div className="campo">
         <label>Gênero</label>
         <select
+      
           value={genero}
+          
           onChange={(e) => setGenero(e.target.value)}
         >
+        
           <option>Feminino</option>
           <option>Masculino</option>
           <option>Outro</option>
@@ -82,7 +86,16 @@ return(
         <label>Crie uma Senha</label>
         <input
           type="text"
+          placeholder="Crie sua senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)} />
+      </div>
 
+      <div className="campo">
+        <label>Confirme sua senha</label>
+        <input
+          type="text"
+          placeholder="Confirme sua senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)} />
       </div>
@@ -91,11 +104,20 @@ return(
 
       <div className="campo">
         <label>Cor</label>
-        <input
-          type="text"
-        
+         <select
+      
           value={cor}
-          onChange={(e) => setCor(e.target.value)} />
+          
+          onChange={(e) => setCor(e.target.value)}
+        >
+        
+          <option>Branco</option>
+          <option>Preto</option>
+          <option>Pardo</option>
+          <option>Amarelo</option>
+          <option>Indigena</option>
+          <option>Prefiro não responder</option>
+        </select>
       </div>
 
 
