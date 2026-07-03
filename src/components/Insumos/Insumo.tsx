@@ -1,7 +1,7 @@
 import '../../css/Insumo.css/Insumo.css';
 
 export default function Insumo() {
-    let insumo = {};
+    
   return (
     <div className="insumo">
         <div className="insumo-container">
