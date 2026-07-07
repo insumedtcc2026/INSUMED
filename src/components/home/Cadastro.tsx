@@ -39,7 +39,7 @@ const handleCadastro = async () => {
 return(
   <>
     <div className="Text-Cadastro">Cadastre-se</div>
-
+<form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
 
   <div className="Cadastro-container">
       <div className="Alinha-campos">
@@ -179,7 +179,7 @@ return(
 
     <button type="submit"
     className="btn-login"
-    onClick={() => handleCadastro()}
+    
     > Cadastrar</button>
 
 
@@ -188,7 +188,8 @@ return(
  
 
 
-    </div></>
+    </div></form>
+    </>
 );
 }
   
