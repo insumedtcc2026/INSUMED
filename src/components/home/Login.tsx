@@ -2,7 +2,7 @@ import "../../css/home/Loginteste.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import images from "../../assets/home-log/images.jpg"; // Sua imagem da esquerda
+import images from "../../assets/home-log/images.jpg"; 
 
 const Loginteste: React.FC = () => {
   const [email, setEmail] = useState("");

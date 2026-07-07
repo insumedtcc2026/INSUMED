@@ -1,5 +1,5 @@
-import axios from "axios"
-
+import axios from 'axios'
+import images from "../../assets/home-log/images.jpg"; 
 
 
 import { useState } from "react";
@@ -38,8 +38,15 @@ const handleCadastro = async () => {
      const [endereco, setEndereco] = useState("");
 return(
   <>
-    <div className="Text-Cadastro">Cadastre-se</div>
+   <div className="login-fullscreen-container">
 <form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
+    
+      <div className="login-image-panel">
+        <img src={images} alt="Login Background" />
+      </div>
+     <div className="login-form-panel">
+        <div className="form-wrapper">
+    <div className="Text-Cadastro">Cadastre-se</div>
 
   <div className="Cadastro-container">
       <div className="Alinha-campos">
@@ -84,6 +91,7 @@ return(
         </div>
       </div>
 
+      <div className="Alinha-campos">
       <div className="campo">
         <label>Data de Nascimento</label>
         <input
@@ -92,6 +100,7 @@ return(
           value={date}
           required
           onChange={(e) => setDate(e.target.value)} />
+      
       </div>
 
       <div className="campo">
@@ -109,7 +118,8 @@ return(
           <option>Prefiro não responder</option>
         </select>
       </div>
-
+      </div>
+<div className="Alinha-campos">
       <div className="campo">
         <label>Crie uma Senha</label>
         <input
@@ -122,25 +132,13 @@ return(
       </div>
 
       <div className="campo">
-        <label>Confirme sua senha</label>
-        <input
-          type="password"
-          placeholder="Confirme sua senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} />
-      </div>
-
-      
-
-      <div className="campo">
         <label>Cor</label>
          <select
-      
+
           value={cor}
           required
           onChange={(e) => setCor(e.target.value)}
         >
-        
           <option>Branco</option>
           <option>Preto</option>
           <option>Pardo</option>
@@ -149,10 +147,20 @@ return(
           <option>Prefiro não responder</option>
         </select>
       </div>
+</div>
 
 
 
+<div className="Alinha-campos">
 
+      <div className="campo">
+        <label>Confirme sua senha</label>
+        <input
+          type="password"
+          placeholder="Confirme sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} />
+      </div>
 
       <div className="campo">
         <label>Endereço</label>
@@ -162,6 +170,7 @@ return(
           placeholder=" Ex: rua blabla, n123 cidade, estado"
           value={endereco}
           onChange={(e) => setEndereco(e.target.value)} />
+      </div>
       </div>
 
       
@@ -185,10 +194,11 @@ return(
 
 
       
- 
-
+ </div>
+</div>
 
     </div></form>
+    </div>
     </>
 );
 }
