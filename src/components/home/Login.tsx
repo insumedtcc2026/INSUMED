@@ -1,29 +1,49 @@
 import "../../css/home/Loginteste.css";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import images from "../../assets/home-log/images.jpg"; 
 
+
+
+
+
+
+
+
 const Loginteste: React.FC = () => {
+
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.trim() && password.trim()) {
-      console.log("Login com:", { email, password });
-      navigate("/home");
-    }
-  };
+    try {
+    const response = await axios.post(
+      "http://localhost:3344/login",
+      {
+        email,
+        senha: password
+      }
+    );
+    localStorage.setItem(
+  "usuario",
+  JSON.stringify(response.data.usuario)
+);
 
-  const handleGoogleLogin = () => {
+
+    console.log(response.data);
+
     navigate("/home");
-  };
 
-  const handleSignUp = () => {
-    navigate("/cadastro");
-  };
+  } catch (error: any) {
+    alert(error.response?.data?.msg || "Email ou senha inválidos");
+  }
+};
+const handleSignUp = () => { navigate("/cadastro"); };
 
   return (
     <div className="login-fullscreen-container">
@@ -62,9 +82,9 @@ const Loginteste: React.FC = () => {
               />
             </div>
             
-            <button type="submit" className="btn-entrar">Entrar</button>
+            <button type="submit" className="btn-entrar" >Entrar</button>
             
-            <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+            <button type="button" className="google-btn" >
               <FcGoogle size={22} /> Entrar com Google
             </button>
             

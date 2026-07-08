@@ -29,10 +29,11 @@ display: flex;
 }
 
 
-.Cadastro-container input {
+.formulario input {
   width: 100%;
   padding: 12px;
 
+  
   
   border: 2px solid transparent;
   border-radius: 10px;
@@ -46,7 +47,7 @@ display: flex;
    
     
 }
-.Cadastro-container label {
+.formulario label {
   font-size: 16px;
   font-weight: 500;
   color: #000000;
@@ -56,17 +57,7 @@ display: flex;
   
 
 }
-.Cadastro-container{
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 600px;
-  padding:  0 20px;
-  margin: auto;
-  margin-left: 25%;
-  margin-top: 5%;
-}
+
 
 .Cadastro-container input:focus {
   
@@ -117,6 +108,8 @@ width: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px; 
+  width: 400px;
+
   
 }
 
@@ -132,13 +125,15 @@ width: 100%;
 
 .Alinha-campos {
   display: flex;
-  gap: 30px; 
-  
+  gap: 40px; 
+  width: 100%;
   flex-wrap: wrap;
+  width: 500px;
 }
 
 .Alinha-campos .campo {
   flex: 1;
+  
 }
 
 .Text-Cadastro{

@@ -6,6 +6,9 @@ import { useState } from "react";
 import "../../css/home/Cadastro.css"
 
   function Cadastro(){
+
+
+    
 const handleCadastro = async () => {
   
   try {
@@ -39,16 +42,18 @@ const handleCadastro = async () => {
 return(
   <>
    <div className="login-fullscreen-container">
-<form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
     
       <div className="login-image-panel">
         <img src={images} alt="Login Background" />
       </div>
+
+
      <div className="login-form-panel">
         <div className="form-wrapper">
     <div className="Text-Cadastro">Cadastre-se</div>
 
-  <div className="Cadastro-container">
+<form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
+ 
       <div className="Alinha-campos">
         <div className="campo">
           <label>Seu Nome Completo</label>
@@ -132,6 +137,23 @@ return(
       </div>
 
       <div className="campo">
+        <label>Confirme sua senha</label>
+        <input
+          type="password"
+          placeholder="Confirme sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} />
+      </div>
+
+</div>
+
+
+
+<div className="Alinha-campos">
+
+      <div className="campo">
+
+
         <label>Cor</label>
          <select
 
@@ -147,33 +169,11 @@ return(
           <option>Prefiro não responder</option>
         </select>
       </div>
-</div>
-
-
-
-<div className="Alinha-campos">
-
-      <div className="campo">
-        <label>Confirme sua senha</label>
-        <input
-          type="password"
-          placeholder="Confirme sua senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} />
-      </div>
-
-      <div className="campo">
-        <label>Endereço</label>
-        <input
-          type="text"
-          required
-          placeholder=" Ex: rua blabla, n123 cidade, estado"
-          value={endereco}
-          onChange={(e) => setEndereco(e.target.value)} />
-      </div>
-      </div>
-
+        
       
+
+
+             
       <div className="campo">
         <label>CEP</label>
         <input
@@ -182,7 +182,23 @@ return(
           required
           value={cep}
           onChange={(e) => setCep(e.target.value)} />
+        </div>
+        </div>
+
+      <div className="campo">
+       <label>Endereço</label>
+        <input
+          type="text"
+          required
+          placeholder=" Ex: rua blabla, n123 cidade, estado"
+          value={endereco}
+          onChange={(e) => setEndereco(e.target.value)} />
+
       </div>
+      
+      
+
+      
 
 
 
@@ -193,12 +209,14 @@ return(
 
 
 
+    </form>
       
  </div>
-</div>
 
-    </div></form>
+
     </div>
+    </div>
+    
     </>
 );
 }
