@@ -1,41 +1,55 @@
-import { useState } from 'react';
-import Header from '../components/universais/Header';
-import Sidebar from '../components/universais/Sidebar.tsx';
+import { useState, useEffect } from 'react';
+
 import Banner from '../components/home-log/Banner.tsx';
-import InfoSection from '../components/home-log/InfoSection.tsx';
+
 import TutorialSection from '../components/home-log/TutorialSection.tsx';
 import Footer from '../components/universais/Footer.tsx';
 import bannerInsumed from '../assets/home-log/banner-insumed.png';
+import   '../css/home/Homepaciente.css'
 
 export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [usuario, setUsuario] = useState<any>(null);
 
-  // Exemplo temporário. Depois, esse valor virá do login.
-  const userType = 'paciente';
+  useEffect(() => {
+    const dados = localStorage.getItem("usuario");
 
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+    if (dados) {
+      setUsuario(JSON.parse(dados));
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+    <div className="home-container">
+      {/* Card do usuário */}
+      {usuario && (
+        <div className="card-usuario">
+          <div className="icone-usuario">
+            <i className="fas fa-user"></i>
+          </div>
 
-      <Header onMenuClick={toggleSidebar} />
+          <div className="dados-usuario">
+            <h3>{usuario.nome}</h3>
+            <p>Email: {usuario.email}</p>
+          </div>
+        </div>
+      )}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      
+
+      {/* Coloque Sidebar apenas se você já tiver sidebarOpen e toggleSidebar */}
+      {/* <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> */}
+
+      <main className="conteudo-home">
         <Banner
           imageUrl={bannerInsumed}
           alt="Banner Insumed"
-          className="mb-10"
         />
-        <br />
-        <br />
-        <InfoSection userType={userType} />
+
+        
       </main>
-        <div className="mt-10">
-          <TutorialSection />
-        </div>
+
+      <TutorialSection />
+
       <Footer />
     </div>
   );

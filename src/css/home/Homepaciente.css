@@ -1,0 +1,293 @@
+
+.header-paciente {
+
+    position: fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    height:58px;
+
+    background:white;
+
+    z-index:1000;
+
+
+    box-shadow:
+
+    0 2px 8px rgba(0,0,0,.12);
+
+}
+
+
+
+/* conteúdo */
+
+.header-content {
+
+
+    height:100%;
+
+
+    display:flex;
+
+    align-items:center;
+
+
+    padding:0 35px;
+
+
+    gap:18px;
+
+}
+
+
+
+/* botão menu */
+
+
+.menu-btn {
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    color:#555;
+
+}
+
+
+
+/* saudação */
+
+
+.saudacao {
+
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:12px;
+
+    color:#333;
+
+
+}
+
+
+
+.saudacao span {
+
+
+    color:#0057ff;
+
+    font-weight:600;
+
+}
+
+
+
+/* lado direito */
+
+
+.header-actions {
+
+
+    margin-left:auto;
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+
+/* CARD USUARIO */
+
+
+.card-usuario {
+
+
+    display:flex;
+
+    align-items:center;
+
+
+    gap:8px;
+
+
+    width:150px;
+
+    height:34px;
+
+
+    padding:0 10px;
+
+
+    border-radius:20px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #0C299A,
+        #0066FF
+    );
+
+
+    box-shadow:
+
+    0 4px 12px rgba(0,0,0,.18);
+
+
+    color:white;
+
+}
+
+
+
+
+/* ícone */
+
+
+.icone-usuario {
+
+
+    width:22px;
+
+    height:22px;
+
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    border-radius:50%;
+
+
+    background:
+
+    rgba(255,255,255,.20);
+
+
+    font-size:11px;
+
+}
+
+
+
+/* dados */
+
+
+.dados-usuario {
+
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.dados-usuario h3 {
+
+
+    margin:0;
+
+
+    font-size:8px;
+
+
+    font-weight:700;
+
+
+    color:white;
+
+
+}
+
+
+
+.dados-usuario p {
+
+
+    margin:2px 0 0;
+
+
+    font-size:7px;
+
+
+    color:
+
+    rgba(255,255,255,.85);
+
+
+}
+
+
+
+/* sino */
+
+
+.notificacao {
+
+
+    border:none;
+
+    background:none;
+
+
+    cursor:pointer;
+
+
+    color:#111;
+
+
+    font-size:14px;
+
+
+    position:relative;
+
+}
+
+
+
+.notificacao::after {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    top:-3px;
+
+    right:-3px;
+
+
+    width:6px;
+
+    height:6px;
+
+
+    border-radius:50%;
+
+
+    background:red;
+
+}

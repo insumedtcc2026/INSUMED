@@ -1,9 +1,10 @@
 import "../../css/home/Loginteste.css";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import images from "../../assets/home-log/images.jpg"; 
+
 
 
 
@@ -29,6 +30,12 @@ const Loginteste: React.FC = () => {
         senha: password
       }
     );
+
+
+
+
+
+    
     localStorage.setItem(
   "usuario",
   JSON.stringify(response.data.usuario)
