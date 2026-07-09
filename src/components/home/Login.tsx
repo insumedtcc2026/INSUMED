@@ -18,7 +18,7 @@ const Loginteste: React.FC = () => {
     e.preventDefault();
     try {
     const response = await axios.post(
-      "https://backend-insumed-lhac.vercel.app/pacientesall",
+      "https://backend-insumed-lhac.vercel.app/login",
       {
         email,
         senha: password

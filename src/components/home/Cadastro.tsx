@@ -12,7 +12,7 @@ import "../../css/home/Cadastro.css"
 const handleCadastro = async () => {
   
   try {
-    const response = await axios.post('http://localhost:3344/pacientes', {
+    const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
   nome: text1,
   email: email,
   telefone: tel,
