@@ -1,6 +1,6 @@
 import "../../css/home/Loginteste.css";
 import axios from "axios";
-import { useState, useEffect} from "react";
+import { useState} from "react";
 import { useNavigate } from "react-router-dom";
 
 import images from "../../assets/home-log/images.jpg"; 
