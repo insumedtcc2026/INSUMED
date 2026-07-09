@@ -172,8 +172,36 @@ linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgb(126, 179, 219) 100%) ;
 
   padding: 10px 40px;
 
-  border-radius: 20px;
+ 
+  border-radius: 15px;
+  margin-top: 10%;
 
+
+  background: linear-gradient(
+    135deg,
+    #0C299A,
+    #0066FF
+  );
+}
+.btn-login1{
+    display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Montserrat", "Trebuchet MS", sans-serif;
+  font-weight: 700;
+  font-size:1rem;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  padding: 10px 40px;
+
+ 
+  border-radius: 15px;
+  margin-top: 10%;
+
+margin-left: 13%;
   background: linear-gradient(
     135deg,
     #0C299A,

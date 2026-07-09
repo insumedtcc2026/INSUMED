@@ -29,6 +29,19 @@ const handleCadastro = async () => {
     console.error("Erro:", error);
   }
 }
+
+const limparFormulario = () => {
+  setEmail("");
+  setCpf("");
+  setText1("");
+  setDate("");
+  setGenero("");
+  setTel("");
+  setPassword("");
+  setCor("");
+  setCep("");
+    setEndereco("");
+};
       const [email, setEmail] = useState("");
       const [cpf, setCpf] = useState("");
       const [text1, setText1] = useState("");
@@ -68,7 +81,7 @@ return(
           <label>Numero de Telefone</label>
           <input
             type="tel"
-            placeholder=""
+            placeholder="(24) 99999-9999"
             required
             value={tel}
             onChange={(e) => setTel(e.target.value)} />
@@ -80,7 +93,7 @@ return(
           <label>Seu CPF</label>
           <input
             type="text"
-            placeholder=""
+            placeholder="123.456.789-00"
             required
             value={cpf}
             onChange={(e) => setCpf(e.target.value)} />
@@ -116,7 +129,7 @@ return(
           required
           onChange={(e) => setGenero(e.target.value)}
         >
-        
+        <option></option>
           <option>Feminino</option>
           <option>Masculino</option>
           <option>Outro</option>
@@ -161,6 +174,7 @@ return(
           required
           onChange={(e) => setCor(e.target.value)}
         >
+          <option></option>
           <option>Branco</option>
           <option>Preto</option>
           <option>Pardo</option>
@@ -200,14 +214,16 @@ return(
 
       
 
+<div className='btn-login'>
 
+    <button type="submit"> Cadastrar</button>
 
-    <button type="submit"
-    className="btn-login"
-    
-    > Cadastrar</button>
+    </div>
 
+    <div className='btn-login1'>
 
+    <button type="reset" onClick={limparFormulario}> Limpar</button>
+</div>
 
     </form>
       
