@@ -2,14 +2,8 @@ import "../../css/home/Loginteste.css";
 import axios from "axios";
 import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+
 import images from "../../assets/home-log/images.jpg"; 
-
-
-
-
-
-
 
 
 
@@ -24,18 +18,12 @@ const Loginteste: React.FC = () => {
     e.preventDefault();
     try {
     const response = await axios.post(
-      "http://localhost:3344/login",
+      "https://backend-insumed-lhac.vercel.app/pacientesall",
       {
         email,
         senha: password
       }
-    );
-
-
-
-
-
-    
+    ); 
     localStorage.setItem(
   "usuario",
   JSON.stringify(response.data.usuario)
@@ -90,10 +78,6 @@ const handleSignUp = () => { navigate("/cadastro"); };
             </div>
             
             <button type="submit" className="btn-entrar" >Entrar</button>
-            
-            <button type="button" className="google-btn" >
-              <FcGoogle size={22} /> Entrar com Google
-            </button>
             
             <p className="register-text">
               Ainda não tem conta? <span onClick={handleSignUp}>Cadastre-se</span>
