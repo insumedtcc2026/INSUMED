@@ -1,5 +1,7 @@
 import axios from 'axios'
 import images from "../../assets/home-log/images.jpg"; 
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 
 import { useState } from "react";
@@ -7,9 +9,18 @@ import "../../css/home/Cadastro.css"
 
   function Cadastro(){
 
-
+const navigate = useNavigate();
     
 const handleCadastro = async () => {
+ if (password !== confirmacaodesenha) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ops...',
+      text: 'Os campos referente a senha devem ter a mesma senha, tente novamente!',
+      confirmButtonColor: '#d33'
+    });
+    return; // Muda essa parte
+  }
   
   try {
     const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
@@ -23,10 +34,24 @@ const handleCadastro = async () => {
   raca: cor,
   senha: password
 });
-
     console.log(response.data);
+   Swal.fire({
+        icon: 'success',
+        title: 'Cadastro realizado!',
+        text: 'Seu cadastro foi efetuado com êxito.',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Ir para o Login'
+      })
+      limparFormulario();
+      navigate('/login');
   } catch (error) {
     console.error("Erro:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Ops...',
+      text: 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.',
+      confirmButtonColor: '#d33'
+    });
   }
 }
 
@@ -38,6 +63,7 @@ const limparFormulario = () => {
   setGenero("");
   setTel("");
   setPassword("");
+  setConfirmacao("");
   setCor("");
   setCep("");
     setEndereco("");
@@ -52,6 +78,7 @@ const limparFormulario = () => {
    const [cor, setCor] = useState("");
      const [cep, setCep] = useState("");
      const [endereco, setEndereco] = useState("");
+     const [confirmacaodesenha, setConfirmacao] = useState("");
 return(
   <>
    <div className="login-fullscreen-container">
@@ -65,7 +92,9 @@ return(
         <div className="form-wrapper">
     <div className="Text-Cadastro">Cadastre-se</div>
 
-<form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
+      
+  
+     <form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
  
       <div className="Alinha-campos">
         <div className="campo">
@@ -125,9 +154,9 @@ return(
         <label>Gênero</label>
         <select
       
-          value={genero}
-          required
-          onChange={(e) => setGenero(e.target.value)}
+      value={genero}
+      required
+      onChange={(e) => setGenero(e.target.value)}
         >
         <option></option>
           <option>Feminino</option>
@@ -154,8 +183,8 @@ return(
         <input
           type="password"
           placeholder="Confirme sua senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} />
+          value={confirmacaodesenha}
+          onChange={(e) => setConfirmacao(e.target.value)} />
       </div>
 
 </div>
@@ -170,10 +199,10 @@ return(
         <label>Cor</label>
          <select
 
-          value={cor}
-          required
-          onChange={(e) => setCor(e.target.value)}
-        >
+value={cor}
+required
+onChange={(e) => setCor(e.target.value)}
+>
           <option></option>
           <option>Branco</option>
           <option>Preto</option>
@@ -184,10 +213,7 @@ return(
         </select>
       </div>
         
-      
-
-
-             
+        
       <div className="campo">
         <label>CEP</label>
         <input
@@ -209,14 +235,11 @@ return(
           onChange={(e) => setEndereco(e.target.value)} />
 
       </div>
-      
-      
-
-      
 
 <div className='btn-login'>
+ 
+      <button type="submit"> Cadastrar</button>
 
-    <button type="submit"> Cadastrar</button>
 
     </div>
 
@@ -226,6 +249,7 @@ return(
 </div>
 
     </form>
+
       
  </div>
 

@@ -2,6 +2,7 @@ import "../../css/home/Loginteste.css";
 import axios from "axios";
 import { useState} from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 import images from "../../assets/home-log/images.jpg"; 
 
@@ -18,14 +19,15 @@ const Loginteste: React.FC = () => {
     e.preventDefault();
     try {
     const response = await axios.post(
-      "https://backend-insumed-lhac.vercel.app/login",
-      {
+          "https://backend-insumed-lhac.vercel.app/login",
+          {
         email,
         senha: password
       }
     ); 
-    localStorage.setItem(
-  "usuario",
+
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("usuario",
   JSON.stringify(response.data.usuario)
 );
 
@@ -35,7 +37,12 @@ const Loginteste: React.FC = () => {
     navigate("/home");
 
   } catch (error: any) {
-    alert(error.response?.data?.msg || "Email ou senha inválidos");
+    Swal.fire({
+      icon: 'error',
+      title: 'Ops...',
+      text: 'Email ou senha inválidos!',
+      confirmButtonColor: '#d33'
+    });
   }
 };
 const handleSignUp = () => { navigate("/cadastro"); };
