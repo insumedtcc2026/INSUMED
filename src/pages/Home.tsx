@@ -12,14 +12,15 @@ export default function Home() {
   const [usuario, setUsuario] = useState<any>(null);
 
   const navigate = useNavigate();
-
+  
   useEffect(() => {
-    const dados = localStorage.getItem("usuario");
+    
+    
     const validarToken = async () => {
       const token = localStorage.getItem("token");
-
+      
       if (!token) navigate("/login");
-
+      
       try {
         const response = await axios.get("https://backend-insumed-lhac.vercel.app/validar", {
           headers: {
@@ -42,15 +43,17 @@ export default function Home() {
         navigate("/login");
         console.error("Erro ao validar token:", error);
       }
-
-    if (dados) {
-      setUsuario(JSON.parse(dados));
-    }
-  };
-
-     validarToken();
+      
+      if (dados) {
+        setUsuario(JSON.parse(dados));
+      }
+    };
+    
+    validarToken();
   }, []);
 
+  const dados = localStorage.getItem("usuario");
+  
   return (
     <div className="home-container">
       {/* Card do usuário */}
@@ -61,8 +64,8 @@ export default function Home() {
           </div>
 
           <div className="dados-usuario">
-            <h3>{usuario.nome}</h3>
-            <p>Email: {usuario.email}</p>
+            <h3>{usuario.pac_nome}</h3>
+            <p>Email: {usuario.pac_email}</p>
           </div>
         </div>
       )}

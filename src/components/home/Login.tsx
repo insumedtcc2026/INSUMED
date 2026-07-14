@@ -27,8 +27,7 @@ const Loginteste: React.FC = () => {
     ); 
 
     localStorage.setItem("token", response.data.token);
-    localStorage.setItem("usuario",
-  JSON.stringify(response.data.usuario)
+    localStorage.setItem("usuario",JSON.stringify(response.data.usuario)
 );
 
 
