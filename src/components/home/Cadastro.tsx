@@ -1,5 +1,5 @@
 import axios from 'axios'
-import images from "../../assets/home-log/images.jpg"; 
+import images from "../../assets/home-log/bolsa esteem body convatec (2).png"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 

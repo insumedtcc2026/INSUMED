@@ -209,6 +209,26 @@ margin-left: 13%;
   );
 }
 
+.btn-login1:hover{
+  background: linear-gradient(
+    135deg,
+    #eb2106,
+    #e93d08
+  );
+  transition: background 0.3s ease;
+  transform: scale(1.05);
+}
+
+.btn-login:hover {
+  background: linear-gradient(
+    135deg,
+    #0eec2c,
+    #17df7b
+  );
+  transition: background 0.3s ease;
+  transform: scale(1.05);
+}
+
 
 .login-image-panel {
   flex: 1;
@@ -218,7 +238,8 @@ margin-left: 13%;
 .login-image-panel img {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: contain; 
+
 }
 
 
