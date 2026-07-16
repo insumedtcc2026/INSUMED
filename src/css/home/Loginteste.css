@@ -93,23 +93,6 @@ input {
 }
 
 
-.google-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 15px;
-  border: 1px solid #ccc;
-  background: rgb(227, 228, 230);
-  color: #333;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background 0.3s;
-}
-
 .google-btn:hover {
   background: #d4d5d8;
 }

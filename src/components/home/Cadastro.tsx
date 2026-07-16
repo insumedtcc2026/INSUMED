@@ -1,5 +1,5 @@
 import axios from 'axios'
-import images from "../../assets/home-log/bolsa esteem body convatec (2).png"; 
+import images from "../../assets/home-log/teste cadastro.png"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 
@@ -224,7 +224,7 @@ onChange={(e) => setCor(e.target.value)}
           onChange={(e) => setCep(e.target.value)} />
         </div>
         </div>
-
+<div className="Alinha-campos">
       <div className="campo">
        <label>Endereço</label>
         <input
@@ -233,7 +233,7 @@ onChange={(e) => setCor(e.target.value)}
           placeholder=" Ex: rua blabla, n123 cidade, estado"
           value={endereco}
           onChange={(e) => setEndereco(e.target.value)} />
-
+</div>
       </div>
 
 <div className='btn-login'>
