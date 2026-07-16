@@ -3,6 +3,7 @@ import Banner from '../components/home-log/Banner.tsx';
 import TutorialSection from '../components/home-log/TutorialSection.tsx';
 import Footer from '../components/universais/Footer.tsx';
 import bannerInsumed from '../assets/home-log/banner-insumed.png';
+import  InfoSection from '../components/home-log/InfoSection.tsx';
 import   '../css/home/Homepaciente.css'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -83,7 +84,10 @@ export default function Home() {
 
         
       </main>
-
+    
+      
+      <InfoSection userType="paciente" />
+      
       <TutorialSection />
 
       <Footer />

@@ -1,0 +1,131 @@
+.postos-container{
+    width: 95%;
+    max-width: 1400px;
+    margin: 30px auto;
+
+    display: grid;/*deixa lado a lado*/
+    /*auto-fit: cria quantas colulas couberem na tela, fr:fração do espaço disponível.*/
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.posto-card{
+    background:#fff;
+    border-radius:22px;
+    overflow:hidden; /*tudo que sai do card sera cortado*/
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+    transition: .25s;
+}
+.posto-card:hover{
+    transform: translateY(-4px);/*o card sobe um pouco*/
+}
+
+.posto-topo{
+    display:flex;
+    align-items: flex-start;
+    gap:15px;
+    padding:20px;
+}
+
+.icone{
+     width:55px;
+    height:55px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:40px;
+
+    color:#0F45E8;
+
+    flex-shrink:0;
+}
+.informacoes{
+    flex:1;/*ocupa todo o espaço restante*/
+}
+.informacoes h3{
+    margin:0;
+    font-size:20px;
+     color:#111;
+}
+
+.informacoes p{
+     margin-top:8px;
+
+    font-size:14px;
+
+    color:#555;
+
+    line-height:1.4;/*espaçamento entre as linhas*/
+}
+
+.tags{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.tags span{
+    background:#143DDB;
+    color:white;
+    padding:5px 14px;
+
+    border-radius:20px;
+
+    font-size:11px;
+
+    font-weight:600;
+}
+
+.acoes{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;/*Cada botão ocupa metade do card.*/
+
+    background:linear-gradient(90deg,#1429CB,#4D6DFF);
+}
+
+.acoes button{
+    border:none;
+
+    background:none;
+
+    color:#fff;
+
+    padding:16px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+.acoes button:first-child{
+
+    border-right:1px solid rgba(255,255,255,.35);
+
+}
+
+@media (max-width:600px){
+
+    .postos-container{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .posto-topo{
+
+        padding:18px;
+
+    }
+
+    .informacoes h3{
+
+        font-size:18px;
+
+    }
+
+}
