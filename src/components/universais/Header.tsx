@@ -2,16 +2,16 @@ import '../../css/universais/Header.css';
 import { FaBell } from 'react-icons/fa';
 import { HiMiniBars3 } from 'react-icons/hi2';
 import { IoPersonSharp } from 'react-icons/io5';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import NotificationDropdown from './NotificationDropdown.tsx';
 
 interface UserBadgeProps {
-  name: string;
+  nome: string;
   cpf: string;
 }
 
-function UserBadge({ name, cpf }: UserBadgeProps) {
+function UserBadge({ nome, cpf }: UserBadgeProps) {
   return (
     <div className="user-badge">
       <div className="user-badge-icon">
@@ -19,7 +19,7 @@ function UserBadge({ name, cpf }: UserBadgeProps) {
       </div>
 
       <div>
-        <p className="user-name">{name}</p>
+        <p className="user-name">Nome : {nome}</p>
         <p className="user-cpf">CPF: {cpf}</p>
       </div>
     </div>
@@ -27,23 +27,41 @@ function UserBadge({ name, cpf }: UserBadgeProps) {
 }
 
 interface HeaderProps {
-  userName?: string;
-  userCpf?: string;
   greeting?: string;
-  onMenuClick?: () => void;
+  onMenuClick: () => void;
 }
 
 export default function Header({
-  userName = 'Usuário Paciente da Silva',
-  userCpf = '123.456.789-10',
   greeting = 'Olá',
   onMenuClick,
 }: HeaderProps) {
-  const firstName = userName.split(' ')[0];
-  const secondName = userName.split(' ')[1] || '';
-
-  const [showNotifications, setShowNotifications] =
+ 
+const [user, setUser] = useState({ nome: ' ', cpf: ' ' });
+const [showNotifications, setShowNotifications] =
     useState(false);
+
+    useEffect(() => {
+
+      const dados = localStorage.getItem("usuario");
+
+      if (dados) {
+        const dados = JSON.parse(localStorage.getItem("usuario") || '{}');
+        setUser({
+          nome: dados.pac_nome,
+          cpf: dados.pac_cpf
+        });
+      }else {
+        setUser({
+          nome: 'Usuário não encontrado',
+          cpf: ' '
+        });
+      }
+
+
+    }, []);
+
+  const firstName = user.nome.split(' ')[0];
+  const secondName = user.nome.split(' ')[1] || ''; // Nao ta sendo Usado, mas caso queira usar o segundo nome, ele está aqui.
 
   return (
     <header className="header">
@@ -65,8 +83,8 @@ export default function Header({
 
       <div className="header-right">
         <UserBadge
-          name={userName}
-          cpf={userCpf}
+          nome={user.nome}
+          cpf={user.cpf}
         />
 
         <div
