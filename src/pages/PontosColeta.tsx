@@ -63,8 +63,8 @@ const postos = [
 
 
 export default function PontosColeta() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [usuario, setUsuario] = useState<any>(null);
+    // eslint-disable-next-line
+  const [ setUsuario] = useState<any>(null);
 
   const navigate = useNavigate();
   
@@ -108,10 +108,10 @@ export default function PontosColeta() {
   }, []);
 
   const dados = localStorage.getItem("usuario");
-  
+  // eslint-disable-next-line
 
   const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
+  
   };
 
 
