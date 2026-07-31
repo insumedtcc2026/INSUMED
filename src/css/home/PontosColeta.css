@@ -15,6 +15,9 @@
     overflow:hidden; /*tudo que sai do card sera cortado*/
     box-shadow:0 6px 18px rgba(0,0,0,.15);
     transition: .25s;
+     display: flex;          
+    flex-direction: column; 
+    height: 100%;      
 }
 .posto-card:hover{
     transform: translateY(-4px);/*o card sobe um pouco*/
@@ -25,6 +28,7 @@
     align-items: flex-start;
     gap:15px;
     padding:20px;
+     flex: 1;
 }
 
 .icone{
@@ -57,7 +61,7 @@
 
     color:#555;
 
-    line-height:1.4;/*espaçamento entre as linhas*/
+    line-height:1.4;
 }
 
 .tags{
@@ -128,4 +132,34 @@
 
     }
 
+}
+
+
+
+
+
+.distancia{
+    font-weight:700;
+    color:#1d4ed8;
+    font-size:17px;
+}
+
+.acoes-proximo{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.acoes-proximo button{
+    padding:12px 24px;
+    border:none;
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.acoes-proximo button:hover{
+    background:#1d4ed8;
 }

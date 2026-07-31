@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from '../components/universais/Header';
-
+import iconpng from'../assets/home-log/ubs.png'
 import '../css/home/PontosColeta.css'
 import Footer from '../components/universais/Footer';
 
@@ -23,6 +23,13 @@ const icon = L.icon({
   iconAnchor: [12, 41],
 });
 
+const iconPosto = L.icon({
+  iconUrl: iconpng,
+  iconSize: [50, 50],
+  iconAnchor: [21, 42],
+  popupAnchor: [0, -40],
+});
+
 
 function UpdateMapCenter({ position }: { position: [number, number] }) {
 //faz com que o icon não fique renderizando toda hora, "Se existir um posto selecionado, use ele. Caso contrário, use a posição do usuário."
@@ -37,30 +44,14 @@ function UpdateMapCenter({ position }: { position: [number, number] }) {
     return null;
 }
 
-const postos = [
-  {
-    id: 1,
-    nome: "UBSF Conforto",
-    endereco: "Av. Nossa Senhora da Conceição, 359 – Conforto",
-    latitude: -22.5235,
-    longitude: -44.1040,
-  },
-  {
-    id: 2,
-    nome: "Posto de Saúde Volta Grande",
-    endereco: "Rua Sargento Paulo Moreira, 200 – Volta Grande",
-    latitude: -22.5038,
-    longitude: -44.0867,
-  },
-  {
-    id: 3,
-    nome: "UBSF São João Eber Gomes",
-    endereco: "Rua Araribóia, 332 – São João",
-    latitude: -22.5310,
-    longitude: -44.0894,
-  },
-];
-
+interface Posto {
+  pos_id: number;
+  pos_nome: string;
+  pos_endereco: string;
+  pos_latitude: number;
+  pos_longitude: number;
+  distancia?: number
+}
 
 export default function PontosColeta() {
     // eslint-disable-next-line
@@ -116,7 +107,30 @@ export default function PontosColeta() {
 
 
 const [posicao, setPosicao]= useState <[number, number]> ([ -22.523,  -44.104]);
-const [postoSelecionado, setPostoSelecionado] = useState<[number, number] | null>(null);
+const [postoSelecionado, setPostoSelecionado] =
+useState<Posto | null>(null);
+const [postos, setPostos] = useState<Posto[]>([]);
+
+
+useEffect(() => {
+    if (postos.length === 0) return;
+
+    setPostos((postosAnteriores) =>
+        postosAnteriores.map((posto) => ({
+            ...posto,
+            
+            distancia: calcularDistancia(
+              
+                posicao[0],
+                posicao[1],
+                Number(posto.pos_latitude),
+                Number(posto.pos_longitude)
+            ),
+        }))
+    );
+}, [posicao]);
+
+
 //funçao que pede permissão para obter a localização
 useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -133,6 +147,109 @@ useEffect(() => {
     );
   }, []);
 
+
+  useEffect(() => {
+
+    //axios.get("https://backend-insumed-lhac.vercel.app/postos")
+    axios.get("http://localhost:3344/postos")
+        .then((res) => {
+
+          
+
+          setPostos(res.data);
+
+        })
+        .catch((err) => {
+
+            console.log(err);
+
+        });
+
+}, []);
+
+
+function calcularDistancia(
+    lat1:number,
+    lon1:number,
+    lat2:number,
+    lon2:number
+){
+
+    const R = 6371;
+
+    const dLat = (lat2-lat1) * Math.PI/180;
+    const dLon = (lon2-lon1) * Math.PI/180;
+
+    const a =
+
+        Math.sin(dLat/2) **2 +
+
+        Math.cos(lat1*Math.PI/180) *
+
+        Math.cos(lat2*Math.PI/180) *
+
+        Math.sin(dLon/2) **2;
+
+    const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+
+    return R*c;
+
+}
+
+useEffect(() => {
+
+    if(postos.length===0)
+        return;
+
+    let menor = Infinity;
+
+    let escolhido: Posto | null = null;
+
+    postos.forEach((posto)=>{
+
+        const distancia = calcularDistancia(
+
+            posicao[0],
+            posicao[1],
+
+            posto.pos_latitude,
+            posto.pos_longitude
+
+        );
+
+        if(distancia<menor){
+
+            menor=distancia;
+
+            escolhido={
+              ...posto,
+    distancia
+            };
+
+        }
+
+    });
+
+   
+
+},[postos,posicao]);
+
+const abrirRota = (posto: Posto) => {
+
+    const origem =
+        `${posicao[0]},${posicao[1]}`;
+
+    const destino =
+        `${posto.pos_latitude},${posto.pos_longitude}`;
+
+    window.open(
+
+`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving`
+
+    );
+
+};
+
   return (
     <>
     
@@ -145,32 +262,68 @@ useEffect(() => {
                   center={posicao}
                   zoom={15}
                   style={{
-                      height: "500px",
-                      width: "100%"
+                      height: "420px",
+                      width: "100%",
+                       borderRadius:"25px"
                   }}
               >
       
                   <TileLayer
                       attribution='&copy; OpenStreetMap'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                   <UpdateMapCenter  position={postoSelecionado ?? posicao} />
+                   url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+
+                  //attribution="Tiles © Esri"
+                   //url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    />
+                   <UpdateMapCenter   position={
+        postoSelecionado
+            ? [
+                postoSelecionado.pos_latitude,
+                postoSelecionado.pos_longitude
+              ]
+            : posicao
+    }
+/>
                     
                  {postos.map((posto) => (
+                  
   <Marker
-    key={posto.id}
-    position={[posto.latitude, posto.longitude]}
-    icon={icon}
+    key={posto.pos_id}
+   position={[
+    posto.pos_latitude,
+    posto.pos_longitude
+
+    
+]}
+
+ 
+
+ icon={iconPosto}
+
   />
+
+  
+
+  
 ))}
+
+<Marker
+    position={posicao}
+    icon={icon}
+/>
                 
               </MapContainer>
+              
+            
+   
+   
+    
 
      <div className="postos-container">
 
   {postos.map((posto) => (
 
-    <div className="posto-card" key={posto.id}>
+    <div className="posto-card" key={posto.pos_id}>
 
       <div className="posto-topo">
 
@@ -180,9 +333,14 @@ useEffect(() => {
 
         <div className="informacoes">
 
-          <h3>{posto.nome}</h3>
+          <h3>{posto.pos_nome}</h3>
 
-          <p>{posto.endereco}</p>
+          <p>{posto.pos_endereco}</p>
+          {postoSelecionado?.pos_id === posto.pos_id && (
+    <p className="distancia">
+        📍 Distância: {posto.distancia?.toFixed(2)} km
+    </p>
+)}
 
           <div className="tags">
             <span>Privado</span>
@@ -195,21 +353,19 @@ useEffect(() => {
 
       <div className="acoes">
 
-        <button>
-          <i className="fas fa-chevron-right"></i>
-          Detalhes
-        </button>
+       <button
+            onClick={() => setPostoSelecionado(posto)}
+>
 
-        <button   onClick={() =>
-        setPostoSelecionado([
-            posto.latitude,
-            posto.longitude
-        ])
-    }>
-          
-          <i className="fas fa-chevron-right"></i>
-          
-          Ver no mapa
+      Ver no mapa
+
+     </button>
+
+       <button
+         onClick={()=> abrirRota(posto)}>
+
+        Ver rota
+
         </button>
 
       </div>
@@ -222,6 +378,12 @@ useEffect(() => {
 
 
       <Footer />
-    </>
-       );
+        
+          
+          
+          
+</>
+          
+);
 }
+
