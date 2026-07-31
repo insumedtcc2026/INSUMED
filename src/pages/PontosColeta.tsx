@@ -196,43 +196,11 @@ function calcularDistancia(
 
 }
 
-useEffect(() => {
 
-    if(postos.length===0)
-        return;
 
-    let menor = Infinity;
-
-    let escolhido: Posto | null = null;
-
-    postos.forEach((posto)=>{
-
-        const distancia = calcularDistancia(
-
-            posicao[0],
-            posicao[1],
-
-            posto.pos_latitude,
-            posto.pos_longitude
-
-        );
-
-        if(distancia<menor){
-
-            menor=distancia;
-
-            escolhido={
-              ...posto,
-    distancia
-            };
-
-        }
-
-    });
+     
 
    
-
-},[postos,posicao]);
 
 const abrirRota = (posto: Posto) => {
 
