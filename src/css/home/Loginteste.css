@@ -126,3 +126,26 @@ input {
     width: 50%;
   }
 }
+.input-password1 img{
+    position: relative;
+    width: 20%;
+    padding-right:40px;
+   
+}
+
+.icone-olho1{
+    position: absolute;
+
+    left: 86%;
+    top: -50%;
+
+    transform: translateY(-145%);
+
+   width: 25px;
+    height: 25px;
+    
+    
+
+    cursor: pointer;
+}
+

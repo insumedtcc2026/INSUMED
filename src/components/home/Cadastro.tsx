@@ -2,6 +2,8 @@ import axios from 'axios'
 import images from "../../assets/home-log/teste cadastro.png"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import olhoAberto from '../../assets/home-log/olho aberto.png';
+import olhoFechado from '../../assets/home-log/olho fechado.png';
 
 
 import { useState } from "react";
@@ -79,8 +81,12 @@ const limparFormulario = () => {
      const [cep, setCep] = useState("");
      const [endereco, setEndereco] = useState("");
      const [confirmacaodesenha, setConfirmacao] = useState("");
-return(
-  <>
+     const[olhoPassword, setOlhoPassword] =useState(false);
+      
+      const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+      const senhasIguais = password===confirmacaodesenha
+      return(
+        <>
    <div className="login-fullscreen-container">
     
       <div className="login-image-panel">
@@ -168,23 +174,48 @@ return(
       </div>
 <div className="Alinha-campos">
       <div className="campo">
+        <div className="input-password">
         <label>Crie uma Senha</label>
         <input
-          type="password"
+          type={olhoPassword? 'text': 'password'}
           placeholder="Crie sua senha"
           pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
           title="A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiuscula, uma letra minúscula, qualquer caractere especial e um número."
           value={password}
           onChange={(e) => setPassword(e.target.value)} />
+
+          <img  src={olhoPassword ? olhoAberto : olhoFechado}
+        alt="Mostrar senha"
+        className="icone-olho"
+        onClick={() => setOlhoPassword(!olhoPassword)}
+        />
+      </div>
       </div>
 
       <div className="campo">
+        <div className="input-password">
         <label>Confirme sua senha</label>
         <input
-          type="password"
+          type={showConfirmPassword? 'text': 'password'}
           placeholder="Confirme sua senha"
           value={confirmacaodesenha}
-          onChange={(e) => setConfirmacao(e.target.value)} />
+          onChange={(e)=>setConfirmacao(e.target.value)}
+          className={
+        confirmacaodesenha === ""
+        ? ""// sem classe css
+        : senhasIguais//compara as senha
+        ? "input-correto"
+        : "input-erro"
+    }
+          />
+
+            <img  src={showConfirmPassword ? olhoAberto : olhoFechado}
+        alt="Mostrar senha"
+        className="icone-olho"
+        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+        />
+      
+       </div>   
       </div>
 
 </div>

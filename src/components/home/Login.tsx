@@ -3,6 +3,9 @@ import axios from "axios";
 import { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import olhoAberto from '../../assets/home-log/olho aberto.png'
+import olhoFechado from '../../assets/home-log/olho fechado.png'
+
 
 import images from "../../assets/home-log/teste login.png"; 
 
@@ -10,7 +13,7 @@ import images from "../../assets/home-log/teste login.png";
 
 const Loginteste: React.FC = () => {
 
-  
+   const[olhoPassword, setOlhoPassword] =useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -73,14 +76,21 @@ const handleSignUp = () => { navigate("/cadastro"); };
             </div>
             
             <div className="login-inputs">
+              <div className="input-password1">
               <label>Senha</label>
               <input 
-                type="password" 
+                type={olhoPassword? 'text': 'password'}
                 placeholder="Digite sua senha"
                 value={password}
                 required
                 onChange={(e) => setPassword(e.target.value)}
               />
+               <img  src={olhoPassword ? olhoAberto : olhoFechado}
+        alt="Mostrar senha"
+        className="icone-olho1"
+        onClick={() => setOlhoPassword(!olhoPassword)}
+        />
+        </div>
             </div>
             
             <button type="submit" className="btn-entrar" >Entrar</button>

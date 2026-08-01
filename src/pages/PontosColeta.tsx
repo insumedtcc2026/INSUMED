@@ -4,6 +4,7 @@ import iconpng from'../assets/home-log/ubs.png'
 import '../css/home/PontosColeta.css'
 import Footer from '../components/universais/Footer';
 
+
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 //importa o icon
 import L from "leaflet"
@@ -150,8 +151,8 @@ useEffect(() => {
 
   useEffect(() => {
 
-    //axios.get("https://backend-insumed-lhac.vercel.app/postos")
-    axios.get("http://localhost:3344/postos")
+    axios.get("https://backend-insumed-lhac.vercel.app/postos")
+    //axios.get("http://localhost:3344/postos")
         .then((res) => {
 
           

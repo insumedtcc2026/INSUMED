@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+import Header from '../components/universais/Header';
+
 export default function Home() {
-  const [usuario, setUsuario] = useState<any>(null);
+   const [ setUsuario] = useState<any>(null);
 
   const navigate = useNavigate();
   
@@ -54,22 +56,17 @@ export default function Home() {
   }, []);
 
   const dados = localStorage.getItem("usuario");
+  // eslint-disable-next-line
+
+  const toggleSidebar = () => {
+  
+  };
+
   
   return (
-    <div className="home-container">
-      {/* Card do usuário */}
-      {usuario && (
-        <div className="card-usuario">
-          <div className="icone-usuario">
-            <i className="fas fa-user"></i>
-          </div>
-
-          <div className="dados-usuario">
-            <h3>{usuario.pac_nome}</h3>
-            <p>Email: {usuario.pac_email}</p>
-          </div>
-        </div>
-      )}
+    <>
+   <Header onMenuClick={toggleSidebar} />
+      
 
       
 
@@ -91,6 +88,6 @@ export default function Home() {
       <TutorialSection />
 
       <Footer />
-    </div>
+    </>
   );
 }
