@@ -2,7 +2,8 @@ import '../../css/universais/Header.css';
 import { FaBell } from 'react-icons/fa';
 import { HiMiniBars3 } from 'react-icons/hi2';
 import { IoPersonSharp } from 'react-icons/io5';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDadosUser } from '../../hook/Dadosuser.tsx';
 
 import NotificationDropdown from './NotificationDropdown.tsx';
 
@@ -36,29 +37,9 @@ export default function Header({
   onMenuClick,
 }: HeaderProps) {
  
-const [user, setUser] = useState({ nome: ' ', cpf: ' ' });
-const [showNotifications, setShowNotifications] =
-    useState(false);
+const user = useDadosUser();
+const [showNotifications, setShowNotifications] = useState(false);
 
-    useEffect(() => {
-
-      const dados = localStorage.getItem("usuario");
-
-      if (dados) {
-        const dados = JSON.parse(localStorage.getItem("usuario") || '{}');
-        setUser({
-          nome: dados.pac_nome,
-          cpf: dados.pac_cpf
-        });
-      }else {
-        setUser({
-          nome: 'Usuário não encontrado',
-          cpf: ' '
-        });
-      }
-
-
-    }, []);
 
   const firstName = user.nome.split(' ')[0];
   const secondName = user.nome.split(' ')[1] || ''; // Nao ta sendo Usado, mas caso queira usar o segundo nome, ele está aqui.

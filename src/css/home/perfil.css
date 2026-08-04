@@ -1,0 +1,59 @@
+h1 {
+  font-size: 3rem;
+  color: #2563eb; 
+  margin-bottom: 12px; 
+}
+
+/* Container principal do formulário (o "cartão" cinza) */
+.perfil-container-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Cria duas colunas de tamanhos iguais */
+  gap: 24px 40px; /* Espaço entre as linhas (24px) e colunas (40px) */
+  background-color: #eff0f173; /* Cor de fundo acinzentada similar à imagem */
+  padding: 40px;
+  border-radius: 20px; /* Bordas arredondadas do cartão */
+  max-width: 900px;
+  margin: 0 auto; /* Centraliza o cartão na tela */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); /* Sombra bem leve */
+}
+
+/* Estilo do agrupamento de cada input */
+.perfil-container-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Espaço entre o título (p) e o input */
+}
+
+/* Títulos dos campos (Nome Completo, CPF, etc) */
+.perfil-container-form label p {
+  color: #2563eb; /* Cor azul/roxa da imagem */
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Estilo padrão dos inputs */
+.perfil-container-form input {
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+  color: linear-gradient(to right, #0800ff, #3b82f6); 
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Sombra leve no input */
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+/* Efeito ao clicar no input */
+.perfil-container-form input:focus {
+  border: 1px solid #2b26d3; 
+}
+
+/* Responsividade de segurança: se a tela for menor que 768px, vira 1 coluna */
+@media (max-width: 768px) {
+  .perfil-container-form {
+    grid-template-columns: 1fr; 
+  }
+}
