@@ -29,6 +29,7 @@ const Loginteste: React.FC = () => {
         senha: password
       }
     ); 
+    console.log("RESPOSTA:", response.data);
 
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("usuario",JSON.stringify(response.data.usuario)
