@@ -23,18 +23,20 @@ const handleCadastro = async () => {
     });
     return; // Muda essa parte
   }
-  
+  console.log(sexo);
   try {
-    const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
+    console.log(sexo);const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
+      
   nome: text1,
   email: email,
   telefone: tel,
   cpf: cpf,
   data_nasc: date,
-  sexo: genero,
+  sexo: sexo,
   endereco: endereco,
   raca: cor,
-  senha: password
+  senha: password,
+  cep: cep,
 });
     console.log(response.data);
    Swal.fire({
@@ -62,7 +64,7 @@ const limparFormulario = () => {
   setCpf("");
   setText1("");
   setDate("");
-  setGenero("");
+  setSexo("");
   setTel("");
   setPassword("");
   setConfirmacao("");
@@ -74,7 +76,7 @@ const limparFormulario = () => {
       const [cpf, setCpf] = useState("");
       const [text1, setText1] = useState("");
       const [date, setDate] = useState("");
-      const [genero, setGenero] = useState("");
+      const [sexo, setSexo] = useState("");
   const [tel, setTel] = useState("");
    const [password, setPassword] = useState(""); 
    const [cor, setCor] = useState("");
@@ -160,15 +162,15 @@ const limparFormulario = () => {
         <label>Gênero</label>
         <select
       
-      value={genero}
+      value={sexo}
       required
-      onChange={(e) => setGenero(e.target.value)}
+      onChange={(e) => setSexo(e.target.value)}
         >
-        <option></option>
-          <option>Feminino</option>
-          <option>Masculino</option>
-          <option>Outro</option>
-          <option>Prefiro não responder</option>
+         <option value="">Selecione</option>
+          <option value='Feminino'>Feminino</option>
+          <option value='Masculino'>Masculino</option>
+          <option value='Outro'>Outro</option>
+          <option value='Prefiro não responder'>Prefiro não responder</option>
         </select>
       </div>
       </div>

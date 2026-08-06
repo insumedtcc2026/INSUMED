@@ -23,6 +23,7 @@ const Loginteste: React.FC = () => {
     try {
     const response = await axios.post(
           "https://backend-insumed-lhac.vercel.app/login",
+           //("http://localhost:3344/login"),
           {
         email,
         senha: password
@@ -36,7 +37,17 @@ const Loginteste: React.FC = () => {
 
     console.log(response.data);
 
+   if (response.data.tipo === "PACIENTE") {
     navigate("/home");
+}
+
+if (response.data.tipo === "PRESCRITOR") {
+    navigate("/homePrescritor");
+}
+
+if (response.data.tipo === "ADMIN") {
+    navigate("/homeAdmin");
+}
 
   } catch (error: any) {
     Swal.fire({
