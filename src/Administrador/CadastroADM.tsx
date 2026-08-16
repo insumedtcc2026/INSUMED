@@ -22,7 +22,7 @@ const handleCadastro = async () => {
     return; // Muda essa parte
   }
   try {
-    const response = await axios.post('http://localhost:3344/administrador', {
+    const response = await axios.post('https://backend-insumed-lhac.vercel.app/administrador', {
   matricula: matricula,    
   nome: text1,
   email: email,

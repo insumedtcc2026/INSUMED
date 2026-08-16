@@ -3,6 +3,8 @@ import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
 import construcaoImage from '../assets/construcacao.png';
+import {useValidarToken} from '../hook/Validartoken.tsx';
+
 
 export default function Agendamentos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -10,6 +12,15 @@ export default function Agendamentos() {
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
+   const { verificando } = useValidarToken();
+    
+      if (verificando) {
+        return (
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <p className="text-xl text-gray-600">Carregando seus dados...</p>
+          </div>
+        );
+      }
 
   return (
     <div className="min-h-screen bg-gray-50">
