@@ -1,63 +1,25 @@
-import { useState, useEffect } from 'react';
 import Banner from '../components/home-log/Banner.tsx';
 import TutorialSection from '../components/home-log/TutorialSection.tsx';
 import Footer from '../components/universais/Footer.tsx';
 import bannerInsumed from '../assets/home-log/banner-insumed.png';
 import  InfoSection from '../components/home-log/InfoSection.tsx';
 import   '../css/home/Homepaciente.css'
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import {useValidarToken} from '../hook/Validartoken.tsx';
 
 import Header from '../components/universais/Header';
 
 export default function Home() {
-   const [ setUsuario] = useState<any>(null);
+   
+   const { verificando } = useValidarToken();
 
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    
-    
-    const validarToken = async () => {
-      const token = localStorage.getItem("token");
-      
-      if (!token) navigate("/login");
-      
-      try {
-        const response = await axios.get("https://backend-insumed-lhac.vercel.app/validar", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-        });
-        if (response.status === 403) {
-          navigate("/login");
-          return Swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: 'Por favor, faça login novamente.',
-            confirmButtonColor: '#d33'
-          });
-        }else {
-          console.log("Token válido");
-        }
-      }catch (error) {
-        alert("Token inválido. Por favor, faça login novamente.");
-        navigate("/login");
-        console.error("Erro ao validar token:", error);
-      }
-      
-      if (dados) {
-        setUsuario(JSON.parse(dados));
-      }
-    };
-    
-    validarToken();
-  }, []);
-
-  const dados = localStorage.getItem("usuario");
-  // eslint-disable-next-line
-
+  if (verificando) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-xl text-gray-600">Carregando seus dados...</p>
+      </div>
+    );
+  }
+ 
   const toggleSidebar = () => {
   
   };

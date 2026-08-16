@@ -9,6 +9,7 @@ import Perfil from './pages/Perfil';
 import Sobre from './pages/Sobre'; 
 import Login from './components/home/Login';
 import Cadastro from "./components/home/Cadastro"
+import CadastroADM from "../src/Administrador/CadastroADM"
 
 function App() {
   return (
@@ -24,6 +25,11 @@ function App() {
       <Route
         path="/login"
         element={<Login />}
+      />
+
+        <Route
+        path="/cadastroadm"
+        element={<CadastroADM />}
       />
       
 

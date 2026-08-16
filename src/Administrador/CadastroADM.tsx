@@ -1,13 +1,13 @@
 import axios from 'axios'
-import images from "../../assets/home-log/teste cadastro.png"; 
+import images from "../assets/home-log/teste cadastro.png"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import olhoAberto from '../../assets/home-log/olho aberto.png';
-import olhoFechado from '../../assets/home-log/olho fechado.png';
+import olhoAberto from '../assets/home-log/olho aberto.png';
+import olhoFechado from '../assets/home-log/olho fechado.png';
 import { useState } from "react";
-import "../../css/home/Cadastro.css"
+import "../css/home/Cadastro.css"
 
-  function Cadastro(){
+function CadastroADM(){
 
 const navigate = useNavigate();
     
@@ -21,20 +21,14 @@ const handleCadastro = async () => {
     });
     return; // Muda essa parte
   }
-  console.log(sexo);
   try {
-    console.log(sexo);const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
-      
+    const response = await axios.post('http://localhost:3344/administrador', {
+  matricula: matricula,    
   nome: text1,
   email: email,
   telefone: tel,
   cpf: cpf,
-  data_nasc: date,
-  sexo: sexo,
-  endereco: endereco,
-  raca: cor,
   senha: password,
-  cep: cep,
 });
     console.log(response.data);
    Swal.fire({
@@ -58,28 +52,21 @@ const handleCadastro = async () => {
 }
 
 const limparFormulario = () => {
+  setMatricula("");  
   setEmail("");
   setCpf("");
   setText1("");
-  setDate("");
-  setSexo("");
   setTel("");
   setPassword("");
   setConfirmacao("");
-  setCor("");
-  setCep("");
-    setEndereco("");
+
 };
       const [email, setEmail] = useState("");
+      const [matricula, setMatricula] = useState("");
       const [cpf, setCpf] = useState("");
       const [text1, setText1] = useState("");
-      const [date, setDate] = useState("");
-      const [sexo, setSexo] = useState("");
   const [tel, setTel] = useState("");
    const [password, setPassword] = useState(""); 
-   const [cor, setCor] = useState("");
-     const [cep, setCep] = useState("");
-     const [endereco, setEndereco] = useState("");
      const [confirmacaodesenha, setConfirmacao] = useState("");
      const[olhoPassword, setOlhoPassword] =useState(false);
       
@@ -96,12 +83,26 @@ const limparFormulario = () => {
 
      <div className="login-form-panel">
         <div className="form-wrapper">
-    <div className="Text-Cadastro">Cadastre-se</div>
+    <div className="Text-Cadastro">Cadastre-se Administrador</div>
 
       
   
      <form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
- 
+        
+        
+        <div className="Alinha-campos">
+        <div className="campo">
+          <label>Sua Matricula</label>
+          <input
+            type="text"
+            placeholder="Digite sua matrícula"
+            name="text"
+            required
+            value={matricula}
+            onChange={(e) => setMatricula(e.target.value)} />
+            </div>
+            </div>
+
       <div className="Alinha-campos">
         <div className="campo">
           <label>Seu Nome Completo</label>
@@ -110,8 +111,10 @@ const limparFormulario = () => {
             placeholder="Digite o seu nome completo"
             name="text"
             required
+            value={text1}
             onChange={(e) => setText1(e.target.value)} />
         </div>
+        
         <div className="campo">
           <label>Numero de Telefone</label>
           <input
@@ -133,6 +136,8 @@ const limparFormulario = () => {
             value={cpf}
             onChange={(e) => setCpf(e.target.value)} />
         </div>
+
+
         <div className="campo">
           <label>Email</label>
           <input
@@ -144,34 +149,6 @@ const limparFormulario = () => {
         </div>
       </div>
 
-      <div className="Alinha-campos">
-      <div className="campo">
-        <label>Data de Nascimento</label>
-        <input
-          type="date"
-          placeholder="Digite sua Data de Nascimento"
-          value={date}
-          required
-          onChange={(e) => setDate(e.target.value)} />
-      
-      </div>
-
-      <div className="campo">
-        <label>Gênero</label>
-        <select
-      
-      value={sexo}
-      required
-      onChange={(e) => setSexo(e.target.value)}
-        >
-         <option value="">Selecione</option>
-          <option value='Feminino'>Feminino</option>
-          <option value='Masculino'>Masculino</option>
-          <option value='Outro'>Outro</option>
-          <option value='Prefiro não responder'>Prefiro não responder</option>
-        </select>
-      </div>
-      </div>
 <div className="Alinha-campos">
       <div className="campo">
         <div className="input-password">
@@ -220,53 +197,6 @@ const limparFormulario = () => {
 
 </div>
 
-
-
-<div className="Alinha-campos">
-
-      <div className="campo">
-
-
-        <label>Cor</label>
-         <select
-
-value={cor}
-required
-onChange={(e) => setCor(e.target.value)}
->
-          <option></option>
-          <option>Branco</option>
-          <option>Preto</option>
-          <option>Pardo</option>
-          <option>Amarelo</option>
-          <option>Indigena</option>
-          <option>Prefiro não responder</option>
-        </select>
-      </div>
-        
-        
-      <div className="campo">
-        <label>CEP</label>
-        <input
-          type="text"
-          placeholder="00000-000"
-          required
-          value={cep}
-          onChange={(e) => setCep(e.target.value)} />
-        </div>
-        </div>
-<div className="Alinha-campos">
-      <div className="campo">
-       <label>Endereço</label>
-        <input
-          type="text"
-          required
-          placeholder=" Ex: rua blabla, n123 cidade, estado"
-          value={endereco}
-          onChange={(e) => setEndereco(e.target.value)} />
-</div>
-      </div>
-
 <div className='btn-login'>
  
       <button type="submit"> Cadastrar</button>
@@ -293,4 +223,4 @@ onChange={(e) => setCor(e.target.value)}
 }
   
 
-export default Cadastro;
+export default CadastroADM;
