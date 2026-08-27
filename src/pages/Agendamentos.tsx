@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Header from '../components/universais/Header';
-import Sidebar from '../components/universais/Sidebar';
+import Sidebaradm from '../components/universais/Siderbaradm.tsx';
 import Footer from '../components/universais/Footer';
 import construcaoImage from '../assets/construcacao.png';
 import {useValidarToken} from '../hook/Validartoken.tsx';
@@ -24,7 +24,7 @@ export default function Agendamentos() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+      <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <Header onMenuClick={toggleSidebar} />
 

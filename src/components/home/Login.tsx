@@ -7,6 +7,7 @@ import olhoAberto from '../../assets/home-log/olho aberto.png'
 import olhoFechado from '../../assets/home-log/olho fechado.png'
 
 
+
 import images from "../../assets/home-log/teste login.png"; 
 
 
@@ -47,7 +48,7 @@ if (response.data.tipo === "PRESCRITOR") {
 }
 
 if (response.data.tipo === "ADMIN") {
-    navigate("/homeAdmin");
+    navigate("/Agendamentos");
 }
 
   } catch (error: any) {

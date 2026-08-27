@@ -10,6 +10,12 @@ import Sobre from './pages/Sobre';
 import Login from './components/home/Login';
 import Cadastro from "./components/home/Cadastro"
 import CadastroADM from "../src/Administrador/CadastroADM"
+import Agendamentosadm from './Administrador/Agendamentosadm';
+import  Historicoadm from './Administrador/Historicoadm';
+import NovoAgendamento from './Administrador/NovoAgendamento';
+import TodosAgendamentos from './Administrador/TodosAgendamentos';
+import Sair from './Administrador/Sair';
+import  Pacientesadm  from './Administrador/Pacientesadm';
 
 function App() {
   return (
@@ -21,6 +27,42 @@ function App() {
         path="/agendamentos"
         element={<Agendamentos />}
       />
+
+      <Route
+        path="/agendamentosadm"
+        element={<Agendamentosadm/>}
+      />
+      
+        <Route
+        path="/historicoadm"
+        element={<Historicoadm/>}
+      />
+
+         <Route
+        path="/novoagendamento"
+        element={<NovoAgendamento/>}
+      />
+
+
+         <Route
+        path="/pacientesadm"
+        element={<Pacientesadm/>}
+      />
+
+        
+
+       <Route
+        path="/Sair"
+        element={<Sair/>}
+      />
+
+       <Route
+        path="/todosagendamentos"
+        element={<TodosAgendamentos/>}
+      />
+      
+      
+      
 
       <Route
         path="/login"
