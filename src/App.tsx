@@ -16,6 +16,7 @@ import NovoAgendamento from './Administrador/NovoAgendamento';
 import TodosAgendamentos from './Administrador/TodosAgendamentos';
 import Sair from './Administrador/Sair';
 import  Pacientesadm  from './Administrador/Pacientesadm';
+import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 
 function App() {
   return (
@@ -72,6 +73,11 @@ function App() {
         <Route
         path="/cadastroadm"
         element={<CadastroADM />}
+      />
+
+         <Route
+        path="/enviarsolicitacao"
+        element={<EnviarSolicitaçao />}
       />
       
 

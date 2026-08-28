@@ -19,46 +19,83 @@ const Loginteste: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+) => {
+
     e.preventDefault();
+
     try {
-    const response = await axios.post(
-          "https://backend-insumed-lhac.vercel.app/login",
-           //("http://localhost:3344/login"),
-          {
-        email,
-        senha: password
-      }
-    ); 
-    console.log("RESPOSTA:", response.data);
 
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem("usuario",JSON.stringify(response.data.usuario)
-);
+        // Limpa token antigo
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
 
+        const response = await axios.post(
+            "https://backend-insumed-lhac.vercel.app/login",
+            {
+                email,
+                senha: password
+            }
+        );
 
-    console.log(response.data);
+        console.log("RESPOSTA DO LOGIN:", response.data);
 
-   if (response.data.tipo === "PACIENTE") {
-    navigate("/home");
-}
+        const token = response.data.token;
 
-if (response.data.tipo === "PRESCRITOR") {
-    navigate("/homePrescritor");
-}
+        if (!token) {
+            console.error("Token não veio na resposta!");
+            throw new Error("Token não recebido");
+        }
 
-if (response.data.tipo === "ADMIN") {
-    navigate("/Agendamentos");
-}
+        // Salva o NOVO token
+        localStorage.setItem("token", token);
 
-  } catch (error: any) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Ops...',
-      text: 'Email ou senha inválidos!',
-      confirmButtonColor: '#d33'
-    });
-  }
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify(response.data.usuario)
+        );
+
+        console.log("NOVO TOKEN:", token);
+
+        console.log(
+            "TOKEN SALVO:",
+            localStorage.getItem("token")
+        );
+
+        // Tipo do usuário
+        const tipo =
+            response.data.usuario?.tipo ||
+            response.data.tipo;
+
+        console.log("TIPO DO USUÁRIO:", tipo);
+
+        if (tipo === "PACIENTE") {
+            navigate("/home");
+        }
+
+        else if (tipo === "PRESCRITOR") {
+            navigate("/homePrescritor");
+        }
+
+        else if (tipo === "ADMIN") {
+            navigate("/Agendamentos");
+        }
+
+    } catch (error: any) {
+
+        console.error(
+            "ERRO NO LOGIN:",
+            error.response?.data || error
+        );
+
+        Swal.fire({
+            icon: "error",
+            title: "Ops...",
+            text: "Email ou senha inválidos!",
+            confirmButtonColor: "#d33"
+        });
+    }
 };
 const handleSignUp = () => { navigate("/cadastro"); };
 

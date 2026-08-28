@@ -1,0 +1,294 @@
+.solicitacao-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.solicitacao-card {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.solicitacao-header h1 {
+    font-size: 28px;
+    color: #003cff;
+    margin: 0 0 8px;
+}
+
+.solicitacao-header p {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* FORMULÁRIO */
+
+.solicitacao-form {
+    width: 100%;
+}
+
+/* ÁREA DOS DOIS CARDS */
+
+.formulario-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    width: 100%;
+}
+
+/* CARDS */
+
+.campo-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 25px;
+    min-height: 390px;
+    box-sizing: border-box;
+}
+
+.campo-card label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* INPUTS */
+
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+select {
+    height: 42px;
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* ÁREA DA IMAGEM */
+
+.arquivo-area {
+    width: 100%;
+    min-height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.arquivo-area input[type="file"] {
+    font-size: 14px;
+}
+
+.arquivo-area span {
+    font-size: 15px;
+    margin-top: 15px;
+}
+
+.campo small {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* BOTÃO */
+
+.btn-enviar {
+    width: 180px;
+    height: 45px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #003cff;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-enviar:hover {
+    background: #002dcc;
+}
+
+/* MENSAGEM */
+
+.mensagem {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+
+    border-radius: 7px;
+
+    text-align: center;
+    font-size: 14px;
+}
+
+.mensagem.sucesso {
+    background: #dff7e5;
+    color: #08752a;
+}
+.prescricao-card {
+    text-align: center;
+}
+
+
+/* TÍTULO */
+
+.prescricao-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+
+    margin-bottom: 6px;
+}
+
+
+/* SUBTÍTULO */
+
+.prescricao-subtitulo {
+    font-size: 9px;
+    color: #777;
+
+    margin-bottom: 10px;
+}
+
+
+/* ==============================
+   ÁREA DE UPLOAD
+============================== */
+
+.arquivo-area {
+    width: 100%;
+    min-height: 300px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+/* ==============================
+   ÍCONE
+============================== */
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: #eef5ff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 14px;
+}
+
+.upload-icon span {
+    font-size: 30px;
+    color: #0066ff;
+}
+
+
+/* ==============================
+   INPUT ORIGINAL ESCONDIDO
+============================== */
+
+.input-arquivo {
+    display: none;
+}
+
+
+/* ==============================
+   TEXTO
+============================== */
+
+.upload-texto {
+    font-size: 13px;
+    color: #555;
+
+    margin-bottom: 8px;
+}
+
+
+/* ==============================
+   OU
+============================== */
+
+.upload-ou {
+    font-size: 13px;
+    color: #333;
+
+    margin-bottom: 12px;
+}
+
+
+/* ==============================
+   BOTÃO SELECIONAR
+============================== */
+
+.btn-selecionar {
+    width: 130px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #003cff;
+    color: white;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-selecionar:hover {
+    background: #002dcc;
+}
+
+
+/* ==============================
+   FORMATOS
+============================== */
+
+.formatos {
+    display: block;
+
+    font-size: 8px;
+    line-height: 1.5;
+
+    color: #777;
+
+    margin-top: 20px;
+
+    text-align: center;
+}

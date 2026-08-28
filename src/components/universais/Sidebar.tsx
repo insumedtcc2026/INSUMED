@@ -35,6 +35,12 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/agendamentos',
     },
+
+    {
+      icon: IoBandage,
+      label: 'Enviar Prescriçao',
+      path: '/EnviarSolicitacao',
+    },
     {
       icon: IoBandage,
       label: 'Meus Insumos',

@@ -4,11 +4,16 @@ import Footer from '../components/universais/Footer.tsx';
 import bannerInsumed from '../assets/home-log/banner-insumed.png';
 import  InfoSection from '../components/home-log/InfoSection.tsx';
 import   '../css/home/Homepaciente.css'
+import { useState } from 'react';
 import {useValidarToken} from '../hook/Validartoken.tsx';
+import Sidebar from '../components/universais/Sidebar.tsx';
 
 import Header from '../components/universais/Header';
 
 export default function Home() {
+   const [sidebarOpen, setSidebarOpen] = useState(false);
+   
+     
    
    const { verificando } = useValidarToken();
 
@@ -21,7 +26,7 @@ export default function Home() {
   }
  
   const toggleSidebar = () => {
-  
+  setSidebarOpen((prev) => !prev);
   };
 
   
@@ -33,7 +38,7 @@ export default function Home() {
       
 
       {/* Coloque Sidebar apenas se você já tiver sidebarOpen e toggleSidebar */}
-      {/* <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> */}
+       <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> 
 
       <main className="conteudo-home">
         <Banner
