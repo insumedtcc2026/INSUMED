@@ -86,7 +86,7 @@ function EnviarSolicitaçao() {
     const [observacao, setObservacao] =
         useState('');
 
-    const [message, setMessage] =
+    const [, setMessage] =
         useState('');
 
     const [enviando, setEnviando] =
