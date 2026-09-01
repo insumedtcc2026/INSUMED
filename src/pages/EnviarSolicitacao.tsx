@@ -7,7 +7,7 @@ import {
 import api from '../services/SoliciatcaoService';
 
 import '../css/home/EnviarSolicitacao.css';
-
+import Swal from 'sweetalert2';
 
 
 
@@ -237,12 +237,17 @@ function EnviarSolicitaçao() {
 
             if (
                 response.status === 200 ||
-                response.status === 201
-            ) {
+                response.status === 201 )
+                { Swal.fire({
+                        icon: 'success',
+                        title: 'Prescrição Enviada com sucesso!',
+                        text: 'Sua prescrição foi enviada com êxito.',
+                        confirmButtonColor: '#00ce11',
+                      }),
+                      setMessage('')
+            }
+            {
 
-                setMessage(
-                    'Solicitação enviada com sucesso!'
-                );
 
                 // Limpa formulário
 
@@ -267,14 +272,16 @@ function EnviarSolicitaçao() {
 
         } catch (error) {
 
-            console.error(
-                'Erro ao enviar solicitação:',
-                error
-            );
+                { Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao enviar prescrição!',
+                        text: 'Não foi possível enviar a prescrição.',
+                        confirmButtonColor: '#dc3545',
+                      }),
+                      setMessage('')
+            }
 
-            setMessage(
-                'Não foi possível enviar a solicitação.'
-            );
+            setMessage('');
 
         } finally {
 
@@ -301,7 +308,27 @@ function EnviarSolicitaçao() {
                 Envie sua prescrição para solicitar os insumos necessários.
             </p>
         </div>
+ <div className="info-prescricao">
+      <div className="info-icone">
+        <span>i</span>
+      </div>
 
+      <div className="info-conteudo">
+        <h3>Por que enviar sua prescrição?</h3>
+
+        <p>
+          A prescrição é o documento que contém os insumos necessários para o
+          seu tratamento.    
+          Com ela, conseguimos preparar seus materiais e informar quando
+          estarão disponíveis para retirada.
+        </p>
+
+        
+          
+    
+      </div>
+    </div>
+  
         <form
             className="solicitacao-form"
             onSubmit={handleSubmit}
@@ -425,7 +452,26 @@ function EnviarSolicitaçao() {
                 </div>
 
             </div>
+<div className="info-prescricao1">
+      <div className="info-icone">
+        <span>i</span>
+      </div>
 
+      <div className="info-conteudo">
+        <h3>Por que enviar sua prescrição?</h3>
+
+        <p>
+          A prescrição é o documento que contém os insumos necessários para o
+          seu tratamento.    
+          Com ela, conseguimos preparar seus materiais e informar quando
+          estarão disponíveis para retirada.
+        </p>
+
+        
+          
+    
+      </div>
+    </div>
             <button
                 className="btn-enviar"
                 type="submit"
@@ -439,7 +485,7 @@ function EnviarSolicitaçao() {
         </form>
 
     </div>
-
+     
 </div>
     );
 }
