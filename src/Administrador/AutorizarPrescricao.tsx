@@ -78,7 +78,8 @@ const [motivo, setMotivo] = useState("");
         // ==========================================
 
         const imagemResponse = await axios.get(
-          `http://localhost:3344/solicitacao/${id}/prescricao`,
+          `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/prescricao`,
+          //`http://localhost:3344/solicitacao/${id}/prescricao`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -128,7 +129,8 @@ const [motivo, setMotivo] = useState("");
     const token = localStorage.getItem("token");
 
     await axios.patch(
-      `http://localhost:3344/solicitacao/${id}/reenvio`,
+      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
+      //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
         motivo: "motivo"
       },
@@ -167,7 +169,8 @@ const enviarSolicitacao = async () => {
     }
 
     await axios.patch(
-      `http://localhost:3344/solicitacoes/${id}`,
+      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
+      //`http://localhost:3344/solicitacoes/${id}`,
       {
         sol_status: "Aprovado"
       },
