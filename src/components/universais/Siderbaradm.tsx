@@ -41,6 +41,12 @@ export default function Sidebar({
       label: 'Historico',
       path: '/Historicoadm',
     },
+
+    {
+      icon: IoBandage,
+      label: 'Solicitações',
+      path: '/VerSolicitaçoes',
+    },
     {
       icon: MdAddLocation,
       label: 'Novo Agendamento',

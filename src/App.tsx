@@ -17,6 +17,8 @@ import TodosAgendamentos from './Administrador/TodosAgendamentos';
 import Sair from './Administrador/Sair';
 import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
+import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
+import AutorizarPrescricao from './Administrador/AutorizarPrescricao'
 
 function App() {
   return (
@@ -79,6 +81,20 @@ function App() {
         path="/enviarsolicitacao"
         element={<EnviarSolicitaçao />}
       />
+
+       <Route
+        path="/versolicitaçoes"
+        element={<VerSolicitaçoes />}
+      />
+
+      <Route
+    path="/administrador/prescricao/:id"
+    element={<VerSolicitaçoes />}
+/>
+ <Route
+  path="/administrador/prescricao/autorizarprescricao/:id"
+  element={<AutorizarPrescricao />}
+/>
       
 
       <Route

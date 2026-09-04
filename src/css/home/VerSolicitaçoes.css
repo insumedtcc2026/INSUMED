@@ -1,0 +1,334 @@
+/* =========================
+   PÁGINA
+========================= */
+
+.pagina-pendencias {
+    min-height: 100vh;
+    background: #f4f4f4;
+    padding: 25px 7%;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================
+   TÍTULO
+========================= */
+
+.pagina-pendencias h1 {
+    text-align: center;
+    color: #063de8;
+    font-size: 28px;
+    margin: 5px 0 20px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   BARRA DE PESQUISA
+========================= */
+
+.barra-pesquisa {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.barra-pesquisa input {
+    width: 350px;
+    height: 32px;
+
+    border: none;
+    border-radius: 4px;
+
+    background: #ffffff;
+
+    padding: 0 15px;
+
+    font-size: 12px;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+
+    outline: none;
+}
+
+.barra-pesquisa input::placeholder {
+    color: #aaa;
+}
+
+
+/* =========================
+   LISTA
+========================= */
+
+.lista-pendencias {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card-pendencia {
+    width: 100%;
+    min-height: 105px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 18px 25px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+
+    position: relative;
+}
+
+
+/* =========================
+   ÍCONE DO PACIENTE
+========================= */
+
+.icone-paciente {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    background: #eee6ff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+
+    margin-right: 18px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================
+   INFORMAÇÕES DO PACIENTE
+========================= */
+
+.info-paciente {
+    display: flex;
+    flex-direction: column;
+
+    width: 220px;
+
+    gap: 5px;
+}
+
+.info-paciente strong {
+    font-size: 14px;
+    color: #222;
+}
+
+.info-paciente span {
+    font-size: 10px;
+    color: #333;
+}
+
+
+/* =========================
+   INFORMAÇÕES DO ENVIO
+========================= */
+
+.info-envio {
+    display: flex;
+    flex-direction: column;
+
+    width: 250px;
+
+    gap: 5px;
+}
+
+.info-envio strong {
+    font-size: 11px;
+    color: #222;
+}
+
+.info-envio span {
+    font-size: 10px;
+    color: #333;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status-pendente {
+    background: #ffc400;
+
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: bold;
+
+    padding: 5px 18px;
+
+    border-radius: 15px;
+
+    text-transform: lowercase;
+
+    margin-left: auto;
+}
+
+
+/* =========================
+   BOTÃO VER MAIS
+========================= */
+
+.btn-ver-mais {
+    background: #063de8;
+
+    color: #ffffff;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 6px 25px;
+
+    font-size: 9px;
+
+    cursor: pointer;
+
+    margin-left: 25px;
+
+    transition: 0.2s;
+}
+
+.btn-ver-mais:hover {
+    background: #002bb5;
+    transform: scale(1.03);
+}
+
+
+/* =========================
+   SEM PENDÊNCIAS
+========================= */
+
+.sem-pendencias {
+    background: #ffffff;
+
+    padding: 40px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.sem-pendencias h2 {
+    color: #555;
+    font-size: 18px;
+}
+
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 900px) {
+
+    .pagina-pendencias {
+        padding: 25px 4%;
+    }
+
+    .card-pendencia {
+        padding: 15px;
+    }
+
+    .info-paciente {
+        width: 180px;
+    }
+
+    .info-envio {
+        width: 180px;
+    }
+
+    .status-pendente {
+        margin-left: 10px;
+    }
+
+    .btn-ver-mais {
+        margin-left: 10px;
+        padding: 6px 18px;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .card-pendencia {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .icone-paciente {
+        width: 45px;
+        height: 45px;
+    }
+
+    .info-paciente,
+    .info-envio {
+        width: calc(50% - 40px);
+    }
+
+    .status-pendente {
+        margin-left: 0;
+    }
+
+    .btn-ver-mais {
+        margin-left: auto;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .pagina-pendencias h1 {
+        font-size: 22px;
+    }
+
+    .barra-pesquisa input {
+        width: 90%;
+    }
+
+    .card-pendencia {
+        padding: 15px;
+        min-height: 130px;
+    }
+
+    .info-paciente,
+    .info-envio {
+        width: calc(100% - 70px);
+    }
+
+    .status-pendente {
+        margin-left: 0;
+    }
+
+    .btn-ver-mais {
+        width: 100%;
+        margin: 5px 0 0;
+    }
+}

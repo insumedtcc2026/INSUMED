@@ -17,7 +17,10 @@ export function useValidarToken() {
       }
 
       try {
-        await axios.get("https://backend-insumed-lhac.vercel.app/validar", { 
+        await axios.get(
+         // "http://localhost:3344/validar",
+          "https://backend-insumed-lhac.vercel.app/validar", 
+          { 
           headers: {
             Authorization: `Bearer ${token}`
           },

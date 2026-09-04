@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Header from "../components/universais/Header";
-import Sidebar from "../components/universais/Sidebar";
+import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
 import AgendamentosListPage from "../components/usuario-1/agendamentos/agendamentosListPage";
 import { listarHistorico } from "../services/AgendamentoService";
@@ -21,7 +21,7 @@ export default function HistoricoColetas() {
  
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+      <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
       <Header onMenuClick={toggleSidebar} />
  
       <main className="mx-auto max-w-7xl px-6 py-8">

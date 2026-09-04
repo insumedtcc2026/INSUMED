@@ -1,0 +1,349 @@
+/* =========================================
+   PÁGINA
+========================================= */
+
+.enviar-prescricao-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+
+/* =========================================
+   CONTEÚDO PRINCIPAL
+========================================= */
+
+.enviar-prescricao-content {
+  margin-left: 150px;
+  padding: 20px 30px 120px;
+}
+
+.enviar-prescricao-content h1 {
+  color: #0645ff;
+  font-size: 20px;
+  margin: 0 0 12px 0;
+}
+
+
+/* =========================================
+   CONTAINER DA PRESCRIÇÃO + INFORMAÇÕES
+========================================= */
+
+.prescricao-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+
+/* =========================================
+   QUADRADO DA PRESCRIÇÃO
+========================================= */
+
+.prescricao-preview {
+  width: 65%;
+  max-width: 700px;
+}
+
+.prescricao-imagem {
+  width: 100%;
+  height: 500px;
+
+  border: 1px solid #cccccc;
+  border-radius: 12px;
+
+  background-color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.prescricao-imagem img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  display: block;
+}
+
+.prescricao-imagem p {
+  color: #777;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   INFORMAÇÕES DA PRESCRIÇÃO
+========================================= */
+
+.informacoes-prescricao {
+  width: 330px;
+
+  border: 1px solid #bdbdbd;
+  border-radius: 12px;
+
+  padding: 10px;
+
+  box-sizing: border-box;
+}
+
+.informacoes-prescricao h2 {
+  font-size: 16px;
+  color: #111;
+
+  margin: 0 0 8px 0;
+}
+
+
+/* =========================================
+   CAMPOS
+========================================= */
+
+.campo {
+  width: 100%;
+  margin-bottom: 7px;
+}
+
+.campo label {
+  display: block;
+
+  font-size: 9px;
+  font-weight: bold;
+
+  color: #222;
+
+  margin-bottom: 3px;
+}
+
+.campo input,
+.campo textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  font-size: 8px;
+  color: #555;
+
+  padding: 7px;
+}
+
+.campo input {
+  height: 25px;
+}
+
+.campo textarea {
+  height: 110px;
+
+  resize: none;
+
+  font-family: Arial, sans-serif;
+}
+
+
+/* =========================================
+   CPF + COD
+========================================= */
+
+.linha-campos {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.linha-campos .campo {
+  flex: 1;
+}
+
+
+/* =========================================
+   DATA DE VENCIMENTO
+========================================= */
+
+.vencimento label {
+  color: #ff3333;
+}
+
+
+/* =========================================
+   MOTIVOS
+========================================= */
+
+
+
+.motivos h2 {
+  font-size: 13px;
+
+  text-align: center;
+
+  margin: 0;
+
+  padding: 7px 0;
+
+  border: 1px solid #ddd;
+  border-bottom: none;
+
+  color: #111;
+}
+
+.motivos label {
+  background-color: #0019c9;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  padding: 8px 5px;
+
+  border-bottom: 2px solid #ffffff;
+
+  cursor: pointer;
+}
+
+.motivos input {
+  margin-right: 5px;
+}
+
+
+/* =========================================
+   BOTÕES
+========================================= */
+
+/* =========================================
+   BOTÕES
+========================================= */
+
+.prescricao-buttons {
+  display: flex !important;
+  flex-direction: row !important;
+
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+
+  width: auto !important;
+
+  gap: 10px !important;
+
+  margin: 15px 0 0 0 !important;
+  padding: 0 !important;
+}
+
+.reenvio-area {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+
+  width: 115px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.prescricao-buttons .btn-reenvio,
+.prescricao-buttons .btn-enviar {
+  display: block !important;
+
+  width: 115px !important;
+  height: 35px !important;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  border: none !important;
+  border-radius: 6px !important;
+
+  color: white !important;
+
+  font-size: 11px !important;
+  font-weight: bold !important;
+
+  cursor: pointer;
+}
+
+.btn-reenvio {
+  background-color: red !important;
+}
+
+.btn-enviar {
+  background-color: #28d34f !important;
+}
+
+.motivos {
+  width: 180px;
+  margin-top: 10px;
+}
+
+.btn-reenvio:hover {
+  background-color: #c90000;
+}
+
+.btn-enviar:hover {
+  background-color: #1db83f;
+}
+
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .enviar-prescricao-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .prescricao-container {
+    flex-direction: column;
+  }
+
+  .prescricao-preview {
+    width: 100%;
+    max-width: none;
+  }
+
+  .informacoes-prescricao {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .prescricao-buttons {
+    margin-left: 0;
+    justify-content: center;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .prescricao-imagem {
+    height: 350px;
+  }
+
+  .linha-campos {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .motivos {
+    width: 100%;
+  }
+
+  .prescricao-buttons {
+    flex-direction: column;
+  }
+
+  .prescricao-buttons button {
+    width: 180px;
+  }
+
+}

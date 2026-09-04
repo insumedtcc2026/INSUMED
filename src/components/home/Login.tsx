@@ -33,6 +33,7 @@ const Loginteste: React.FC = () => {
 
         const response = await axios.post(
             "https://backend-insumed-lhac.vercel.app/login",
+              //"http://localhost:3344/login",
             {
                 email,
                 senha: password
@@ -41,47 +42,42 @@ const Loginteste: React.FC = () => {
 
         console.log("RESPOSTA DO LOGIN:", response.data);
 
+        
+
         const token = response.data.token;
 
-        if (!token) {
-            console.error("Token não veio na resposta!");
-            throw new Error("Token não recebido");
-        }
+if (!token) {
+    console.error("Token não veio na resposta!");
+    throw new Error("Token não recebido");
+}
 
-        // Salva o NOVO token
-        localStorage.setItem("token", token);
+localStorage.setItem("token", token);
 
-        localStorage.setItem(
-            "usuario",
-            JSON.stringify(response.data.usuario)
-        );
+const usuario = response.data.usuario;
 
-        console.log("NOVO TOKEN:", token);
+localStorage.setItem(
+    "usuario",
+    JSON.stringify(usuario)
+);
 
-        console.log(
-            "TOKEN SALVO:",
-            localStorage.getItem("token")
-        );
+console.log("USUÁRIO SALVO:", usuario);
+console.log("TOKEN SALVO:", localStorage.getItem("token"));
 
-        // Tipo do usuário
-        const tipo =
-            response.data.usuario?.tipo ||
-            response.data.tipo;
+const tipo =
+    usuario?.tipo ||
+    response.data.tipo;
 
-        console.log("TIPO DO USUÁRIO:", tipo);
+console.log("TIPO DO USUÁRIO:", tipo);
 
-        if (tipo === "PACIENTE") {
-            navigate("/home");
-        }
-
-        else if (tipo === "PRESCRITOR") {
-            navigate("/homePrescritor");
-        }
-
-        else if (tipo === "ADMIN") {
-            navigate("/Agendamentos");
-        }
-
+if (tipo === "PACIENTE") {
+    navigate("/home");
+}
+else if (tipo === "PRESCRITOR") {
+    navigate("/homePrescritor");
+}
+else if (tipo === "ADMIN") {
+    navigate("/Agendamentosadm");
+}
     } catch (error: any) {
 
         console.error(

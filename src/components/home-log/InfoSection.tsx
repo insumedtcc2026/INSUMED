@@ -13,7 +13,7 @@ interface InfoCard {
 }
 
 interface InfoSectionProps {
-  userType: 'paciente' | 'medico' | 'fornecedor';
+  userType: 'paciente' | 'administrador' | 'autorizador';
 }
 
 const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
@@ -38,7 +38,7 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
     },
   ],
 
-  medico: [
+  administrador: [
     {
       id: 'pacientes',
       title: 'Pacientes',
@@ -59,7 +59,7 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
     },
   ],
 
-  fornecedor: [
+  autorizador: [
     {
       id: 'pedidos',
       title: 'Pedidos',
