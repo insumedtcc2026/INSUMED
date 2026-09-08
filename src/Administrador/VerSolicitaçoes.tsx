@@ -11,6 +11,7 @@ import { useValidarToken } from "../hook/Validartoken.tsx";
 
 import Sidebaradm from "../components/universais/Siderbaradm.tsx";
 import Header from "../components/universais/HeaderAdm.tsx";
+import Footer from "../components/universais/Footer.tsx";
 
 import "../css/home/VerSolicitaçoes.css";
 
@@ -19,9 +20,9 @@ export default function Pendencias() {
 
     const navigate = useNavigate();
 
-    // =========================
+    
     // ESTADOS
-    // =========================
+
 
     const [cpf, setCpf] = useState("");
 
@@ -38,25 +39,24 @@ export default function Pendencias() {
         useState(true);
 
 
-    // =========================
+   
     // VALIDAÇÃO DO TOKEN
-    // =========================
+  
 
     const { verificando } = useValidarToken();
 
 
-    // =========================
     // SIDEBAR
-    // =========================
+
 
     const toggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
     };
 
 
-    // =========================
+ 
     // BUSCAR PENDÊNCIAS
-    // =========================
+
 
     useEffect(() => {
 
@@ -153,9 +153,6 @@ export default function Pendencias() {
     }
 
 
-    // =========================
-    // PÁGINA
-    // =========================
 
     return (
 
@@ -285,15 +282,15 @@ export default function Pendencias() {
                     >
                              VER MAIS
                               </button>
-
+         
                         </div>
 
                     ))}
-
+              
                 </div>
 
             </div>
-
+    <Footer />
         </>
     );
 }

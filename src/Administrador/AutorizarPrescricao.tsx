@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-import Header from "../components/universais/Header";
-import Sidebar from "../components/universais/Sidebar";
+import Header from "../components/universais/HeaderAdm";
+import Sidebar from "../components/universais/Siderbaradm";
 
 
 import "../css/home/AutorizarPrescricao.css";
@@ -32,15 +32,18 @@ function EnviarPrescricao() {
 
   const [carregando, setCarregando] = useState(true);
 
+  
+  
+
   const [solicitacao, setSolicitacao] =
     useState<Solicitacao | null>(null);
 
 const [mostrarMotivos, setMostrarMotivos] = useState(false);
 
 const [motivo, setMotivo] = useState("");
-  // ==========================================
+ 
   // BUSCAR DADOS DA SOLICITAÇÃO E PRESCRIÇÃO
-  // ==========================================
+
 
   useEffect(() => {
 
@@ -51,9 +54,9 @@ const [motivo, setMotivo] = useState("");
         const token = localStorage.getItem("token");
 
 
-        // ==========================================
+      
         // BUSCAR DADOS DA SOLICITAÇÃO
-        // ==========================================
+        
 
         const dadosResponse = await axios.get(
           //`http://localhost:3344/solicitacao/${id}`,
@@ -73,9 +76,8 @@ const [motivo, setMotivo] = useState("");
         setSolicitacao(dadosResponse.data);
 
 
-        // ==========================================
         // BUSCAR IMAGEM DA PRESCRIÇÃO
-        // ==========================================
+        
 
         const imagemResponse = await axios.get(
           `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/prescricao`,
@@ -159,6 +161,12 @@ const [motivo, setMotivo] = useState("");
   }
 };
 
+
+  const toggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
+
+
 const enviarSolicitacao = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -208,16 +216,14 @@ const enviarSolicitacao = async () => {
     <div className="enviar-prescricao-page">
 
       <Header
-        onMenuClick={() =>
-          setSidebarOpen(!sidebarOpen)
-        }
+        
+         onMenuClick={toggleSidebar}
+        
       />
 
       <Sidebar
         isOpen={sidebarOpen}
-        onClose={() =>
-          setSidebarOpen(false)
-        }
+                onClose={toggleSidebar}
       />
 
 
@@ -229,9 +235,9 @@ const enviarSolicitacao = async () => {
         <div className="prescricao-container">
 
 
-          {/* ==================================
-              IMAGEM DA PRESCRIÇÃO
-          ================================== */}
+          
+              {/*IMAGEM DA PRESCRIÇÃO*/}
+        
 
           <section className="prescricao-preview">
 
@@ -263,9 +269,9 @@ const enviarSolicitacao = async () => {
           </section>
 
 
-          {/* ==================================
-              INFORMAÇÕES DA PRESCRIÇÃO
-          ================================== */}
+        
+          {/*    INFORMAÇÕES DA PRESCRIÇÃO */}
+          
 
           <section className="informacoes-prescricao">
 
@@ -417,9 +423,9 @@ const enviarSolicitacao = async () => {
         </div>
 
 
-        {/* ==================================
+        {/* 
             MOTIVOS
-        ================================== */}
+     */}
 
        <div className="prescricao-buttons">
 
@@ -430,7 +436,7 @@ const enviarSolicitacao = async () => {
       type="button"
       onClick={() => setMostrarMotivos(!mostrarMotivos)}
     >
-      PEDIR REENVIO
+      Pedir reenvio da prescrição
     </button>
 
     {mostrarMotivos && (
