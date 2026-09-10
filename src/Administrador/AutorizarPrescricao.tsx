@@ -150,7 +150,7 @@ const [motivo, setMotivo] = useState("");
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-    navigate('/VerSolicitaçoes');
+    navigate('/VerSolicitacoes');
     setMostrarMotivos(false);
 
   } catch (error: any) {
@@ -205,7 +205,7 @@ const enviarSolicitacao = async () => {
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-navigate('/VerSolicitaçoes')
+navigate('/VerSolicitacoes')
   } catch (error: any) {
 
     console.error(
@@ -218,15 +218,14 @@ navigate('/VerSolicitaçoes')
       error.response?.data
     );
 
-    alert(
-      error.response?.data?.error ||
-     Swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: 'Ocorreu um erro ao autoriza prescrição. Por favor, tente novamente.',
-            confirmButtonColor: '#d33'
-          })
-    );
+   await Swal.fire({
+    icon: 'error',
+    title: 'Ops...',
+    text: error.response?.data?.error ||
+          error.response?.data?.message ||
+          'Ocorreu um erro ao autorizar a prescrição. Por favor, tente novamente.',
+    confirmButtonColor: '#d33'
+  });
   }
 };
 
