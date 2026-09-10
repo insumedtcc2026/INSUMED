@@ -145,12 +145,12 @@ const [motivo, setMotivo] = useState("");
 
      Swal.fire({
             icon: 'success',
-            title: 'Cadastro realizado!',
+            title: 'Reenvio realizado!',
             text: 'Pedido de reenvio enviado com sucesso!',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-    navigate('/VerSoliciraçoes');
+    navigate('/VerSolicitaçoes');
     setMostrarMotivos(false);
 
   } catch (error: any) {
@@ -200,12 +200,12 @@ const enviarSolicitacao = async () => {
 
      Swal.fire({
             icon: 'success',
-            title: 'Cadastro realizado!',
+            title: 'Pescriçao Aprovada!',
             text: 'Prescrição autorizada com sucesso!',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-navigate('/VerSoliciraçoes')
+navigate('/VerSolicitaçoes')
   } catch (error: any) {
 
     console.error(
