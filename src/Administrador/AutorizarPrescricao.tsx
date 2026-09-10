@@ -134,7 +134,7 @@ const [motivo, setMotivo] = useState("");
      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
       //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
-        motivo: "motivo"
+        motivo: motivo
       },
       {
         headers: {
