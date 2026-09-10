@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import Swal from 'sweetalert2';
 import Header from "../components/universais/HeaderAdm";
 import Sidebar from "../components/universais/Siderbaradm";
-
+import { useNavigate } from "react-router-dom";
 
 import "../css/home/AutorizarPrescricao.css";
 
@@ -32,7 +32,7 @@ function EnviarPrescricao() {
 
   const [carregando, setCarregando] = useState(true);
 
-  
+  const navigate = useNavigate();
   
 
   const [solicitacao, setSolicitacao] =
@@ -143,21 +143,30 @@ const [motivo, setMotivo] = useState("");
       }
     );
 
-    alert("Pedido de reenvio enviado com sucesso!");
-
+     Swal.fire({
+            icon: 'success',
+            title: 'Cadastro realizado!',
+            text: 'Pedido de reenvio enviado com sucesso!',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ir para prescrições '
+          })
+    navigate('/VerSoliciraçoes');
     setMostrarMotivos(false);
 
   } catch (error: any) {
 
     console.error(
-      "Erro ao pedir reenvio:",
-      error
-    );
+      "Erro ao pedir reenvio:",error);
 
     alert(
       error.response?.data?.error ||
-      "Erro ao pedir reenvio."
-    );
+       Swal.fire({
+            icon: 'error',
+            title: 'Ops...',
+            text: 'Ocorreu um erro ao pedir reenvio. Por favor, tente novamente.',
+            confirmButtonColor: '#d33'
+          })
+        )
   }
 };
 
@@ -189,8 +198,14 @@ const enviarSolicitacao = async () => {
       }
     );
 
-    alert("Prescrição autorizada com sucesso!");
-
+     Swal.fire({
+            icon: 'success',
+            title: 'Cadastro realizado!',
+            text: 'Prescrição autorizada com sucesso!',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ir para prescrições '
+          })
+navigate('/VerSoliciraçoes')
   } catch (error: any) {
 
     console.error(
@@ -205,7 +220,12 @@ const enviarSolicitacao = async () => {
 
     alert(
       error.response?.data?.error ||
-      "Erro ao autorizar prescrição."
+     Swal.fire({
+            icon: 'error',
+            title: 'Ops...',
+            text: 'Ocorreu um erro ao autoriza prescrição. Por favor, tente novamente.',
+            confirmButtonColor: '#d33'
+          })
     );
   }
 };
