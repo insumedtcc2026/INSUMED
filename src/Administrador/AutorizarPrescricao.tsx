@@ -131,7 +131,7 @@ const [motivo, setMotivo] = useState("");
     const token = localStorage.getItem("token");
 
     await axios.patch(
-      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
+     `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
       //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
         motivo: "motivo"
