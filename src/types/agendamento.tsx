@@ -24,11 +24,8 @@ export interface InsumoAgendado {
   quantidade: number;
 }
 
-export interface InsumoNoAgendamento {
-  ins_id: number;
-  ins_nome: string;
-  quantidade: number;
-}
+// Alias para manter compatibilidade com importações existentes
+export type InsumoNoAgendamento = InsumoAgendado;
 
 export interface Agendamento {
   sol_id: number;
