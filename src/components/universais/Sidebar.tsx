@@ -56,6 +56,15 @@ export default function Sidebar({
       label: 'Perfil',
       path: '/perfil',
     },
+    {
+      icon: IoPersonSharp,
+      label: 'Sair',
+      path: '/login',
+       action: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+      }
+    },
   ];
 
   return (
@@ -91,10 +100,13 @@ export default function Sidebar({
 
         <nav className="sidebar-nav">
           {menuItems.map(
-            ({ icon: Icon, label, path }) => (
+            ({ icon: Icon, label, path, action }) => (
               <button
                 key={label}
                 onClick={() => {
+                  if (action) {
+                    action();
+                  }
                   navigate(path);
 
                   onClose();

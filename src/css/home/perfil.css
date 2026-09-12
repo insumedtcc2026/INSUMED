@@ -1,59 +1,208 @@
 h1 {
   font-size: 3rem;
-  color: #2563eb; 
-  margin-bottom: 12px; 
+  color: #2563eb;
+  margin-bottom: 12px;
 }
 
-/* Container principal do formulário (o "cartão" cinza) */
 .perfil-container-form {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Cria duas colunas de tamanhos iguais */
-  gap: 24px 40px; /* Espaço entre as linhas (24px) e colunas (40px) */
-  background-color: #eff0f173; /* Cor de fundo acinzentada similar à imagem */
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 40px;
+  background: #eff0f173;
   padding: 40px;
-  border-radius: 20px; /* Bordas arredondadas do cartão */
+  border-radius: 20px;
   max-width: 900px;
-  margin: 0 auto; /* Centraliza o cartão na tela */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); /* Sombra bem leve */
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12);
 }
 
-/* Estilo do agrupamento de cada input */
 .perfil-container-form label {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Espaço entre o título (p) e o input */
+  gap: 8px;
+  font-style: bold;
 }
 
-/* Títulos dos campos (Nome Completo, CPF, etc) */
 .perfil-container-form label p {
-  color: #2563eb; /* Cor azul/roxa da imagem */
+  color: #2563eb;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: .9rem;
   margin: 0;
 }
 
-/* Estilo padrão dos inputs */
 .perfil-container-form input {
-  padding: 14px 16px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background-color: #ffffff;
-  font-size: 0.95rem;
-  color: linear-gradient(to right, #0800ff, #3b82f6); 
-  outline: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Sombra leve no input */
-  transition: border-color 0.2s ease;
   width: 100%;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #fff;
+  font-size: .95rem;
+  outline: none;
+  transition: .2s;
+  font-size: 17px;
 }
 
-/* Efeito ao clicar no input */
 .perfil-container-form input:focus {
-  border: 1px solid #2b26d3; 
+  border-color: #2b26d3;
 }
 
-/* Responsividade de segurança: se a tela for menor que 768px, vira 1 coluna */
+
+/* PRESCRIÇÕES */
+
+.prescricao-list {
+  width: min(95%, 1100px);
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  
+}
+
+.prescricao-card {
+  width: 100%;
+  min-height: 200px;
+  padding: 32px 50px;
+  box-sizing: border-box;
+  background: #f2f2f2;
+  border-radius: 35px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  transition: .2s;
+}
+
+.prescricao-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 35px rgba(0,0,0,.14);
+}
+
+.prescricao-data {
+  margin: 0 0 25px;
+  font-size: 20px;
+  color: #111;
+}
+
+.prescricao-arquivo {
+  width: 100%;
+  max-width: 900px;
+  min-height: 44px;
+  padding: 12px 18px;
+  margin-bottom: 28px;
+  box-sizing: border-box;
+  background: #d9d9d9;
+  border-radius: 8px;
+  color: #333;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 20px;
+}
+
+/* ALINHAMENTO DOS STATUS E BOTÃO */
+.prescricao-acoes {
+  width: 100%;
+  margin-top: auto;
+  display: flex;
+  justify-content: right; 
+  align-items: center;
+  font-family: arial, sans-serif;
+  gap: 12px;
+}
+
+.status-badge,
+.btn-ver-mais {
+  min-width: 155px;
+  height: 28px;
+  padding: 0 22px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.status-ativa,
+.status-concluído,
+.status-concluida {
+  background: #31d74b;
+}
+
+.status-aguardando,
+.status-pendente {
+  background: #fbb404;
+  
+ 
+}
+
+.status-reenvio {
+  background: #ff4b4b;
+}
+
+.btn-ver-mais {
+  background: #0b25d2;
+  text-decoration: none;
+  gap: 8px;
+  transition: .2s;
+}
+
+.btn-ver-mais:hover {
+  background: #081a9c;
+  transform: scale(1.03);
+}
+
+
 @media (max-width: 768px) {
   .perfil-container-form {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
+    padding: 25px;
+  }
+
+  .prescricao-list {
+    width: calc(100% - 24px);
+    gap: 20px;
+  }
+
+  .prescricao-card {
+    padding: 22px 20px;
+    min-height: auto;
+    border-radius: 25px;
+  }
+
+
+  .prescricao-arquivo {
+    max-width: 100%;
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  .prescricao-acoes {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .status-badge,
+  .btn-ver-mais {
+    width: 100%;
+    height: 36px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .prescricao-card {
+    padding: 18px 15px;
+  }
+
+  .perfil-container-form {
+    padding: 20px 15px;
   }
 }

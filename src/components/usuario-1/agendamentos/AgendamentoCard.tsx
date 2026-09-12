@@ -69,10 +69,10 @@ export default function AgendamentoCard({
       </div>
  
       {/* Insumos solicitados */}
-      <div className="flex-1 min-w-[200px]">
+      {/* <div className="flex-1 min-w-[200px]">
         <p className="text-sm font-medium text-gray-400">Insumos</p>
         <p className="text-gray-700">{resumoInsumos}</p>
-      </div>
+      </div> */}
  
       {/* Status + ações */}
       <div className="flex items-center gap-3">

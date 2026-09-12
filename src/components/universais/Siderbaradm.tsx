@@ -59,13 +59,17 @@ export default function Sidebar({
     },
     {
       icon: IoPersonSharp,
-      label: 'Sair',
-      path: '/Sair',
+      label: 'TodosAgendamentos',
+      path: '/TodosAgendamentos',
     },
     {
       icon: IoPersonSharp,
-      label: 'TodosAgendamentos',
-      path: '/TodosAgendamentos',
+      label: 'Sair',
+      path: '/login',
+       action: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+      }
     },
   ];
 
@@ -102,10 +106,13 @@ export default function Sidebar({
 
         <nav className="sidebar-nav">
           {menuItems.map(
-            ({ icon: Icon, label, path }) => (
+            ({ icon: Icon, label, path, action }) => (
               <button
                 key={label}
                 onClick={() => {
+                  if (action) {
+                    action();
+                  }
                   navigate(path);
 
                   onClose();

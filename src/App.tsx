@@ -14,7 +14,6 @@ import Agendamentosadm from './Administrador/Agendamentosadm';
 import  Historicoadm from './Administrador/Historicoadm';
 import NovoAgendamento from './Administrador/NovoAgendamento';
 import TodosAgendamentos from './Administrador/TodosAgendamentos';
-import Sair from './Administrador/Sair';
 import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
@@ -53,11 +52,6 @@ function App() {
       />
 
         
-
-       <Route
-        path="/Sair"
-        element={<Sair/>}
-      />
 
        <Route
         path="/todosagendamentos"

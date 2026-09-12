@@ -9,6 +9,7 @@ export interface PrescricaoPendente {
     sol_data_solicitacao: string;
     pac_nome: string;
     pac_cpf: string;
+    sol_prescricao: string;
 }
 
 export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]> => {
@@ -25,11 +26,24 @@ export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]
     );
 
     return response.data;
-}
+
+  };
+
+export const prescricaopaciente = async () => {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API_URL}/solicitacao/pacienteid`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+};
+
 export async function enviarPrescricao (
   pos_id: number,
   sol_prescricao: string,
-  sol_observacao: string
+  sol_observacao: string,
+  sol_status: string,
+  sol_data_solicitacao: string
+
 ) {
   const token = localStorage.getItem("token");
 
@@ -39,6 +53,8 @@ export async function enviarPrescricao (
       pos_id,
       sol_prescricao,
       sol_observacao,
+      sol_status,
+      sol_data_solicitacao
     },
     {
       headers: {

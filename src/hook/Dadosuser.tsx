@@ -10,6 +10,7 @@ export interface User {
   genero: string;
   telefone: string;
   raca: string;
+  id?: number;
 }
 
 const ErroUser: User = {
@@ -41,6 +42,7 @@ export function useDadosUser() {
           genero: dadosuser.pac_sexo || ErroUser.genero,
           telefone: dadosuser.pac_telefone || ErroUser.telefone,
           raca: dadosuser.pac_raca || ErroUser.raca,
+          id: dadosuser.pac_id || ErroUser.id
         };
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
