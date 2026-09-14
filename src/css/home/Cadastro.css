@@ -1,319 +1,269 @@
-label, select {
-  margin: 0px;
-  padding: 8px 0;
+/* ============================
+   RESET / BASE
+============================ */
+* {
+  box-sizing: border-box;
 }
-.login-container form {
-  width: 90%;
-display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px;
-  position: relative;
 
-    
-
-}
-.login-container .container {
-  position: relative;
-  width: 90%;
-  max-width: 870px;
-height: 100vh;
-  
-  background-color: #fff;
-  border-radius: 30px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, .2);
-  display: flex;
-  overflow: hidden;
-  flex-direction: column; 
-  overflow: hidden;
-  margin: 20px auto; 
-
-}
 .login-fullscreen-container {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
-}
-
-
-.formulario input {
   width: 100%;
-  padding: 12px;
-
-  
-  
-  border: 2px solid transparent;
-  border-radius: 10px;
-  font-size: 16px;
-  outline: none;
-  background:
-    linear-gradient(white, white) padding-box,
-    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
-    transition: background 0.3s;
-   
-   
-    
-}
-.formulario label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #000000;
-  
-  display: block;
-  
-  
-
 }
 
-
-.Cadastro-container input:focus {
-  
-  background:
-    linear-gradient(white, white) padding-box,
-    black border-box;
+/* ============================
+   PAINEL DE IMAGEM (esquerda)
+============================ */
+.login-image-panel {
+  display: none;
+  flex: 1;
 }
-.Cadastro-container .option {
+
+.login-image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 992px) {
+  .login-image-panel {
+    display: flex;
+  }
+}
+
+/* ============================
+   PAINEL DO FORMULÁRIO (direita)
+============================ */
+.login-form-panel {
+  flex: 1;
   display: flex;
   align-items: center;
-  background:
-    linear-gradient(white, white) padding-box,
-    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+  justify-content: center;
+  padding: 20px 10px;
+  background-color: #f7f9fc;
 }
-  select {
-  
- border: 2px solid transparent;
-  
 
-  background:
-    linear-gradient(white, white) padding-box,
-    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
-  border-radius: 10px;          
-  padding: 12px;           
-  
-  
-  font-size: 16px;
-  background-color: #ffffff;
-  color: #000000;
-  
-  
-  
+.form-wrapper {
   width: 100%;
-outline: none;
+  max-width: 750px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(17, 9, 164, 0.08);
+  padding: 40px 48px;
 }
 
-select:focus{
-  border-color: #000000;
+.Text-Cadastro {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgb(126, 179, 219) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-option:focus {
-  outline: none;
-  background:
-    linear-gradient(white, white) padding-box,
-    black border-box;
-}
-
-.campo {
-width: 100%;
+/* ============================
+   FORMULÁRIO
+============================ */
+.formulario {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 5px; 
-  width: 400px;
-
-
-
-  
-}
-
-@media (min-width: 768px) {
-  .login-container .container {
-    flex-direction: row; 
-  }
-  
-  .login-container form {
-    width: 50%;
-  }
+  gap: 20px;
 }
 
 .Alinha-campos {
   display: flex;
-  gap: 90px; 
+  gap: 24px;
   width: 100%;
   flex-wrap: wrap;
-  width: 500px;
- margin-left: -50px;
 }
 
-.Alinha-campos .campo {
-  flex: 1;
+.campo {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.formulario label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+/* ============================
+   INPUTS E SELECTS
+============================ */
+.formulario input,
+.formulario select {
+  width: 100%;
+  min-height: 40px;
+  padding: 12px 11px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.campo label:has(+ input),
+.campo label:has(+ select) {
+  font-size: 17px;
+  font-family:Arial, Helvetica, sans-serif
+}
+
+.formulario input::placeholder {
+  color: #a0a0a0;
+  font-size: 14px;
   
 }
 
-.Text-Cadastro{
+.formulario input:focus,
+.formulario select:focus {
+  box-shadow: 0 0 0 4px rgba(2, 144, 253, 0.15);
+}
+
+.formulario select {
+  cursor: pointer;
+  color: #333;
+  appearance: none;
+  background-image:
+    linear-gradient(white, white),
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: 0 0, 0 0, right 12px center;
+  background-size: auto, auto, 17px;
+  background-clip: padding-box, border-box, padding-box;
+  background-origin: padding-box, border-box, padding-box;
+  padding-right: 40px;
+  padding-left: 14px;
+}
+
+.input-correto {
+  border: 2px solid #28a745 !important;
+}
+
+.input-erro {
+  border: 2px solid #dc3545 !important;
+}
+
+/* ============================
+   CAMPO DE SENHA COM ÍCONE
+============================ */
+.input-password {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-password input {
+  padding-right: 44px;
+}
+
+.icone-olho {
+  position: absolute;
+  right: 12px;
+  top: 70%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.icone-olho:hover {
+  opacity: 1;
+}
+
+/* ============================
+   BOTÕES
+============================ */
+.btn-login,
+.btn-login1 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", "Trebuchet MS", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 14px 0;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #0c299a, #0066ff);
+  transition: background 0.3s ease, transform 0.15s ease;
+}
+
+.btn-login button,
+.btn-login1 button {
+  all: unset;
+  width: 100%;
   text-align: center;
-
-
-   margin-top: 10%;
-  font-size: 40px;
-  font-weight: 500;
-  margin-bottom:  auto;
-background: 
-linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgb(126, 179, 219) 100%) ;
-  
- 
-  -webkit-background-clip: text;
-  background-clip: text;
-  
-
-  color: transparent;
-  
-
-  font-weight: bold;
-
-}
-.btn-login{
-    display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family: "Montserrat", "Trebuchet MS", sans-serif;
-  font-weight: 700;
-  font-size:1rem;
-
-  color: #ffffff;
-  text-decoration: none;
-
-  padding: 10px 40px;
-
- 
-  border-radius: 15px;
-  margin-top: 10%;
-
-
-  background: linear-gradient(
-    135deg,
-    #0C299A,
-    #0066FF
-  );
-}
-.btn-login1{
-    display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family: "Montserrat", "Trebuchet MS", sans-serif;
-  font-weight: 700;
-  font-size:1rem;
-
-  color: #ffffff;
-  text-decoration: none;
-
-  padding: 10px 40px;
-
- 
-  border-radius: 15px;
-  margin-top: 10%;
-
-margin-left: 13%;
-  background: linear-gradient(
-    135deg,
-    #0C299A,
-    #0066FF
-  );
+  cursor: pointer;
 }
 
-.btn-login1:hover{
-  background: linear-gradient(
-    135deg,
-    #eb2106,
-    #e93d08
-  );
-  transition: background 0.3s ease;
-  transform: scale(1.05);
+.btn-login {
+  margin-top: 12px;
+}
+
+.btn-login1 {
+  margin-top: 4px;
+  background: linear-gradient(135deg, #6c757d, #8a8f94);
 }
 
 .btn-login:hover {
-  background: linear-gradient(
-    135deg,
-    #0eec2c,
-    #17df7b
-  );
-  transition: background 0.3s ease;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #17df7b, #0eec2c);
+  transform: translateY(-1px);
 }
 
+.btn-login1:hover {
+  background: linear-gradient(135deg, #e93d08, #eb2106);
+  transform: translateY(-1px);
+}
 
-.login-image-panel {
-  flex: 1;
+/* Linha para os dois botões lado a lado em telas maiores */
+.btn-row {
   display: flex;
- 
+  gap: 16px;
+  margin-top: 16px;
 }
 
-.login-image-panel img {
-  width: 100%;
-  height: 100%;
-  object-fit: over; 
-
-}
-.input-password img{
-    position: relative;
-    width: 30%;
-    padding-right:40px;
-   
+@media (min-width: 480px) {
+  .btn-row {
+    flex-direction: row;
+  }
 }
 
-.icone-olho{
-    position: absolute;
+/* ============================
+   RESPONSIVO
+============================ */
+@media (max-width: 767px) {
+  .form-wrapper {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
 
-    left: 83%;
-    top: -22%;
+  .Text-Cadastro {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
 
-    transform: translateY(-50%);
+  .Alinha-campos {
+    gap: 0;
+  }
 
-    width: 22px;
-    height: 22px;
-
-    cursor: pointer;
+  .campo {
+    flex: 1 1 100%;
+  }
 }
-
-
-.login-image-panel img {
-  width: 100%;
-  height: 100%;
-  object-fit: over; 
-
-}
-.input-password img{
-    position: relative;
-    width: 30%;
-    padding-right:40px;
-   
-}
-
-.icone-olho{
-    position: absolute;
-
-    left: 83%;
-    top: -22%;
-
-    transform: translateY(-50%);
-
-    width: 22px;
-    height: 22px;
-
-    cursor: pointer;
-}
-
-.input-correto{
-    border:2px solid #28a745 !important;
-}
-
-.input-erro{
-    border:2px solid #dc3545 !important;
-}
-
-
-
-
-  
-

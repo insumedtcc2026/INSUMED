@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import Header from '../components/universais/Header';
-import iconpng from'../assets/home-log/ubs.png'
+import iconpng from '../assets/home-log/ubs.png'
 import '../css/home/PontosColeta.css'
+import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
-
-
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-//importa o icon
 import L from "leaflet"
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
@@ -33,16 +31,16 @@ const iconPosto = L.icon({
 
 
 function UpdateMapCenter({ position }: { position: [number, number] }) {
-//faz com que o icon não fique renderizando toda hora, "Se existir um posto selecionado, use ele. Caso contrário, use a posição do usuário."
-    const map = useMap();
+  // faz com que o icon não fique renderizando toda hora, "Se existir um posto selecionado, use ele. Caso contrário, use a posição do usuário."
+  const map = useMap();
 
-    useEffect(() => {
-        map.setView(position, 15, {
-            animate: true
-        });
-    }, [position, map]);
+  useEffect(() => {
+    map.setView(position, 15, {
+      animate: true
+    });
+  }, [position, map]);
 
-    return null;
+  return null;
 }
 
 interface Posto {
@@ -55,19 +53,27 @@ interface Posto {
 }
 
 export default function PontosColeta() {
-    // eslint-disable-next-line
-  const [ setUsuario] = useState<any>(null);
+  // eslint-disable-next-line
+  const [, setUsuario] = useState<any>(null);
 
   const navigate = useNavigate();
-  
+
+  // ==============================
+  // ESTADO DO SIDEBAR (faltava isso)
+  // ==============================
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
   useEffect(() => {
-    
-    
+
     const validarToken = async () => {
       const token = localStorage.getItem("token");
-      
+
       if (!token) navigate("/login");
-      
+
       try {
         const response = await axios.get("https://backend-insumed-lhac.vercel.app/validar", {
           headers: {
@@ -82,58 +88,52 @@ export default function PontosColeta() {
             text: 'Por favor, faça login novamente.',
             confirmButtonColor: '#d33'
           });
-        }else {
+        } else {
           console.log("Token válido");
         }
-      }catch (error) {
+      } catch (error) {
         alert("Token inválido. Por favor, faça login novamente.");
         navigate("/login");
         console.error("Erro ao validar token:", error);
       }
-      
+
       if (dados) {
         setUsuario(JSON.parse(dados));
       }
     };
-    
+
     validarToken();
   }, []);
 
   const dados = localStorage.getItem("usuario");
-  // eslint-disable-next-line
 
-  const toggleSidebar = () => {
-  
-  };
-
-
-const [posicao, setPosicao]= useState <[number, number]> ([ -22.523,  -44.104]);
-const [postoSelecionado, setPostoSelecionado] =
-useState<Posto | null>(null);
-const [postos, setPostos] = useState<Posto[]>([]);
+  const [posicao, setPosicao] = useState<[number, number]>([-22.523, -44.104]);
+  const [postoSelecionado, setPostoSelecionado] =
+    useState<Posto | null>(null);
+  const [postos, setPostos] = useState<Posto[]>([]);
 
 
-useEffect(() => {
+  useEffect(() => {
     if (postos.length === 0) return;
 
     setPostos((postosAnteriores) =>
-        postosAnteriores.map((posto) => ({
-            ...posto,
-            
-            distancia: calcularDistancia(
-              
-                posicao[0],
-                posicao[1],
-                Number(posto.pos_latitude),
-                Number(posto.pos_longitude)
-            ),
-        }))
+      postosAnteriores.map((posto) => ({
+        ...posto,
+
+        distancia: calcularDistancia(
+
+          posicao[0],
+          posicao[1],
+          Number(posto.pos_latitude),
+          Number(posto.pos_longitude)
+        ),
+      }))
     );
-}, [posicao]);
+  }, [posicao]);
 
 
-//funçao que pede permissão para obter a localização
-useEffect(() => {
+  // função que pede permissão para obter a localização
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setPosicao([
@@ -152,207 +152,186 @@ useEffect(() => {
   useEffect(() => {
 
     axios.get("https://backend-insumed-lhac.vercel.app/postos")
-    //axios.get("http://localhost:3344/postos")
-        .then((res) => {
+      //axios.get("http://localhost:3344/postos")
+      .then((res) => {
 
-          
+        setPostos(res.data);
 
-          setPostos(res.data);
+      })
+      .catch((err) => {
 
-        })
-        .catch((err) => {
+        console.log(err);
 
-            console.log(err);
+      });
 
-        });
-
-}, []);
+  }, []);
 
 
-function calcularDistancia(
-    lat1:number,
-    lon1:number,
-    lat2:number,
-    lon2:number
-){
+  function calcularDistancia(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) {
 
     const R = 6371;
 
-    const dLat = (lat2-lat1) * Math.PI/180;
-    const dLon = (lon2-lon1) * Math.PI/180;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
 
     const a =
 
-        Math.sin(dLat/2) **2 +
+      Math.sin(dLat / 2) ** 2 +
 
-        Math.cos(lat1*Math.PI/180) *
+      Math.cos(lat1 * Math.PI / 180) *
 
-        Math.cos(lat2*Math.PI/180) *
+      Math.cos(lat2 * Math.PI / 180) *
 
-        Math.sin(dLon/2) **2;
+      Math.sin(dLon / 2) ** 2;
 
-    const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R*c;
+    return R * c;
 
-}
+  }
 
 
-
-     
-
-   
-
-const abrirRota = (posto: Posto) => {
+  const abrirRota = (posto: Posto) => {
 
     const origem =
-        `${posicao[0]},${posicao[1]}`;
+      `${posicao[0]},${posicao[1]}`;
 
     const destino =
-        `${posto.pos_latitude},${posto.pos_longitude}`;
+      `${posto.pos_latitude},${posto.pos_longitude}`;
 
     window.open(
 
-`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving`
+      `https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving`
 
     );
 
-};
+  };
 
   return (
     <>
-    
-     
-
       <Header onMenuClick={toggleSidebar} />
-      
 
-      <MapContainer
-                  center={posicao}
-                  zoom={15}
-                  style={{
-                      height: "420px",
-                      width: "100%",
-                       borderRadius:"25px"
-                  }}
-              >
-      
-                  <TileLayer
-                      attribution='&copy; OpenStreetMap'
-                   url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+      <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
-                  //attribution="Tiles © Esri"
-                   //url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-    />
-                   <UpdateMapCenter   position={
-        postoSelecionado
-            ? [
-                postoSelecionado.pos_latitude,
-                postoSelecionado.pos_longitude
-              ]
-            : posicao
-    }
-/>
-                    
-                 {postos.map((posto) => (
-                  
-  <Marker
-    key={posto.pos_id}
-   position={[
-    posto.pos_latitude,
-    posto.pos_longitude
+      <div className="pontos-coleta-page">
 
-    
-]}
+        <div className="mapa-wrapper">
+          <MapContainer
+            center={posicao}
+            zoom={15}
+            style={{
+              height: "420px",
+              width: "100%"
+            }}
+          >
 
- 
+            <TileLayer
+              attribution='&copy; OpenStreetMap'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
 
- icon={iconPosto}
+            //attribution="Tiles © Esri"
+            //url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            />
+            <UpdateMapCenter position={
+              postoSelecionado
+                ? [
+                  postoSelecionado.pos_latitude,
+                  postoSelecionado.pos_longitude
+                ]
+                : posicao
+            }
+            />
 
-  />
+            {postos.map((posto) => (
 
-  
+              <Marker
+                key={posto.pos_id}
+                position={[
+                  posto.pos_latitude,
+                  posto.pos_longitude
+                ]}
 
-  
-))}
+                icon={iconPosto}
 
-<Marker
-    position={posicao}
-    icon={icon}
-/>
-                
-              </MapContainer>
-              
-            
-   
-   
-    
+              />
 
-     <div className="postos-container">
+            ))}
 
-  {postos.map((posto) => (
+            <Marker
+              position={posicao}
+              icon={icon}
+            />
 
-    <div className="posto-card" key={posto.pos_id}>
-
-      <div className="posto-topo">
-
-        <div className="icone">
-          <i className="fas fa-hospital"></i>
+          </MapContainer>
         </div>
 
-        <div className="informacoes">
+        <div className="postos-container">
 
-          <h3>{posto.pos_nome}</h3>
+          {postos.map((posto) => (
 
-          <p>{posto.pos_endereco}</p>
-          {postoSelecionado?.pos_id === posto.pos_id && (
-    <p className="distancia">
-        📍 Distância: {posto.distancia?.toFixed(2)} km
-    </p>
-)}
+            <div className="posto-card" key={posto.pos_id}>
 
-          <div className="tags">
-            <span>Privado</span>
-            <span>Municipal</span>
-          </div>
+              <div className="posto-topo">
+
+                <div className="icone">
+                  <i className="fas fa-hospital"></i>
+                </div>
+
+                <div className="informacoes">
+
+                  <h3>{posto.pos_nome}</h3>
+
+                  <p>{posto.pos_endereco}</p>
+                  {postoSelecionado?.pos_id === posto.pos_id && (
+                    <p className="distancia">
+                      📍 Distância: {posto.distancia?.toFixed(2)} km
+                    </p>
+                  )}
+
+                  <div className="tags">
+                    <span>Privado</span>
+                    <span>Municipal</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="acoes">
+
+                <button
+                  onClick={() => setPostoSelecionado(posto)}
+                >
+
+                  Ver no mapa
+
+                </button>
+
+                <button
+                  onClick={() => abrirRota(posto)}>
+
+                  Ver rota
+
+                </button>
+
+              </div>
+
+            </div>
+
+          ))}
 
         </div>
 
       </div>
-
-      <div className="acoes">
-
-       <button
-            onClick={() => setPostoSelecionado(posto)}
->
-
-      Ver no mapa
-
-     </button>
-
-       <button
-         onClick={()=> abrirRota(posto)}>
-
-        Ver rota
-
-        </button>
-
-      </div>
-
-    </div>
-
-  ))}
-
-</div>
-
 
       <Footer />
-        
-          
-          
-          
-</>
-          
-);
-}
 
+    </>
+
+  );
+}

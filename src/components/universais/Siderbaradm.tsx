@@ -33,8 +33,8 @@ export default function Sidebar({
     },
     {
       icon: BsCalendarCheckFill,
-      label: 'Agendamentos',
-      path: 'Agendamentosadm',
+      label: 'AgendamentosADM',
+      path: '/Agendamentosadm',
     },
     {
       icon: IoBandage,

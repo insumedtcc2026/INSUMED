@@ -1,165 +1,232 @@
-.postos-container{
-    width: 95%;
-    max-width: 1400px;
-    margin: 30px auto;
+/* ==============================
+   ESPAÇO PARA O HEADER FIXO
+   (o Header usa position: fixed,
+   então a página precisa compensar
+   a altura dele aqui em cima)
+============================== */
 
-    display: grid;/*deixa lado a lado*/
-    /*auto-fit: cria quantas colulas couberem na tela, fr:fração do espaço disponível.*/
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
+/* PontosColeta.css */
+.pontos-coleta-page {
+  padding-top: var(--header-height);
 }
 
-.posto-card{
-    background:#fff;
-    border-radius:22px;
-    overflow:hidden; /*tudo que sai do card sera cortado*/
-    box-shadow:0 6px 18px rgba(0,0,0,.15);
-    transition: .25s;
-     display: flex;          
-    flex-direction: column; 
-    height: 100%;      
-}
-.posto-card:hover{
-    transform: translateY(-4px);/*o card sobe um pouco*/
+@media (max-width: 1024px) {
+  /* nesse breakpoint o header vira coluna (flex-direction: column)
+     e fica mais alto */
+  .pontos-coleta-page {
+    padding-top: 160px;
+  }
 }
 
-.posto-topo{
-    display:flex;
-    align-items: flex-start;
-    gap:15px;
-    padding:20px;
-     flex: 1;
-}
-
-.icone{
-     width:55px;
-    height:55px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:40px;
-
-    color:#0F45E8;
-
-    flex-shrink:0;
-}
-.informacoes{
-    flex:1;/*ocupa todo o espaço restante*/
-}
-.informacoes h3{
-    margin:0;
-    font-size:20px;
-     color:#111;
-}
-
-.informacoes p{
-     margin-top:8px;
-
-    font-size:14px;
-
-    color:#555;
-
-    line-height:1.4;
-}
-
-.tags{
-    display:flex;
-    gap:8px;
-    margin-top:15px;
-}
-
-.tags span{
-    background:#143DDB;
-    color:white;
-    padding:5px 14px;
-
-    border-radius:20px;
-
-    font-size:11px;
-
-    font-weight:600;
-}
-
-.acoes{
-    display:grid;
-
-    grid-template-columns:1fr 1fr;/*Cada botão ocupa metade do card.*/
-
-    background:linear-gradient(90deg,#1429CB,#4D6DFF);
-}
-
-.acoes button{
-    border:none;
-
-    background:none;
-
-    color:#fff;
-
-    padding:16px;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    cursor:pointer;
-}
-
-.acoes button:first-child{
-
-    border-right:1px solid rgba(255,255,255,.35);
-
-}
-
-@media (max-width:600px){
-
-    .postos-container{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .posto-topo{
-
-        padding:18px;
-
-    }
-
-    .informacoes h3{
-
-        font-size:18px;
-
-    }
-
+@media (max-width: 768px) {
+  .pontos-coleta-page {
+    padding-top: 140px;
+  }
 }
 
 
+/* ==============================
+   MAPA
+============================== */
 
+.mapa-wrapper {
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto 30px;
 
+  border-radius: 25px;
+  overflow: hidden; /* garante que o mapa respeite o border-radius */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
 
-.distancia{
-    font-weight:700;
-    color:#1d4ed8;
-    font-size:17px;
+  position: relative;
+  z-index: 1; /* fica abaixo do header (999) */
 }
 
-.acoes-proximo{
-    display:flex;
-    gap:15px;
-    margin-top:20px;
+/* Controles de zoom (+/-) do Leaflet.
+   Por padrão vêm com z-index: 1000, o que ultrapassa o header.
+   Forçamos para um valor bem mais baixo. */
+.leaflet-control-container,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 400 !important;
 }
 
-.acoes-proximo button{
-    padding:12px 24px;
-    border:none;
-    border-radius:12px;
-    background:#2563eb;
-    color:#fff;
-    cursor:pointer;
-    font-weight:600;
+/* O próprio painel do Leaflet também define z-index alto internamente */
+.leaflet-pane {
+  z-index: 1 !important;
 }
 
-.acoes-proximo button:hover{
-    background:#1d4ed8;
+.leaflet-control-zoom {
+  z-index: 400 !important;
+  margin-top: 12px !important;
+  margin-left: 12px !important;
+}
+
+@media (max-width: 768px) {
+  .mapa-wrapper {
+    width: 92%;
+    border-radius: 16px;
+  }
+}
+
+
+/* ==============================
+   CARDS DE POSTOS
+============================== */
+
+.postos-container {
+  width: 95%;
+  max-width: 1400px;
+  margin: 30px auto;
+
+  display: grid; /* deixa lado a lado */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.posto-card {
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  transition: transform .25s ease, box-shadow .25s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.posto-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+}
+
+.posto-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  flex: 1;
+}
+
+.icone {
+  width: 55px;
+  height: 55px;
+  min-width: 55px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 40px;
+  color: #0F45E8;
+  flex-shrink: 0;
+}
+
+.informacoes {
+  flex: 1;
+  min-width: 0;
+}
+
+.informacoes h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #111;
+}
+
+.informacoes p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.distancia {
+  font-weight: 700;
+  color: #1d4ed8;
+  font-size: 17px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.tags span {
+  background: #143DDB;
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: linear-gradient(90deg, #1429CB, #4D6DFF);
+}
+
+.acoes button {
+  border: none;
+  background: none;
+  color: #fff;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.acoes button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.acoes button:first-child {
+  border-right: 1px solid rgba(255, 255, 255, .35);
+}
+
+
+/* ==============================
+   RESPONSIVO (cards)
+============================== */
+
+@media (max-width: 1024px) {
+  .postos-container {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .postos-container {
+    grid-template-columns: 1fr;
+    width: 92%;
+    gap: 16px;
+    margin: 20px auto;
+  }
+
+  .posto-topo {
+    padding: 18px;
+  }
+
+  .informacoes h3 {
+    font-size: 18px;
+  }
+
+  .acoes button {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .icone {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    font-size: 32px;
+  }
 }

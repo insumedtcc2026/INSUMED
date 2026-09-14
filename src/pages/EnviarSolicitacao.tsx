@@ -1,15 +1,16 @@
 import {
     useEffect,
     useState,
-    type FormEvent
+    type FormEvent,
+    type ChangeEvent
 } from 'react';
-
+import Sidebar from '../components/universais/Sidebar.tsx';
 import api from '../services/SoliciatcaoService';
+import Header from '../components/universais/Header';
+import Footer from '../components/universais/Footer.tsx';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
-
-
 
 
 // ==============================
@@ -74,6 +75,13 @@ function fileToBase64(file: File): Promise<string> {
 
 function EnviarSolicitaçao() {
 
+    // Estado do sidebar precisa estar DENTRO do componente
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
+
     const [postos, setPostos] =
         useState<Posto[]>([]);
 
@@ -131,33 +139,33 @@ function EnviarSolicitaçao() {
     // ==============================
 
     function selecionarArquivo(
-    e: React.ChangeEvent<HTMLInputElement>
-) {
-    if (
-        e.target.files &&
-        e.target.files.length > 0
+        e: ChangeEvent<HTMLInputElement>
     ) {
-        const arquivo = e.target.files[0];
+        if (
+            e.target.files &&
+            e.target.files.length > 0
+        ) {
+            const arquivo = e.target.files[0];
 
-        const tamanhoMaximo =
-            5 * 1024 * 1024;
+            const tamanhoMaximo =
+                5 * 1024 * 1024;
 
-        if (arquivo.size > tamanhoMaximo) {
+            if (arquivo.size > tamanhoMaximo) {
 
-            setMessage(
-                'A prescrição deve ter no máximo 5 MB.'
-            );
+                setMessage(
+                    'A prescrição deve ter no máximo 5 MB.'
+                );
 
-            e.target.value = '';
+                e.target.value = '';
 
-            return;
+                return;
+            }
+
+            setFile(arquivo);
+
+            setMessage('');
         }
-
-        setFile(arquivo);
-
-        setMessage('');
     }
-}
 
 
     // ==============================
@@ -213,10 +221,7 @@ function EnviarSolicitaçao() {
 
 
             // Envia para o backend
-            console.log(
-    "TOKEN:",
-    localStorage.getItem("token")
-);
+
             const response =
                 await api.post(
                     '/solicitacoes',
@@ -229,7 +234,12 @@ function EnviarSolicitaçao() {
                             base64String,
 
                         sol_observacao:
-                            observacao
+                            observacao,
+
+                        // NOVO: manda o mimetype real do arquivo (ex: "image/png",
+                        // "application/pdf") pro backend saber o que foi enviado.
+                        sol_prescricao_tipo:
+                            file.type
 
                     }
                 );
@@ -237,19 +247,19 @@ function EnviarSolicitaçao() {
 
             if (
                 response.status === 200 ||
-                response.status === 201 )
-                { Swal.fire({
-                        icon: 'success',
-                        title: 'Prescrição Enviada com sucesso!',
-                        text: 'Sua prescrição foi enviada com êxito.',
-                        confirmButtonColor: '#00ce11',
-                      }),
-                      setMessage('')
-            }
-            {
+                response.status === 201
+            ) {
 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Prescrição Enviada com sucesso!',
+                    text: 'Sua prescrição foi enviada com êxito.',
+                    confirmButtonColor: '#00ce11',
+                });
 
-                // Limpa formulário
+                setMessage('');
+
+                // Limpa formulário (só quando dá certo)
 
                 setPosto('');
 
@@ -272,14 +282,12 @@ function EnviarSolicitaçao() {
 
         } catch (error) {
 
-                { Swal.fire({
-                        icon: 'error',
-                        title: 'Erro ao enviar prescrição!',
-                        text: 'Não foi possível enviar a prescrição.',
-                        confirmButtonColor: '#dc3545',
-                      }),
-                      setMessage('')
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao enviar prescrição!',
+                text: 'Não foi possível enviar a prescrição.',
+                confirmButtonColor: '#dc3545',
+            });
 
             setMessage('');
 
@@ -296,197 +304,182 @@ function EnviarSolicitaçao() {
     // ==============================
 
     return (
+        <>
+            <Header onMenuClick={toggleSidebar} />
 
-       <div className="solicitacao-page">
+            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
-    <div className="solicitacao-card">
+            <div className="solicitacao-page">
 
-        <div className="solicitacao-header">
-            <h1>Enviar Prescrição</h1>
+                <div className="solicitacao-card">
 
-            <p>
-                Envie sua prescrição para solicitar os insumos necessários.
-            </p>
-        </div>
- <div className="info-prescricao">
-      <div className="info-icone">
-        <span>i</span>
-      </div>
+                    <div className="solicitacao-header">
+                        <h1>Enviar Prescrição</h1>
 
-      <div className="info-conteudo">
-        <h3>Por que enviar sua prescrição?</h3>
+                        <p>
+                            Envie sua prescrição para solicitar os insumos necessários.
+                        </p>
+                    </div>
 
-        <p>
-          A prescrição é o documento que contém os insumos necessários para o
-          seu tratamento.    
-          Com ela, conseguimos preparar seus materiais e informar quando
-          estarão disponíveis para retirada.
-        </p>
+                    <div className="info-prescricao">
+                        <div className="info-icone">
+                            <span>i</span>
+                        </div>
 
-        
-          
-    
-      </div>
-    </div>
-  
-        <form
-            className="solicitacao-form"
-            onSubmit={handleSubmit}
-        >
+                        <div className="info-conteudo">
+                            <h3>Por que enviar sua prescrição?</h3>
 
-            <div className="formulario-grid">
+                            <p>
+                                A prescrição é o documento que contém os insumos necessários para o
+                                seu tratamento.
+                                Com ela, conseguimos preparar seus materiais e informar quando
+                                estarão disponíveis para retirada.
+                            </p>
+                        </div>
+                    </div>
 
-               {/* PRESCRIÇÃO */}
-<div className="campo-card prescricao-card">
+                    <form
+                        className="solicitacao-form"
+                        onSubmit={handleSubmit}
+                    >
 
-    <div className="prescricao-titulo">
-        Envie a foto da sua prescrição
-    </div>
+                        <div className="formulario-grid">
 
-    <div className="prescricao-subtitulo">
-        A imagem deve estar nítida e legível
-    </div>
+                            {/* PRESCRIÇÃO */}
+                            <div className="campo-card prescricao-card">
 
-    <div className="arquivo-area">
+                                <div className="prescricao-titulo">
+                                    Envie a foto da sua prescrição
+                                </div>
 
-        {/* ÍCONE DE UPLOAD */}
-        <div className="upload-icon">
-            <span>⇧</span>
-        </div>
+                                <div className="prescricao-subtitulo">
+                                    A imagem deve estar nítida e legível
+                                </div>
 
-        {/* INPUT ESCONDIDO */}
-        <input
-            id="prescricao"
-            type="file"
-            accept="image/*,.pdf"
-            onChange={selecionarArquivo}
-            required
-            className="input-arquivo"
-        />
+                                <div className="arquivo-area">
 
-        {/* TEXTO */}
-        <span className="upload-texto">
-            {file
-                ? file.name
-                : "Arraste e solte uma imagem aqui"}
-        </span>
+                                    {/* ÍCONE DE UPLOAD */}
+                                    <div className="upload-icon">
+                                        <span>⇧</span>
+                                    </div>
 
-        {/* OU */}
-        <span className="upload-ou">
-            ou
-        </span>
+                                    {/* INPUT ESCONDIDO */}
+                                    <input
+                                        id="prescricao"
+                                        type="file"
+                                        accept="image/*,.pdf"
+                                        onChange={selecionarArquivo}
+                                        required
+                                        className="input-arquivo"
+                                    />
 
-        {/* BOTÃO */}
-        <label
-            htmlFor="prescricao"
-            className="btn-selecionar"
-        >
-            Selecionar imagem
-        </label>
+                                    {/* TEXTO */}
+                                    <span className="upload-texto">
+                                        {file
+                                            ? file.name
+                                            : "Arraste e solte uma imagem aqui"}
+                                    </span>
 
-        {/* FORMATOS */}
-        <small className="formatos">
-            Formatos aceitos: JPG, PNG ou PDF
-            <br />
-            Tamanho máximo: 10MB
-        </small>
+                                    {/* OU */}
+                                    <span className="upload-ou">
+                                        ou
+                                    </span>
 
-    </div>
+                                    {/* BOTÃO */}
+                                    <label
+                                        htmlFor="prescricao"
+                                        className="btn-selecionar"
+                                    >
+                                        Selecionar imagem
+                                    </label>
 
-</div>
+                                    {/* FORMATOS */}
+                                    <small className="formatos">
+                                        Formatos aceitos: JPG, PNG ou PDF
+                                        <br />
+                                        Tamanho máximo: 10MB
+                                    </small>
+
+                                </div>
+
+                            </div>
 
 
-                {/* INFORMAÇÕES */}
-                <div className="campo-card">
+                            {/* INFORMAÇÕES */}
+                            <div className="campo-card">
 
-                    <div className="campo">
+                                <div className="campo">
 
-                        <label htmlFor="posto">
-                            Unidade de Saúde
-                        </label>
+                                    <label htmlFor="posto">
+                                        Unidade de Saúde
+                                    </label>
 
-                        <select
-                            id="posto"
-                            value={posto}
-                            onChange={e =>
-                                setPosto(e.target.value)
-                            }
-                            required
+                                    <select
+                                        id="posto"
+                                        value={posto}
+                                        onChange={e =>
+                                            setPosto(e.target.value)
+                                        }
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Selecione uma
+                                        </option>
+
+                                        {postos.map(posto => (
+                                            <option
+                                                key={posto.pos_id}
+                                                value={posto.pos_id}
+                                            >
+                                                {posto.pos_nome}
+                                            </option>
+                                        ))}
+
+                                    </select>
+
+                                </div>
+
+
+                                <div className="campo">
+
+                                    <label htmlFor="observacao">
+                                        Observação
+                                    </label>
+
+                                    <textarea
+                                        id="observacao"
+                                        value={observacao}
+                                        onChange={e =>
+                                            setObservacao(e.target.value)
+                                        }
+                                        placeholder="Digite alguma informação adicional..."
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            className="btn-enviar"
+                            type="submit"
+                            disabled={enviando}
                         >
+                            {enviando
+                                ? "Enviando..."
+                                : "Enviar solicitação"}
+                        </button>
 
-                            <option value="">
-                                Selecione uma
-                            </option>
-
-                            {postos.map(posto => (
-                                <option
-                                    key={posto.pos_id}
-                                    value={posto.pos_id}
-                                >
-                                    {posto.pos_nome}
-                                </option>
-                            ))}
-
-                        </select>
-
-                    </div>
-
-
-                    <div className="campo">
-
-                        <label htmlFor="observacao">
-                            Observação
-                        </label>
-
-                        <textarea
-                            id="observacao"
-                            value={observacao}
-                            onChange={e =>
-                                setObservacao(e.target.value)
-                            }
-                            placeholder="Digite alguma informação adicional..."
-                        />
-
-                    </div>
+                    </form>
 
                 </div>
 
             </div>
-<div className="info-prescricao1">
-      <div className="info-icone">
-        <span>i</span>
-      </div>
 
-      <div className="info-conteudo">
-        <h3>Por que enviar sua prescrição?</h3>
-
-        <p>
-          A prescrição é o documento que contém os insumos necessários para o
-          seu tratamento.    
-          Com ela, conseguimos preparar seus materiais e informar quando
-          estarão disponíveis para retirada.
-        </p>
-
-        
-          
-    
-      </div>
-    </div>
-            <button
-                className="btn-enviar"
-                type="submit"
-                disabled={enviando}
-            >
-                {enviando
-                    ? "Enviando..."
-                    : "Enviar solicitação"}
-            </button>
-
-        </form>
-
-    </div>
-     
-</div>
+            <Footer />
+        </>
     );
 }
 

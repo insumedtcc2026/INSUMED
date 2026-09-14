@@ -1,14 +1,6 @@
-import {useState, useEffect} from 'react';
-import { prescricaopaciente } from '../services/PrescricaoService';
+import { useState, useEffect } from 'react';
+import { prescricaopaciente, type SolicitacaoPaciente } from '../services/PrescricaoService';
 
-export interface SolicitacaoPaciente {
-    sol_id: number;
-    sol_data_solicitacao: string;
-    sol_status: string;
-    sol_observacao: string | null;
-    pos_id: number;
-    sol_prescricao: string | null;
-}
 export function usePrescricao(){
   const [prescricoes, setPrescricoes] = useState<SolicitacaoPaciente[]>([]);
     const [carregando, setCarregando] = useState<boolean>(true);

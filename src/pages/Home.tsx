@@ -33,9 +33,6 @@ export default function Home() {
   return (
     <>
    <Header onMenuClick={toggleSidebar} />
-      
-
-      
 
       {/* Coloque Sidebar apenas se você já tiver sidebarOpen e toggleSidebar */}
        <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> 
@@ -45,8 +42,6 @@ export default function Home() {
           imageUrl={bannerInsumed}
           alt="Banner Insumed"
         />
-
-        
       </main>
     
       

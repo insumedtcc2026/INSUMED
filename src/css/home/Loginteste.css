@@ -1,25 +1,21 @@
-
-
-
 .login-fullscreen-container {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%; /* era 100vw — 100vw pode causar overflow horizontal por causa da barra de rolagem */
 }
 
 /* --- LADO ESQUERDO (Imagem) --- */
 .login-image-panel {
   flex: 1;
-  display: flex;
+  display: none; /* esconde a imagem em telas pequenas, mostra só a partir do breakpoint */
 }
 
 .login-image-panel img {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
 }
-
 
 .login-form-panel {
   flex: 1;
@@ -27,7 +23,7 @@
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
-  padding: 40px 20px;
+  padding: clamp(20px, 5vw, 40px) 20px; /* padding se ajusta ao tamanho da tela */
 }
 
 .form-wrapper {
@@ -37,42 +33,35 @@
   flex-direction: column;
 }
 
-
 .login-left {
-  font-size: 28px;
+  font-size: clamp(22px, 5vw, 28px);
   margin-bottom: 30px;
   text-align: center;
   font-weight: 700;
   background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.login-inputs {
-  margin-bottom: 20px;
 }
 
 label {
   font-weight: 500;
   margin-bottom: 8px;
   display: block;
-  font-size: 16px;
+  font-size: clamp(14px, 3.5vw, 16px);
   color: #333;
 }
-
 
 input {
   width: 100%;
   padding: 12px;
-  border: 2px solid transparent; 
+  border: 2px solid transparent;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 16px; /* nunca menos que 16px, senão iOS dá zoom automático no input */
   outline: none;
   background:
     linear-gradient(white, white) padding-box,
     linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
 }
-
 
 .btn-entrar {
   width: 100%;
@@ -80,7 +69,7 @@ input {
   margin: 15px 0;
   border: none;
   border-radius: 15px;
-  font-size: 17px;
+  font-size: clamp(15px, 4vw, 17px);
   background: linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%);
   color: #fff;
   font-weight: 600;
@@ -91,12 +80,6 @@ input {
 .btn-entrar:hover {
   opacity: 0.9;
 }
-
-
-.google-btn:hover {
-  background: #d4d5d8;
-}
-
 
 .register-text {
   text-align: center;
@@ -116,36 +99,44 @@ input {
   text-decoration: underline;
 }
 
-
 @media (min-width: 768px) {
   .login-fullscreen-container {
-    flex-direction: row; 
+    flex-direction: row;
   }
 
-  .login-image-panel, .login-form-panel {
+  .login-image-panel {
+    display: flex; /* volta a aparecer em telas maiores */
+  }
+
+  .login-image-panel,
+  .login-form-panel {
     width: 50%;
   }
 }
-.input-password1 img{
-    position: relative;
-    width: 20%;
-    padding-right:40px;
-   
+
+/* --- OLHO DA SENHA (responsivo) --- */
+.input-password1 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.icone-olho1{
-    position: absolute;
-
-    left: 86%;
-    top: -50%;
-
-    transform: translateY(-145%);
-
-   width: 25px;
-    height: 25px;
-    
-    
-
-    cursor: pointer;
+.input-password1 input {
+  padding-right: 44px; /* espaço reservado pro ícone, sem sobrepor o texto digitado */
 }
 
+.icone-olho1 {
+  position: absolute;
+  right: 12px;
+  top: 60%;
+  transform: translateY(-25%);
+  cursor: pointer;
+  width: clamp(20px, 4vw, 46px);
+  height: clamp(18px, 4vw, 38px);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.icone-olho1:hover {
+  opacity: 1;
+}

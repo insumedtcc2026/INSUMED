@@ -6,8 +6,6 @@ import Swal from 'sweetalert2';
 import olhoAberto from '../../assets/home-log/olho aberto.png'
 import olhoFechado from '../../assets/home-log/olho fechado.png'
 
-
-
 import images from "../../assets/home-log/teste login.png"; 
 
 

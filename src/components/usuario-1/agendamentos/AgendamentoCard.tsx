@@ -52,7 +52,6 @@ export default function AgendamentoCard({
       setLoadingAcao(null);
     }
   }
-
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-3xl bg-gray-50 px-6 py-4 shadow-sm">
       {/* Avatar + dados do paciente */}

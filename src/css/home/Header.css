@@ -1,10 +1,4 @@
-/* =============================================
-   INSUMED — Floating Header
-   ============================================= */
 
-/* =============================================
-   Ajuste na classe Base do Header
-   ============================================= */
 .insumed-header {
   position: fixed;
   top: 20px;
@@ -18,6 +12,7 @@
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+  padding-top: var(--header-height);
 
   /* Mantemos as transições suaves de tamanho/cor existentes */
   transition:
@@ -29,18 +24,15 @@
   opacity: 0; 
 }
 
-/* =============================================
-   Classes de Controle de Animação Ativa
-   ============================================= */
-
-/* Quando estiver visível (Entrada) */
 .insumed-header.header--show {
   animation: headerReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  padding-top: var(--header-height);
 }
 
 /* Quando precisar desaparecer (Saída Inversa Perfeita) */
 .insumed-header.header--hide {
   animation: headerHide 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  padding-top: var(--header-height);
 }
 
 

@@ -1,4 +1,9 @@
 
+.home-pacientes-page{
+    padding-top: var(--header--height);
+}
+
+
 .header-paciente {
 
     position: fixed;

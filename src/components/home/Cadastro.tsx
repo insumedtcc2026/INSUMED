@@ -5,9 +5,9 @@ import Swal from 'sweetalert2';
 import olhoAberto from '../../assets/home-log/olho aberto.png';
 import olhoFechado from '../../assets/home-log/olho fechado.png';
 import { useState } from "react";
-import "../../css/home/Cadastro.css"
+import "../../css/home/Cadastro.css";
 
-  function Cadastro(){
+function Cadastro(){
 
 const navigate = useNavigate();
     
@@ -157,7 +157,7 @@ const limparFormulario = () => {
       </div>
 
       <div className="campo">
-        <label>Gênero</label>
+        <label className='labels'>Gênero</label>
         <select
       
       value={sexo}
@@ -226,8 +226,7 @@ const limparFormulario = () => {
 
       <div className="campo">
 
-
-        <label>Cor</label>
+        <label className='text'>Cor</label>
          <select
 
 value={cor}

@@ -1,6 +1,9 @@
 .header {
-  position: sticky;
+  position: fixed; /* era 'sticky' — precisa ser 'fixed' pra poder sumir da tela com translateY */
   top: 0;
+  left: 0;
+  width: 100%;
+
   z-index: 999;
 
   display: flex;
@@ -14,6 +17,14 @@
   border-bottom: 1px solid #e5e7eb;
 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+/* Aplicada via JS quando o usuário rola pra baixo */
+.header-hidden {
+  transform: translateY(-100%);
 }
 
 .header-left {

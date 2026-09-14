@@ -18,6 +18,7 @@ import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
 import AutorizarPrescricao from './Administrador/AutorizarPrescricao'
+import './index.css';
 
 function App() {
   return (

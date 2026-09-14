@@ -1,6 +1,6 @@
-/* =========================
-   PÁGINA
-========================= */
+.page{
+    padding-top: var(--header-height);
+}
 
 .pagina-pendencias {
     min-height: 100vh;
@@ -8,6 +8,7 @@
     padding: 25px 7%;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
+    padding-top: var(--header-height);
 }
 
 

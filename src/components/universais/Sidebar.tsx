@@ -42,11 +42,6 @@ export default function Sidebar({
       path: '/EnviarSolicitacao',
     },
     {
-      icon: IoBandage,
-      label: 'Meus Insumos',
-      path: '/Insumo',
-    },
-    {
       icon: MdAddLocation,
       label: 'Pontos de Coleta',
       path: '/pontos-coleta',

@@ -12,6 +12,26 @@ export interface PrescricaoPendente {
     sol_prescricao: string;
 }
 
+// Usada na LISTAGEM — bate com o que "prescicaodopaciente" retorna
+export interface SolicitacaoPaciente {
+    sol_id: number;
+    sol_data_solicitacao: string;
+    sol_status: string;
+    sol_observacao: string | null;
+    tem_prescricao: boolean;
+    sol_prescricao_tipo: string | null; 
+}
+
+// DETALHE — bate com o que "detalhesPrescricaoPaciente" retorna
+export interface DetalhesPrescricao {
+    sol_id: number;
+    sol_status: string;
+    sol_data_solicitacao: string;
+    sol_observacao: string | null;
+    sol_prescricao_base64: string | null;
+    sol_prescricao_mimetype: string | null; // NOVO
+}
+
 export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]> => {
 
     const token = localStorage.getItem("token");
@@ -27,13 +47,27 @@ export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]
 
     return response.data;
 
-  };
+};
 
-export const prescricaopaciente = async () => {
+// LISTA: chama /solicitacao/pacienteid
+export const prescricaopaciente = async (): Promise<SolicitacaoPaciente[]> => {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/solicitacao/pacienteid`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await axios.get<SolicitacaoPaciente[]>(
+        `${API_URL}/solicitacao/pacienteid`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+};
+
+// DETALHE: chama /solicitacao/:id/detalhes, sob demanda
+export const buscarDetalhesPrescricao = async (
+    sol_id: number
+): Promise<DetalhesPrescricao> => {
+    const token = localStorage.getItem("token");
+    const response = await axios.get<DetalhesPrescricao>(
+        `${API_URL}/solicitacao/${sol_id}/detalhes`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
     return response.data;
 };
 
@@ -41,9 +75,7 @@ export async function enviarPrescricao (
   pos_id: number,
   sol_prescricao: string,
   sol_observacao: string,
-  sol_status: string,
-  sol_data_solicitacao: string
-
+  sol_prescricao_tipo: string, 
 ) {
   const token = localStorage.getItem("token");
 
@@ -53,8 +85,7 @@ export async function enviarPrescricao (
       pos_id,
       sol_prescricao,
       sol_observacao,
-      sol_status,
-      sol_data_solicitacao
+      sol_prescricao_tipo,
     },
     {
       headers: {
@@ -66,4 +97,3 @@ export async function enviarPrescricao (
 
   return response.data;
 }
- 
