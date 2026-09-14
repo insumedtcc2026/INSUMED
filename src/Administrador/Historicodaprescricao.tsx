@@ -159,8 +159,8 @@ export default function Historico() {
                         Todos os status
                     </option>
 
-                    <option value="Autorizada">
-                        Autorizadas
+                    <option value="Aprovado">
+                        Aprovada
                     </option>
 
                     <option value="Reenvio">
@@ -291,17 +291,17 @@ export default function Historico() {
                             className={
                                 `historico-status ${
                                     prescricao.sol_status ===
-                                    "Autorizada"
-                                        ? "autorizada"
+                                    "Aprovado"
+                                        ? "aprovada"
                                         : "reenvio"
                                 }`
                             }
                         >
 
                             {prescricao.sol_status ===
-                            "Autorizada"
-                                ? "Autorizada"
-                                : "Não autorizado"}
+                            "Aprovado"
+                                ? "Aprovado"
+                                : "Reenvio"}
 
                         </div>
 

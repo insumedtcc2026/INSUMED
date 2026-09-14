@@ -106,6 +106,7 @@ export const buscarHistoricoPrescricoes =
             await axios.get<HistoricoPrescricao[]>(
                 `${API_URL}/prescricoes/historico`
             );
+             console.log("HISTÓRICO RETORNADO PELA API:", response.data);
 
         return response.data;
     };
