@@ -18,6 +18,7 @@ import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
 import AutorizarPrescricao from './Administrador/AutorizarPrescricao'
+import Historicodaprescricao from './Administrador/Historicodaprescricao'
 import './index.css';
 
 function App() {
@@ -91,6 +92,10 @@ function App() {
   element={<AutorizarPrescricao />}
 />
       
+      <Route
+  path="/Historicodaprescricao"
+  element={<Historicodaprescricao />}
+/>
 
       <Route
         path="/Insumos"

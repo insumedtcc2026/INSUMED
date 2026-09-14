@@ -71,6 +71,45 @@ export const buscarDetalhesPrescricao = async (
     return response.data;
 };
 
+export interface HistoricoPrescricao {
+
+    sol_id: number;
+
+    pac_id: number;
+
+    pac_nome: string;
+
+    pac_cpf: string;
+
+    ins_nome?: string;
+
+    pos_nome?: string;
+
+    sol_status: string;
+
+    sol_data_solicitacao: string;
+
+    sol_data_analise?: string;
+
+    sol_motivo_reenvio?: string;
+
+    sol_observacao?: string;
+
+    sol_prescricao_tipo?: string;
+}
+
+
+export const buscarHistoricoPrescricoes =
+    async (): Promise<HistoricoPrescricao[]> => {
+
+        const response =
+            await axios.get<HistoricoPrescricao[]>(
+                `${API_URL}/prescricoes/historico`
+            );
+
+        return response.data;
+    };
+
 export async function enviarPrescricao (
   pos_id: number,
   sol_prescricao: string,

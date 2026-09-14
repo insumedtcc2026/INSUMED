@@ -37,6 +37,11 @@ export default function Sidebar({
       path: '/Agendamentosadm',
     },
     {
+      icon: IoPersonSharp,
+      label: 'Historicodaprescricao',
+      path: '/Historicodaprescricao',
+    },
+    {
       icon: IoBandage,
       label: 'Historico',
       path: '/Historicoadm',
@@ -62,6 +67,9 @@ export default function Sidebar({
       label: 'TodosAgendamentos',
       path: '/TodosAgendamentos',
     },
+
+
+
     {
       icon: IoPersonSharp,
       label: 'Sair',

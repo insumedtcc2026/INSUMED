@@ -150,7 +150,7 @@ const [motivo, setMotivo] = useState("");
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-    navigate('/VerSolicitacoes');
+    navigate('/VerSolicitaçoes');
     setMostrarMotivos(false);
 
   } catch (error: any) {
@@ -205,7 +205,7 @@ const enviarSolicitacao = async () => {
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ir para prescrições '
           })
-navigate('/VerSolicitacoes')
+navigate('/VerSolicitaçoes')
   } catch (error: any) {
 
     console.error(
