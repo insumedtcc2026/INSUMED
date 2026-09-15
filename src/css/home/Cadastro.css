@@ -97,10 +97,25 @@
 /* ============================
    INPUTS E SELECTS
 ============================ */
-.formulario input,
-.formulario select {
+.formulario .campo input{
   width: 100%;
   min-height: 40px;
+  padding: 24px 11px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: inherit;
+  outline: none;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
+}
+
+
+
+.formulario select {
+  width: 100%;
+  min-height: 50px;
   padding: 12px 11px;
   border: 2px solid transparent;
   border-radius: 10px;
@@ -120,7 +135,7 @@
 
 .formulario input::placeholder {
   color: #a0a0a0;
-  font-size: 14px;
+  font-size: 18px;
   
 }
 

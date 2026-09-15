@@ -12,50 +12,66 @@ function Cadastro(){
 const navigate = useNavigate();
     
 const handleCadastro = async () => {
- if (password !== confirmacaodesenha) {
+  if (password !== confirmacaodesenha) {
     Swal.fire({
       icon: 'error',
       title: 'Ops...',
       text: 'Os campos referente a senha devem ter a mesma senha, tente novamente!',
       confirmButtonColor: '#d33'
     });
-    return; // Muda essa parte
+    return;
   }
+
   console.log(sexo);
+
   try {
-    console.log(sexo);const response = await axios.post('https://backend-insumed-lhac.vercel.app/pacientes', {
-      
-  nome: text1,
-  email: email,
-  telefone: tel,
-  cpf: cpf,
-  data_nasc: date,
-  sexo: sexo,
-  endereco: endereco,
-  raca: cor,
-  senha: password,
-  cep: cep,
-});
+    console.log(sexo);
+
+    const response = await axios.post(
+      'https://backend-insumed-lhac.vercel.app/pacientes',
+      {
+        nome: text1,
+        email: email,
+        telefone: tel,
+        cpf: cpf,
+        data_nasc: date,
+        sexo: sexo,
+        endereco: endereco,
+        raca: cor,
+        senha: password,
+        cep: cep,
+      }
+    );
+
     console.log(response.data);
-   Swal.fire({
-        icon: 'success',
-        title: 'Cadastro realizado!',
-        text: 'Seu cadastro foi efetuado com êxito.',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Ir para o Login'
-      })
-      limparFormulario();
-      navigate('/login');
-  } catch (error) {
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Cadastro realizado!',
+      text: 'Seu cadastro foi efetuado com êxito.',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Ir para o Login'
+    });
+
+    limparFormulario();
+    navigate('/login');
+
+  } catch (error: any) {
     console.error("Erro:", error);
+
+    // Pega os erros enviados pelo backend
+    const erros = error.response?.data?.erros;
+
     Swal.fire({
       icon: 'error',
       title: 'Ops...',
-      text: 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.',
+      text: erros
+        ? erros.join('\n')
+        : 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.',
       confirmButtonColor: '#d33'
     });
   }
-}
+};
 
 const limparFormulario = () => {
   setEmail("");
