@@ -9,6 +9,7 @@ import "../css/home/Historicodaprescricao.css";
 
 
 export default function Historico() {
+    
 
     const navigate = useNavigate();
 
