@@ -220,7 +220,7 @@ export default function Historico() {
 
                         <div className="historico-avatar">
 
-                            <span>♙</span>
+                            <span> 👤</span>
 
                         </div>
 
@@ -313,13 +313,14 @@ export default function Historico() {
                             className="historico-vermais"
                             onClick={() =>
                                 navigate(
-                                    `/administrador/prescricao/${prescricao.sol_id}`
-                                )
+                                    `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
+                             )
+                                
                             }
                         >
 
                             Ver mais
-                            <span>⌃</span>
+                            <span></span>
 
                         </button>
 
