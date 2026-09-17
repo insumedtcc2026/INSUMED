@@ -19,6 +19,8 @@
     margin: 5px 0 12px;
 
     font-weight: 600;
+
+    margin-top: 100px;
 }
 
 
@@ -34,6 +36,7 @@
     margin: 0 auto 20px;
 
     display: flex;
+    margin-top: -12px;
 
     align-items: center;
 
@@ -78,10 +81,23 @@
 
     gap: 8px;
 
-    margin-bottom: 18px;
+    margin-left: -80px;
+
+    margin-bottom: 20px;
 
     font-size: 11px;
+
+    
 }
+
+.historico-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  width: 90%;
+  margin: 20px auto;
+}
+
 
 
 .historico-filtros select,
@@ -95,6 +111,7 @@
     font-size: 10px;
 
     background: white;
+    
 }
 
 
@@ -138,28 +155,27 @@
 
 
 /* AVATAR */
-
 .historico-avatar {
-    width: 45px;
-
-    height: 45px;
-
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     border-radius: 50%;
 
     background: #eadcff;
+    color: #4938a8;
+
+    font-size: 20px;
+    font-weight: bold;
 }
 
 
 .historico-avatar span {
-    font-size: 30px;
+    font-size: 0px;
 
     color: #4938a8;
 }
@@ -230,24 +246,25 @@
 .historico-status {
     position: absolute;
 
-    left: 22px;
+    left: 18px;
 
     bottom: 8px;
 
     padding: 3px 18px;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     font-size: 8px;
 
-    color: white;
+    color: rgb(243, 239, 239);
 
     font-weight: bold;
+    margin-right: 15px;
 }
 
 
-.historico-status.autorizada {
-    background: #28d15c;
+.historico-status.aprovada {
+    background: #1ac74e;
 }
 
 

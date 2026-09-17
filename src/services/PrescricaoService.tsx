@@ -87,6 +87,8 @@ export interface HistoricoPrescricao {
 
     sol_status: string;
 
+     pac_avatar: string;
+
     sol_data_solicitacao: string;
 
     sol_data_analise?: string;

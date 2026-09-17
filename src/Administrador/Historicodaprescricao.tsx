@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import {buscarHistoricoPrescricoes} from "../services/PrescricaoService";
 import type {HistoricoPrescricao} from "../services/PrescricaoService";
+import Header from "../components/universais/HeaderAdm";
+import Sidebar from "../components/universais/Siderbaradm";
 
 
 import "../css/home/Historicodaprescricao.css";
@@ -30,6 +32,7 @@ export default function Historico() {
 
     const [carregando, setCarregando] =
         useState(true);
+const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
     useEffect(() => {
@@ -39,6 +42,9 @@ export default function Historico() {
     }, []);
 
 
+  const toggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
     const carregarHistorico = async () => {
 
         try {
@@ -108,7 +114,7 @@ export default function Historico() {
         return new Date(data)
             .toLocaleDateString("pt-BR");
     };
-
+      
 
     if (carregando) {
 
@@ -121,6 +127,17 @@ export default function Historico() {
 
 
     return (
+<>
+            <Header
+                
+                 onMenuClick={toggleSidebar}
+                
+              />
+        
+              <Sidebar
+                isOpen={sidebarOpen}
+                        onClose={toggleSidebar}
+              />
 
         <div className="historico-page">
 
@@ -144,8 +161,8 @@ export default function Historico() {
 
             </div>
 
-
             {/* FILTROS */}
+            <div className="historico-container">
 
             <div className="historico-filtros">
 
@@ -165,7 +182,7 @@ export default function Historico() {
                     </option>
 
                     <option value="Reenvio">
-                        Reenvios
+                        Reenvio
                     </option>
 
                 </select>
@@ -192,6 +209,9 @@ export default function Historico() {
                 />
 
             </div>
+</div>
+
+
 
 
             {/* CARDS */}
@@ -210,6 +230,7 @@ export default function Historico() {
 
                 {prescricoesFiltradas.map(
                     (prescricao) => (
+                         
 
                     <div
                         className="historico-card"
@@ -217,13 +238,9 @@ export default function Historico() {
                     >
 
                         {/* ÍCONE */}
-
-                        <div className="historico-avatar">
-
-                            <span> 👤</span>
-
+                     <div className="historico-avatar">
+                        <span>{prescricao.pac_avatar}</span>
                         </div>
-
 
                         {/* PACIENTE */}
 
@@ -332,5 +349,6 @@ export default function Historico() {
             </div>
 
         </div>
+        </>
     );
 }
