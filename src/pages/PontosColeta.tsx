@@ -29,16 +29,27 @@ const iconPosto = L.icon({
   popupAnchor: [0, -40],
 });
 
+// faz com que o icon não fique renderizando toda hora, "Se existir um posto selecionado, use ele. Caso contrário, use a posição do usuário."
 
-function UpdateMapCenter({ position }: { position: [number, number] }) {
-  // faz com que o icon não fique renderizando toda hora, "Se existir um posto selecionado, use ele. Caso contrário, use a posição do usuário."
+function UpdateMapCenter({
+  position,
+  focoPosto
+}: {
+  position: [number, number];
+  focoPosto: boolean;
+}) {
   const map = useMap();
 
   useEffect(() => {
-    map.setView(position, 15, {
-      animate: true
-    });
-  }, [position, map]);
+    if (focoPosto) {
+      map.flyTo(position, 18, {
+        animate: true,
+        duration: 1.5
+      });
+    } else {
+      map.setView(position, 15);
+    }
+  }, [position, focoPosto, map]);
 
   return null;
 }
@@ -111,6 +122,10 @@ export default function PontosColeta() {
   const [postoSelecionado, setPostoSelecionado] =
     useState<Posto | null>(null);
   const [postos, setPostos] = useState<Posto[]>([]);
+  const [mostrarCep, setMostrarCep] = useState(false);
+const [cep, setCep] = useState("");
+const [buscandoCep, setBuscandoCep] = useState(false);
+const [focoPosto, setFocoPosto] = useState(false);
 
 
   useEffect(() => {
@@ -134,37 +149,57 @@ export default function PontosColeta() {
 
   // função que pede permissão para obter a localização
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setPosicao([
-          position.coords.latitude,
-          position.coords.longitude,
-        ]);
-      },
-      (error) => {
-        console.log(error);
-        alert("Não foi possível obter sua localização.");
-      }
-    );
-  }, []);
+  if (!navigator.geolocation) {
+    setMostrarCep(true);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setPosicao([
+        position.coords.latitude,
+        position.coords.longitude,
+      ]);
+
+      setMostrarCep(false);
+    },
+    (error) => {
+      console.log("Localização não permitida:", error);
+
+      // Se o usuário recusar a localização,
+      // mostramos a opção de informar o CEP.
+      setMostrarCep(true);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    }
+  );
+}, []);
 
 
   useEffect(() => {
 
-    axios.get("https://backend-insumed-lhac.vercel.app/postos")
-      //axios.get("http://localhost:3344/postos")
+   // axios.get("https://backend-insumed-lhac.vercel.app/postos")
+      axios.get("http://localhost:3344/postos")
       .then((res) => {
+ const postosComDistancia = res.data.map((posto: Posto) => ({
+        ...posto,
+        distancia: calcularDistancia(
+          posicao[0],
+          posicao[1],
+          Number(posto.pos_latitude),
+          Number(posto.pos_longitude)
+        ),
+      }));
 
-        setPostos(res.data);
-
-      })
-      .catch((err) => {
-
-        console.log(err);
-
-      });
-
-  }, []);
+      setPostos(postosComDistancia);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, []);
 
 
   function calcularDistancia(
@@ -211,7 +246,123 @@ export default function PontosColeta() {
     );
 
   };
+const buscarCep = async () => {
+  const cepLimpo = cep.replace(/\D/g, "");
 
+  if (cepLimpo.length !== 8) {
+    Swal.fire({
+      icon: "warning",
+      title: "CEP inválido",
+      text: "Digite um CEP com 8 números.",
+      confirmButtonColor: "#0C299A",
+    });
+
+    return;
+  }
+
+  try {
+    setBuscandoCep(true);
+
+    // 1️⃣ Busca o endereço através do CEP
+    const respostaCep = await axios.get(
+      `https://viacep.com.br/ws/${cepLimpo}/json/`
+    );
+
+    const endereco = respostaCep.data;
+
+    if (endereco.erro) {
+      Swal.fire({
+        icon: "error",
+        title: "CEP não encontrado",
+        text: "Verifique o CEP informado.",
+        confirmButtonColor: "#0C299A",
+      });
+
+      return;
+    }
+
+    // 2️⃣ Monta o endereço para geocodificação
+    const enderecoCompleto = [
+      endereco.logradouro,
+      endereco.bairro,
+      endereco.localidade,
+      endereco.uf,
+      "Brasil",
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    // 3️⃣ Transforma endereço em latitude/longitude
+    const respostaMapa = await axios.get(
+      "https://nominatim.openstreetmap.org/search",
+      {
+        params: {
+          q: enderecoCompleto,
+          format: "json",
+          limit: 1,
+        },
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!respostaMapa.data.length) {
+      Swal.fire({
+        icon: "error",
+        title: "Localização não encontrada",
+        text: "Não conseguimos localizar esse CEP no mapa.",
+        confirmButtonColor: "#0C299A",
+      });
+
+      return;
+    }
+
+    const localizacao = respostaMapa.data[0];
+
+    const novaPosicao: [number, number] = [
+      Number(localizacao.lat),
+      Number(localizacao.lon),
+    ];
+
+    // 4️ Atualiza a posição usada pelo mapa
+    setPosicao(novaPosicao);
+
+    // 5️ Esconde o formulário depois de encontrar
+    setMostrarCep(false);
+
+    Swal.fire({
+      icon: "success",
+      title: "Localização encontrada!",
+      text: `Mostrando os postos próximos ao CEP ${cep}.`,
+      confirmButtonColor: "#0C299A",
+    });
+
+  } catch (error) {
+    console.error("Erro ao buscar CEP:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text: "Não foi possível consultar o CEP.",
+      confirmButtonColor: "#0C299A",
+    });
+
+  } finally {
+    setBuscandoCep(false);
+  }
+};
+
+
+const formatarCep = (valor: string) => {
+  const numeros = valor.replace(/\D/g, "");
+
+  if (numeros.length <= 5) {
+    return numeros;
+  }
+
+  return `${numeros.slice(0, 5)}-${numeros.slice(5, 8)}`;
+};
   return (
     <>
       <Header onMenuClick={toggleSidebar} />
@@ -219,8 +370,52 @@ export default function PontosColeta() {
       <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <div className="pontos-coleta-page">
+        {mostrarCep && (
+  <div className="cep-container">
 
-        <div className="mapa-wrapper">
+    <div className="cep-content">
+
+      <h2>
+        Encontre postos próximos de você
+      </h2>
+
+      <p>
+        Para encontrar os postos mais próximos,
+        permita sua localização ou informe seu CEP.
+      </p>
+
+      <label htmlFor="cep">
+        CEP
+      </label>
+
+      <div className="cep-input-container">
+
+        <input
+          id="cep"
+          type="text"
+          placeholder="00000-000"
+          value={cep}
+          maxLength={9}
+          onChange={(e) =>
+            setCep(formatarCep(e.target.value))
+          }
+        />
+
+        <button
+          type="button"
+          onClick={buscarCep}
+          disabled={buscandoCep}
+        >
+          {buscandoCep ? "Buscando..." : "Buscar"}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+        <div className="mapa-wrapper" id ='mapa'>
           <MapContainer
             center={posicao}
             zoom={15}
@@ -243,15 +438,17 @@ export default function PontosColeta() {
             //attribution="Tiles © Esri"
             //url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
-            <UpdateMapCenter position={
-              postoSelecionado
-                ? [
-                  postoSelecionado.pos_latitude,
-                  postoSelecionado.pos_longitude
-                ]
-                : posicao
-            }
-            />
+            <UpdateMapCenter
+  position={
+    postoSelecionado
+      ? [
+          Number(postoSelecionado.pos_latitude),
+          Number(postoSelecionado.pos_longitude)
+        ]
+      : posicao
+  }
+  focoPosto={focoPosto}
+/>
 
             {postos.map((posto) => (
 
@@ -292,12 +489,11 @@ export default function PontosColeta() {
 
                   <h3>{posto.pos_nome}</h3>
 
-                  <p>{posto.pos_endereco}</p>
-                  {postoSelecionado?.pos_id === posto.pos_id && (
-                    <p className="distancia">
-                      📍 Distância: {posto.distancia?.toFixed(2)} km
-                    </p>
-                  )}
+                  {posto.distancia !== undefined && (
+  <p className="distancia">
+    📍 Distância: {posto.distancia.toFixed(2)} km
+  </p>
+)}
 
                   <div className="tags">
                     <span>Privado</span>
@@ -311,8 +507,18 @@ export default function PontosColeta() {
               <div className="acoes">
 
                 <button
-                  onClick={() => setPostoSelecionado(posto)}
-                >
+                 onClick={() => {
+    setPostoSelecionado(posto);
+    setFocoPosto(true);
+
+    setTimeout(() => {
+      document.getElementById("mapa")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
+  }}
+>
 
                   Ver no mapa
 

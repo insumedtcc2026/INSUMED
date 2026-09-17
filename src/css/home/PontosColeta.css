@@ -230,3 +230,106 @@
     font-size: 32px;
   }
 }
+
+/* ==========================================
+   CAIXA DE CEP
+========================================== */
+
+.cep-container {
+  width: 100%;
+  max-width: 500px;
+
+  /* tira a caixa branca */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* tira o espaçamento grande */
+  padding: 0;
+
+  /* deixa no canto esquerdo */
+  margin: 0 0 25px 0;
+}
+
+.cep-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.cep-content h2 {
+  margin: 0 0 8px;
+  color: #0c299a;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.cep-content p {
+  margin: 0 0 20px;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.cep-content label {
+  width: 100%;
+  margin-bottom: 7px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.cep-input-container {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.cep-input-container input {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+
+  border: 1px solid #d6dce8;
+  border-radius: 10px;
+
+  outline: none;
+  background: #f9fafc;
+
+  color: #333;
+  font-size: 16px;
+
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+.cep-input-container input:focus {
+  border-color: #0c299a;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(12, 41, 154, 0.1);
+}
+
+.cep-input-container button {
+  height: 48px;
+  padding: 0 24px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #0c299a;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cep-input-container button:hover {
+  background: #082176;
+  transform: translateY(-1px);
+}
