@@ -181,8 +181,8 @@ const [focoPosto, setFocoPosto] = useState(false);
 
   useEffect(() => {
 
-   // axios.get("https://backend-insumed-lhac.vercel.app/postos")
-      axios.get("http://localhost:3344/postos")
+    axios.get("https://backend-insumed-lhac.vercel.app/postos")
+      //axios.get("http://localhost:3344/postos")
       .then((res) => {
  const postosComDistancia = res.data.map((posto: Posto) => ({
         ...posto,
