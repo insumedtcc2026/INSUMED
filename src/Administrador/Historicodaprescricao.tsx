@@ -186,7 +186,7 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
                     </option>
 
                 </select>
-
+<div className="filtro-datas">
 
                 <input
                     type="date"
@@ -207,7 +207,7 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
                         setDataFim(e.target.value)
                     }
                 />
-
+</div>
             </div>
 </div>
 
@@ -239,7 +239,7 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
 
                         {/* ÍCONE */}
                      <div className="historico-avatar">
-                        <span>{prescricao.pac_avatar}</span>
+                        {prescricao.pac_avatar}
                         </div>
 
                         {/* PACIENTE */}
