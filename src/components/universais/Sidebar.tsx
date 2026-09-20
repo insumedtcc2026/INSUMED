@@ -4,10 +4,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
 
-import { X } from 'lucide-react';
+import { LogOut, Upload, X } from 'lucide-react';
 
 import { MdAddLocation } from 'react-icons/md';
-import { IoBandage, IoPersonSharp } from 'react-icons/io5';
+import { IoPersonSharp } from 'react-icons/io5';
 import { BsCalendarCheckFill } from 'react-icons/bs';
 import { GoHomeFill } from 'react-icons/go';
 
@@ -37,7 +37,7 @@ export default function Sidebar({
     },
 
     {
-      icon: IoBandage,
+      icon: Upload,
       label: 'Enviar Prescriçao',
       path: '/EnviarSolicitacao',
     },
@@ -52,7 +52,7 @@ export default function Sidebar({
       path: '/perfil',
     },
     {
-      icon: IoPersonSharp,
+      icon: LogOut,
       label: 'Sair',
       path: '/login',
        action: () => {

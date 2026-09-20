@@ -4,6 +4,11 @@ import {
     type FormEvent,
     type ChangeEvent
 } from 'react';
+
+import { Upload } from 'lucide-react';
+import { SendHorizontal } from 'lucide-react';
+import { Info } from 'lucide-react';
+
 import Sidebar from '../components/universais/Sidebar.tsx';
 import api from '../services/SoliciatcaoService';
 import Header from '../components/universais/Header';
@@ -11,6 +16,8 @@ import Footer from '../components/universais/Footer.tsx';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
+
+
 
 
 // ==============================
@@ -302,111 +309,156 @@ function EnviarSolicitaçao() {
     // ==============================
     // HTML
     // ==============================
+return (
+    <>
+        <Header onMenuClick={toggleSidebar} />
 
-    return (
-        <>
-            <Header onMenuClick={toggleSidebar} />
+        <Sidebar
+            isOpen={sidebarOpen}
+            onClose={toggleSidebar}
+        />
 
-            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+        <main className="solicitacao-page">
 
-            <div className="solicitacao-page">
+            <div className="solicitacao-card">
 
-                <div className="solicitacao-card">
+                {/* CABEÇALHO */}
 
-                    <div className="solicitacao-header">
-                        <h1>Enviar Prescrição</h1>
+                <div className="solicitacao-header">
+
+                    <h1>Enviar Prescrição</h1>
+
+                    <p>
+                        Envie uma foto da sua prescrição para que possamos
+                        analisar e cadastrar seus insumos.
+                    </p>
+
+                </div>
+
+
+                {/* INFORMAÇÃO */}
+
+                <div className="info-prescricao">
+
+                    <div className="info-icone">
+                        <Info size={21} strokeWidth={3} />
+                    </div>
+
+                    <div className="info-conteudo">
+
+                        <h3>
+                            Por que enviar sua prescrição?
+                        </h3>
 
                         <p>
-                            Envie sua prescrição para solicitar os insumos necessários.
+                            A prescrição é o documento que contém os insumos
+                            necessários para o seu tratamento. Com ela,
+                            conseguimos preparar seus materiais e informar
+                            quando estarão disponíveis para retirada.
                         </p>
+
                     </div>
 
-                    <div className="info-prescricao">
-                        <div className="info-icone">
-                            <span>i</span>
-                        </div>
+                </div>
 
-                        <div className="info-conteudo">
-                            <h3>Por que enviar sua prescrição?</h3>
 
-                            <p>
-                                A prescrição é o documento que contém os insumos necessários para o
-                                seu tratamento.
-                                Com ela, conseguimos preparar seus materiais e informar quando
-                                estarão disponíveis para retirada.
-                            </p>
-                        </div>
-                    </div>
+                <form
+                    className="solicitacao-form"
+                    onSubmit={handleSubmit}
+                >
 
-                    <form
-                        className="solicitacao-form"
-                        onSubmit={handleSubmit}
-                    >
+                    {/* CARDS */}
 
-                        <div className="formulario-grid">
+                    <div className="formulario-grid">
 
-                            {/* PRESCRIÇÃO */}
-                            <div className="campo-card prescricao-card">
+                        {/* ================================
+                            UPLOAD
+                        ================================= */}
 
-                                <div className="prescricao-titulo">
+                        <div className="campo-card prescricao-card">
+
+                            <div className="prescricao-titulo">
+
+                                <h2>
                                     Envie a foto da sua prescrição
-                                </div>
+                                </h2>
 
-                                <div className="prescricao-subtitulo">
+                                <p>
                                     A imagem deve estar nítida e legível
-                                </div>
-
-                                <div className="arquivo-area">
-
-                                    {/* ÍCONE DE UPLOAD */}
-                                    <div className="upload-icon">
-                                        <span>⇧</span>
-                                    </div>
-
-                                    {/* INPUT ESCONDIDO */}
-                                    <input
-                                        id="prescricao"
-                                        type="file"
-                                        accept="image/*,.pdf"
-                                        onChange={selecionarArquivo}
-                                        required
-                                        className="input-arquivo"
-                                    />
-
-                                    {/* TEXTO */}
-                                    <span className="upload-texto">
-                                        {file
-                                            ? file.name
-                                            : "Arraste e solte uma imagem aqui"}
-                                    </span>
-
-                                    {/* OU */}
-                                    <span className="upload-ou">
-                                        ou
-                                    </span>
-
-                                    {/* BOTÃO */}
-                                    <label
-                                        htmlFor="prescricao"
-                                        className="btn-selecionar"
-                                    >
-                                        Selecionar imagem
-                                    </label>
-
-                                    {/* FORMATOS */}
-                                    <small className="formatos">
-                                        Formatos aceitos: JPG, PNG ou PDF
-                                        <br />
-                                        Tamanho máximo: 10MB
-                                    </small>
-
-                                </div>
+                                </p>
 
                             </div>
 
 
-                            {/* INFORMAÇÕES */}
-                            <div className="campo-card">
+                            <div className="arquivo-area">
+
+                                <div className="upload-icon">
+                                    <Upload
+                                        size={38}
+                                        strokeWidth={2.0}
+                                    />
+                                </div>
+
+
+                                <input
+                                    id="prescricao"
+                                    type="file"
+                                    accept="image/*,.pdf"
+                                    onChange={selecionarArquivo}
+                                    required
+                                    className="input-arquivo"
+                                />
+
+
+                                <span className="upload-texto">
+
+                                    {file
+                                        ? file.name
+                                        : "Arraste e solte uma imagem aqui"}
+
+                                </span>
+
+
+                                <span className="upload-ou">
+                                    ou
+                                </span>
+
+
+                                <label
+                                    htmlFor="prescricao"
+                                    className="btn-selecionar"
+                                >
+                                    Selecionar imagem
+                                </label>
+
+
+                                <small className="formatos">
+                                    Formatos aceitos: JPG, PNG ou PDF
+                                    <br />
+                                    Tamanho máximo: 5MB
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* ================================
+                            INFORMAÇÕES
+                        ================================= */}
+
+                        <div className="campo-card informacoes-card">
+
+                            <div className="informacoes-titulo">
+
+                                <h2>
+                                    Informações da prescrição
+                                </h2>
+
+                            </div>
+
+
+                            <div className="campos-container">
 
                                 <div className="campo">
 
@@ -424,16 +476,18 @@ function EnviarSolicitaçao() {
                                     >
 
                                         <option value="">
-                                            Selecione uma
+                                            Selecione uma unidade
                                         </option>
 
                                         {postos.map(posto => (
+
                                             <option
                                                 key={posto.pos_id}
                                                 value={posto.pos_id}
                                             >
                                                 {posto.pos_nome}
                                             </option>
+
                                         ))}
 
                                     </select>
@@ -445,6 +499,7 @@ function EnviarSolicitaçao() {
 
                                     <label htmlFor="observacao">
                                         Observação
+                                        <span> (opcional)</span>
                                     </label>
 
                                     <textarea
@@ -453,7 +508,7 @@ function EnviarSolicitaçao() {
                                         onChange={e =>
                                             setObservacao(e.target.value)
                                         }
-                                        placeholder="Digite alguma informação adicional..."
+                                        placeholder="Digite alguma informação adicional, caso necessário..."
                                     />
 
                                 </div>
@@ -462,26 +517,66 @@ function EnviarSolicitaçao() {
 
                         </div>
 
+                    </div>
+
+
+                    {/* PARTE INFERIOR */}
+
+                    <div className="formulario-footer">
+
+                        <div className="dados-protegidos">
+
+                            <div className="protegidos-icone">
+                                <span>✓</span>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Seus dados estão protegidos
+                                </strong>
+
+                                <p>
+                                    Suas informações são confidenciais e
+                                    utilizadas apenas para o gerenciamento
+                                    dos seus insumos.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
                         <button
                             className="btn-enviar"
                             type="submit"
                             disabled={enviando}
                         >
-                            {enviando
-                                ? "Enviando..."
-                                : "Enviar solicitação"}
+
+                            <SendHorizontal
+                                size={19}
+                                strokeWidth={2.5}
+                            />
+
+                            <span>
+                                {enviando
+                                    ? "Enviando..."
+                                    : "Enviar"}
+                            </span>
+
                         </button>
 
-                    </form>
+                    </div>
 
-                </div>
+                </form>
 
             </div>
 
-            <Footer />
-        </>
-    );
-}
+        </main>
 
+        <Footer />
+    </>
+);
+}
 
 export default EnviarSolicitaçao;

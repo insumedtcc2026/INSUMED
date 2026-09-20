@@ -70,7 +70,7 @@ export default function Agendamentos() {
       <Header onMenuClick={toggleSidebar} />
 
       <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-5xl">
           <h1 className="mb-6 text-center text-2xl font-bold text-blue-700">
             Meus Agendamentos
           </h1>

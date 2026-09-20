@@ -1,5 +1,7 @@
 .info-section {
   width: 100%;
+  box-sizing: border-box;
+  padding-inline: clamp(16px, 4vw, 48px);
 
   margin-top: 48px;
   margin-bottom: 0px;

@@ -5,9 +5,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
 
-import { X } from 'lucide-react';
+import {
+  CalendarPlus,
+  Files,
+  LogOut,
+  RotateCcwIcon,
+  X,
+} from 'lucide-react';
 
-import { MdAddLocation } from 'react-icons/md';
 import { IoBandage, IoPersonSharp } from 'react-icons/io5';
 import { BsCalendarCheckFill } from 'react-icons/bs';
 import { GoHomeFill } from 'react-icons/go';
@@ -33,12 +38,12 @@ export default function Sidebar({
     },
     {
       icon: BsCalendarCheckFill,
-      label: 'AgendamentosADM',
+      label: 'Agendamentos',
       path: '/Agendamentosadm',
     },
     {
-      icon: IoPersonSharp,
-      label: 'Historicodaprescricao',
+      icon: RotateCcwIcon,
+      label: 'Historico da prescrição',
       path: '/Historicodaprescricao',
     },
     {
@@ -48,12 +53,12 @@ export default function Sidebar({
     },
 
     {
-      icon: IoBandage,
+      icon: Files,
       label: 'Solicitações',
       path: '/VerSolicitaçoes',
     },
     {
-      icon: MdAddLocation,
+      icon: CalendarPlus,
       label: 'Novo Agendamento',
       path: '/NovoAgendamento',
     },
@@ -71,7 +76,7 @@ export default function Sidebar({
 
 
     {
-      icon: IoPersonSharp,
+      icon: LogOut,
       label: 'Sair',
       path: '/login',
        action: () => {

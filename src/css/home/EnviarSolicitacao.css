@@ -1,407 +1,384 @@
 .solicitacao-page {
-    width: 100%;
-    height: 89%;
-    min-height: 100vh;
-    padding: 30px;
-    box-sizing: border-box;
-    background: #fff;
+	width: 100%;
+	min-height: calc(100vh - 80px);
+	padding: 112px 32px 45px;
+	box-sizing: border-box;
+	background: #ffffff;
+	font-family: "Inter", sans-serif;
 }
 
-
 .solicitacao-card {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
+	width: 100%;
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+.solicitacao-header {
+	margin-bottom: 18px;
 }
 
 .solicitacao-header h1 {
-    font-size: 28px;
-    color: #003cff;
-    margin: 0 0 8px;
-    font-weight: 650;
+	margin: 0 0 5px;
+	color: #0648f5;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.2;
 }
 
 .solicitacao-header p {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 25px;
-}
-
-/* FORMULÁRIO */
-
-.solicitacao-form {
-    width: 100%;
-}
-
-/* ÁREA DOS DOIS CARDS */
-
-.formulario-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
-    width: 100%;
-}
-
-/* CARDS */
-
-.campo-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 25px;
-    min-height: 500px;
-    box-sizing: border-box;
-}
-
-.campo-card label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-/* INPUTS */
-
-select,
-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 12px;
-    font-family: inherit; /* sem isso, a textarea pode herdar fonte monoespaçada do navegador */
-}
-
-select {
-    height: 42px;
-}
-
-textarea {
-    min-height: 150px;
-    resize: vertical;
-    font-size: 16px; /* era 14px — texto digitado ficava pequeno */
-    line-height: 1.5;
-}
-
-/* ÁREA DA IMAGEM */
-
-.arquivo-area {
-    width: 100%;
-    min-height: 250px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-}
-
-.arquivo-area input[type="file"] {
-    font-size: 14px;
-}
-
-.arquivo-area span {
-    font-size: 15px;
-    margin-top: 15px;
-}
-
-.campo small {
-    display: block;
-    font-size: 12px;
-    color: #777;
-    margin-top: 10px;
-}
-
-/* BOTÃO */
-
-.btn-enviar {
-    width: 180px;
-    height: 45px;
-
-    border: none;
-    border-radius: 7px;
-
-    background: #003cff;
-    color: white;
-
-    font-size: 15px;
-    font-weight: 600;
-    margin-left: 928px;
-    margin-bottom: -11px;
-
-    cursor: pointer;
-}
-
-.btn-enviar:hover {
-    background: #002dcc;
-}
-
-/* MENSAGEM */
-
-.mensagem {
-    width: 100%;
-    padding: 12px;
-    margin-top: 24px;
-
-    border-radius: 7px;
-
-    text-align: center;
-    font-size: 12px;
-}
-
-.mensagem.sucesso {
-    background: #dff7e5;
-    color: #08752a;
-}
-.prescricao-card {
-    text-align: center;
-}
-
-
-/* TÍTULO */
-
-.prescricao-titulo {
-    font-size: 14px;
-    font-weight: bold;
-    color: #111;
-
-    margin-bottom: 6px;
-}
-
-
-/* SUBTÍTULO */
-
-.prescricao-subtitulo {
-    font-size: 9px;
-    color: #777;
-
-    margin-bottom: 10px;
-}
-
-
-/* ==============================
-   ÁREA DE UPLOAD
-============================== */
-
-.arquivo-area {
-    width: 100%;
-    min-height: 300px;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-}
-
-
-/* ==============================
-   ÍCONE
-============================== */
-
-.upload-icon {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 50%;
-
-    background: #eef5ff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin-bottom: 14px;
-}
-
-.upload-icon span {
-    font-size: 30px;
-    color: #0066ff;
-}
-
-
-/* ==============================
-   INPUT ORIGINAL ESCONDIDO
-============================== */
-
-.input-arquivo {
-    display: none;
-}
-
-
-/* ==============================
-   TEXTO
-============================== */
-
-.upload-texto {
-    font-size: 14px;
-    color: #000000;
-
-    margin-bottom: 8px;
-}
-
-
-/* ==============================
-   OU
-============================== */
-
-.upload-ou {
-    font-size: 13px;
-    color: #333;
-
-    margin-bottom: 12px;
-}
-
-
-/* ==============================
-   BOTÃO SELECIONAR
-============================== */
-
-.btn-selecionar {
-    width: 130px;
-    height: 40px;
-    display: absolute;
-    align-items: center;
-    background: #003cff;
-    color: white;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-selecionar:hover {
-    background: #002dcc;
-}
-
-
-/* ==============================
-   FORMATOS
-============================== */
-
-.formatos {
-    display: block;
-
-    font-size: 10px;
-    line-height: 1.5;
-
-    color: #777;
-
-    margin-top: 20px;
-
-    text-align: center;
-    
+	margin: 0;
+	color: #333333;
+	font-size: 13px;
+	line-height: 1.5;
 }
 
 .info-prescricao {
-    width: 100%;
-    max-width:1200px;
-    min-height: 70px;
-
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-
-    padding: 9px 12px;
-
-    background-color: #dceeff;
-    border: 1px solid #80bfff;
-    border-radius: 10px;
-margin-bottom: 20px;
-    box-sizing: border-box;
+	width: 100%;
+	min-height: 54px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 14px;
+	background: #e3f0ff;
+	border: 1px solid #7db8ff;
+	border-radius: 9px;
+	margin-bottom: 26px;
 }
 
-.info-prescricao1 {
-    width: 100%;
-    max-width:625px;
-    min-height: 70px;
-
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-
-    padding: 9px 12px;
-
-    background-color: #dceeff;
-    border: 1px solid #80bfff;
-    border-radius: 10px;
-margin-top: 20px;
-    box-sizing: border-box;
-}
-
-.rodape-solicitacao {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    width: 100%;
-}
-
-.info-prescricao1 {
-    flex: 1;
-    width: 100%;
-}
-
-/* Círculo azul com o "i" */
 .info-icone {
-    width: 22px;
-    height: 22px;
-
-    min-width: 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: #001bb5;
-    border-radius: 50%;
-
-    color: white;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
+	width: 23px;
+	height: 23px;
+	min-width: 23px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #002db5;
+	color: #ffffff;
+	border-radius: 50%;
+	font-size: 14px;
+	font-weight: 700;
 }
 
-.info-icone span {
-    line-height: 1;
-}
-
-/* Conteúdo */
 .info-conteudo {
-    display: flex;
-    flex-direction: column;
-
-    margin: 0;
-    padding: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .info-conteudo h3 {
-    margin: 0 0 2px 0;
-
-    color: #001a8d;
-
-    font-size: 12px;
-    font-weight: 700;
+	margin: 0 0 2px;
+	color: #0035a8;
+	font-size: 12px;
+	font-weight: 700;
 }
 
 .info-conteudo p {
-    margin: 0;
-
-    color: #222;
-
-    font-size: 12px;
-    line-height: 1.25;
-}
-.rodape-solicitacao {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    width: 100%;
+	margin: 0;
+	color: #333333;
+	font-size: 10px;
+	line-height: 1.35;
 }
 
-.info-prescricao1 {
-    flex: 1;
-    width: 100%;
+.solicitacao-form {
+	width: 100%;
+}
+
+.formulario-grid {
+	width: 100%;
+	display: grid;
+	grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+	gap: 16px;
+	align-items: stretch;
+}
+
+.campo-card {
+	min-height: 280px;
+	box-sizing: border-box;
+	background: #ffffff;
+	border: 1px solid #d6d6d6;
+	border-radius: 11px;
+	padding: 18px;
+	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+}
+
+.prescricao-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	text-align: center;
+}
+
+.prescricao-titulo h2,
+.informacoes-titulo h2 {
+	margin: 0;
+	color: #111111;
+	font-size: 18px;
+	font-weight: 800;
+	line-height: 1.3;
+}
+
+.prescricao-titulo p {
+	margin: 6px 0 0;
+	color: #777777;
+	font-size: 12px;
+}
+
+.arquivo-area {
+	width: 100%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 0 2px;
+	box-sizing: border-box;
+}
+
+.upload-icon {
+	width: 58px;
+	height: 58px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 14px;
+	background: #eef5ff;
+	color: #1260ff;
+	border-radius: 50%;
+}
+
+.input-arquivo {
+	display: none;
+}
+
+.upload-texto {
+	max-width: 90%;
+	color: #555555;
+	font-size: 14px;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.upload-ou {
+	margin: 10px 0;
+	color: #666666;
+	font-size: 13px;
+}
+
+.btn-selecionar {
+	min-width: 155px;
+	height: 43px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 20px;
+	box-sizing: border-box;
+	background: #0648f5;
+	color: #ffffff;
+	border-radius: 7px;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: 0.2s ease;
+}
+
+.btn-selecionar:hover {
+	background: #003bd0;
+	transform: translateY(-1px);
+	box-shadow: 0 5px 12px rgba(6, 72, 245, 0.2);
+}
+
+.formatos {
+	margin-top: 17px;
+	color: #777777;
+	font-size: 10px;
+	font-weight: 500;
+	line-height: 1.6;
+	text-align: center;
+}
+
+.informacoes-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.informacoes-titulo {
+	margin-bottom: 27px;
+}
+
+.campos-container {
+	display: flex;
+	flex-direction: column;
+	gap: 23px;
+}
+
+.campo {
+	width: 100%;
+}
+
+.campo label {
+	display: block;
+	margin-bottom: 8px;
+	color: #222222;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.campo label span {
+	color: #888888;
+	font-weight: 500;
+}
+
+.campo select,
+.campo textarea {
+	width: 100%;
+	box-sizing: border-box;
+	background: #ffffff;
+	border: 1px solid #d3d3d3;
+	border-radius: 7px;
+	color: #222222;
+	font-family: "Inter", sans-serif;
+	outline: none;
+}
+
+.campo select {
+	height: 45px;
+	padding: 0 13px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.campo textarea {
+	height: 145px;
+	padding: 12px;
+	font-size: 15px;
+	line-height: 1.5;
+	resize: none;
+}
+
+.campo select:focus,
+.campo textarea:focus {
+	border-color: #0648f5;
+	box-shadow: 0 0 0 3px rgba(6, 72, 245, 0.1);
+}
+
+.campo textarea::placeholder {
+	color: #a5a5a5;
+}
+
+.formulario-footer {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-top: 18px;
+}
+
+.dados-protegidos {
+	flex: 1;
+	min-height: 68px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 11px 17px;
+	box-sizing: border-box;
+	background: #e7f2ff;
+	border: 1px solid #87baff;
+	border-radius: 9px;
+}
+
+.protegidos-icone {
+	width: 25px;
+	height: 25px;
+	min-width: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #1260ff;
+	color: #ffffff;
+	border-radius: 50%;
+	font-weight: 700;
+}
+
+.dados-protegidos strong {
+	display: block;
+	color: #0035a8;
+	font-size: 12px;
+}
+
+.dados-protegidos p {
+	margin: 3px 0 0;
+	color: #4f6380;
+	font-size: 10px;
+	line-height: 1.4;
+}
+
+.btn-enviar {
+	min-width: 145px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 7px;
+	background: #0648f5;
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: 0.2s ease;
+}
+
+.btn-enviar:hover:not(:disabled) {
+	background: #003bd0;
+	transform: translateY(-1px);
+}
+
+.btn-enviar:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+@media (max-width: 800px) {
+	.solicitacao-page {
+		padding: 24px 18px 36px;
+	}
+
+	.formulario-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.formulario-footer {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.btn-enviar {
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.solicitacao-page {
+		padding: 20px 12px 30px;
+	}
+
+	.campo-card {
+		padding: 15px;
+	}
+
+	.solicitacao-header h1 {
+		font-size: 22px;
+	}
+
+	.campo label,
+	.campo select,
+	.campo textarea {
+		font-size: 14px;
+	}
 }

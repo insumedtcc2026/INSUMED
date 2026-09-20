@@ -1,5 +1,7 @@
 .banner {
   width: 100%;
+  box-sizing: border-box;
+  padding: clamp(90px, 16vw, 140px) clamp(16px, 4vw, 48px) 0;
 }
 
 .banner-container {

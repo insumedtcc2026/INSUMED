@@ -8,7 +8,48 @@ import {
 
 import logo from '../../assets/logo-footer.png';
 
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+const linksPaciente: FooterLink[] = [
+  { label: 'Início', href: '/home' },
+  { label: 'Agendamentos', href: '/agendamentos' },
+  { label: 'Pontos de Coleta', href: '/pontos-coleta' },
+  { label: 'Enviar Prescrições', href: '/EnviarSolicitacao' },
+  { label: 'Perfil', href: '/perfil' },
+];
+
+const linksAdministrador: FooterLink[] = [
+  { label: 'Início', href: '/HomeAdmin' },
+  { label: 'Agendamentos', href: '/Agendamentosadm' },
+  { label: 'Histórico de Prescrições', href: '/Historicodaprescricao' },
+  { label: 'Histórico', href: '/Historicoadm' },
+  { label: 'Solicitações', href: '/VerSolicitaçoes' },
+  { label: 'Novo Agendamento', href: '/NovoAgendamento' },
+  { label: 'Pacientes', href: '/Pacientesadm' },
+  { label: 'Todos os Agendamentos', href: '/TodosAgendamentos' },
+];
+
+function usuarioAdministrador(): boolean {
+  if (localStorage.getItem('tipo') === 'ADMIN') {
+    return true;
+  }
+
+  try {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    return usuario?.tipo === 'ADMIN';
+  } catch {
+    return false;
+  }
+}
+
 export default function Footer() {
+  const linksPrincipais = usuarioAdministrador()
+    ? linksAdministrador
+    : linksPaciente;
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -22,11 +63,11 @@ export default function Footer() {
 
         <div className="footer-links">
           <div className="footer-column">
-            <a href="/">Início</a>
-            <a href="/agendamentos">Agendamentos</a>
-            <a href="/pontos-coleta">Pontos de Coleta</a>
-            <a href="/EnviarSolicitacao">Enviar Prescrições</a>
-            <a href="/perfil">Perfil</a>
+            {linksPrincipais.map((link) => (
+              <a key={link.href} href={link.href}>
+                {link.label}
+              </a>
+            ))}
           </div>
 
           <div className="footer-column">
