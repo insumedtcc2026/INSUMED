@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from '../components/universais/Header';
+import HeaderAdm from '../components/universais/HeaderAdm';
 import Sidebaradm from '../components/universais/Siderbaradm';
 import Footer from '../components/universais/Footer';
 import AgendamentosListPage from '../components/usuario-1/agendamentos/agendamentosListPage';
@@ -17,7 +17,7 @@ export default function Agendamentos() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
-      <Header onMenuClick={toggleSidebar} />
+      <HeaderAdm onMenuClick={toggleSidebar} />
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         <AgendamentosListPage

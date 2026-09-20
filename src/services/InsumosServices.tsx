@@ -9,10 +9,7 @@ export async function buscarInsumos(
   if (!termo.trim()) return [];
 
   try {
-    const token = localStorage.getItem("accessToken");
-
-    console.log("Termo:", termo);
-    console.log("Token:", token);
+    const token = localStorage.getItem("token");
 
     const resposta = await axios.get<InsumoCatalogo[]>(
       `${API_URL}/insumos`,
@@ -25,8 +22,6 @@ export async function buscarInsumos(
         },
       }
     );
-
-    console.log("Resposta:", resposta.data);
 
     return resposta.data;
   } catch (error) {

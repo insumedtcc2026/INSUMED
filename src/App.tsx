@@ -11,6 +11,7 @@ import Login from './components/home/Login';
 import Cadastro from "./components/home/Cadastro"
 import CadastroADM from "../src/Administrador/CadastroADM"
 import Agendamentosadm from './Administrador/Agendamentosadm';
+import HomeAdmin from './Administrador/HomeAdmin';
 import  Historicoadm from './Administrador/Historicoadm';
 import NovoAgendamento from './Administrador/NovoAgendamento';
 import TodosAgendamentos from './Administrador/TodosAgendamentos';
@@ -35,6 +36,11 @@ function App() {
       <Route
         path="/agendamentosadm"
         element={<Agendamentosadm/>}
+      />
+
+      <Route
+        path="/homeadmin"
+        element={<HomeAdmin/>}
       />
       
         <Route

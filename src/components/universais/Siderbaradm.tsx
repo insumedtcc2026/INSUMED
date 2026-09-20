@@ -29,7 +29,7 @@ export default function Sidebar({
     {
       icon: GoHomeFill,
       label: 'Início',
-      path: '/home',
+      path: '/HomeAdmin',
     },
     {
       icon: BsCalendarCheckFill,

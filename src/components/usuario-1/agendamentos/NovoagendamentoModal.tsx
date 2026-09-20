@@ -1,46 +1,64 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
-import { buscarInsumos } from "../../../services/InsumosServices";
 import { criarAgendamento } from "../../../services/AgendamentoService";
-import type { Paciente, InsumoCatalogo, InsumoAgendado } from "../../../types/agendamento";
- 
+import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
+
+const API_URL = "https://backend-insumed-lhac.vercel.app";
+
 interface NovoAgendamentoModalProps {
   onClose: () => void;
   onSuccess?: () => void;
 }
- 
+
 /**
  * Página 1: "Novo Agendamento" (cadastro). Renderizada como modal.
  *
- * Suporta MÚLTIPLOS insumos por agendamento: o usuário busca um produto,
- * define a quantidade, clica em "Adicionar" e ele entra numa lista. O
- * agendamento só pode ser salvo com pelo menos 1 item na lista.
+ * Suporta MÚLTIPLOS insumos por agendamento. O produto NÃO é buscado num
+ * catálogo existente — o admin digita o nome do produto direto (não há
+ * seleção de um item já cadastrado). O backend decide, ao salvar, se
+ * reaproveita um insumo já existente com esse nome ou cria um novo.
  */
 export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendamentoModalProps) {
   // --- paciente ---
   const [buscaPaciente, setBuscaPaciente] = useState("");
   const [resultadosPaciente, setResultadosPaciente] = useState<Paciente[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
- 
-  // --- produto (insumo) sendo adicionado no momento ---
-  const [buscaProduto, setBuscaProduto] = useState("");
-  const [resultadosProduto, setResultadosProduto] = useState<InsumoCatalogo[]>([]);
-  const [produtoSelecionado, setProdutoSelecionado] = useState<InsumoCatalogo | null>(null);
+
+  // --- produto sendo adicionado no momento (digitado, não buscado) ---
+  const [nomeProduto, setNomeProduto] = useState("");
   const [quantidade, setQuantidade] = useState("");
- 
+
   // --- lista de itens já adicionados ao agendamento ---
-  const [itens, setItens] = useState<InsumoAgendado[]>([]);
- 
+  const [itens, setItens] = useState<ItemNovoAgendamento[]>([]);
+
   // --- data da coleta ---
   const [dataColeta, setDataColeta] = useState("");
- 
+
+  // --- posto de coleta ---
+  const [postos, setPostos] = useState<Posto[]>([]);
+  const [postoSelecionado, setPostoSelecionado] = useState<Posto | null>(null);
+
   // --- envio ---
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
- 
+
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
- 
-  // Busca de paciente por CPF (debounced)
+
+  // Carrega a lista de postos assim que o modal abre (backend exige
+  // posto.pos_id pra criar o agendamento, então precisamos que o ADM escolha)
+  useEffect(() => {
+    axios
+      .get<Posto[]>(`${API_URL}/postos`)
+      .then((res) => {
+        setPostos(res.data);
+        if (res.data.length === 1) setPostoSelecionado(res.data[0]);
+      })
+      .catch(() => setErro("Não foi possível carregar os postos de coleta."));
+  }, []);
+
+  // Busca de paciente por CPF (debounced) — esta busca continua existindo,
+  // só a de produto que foi removida.
   useEffect(() => {
     if (!buscaPaciente || paciente) {
       setResultadosPaciente([]);
@@ -53,36 +71,18 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
     }, 250);
     return () => clearTimeout(debounceRef.current);
   }, [buscaPaciente, paciente]);
- 
-  // Busca de produto por nome/código (debounced)
-  useEffect(() => {
-    if (!buscaProduto || produtoSelecionado) {
-      setResultadosProduto([]);
-      return;
-    }
-    const t = setTimeout(async () => {
-      const res = await buscarInsumos(buscaProduto);
-      setResultadosProduto(res);
-    }, 250);
-    return () => clearTimeout(t);
-  }, [buscaProduto, produtoSelecionado]);
- 
+
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
     setBuscaPaciente(`${p.pac_nome} — ${p.pac_cpf}`);
     setResultadosPaciente([]);
   }
- 
-  function selecionarProduto(p: InsumoCatalogo) {
-    setProdutoSelecionado(p);
-    setBuscaProduto(p.ins_nome);
-    setResultadosProduto([]);
-  }
- 
+
   function adicionarItem() {
     setErro(null);
-    if (!produtoSelecionado) {
-      setErro("Selecione um produto antes de adicionar.");
+    const nome = nomeProduto.trim();
+    if (!nome) {
+      setErro("Informe o nome do produto antes de adicionar.");
       return;
     }
     const qtd = Number(quantidade);
@@ -90,30 +90,28 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
       setErro("Informe uma quantidade válida.");
       return;
     }
-    setItens((prev) => [
-      ...prev,
-      { ins_id: produtoSelecionado.ins_id, ins_nome: produtoSelecionado.ins_nome, quantidade: qtd },
-    ]);
-    setProdutoSelecionado(null);
-    setBuscaProduto("");
+    setItens((prev) => [...prev, { ins_nome: nome, quantidade: qtd }]);
+    setNomeProduto("");
     setQuantidade("");
   }
- 
-  function removerItem(ins_id: number) {
-    setItens((prev) => prev.filter((i) => i.ins_id !== ins_id));
+
+  function removerItem(index: number) {
+    setItens((prev) => prev.filter((_, i) => i !== index));
   }
- 
+
   async function handleSalvar() {
     setErro(null);
     if (!paciente) return setErro("Selecione um paciente.");
     if (itens.length === 0) return setErro("Adicione ao menos um produto.");
     if (!dataColeta) return setErro("Informe a data da coleta.");
- 
+    if (!postoSelecionado) return setErro("Selecione o posto de coleta.");
+
     setEnviando(true);
     try {
       await criarAgendamento({
         paciente,
         sol_data_de_coleta: dataColeta,
+        posto: postoSelecionado,
         itens,
       });
       onSuccess?.();
@@ -123,7 +121,7 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
       setEnviando(false);
     }
   }
- 
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
       <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
@@ -133,7 +131,7 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
           </span>
           <h2 className="text-lg font-semibold text-gray-800">Novo Agendamento</h2>
         </div>
- 
+
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {/* Paciente */}
           <div className="relative">
@@ -162,7 +160,7 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
               </ul>
             )}
           </div>
- 
+
           {/* Data da coleta */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-600">Data da Coleta *</label>
@@ -173,35 +171,41 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
             />
           </div>
- 
-          {/* Produto */}
-          <div className="relative">
-            <label className="mb-1 block text-sm font-medium text-gray-600">Produto(s) *</label>
+
+          {/* Posto de coleta */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-600">Posto de Coleta *</label>
+            <select
+              value={postoSelecionado?.pos_id ?? ""}
+              onChange={(e) => {
+                const posto = postos.find((p) => p.pos_id === Number(e.target.value)) ?? null;
+                setPostoSelecionado(posto);
+              }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+            >
+              <option value="" disabled>
+                Selecione o posto
+              </option>
+              {postos.map((posto) => (
+                <option key={posto.pos_id} value={posto.pos_id}>
+                  {posto.pos_nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Produto (digitado, não buscado) */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-600">Produto *</label>
             <input
               type="text"
-              value={buscaProduto}
-              onChange={(e) => {
-                setBuscaProduto(e.target.value);
-                setProdutoSelecionado(null);
-              }}
-              placeholder="Busque por nome ou código"
+              value={nomeProduto}
+              onChange={(e) => setNomeProduto(e.target.value)}
+              placeholder="Digite o nome do produto"
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
             />
-            {resultadosProduto.length > 0 && (
-              <ul className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
-                {resultadosProduto.map((p) => (
-                  <li
-                    key={p.ins_id}
-                    onClick={() => selecionarProduto(p)}
-                    className="cursor-pointer px-3 py-2 text-sm hover:bg-indigo-50"
-                  >
-                    {p.ins_nome}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
- 
+
           {/* Quantidade + adicionar */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-600">Quantidade *</label>
@@ -224,13 +228,13 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
             </div>
           </div>
         </div>
- 
+
         {/* Lista de itens adicionados (permite múltiplos insumos por agendamento) */}
         {itens.length > 0 && (
           <ul className="mt-4 flex flex-col gap-2">
-            {itens.map((item) => (
+            {itens.map((item, index) => (
               <li
-                key={item.ins_id}
+                key={`${item.ins_nome}-${index}`}
                 className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700"
               >
                 <span>
@@ -238,7 +242,7 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
                 </span>
                 <button
                   type="button"
-                  onClick={() => removerItem(item.ins_id)}
+                  onClick={() => removerItem(index)}
                   className="text-rose-500 hover:text-rose-600"
                 >
                   Remover
@@ -247,9 +251,9 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
             ))}
           </ul>
         )}
- 
+
         {erro && <p className="mt-4 text-sm text-rose-500">{erro}</p>}
- 
+
         <div className="mt-8 flex justify-end gap-3">
           <button
             type="button"
@@ -271,4 +275,3 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
     </div>
   );
 }
- 

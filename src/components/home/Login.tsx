@@ -65,6 +65,8 @@ const tipo =
     usuario?.tipo ||
     response.data.tipo;
 
+localStorage.setItem("tipo", tipo);
+
 console.log("TIPO DO USUÁRIO:", tipo);
 
 if (tipo === "PACIENTE") {
@@ -74,7 +76,7 @@ else if (tipo === "PRESCRITOR") {
     navigate("/homePrescritor");
 }
 else if (tipo === "ADMIN") {
-    navigate("/Agendamentosadm");
+    navigate("/homeadmin");
 }
     } catch (error: any) {
 

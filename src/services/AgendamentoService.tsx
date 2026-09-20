@@ -17,10 +17,15 @@ const api = axios.create({
 // ---------------------------------------------------------
 
 export async function listarAgendamentosDeHoje(): Promise<Agendamento[]> {
+  const token = localStorage.getItem("token");
+
   const response = await api.get("/agendamentos", {
     params: {
       status: "agendado",
       data: "hoje",
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -32,11 +37,16 @@ export async function listarAgendamentosDeHoje(): Promise<Agendamento[]> {
 // ---------------------------------------------------------
 
 export async function listarTodosAgendamentosExcetoHoje(): Promise<Agendamento[]> {
+  const token = localStorage.getItem("token");
+
   const response = await api.get("/agendamentos", {
     params: {
       status: "agendado",
       excluir_data: "hoje",
       order: "proximidade",
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -48,9 +58,14 @@ export async function listarTodosAgendamentosExcetoHoje(): Promise<Agendamento[]
 // ---------------------------------------------------------
 
 export async function listarHistorico(): Promise<Agendamento[]> {
+  const token = localStorage.getItem("token");
+
   const response = await api.get("/agendamentos", {
     params: {
       status: "concluido",
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -106,6 +121,9 @@ export async function concluirAgendamento(
   const response = await api.get("/agendamentos", {
     params: {
       status: "concluido",
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -169,7 +187,11 @@ export async function criarAgendamento(
    * para devolver um objeto Agendamento completo.
    */
 
-  const agendamentos = await api.get("/agendamentos");
+  const agendamentos = await api.get("/agendamentos", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const novoAgendamento = agendamentos.data.find(
     (agendamento: Agendamento) =>
