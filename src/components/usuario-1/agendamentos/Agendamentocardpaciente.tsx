@@ -34,8 +34,8 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
   );
 }
  
-function formatarDataBR(isoDate: string): string {
+function formatarDataBR(isoDate: string | null | undefined): string {
+  if (!isoDate) return "Data não informada";
   const [ano, mes, dia] = isoDate.split("-");
   return `${dia}/${mes}/${ano}`;
 }
- 

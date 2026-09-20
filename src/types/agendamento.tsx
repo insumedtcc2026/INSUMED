@@ -38,7 +38,7 @@ export type InsumoNoAgendamento = InsumoAgendado;
 
 export interface Agendamento {
   sol_id: number;
-  sol_data_de_coleta: string;
+  sol_data_de_coleta: string | null;
   sol_hora_coleta?: string;
   status: StatusAgendamento;
   paciente: Paciente;
