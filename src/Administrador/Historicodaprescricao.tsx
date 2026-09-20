@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 import {buscarHistoricoPrescricoes} from "../services/PrescricaoService";
 import type {HistoricoPrescricao} from "../services/PrescricaoService";
-import Header from "../components/universais/HeaderAdm";
-import Sidebar from "../components/universais/Siderbaradm";
 
+import HeaderAdm from "../components/universais/HeaderAdm";
+import Sidebaradm from "../components/universais/Siderbaradm";
+import Footer from "../components/universais/Footer";
 
 import "../css/home/Historicodaprescricao.css";
 
@@ -14,6 +15,12 @@ export default function Historico() {
     
 
     const navigate = useNavigate();
+
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
 
     const [prescricoes, setPrescricoes] =
         useState<HistoricoPrescricao[]>([]);
@@ -32,7 +39,6 @@ export default function Historico() {
 
     const [carregando, setCarregando] =
         useState(true);
-const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
     useEffect(() => {
@@ -42,9 +48,6 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
     }, []);
 
 
-  const toggleSidebar = () => {
-        setSidebarOpen((prev) => !prev);
-    };
     const carregarHistorico = async () => {
 
         try {
@@ -114,32 +117,32 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
         return new Date(data)
             .toLocaleDateString("pt-BR");
     };
-      
+
 
     if (carregando) {
 
         return (
-            <div className="historico-loading">
-                Carregando histórico...
+            <div className="min-h-screen bg-gray-50">
+                <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
+                <HeaderAdm onMenuClick={toggleSidebar} />
+
+                <div className="historico-loading">
+                    Carregando histórico...
+                </div>
+
+                <Footer />
             </div>
         );
     }
 
 
     return (
-<>
-            <Header
-                
-                 onMenuClick={toggleSidebar}
-                
-              />
-        
-              <Sidebar
-                isOpen={sidebarOpen}
-                        onClose={toggleSidebar}
-              />
 
-        <div className="historico-page">
+        <div className="min-h-screen bg-gray-50">
+            <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
+            <HeaderAdm onMenuClick={toggleSidebar} />
+
+            <div className="historico-page">
 
             <h1>HISTÓRICO</h1>
 
@@ -161,8 +164,8 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
 
             </div>
 
+
             {/* FILTROS */}
-            <div className="historico-container">
 
             <div className="historico-filtros">
 
@@ -182,11 +185,11 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
                     </option>
 
                     <option value="Reenvio">
-                        Reenvio
+                        Reenvios
                     </option>
 
                 </select>
-<div className="filtro-datas">
+
 
                 <input
                     type="date"
@@ -207,11 +210,8 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
                         setDataFim(e.target.value)
                     }
                 />
-</div>
+
             </div>
-</div>
-
-
 
 
             {/* CARDS */}
@@ -230,7 +230,6 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
 
                 {prescricoesFiltradas.map(
                     (prescricao) => (
-                         
 
                     <div
                         className="historico-card"
@@ -238,9 +237,13 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
                     >
 
                         {/* ÍCONE */}
-                     <div className="historico-avatar">
-                        {prescricao.pac_avatar}
+
+                        <div className="historico-avatar">
+
+                            <span> 👤</span>
+
                         </div>
+
 
                         {/* PACIENTE */}
 
@@ -348,7 +351,9 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
 
             </div>
 
+            </div>
+
+            <Footer />
         </div>
-        </>
     );
 }
