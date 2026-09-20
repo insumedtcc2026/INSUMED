@@ -20,6 +20,7 @@ import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
 import AutorizarPrescricao from './Administrador/AutorizarPrescricao'
 import Historicodaprescricao from './Administrador/Historicodaprescricao'
+import CadastroAUT from './Autorizador/CadastroAUT';
 import './index.css';
 
 function App() {
@@ -77,6 +78,13 @@ function App() {
         <Route
         path="/cadastroadm"
         element={<CadastroADM />}
+
+      />
+
+      <Route
+        path="/cadastroaut"
+        element={<CadastroAUT />}
+
       />
 
          <Route

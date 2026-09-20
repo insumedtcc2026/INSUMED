@@ -72,7 +72,7 @@ console.log("TIPO DO USUÁRIO:", tipo);
 if (tipo === "PACIENTE") {
     navigate("/home");
 }
-else if (tipo === "PRESCRITOR") {
+else if (tipo === "AUTORIZADOR") {
     navigate("/homePrescritor");
 }
 else if (tipo === "ADMIN") {
