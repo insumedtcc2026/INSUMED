@@ -3,6 +3,9 @@ import '../../css/home-log/InfoSection.css';
 import coletasImg from '../../assets/home-log/coletas.png';
 import calendarioImg from '../../assets/home-log/calendario.png';
 import notificacaoImg from '../../assets/home-log/notificacao.png';
+import agendamentoAdmImg from '../../assets/home-log/Agendamento.png';
+import pacientesAdmImg from '../../assets/home-log/Pacientes.png';
+import solicitacoesAdmImg from '../../assets/home-log/Solicitações.png';
 
 
 interface InfoCard {
@@ -40,22 +43,22 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
 
   administrador: [
     {
-      id: 'pacientes',
-      title: 'Pacientes',
-      imageUrl: calendarioImg,
-      href: '/pacientes',
+      id: 'agendamento',
+      title: 'Agendamento',
+      imageUrl: agendamentoAdmImg,
+      href: '/agendamentosadm',
     },
     {
       id: 'solicitacoes',
       title: 'Solicitações',
-      imageUrl: calendarioImg,
-      href: '/solicitacoes',
+      imageUrl: solicitacoesAdmImg,
+      href: '/versolicitaçoes',
     },
     {
-      id: 'agenda',
-      title: 'Agenda Médica',
-      imageUrl: calendarioImg,
-      href: '/agenda',
+      id: 'pacientes',
+      title: 'Pacientes',
+      imageUrl: pacientesAdmImg,
+      href: '/pacientesadm',
     },
   ],
 

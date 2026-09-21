@@ -35,7 +35,7 @@ export default function HomeAdmin() {
   };
 
   return (
-    <>
+    <div className="home-admin-page">
       <HeaderAdm onMenuClick={toggleSidebar} />
 
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
@@ -47,6 +47,6 @@ export default function HomeAdmin() {
       <InfoSection userType="administrador" />
 
       <Footer />
-    </>
+    </div>
   );
 }

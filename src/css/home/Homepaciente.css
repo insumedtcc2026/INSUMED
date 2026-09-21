@@ -1,6 +1,11 @@
 
-.home-pacientes-page{
-    padding-top: var(--header--height);
+.home-paciente-page,
+.home-admin-page {
+    padding-top: 5px;
+}
+
+.home-admin-page {
+    padding-bottom: 48px;
 }
 
 
