@@ -38,6 +38,7 @@ export type InsumoNoAgendamento = InsumoAgendado;
 
 export interface Agendamento {
   sol_id: number;
+  sol_protocolo: string | null;
   sol_data_de_coleta: string | null;
   sol_hora_coleta?: string;
   status: StatusAgendamento;
@@ -57,4 +58,13 @@ export interface ResultadoPaginado<T> {
   itens: T[];
   paginaAtual: number;
   totalPaginas: number;
+}
+
+// Filtros da página única de agendamentos do ADM (substitui as antigas
+// páginas separadas de "hoje" / "todos" / "histórico").
+export interface FiltrosAgendamento {
+  status?: "todos" | StatusAgendamento;
+  busca?: string; // nome, CPF ou protocolo
+  dataInicio?: string;
+  dataFim?: string;
 }

@@ -12,9 +12,7 @@ import Cadastro from "./components/home/Cadastro"
 import CadastroADM from "../src/Administrador/CadastroADM"
 import Agendamentosadm from './Administrador/Agendamentosadm';
 import HomeAdmin from './Administrador/HomeAdmin';
-import  Historicoadm from './Administrador/Historicoadm';
 import NovoAgendamento from './Administrador/NovoAgendamento';
-import TodosAgendamentos from './Administrador/TodosAgendamentos';
 import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
@@ -43,11 +41,6 @@ function App() {
         path="/homeadmin"
         element={<HomeAdmin/>}
       />
-      
-        <Route
-        path="/historicoadm"
-        element={<Historicoadm/>}
-      />
 
          <Route
         path="/novoagendamento"
@@ -62,12 +55,6 @@ function App() {
 
         
 
-       <Route
-        path="/todosagendamentos"
-        element={<TodosAgendamentos/>}
-      />
-      
-      
       
 
       <Route

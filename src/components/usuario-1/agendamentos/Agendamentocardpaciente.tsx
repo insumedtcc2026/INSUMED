@@ -12,13 +12,16 @@ interface AgendamentoCardPacienteProps {
  * com variant="paciente" (label "Coletado" em vez de "Concluído").
  */
 export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCardPacienteProps) {
-  const { sol_data_de_coleta, sol_hora_coleta, posto, insumos, status } = agendamento;
+  const { sol_protocolo, sol_data_de_coleta, sol_hora_coleta, posto, insumos, status } = agendamento;
  
   const resumoInsumos = insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ");
   const dataFormatada = formatarDataBR(sol_data_de_coleta);
  
   return (
     <div className="rounded-3xl bg-gray-50 px-6 py-5 shadow-sm">
+      <p className="text-gray-700">
+        <span className="font-bold">Protocolo:</span> {sol_protocolo ?? "—"}
+      </p>
       <p className="text-gray-700">
         <span className="font-bold">Coleta:</span> {resumoInsumos}
       </p>
@@ -36,6 +39,7 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
  
 function formatarDataBR(isoDate: string | null | undefined): string {
   if (!isoDate) return "Data não informada";
-  const [ano, mes, dia] = isoDate.split("-");
+  const [ano, mes, dia] = isoDate.split("T")[0].split("-");
+  if (!ano || !mes || !dia) return "Data não informada";
   return `${dia}/${mes}/${ano}`;
 }

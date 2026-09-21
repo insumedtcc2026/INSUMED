@@ -12,10 +12,9 @@ interface AgendamentoCardProps {
 type AcaoEmAndamento = "concluir" | "cancelar" | null;
 
 /**
- * Card de um agendamento. Reciclado em:
- *  - Coletas de Hoje        (showActions = true)
- *  - Todos os Agendamentos  (showActions = true)
- *  - Histórico de Coletas   (showActions = false -> concluído, sem botões)
+ * Card de um agendamento (visão ADM). Usado na página única de
+ * "Agendamentos" do administrador, com os botões de ação aparecendo
+ * apenas para agendamentos ainda com status 'agendado'.
  */
 export default function AgendamentoCard({
   agendamento,
@@ -23,15 +22,15 @@ export default function AgendamentoCard({
   onConcluir,
   onCancelar,
 }: AgendamentoCardProps) {
-  const { sol_id, paciente, status } = agendamento;
+  const { sol_id, sol_protocolo, sol_data_de_coleta, paciente, insumos, status } = agendamento;
   const [loadingAcao, setLoadingAcao] = useState<AcaoEmAndamento>(null);
 
   // Regra: mesmo se a página passar showActions=true, um agendamento que já
   // não está mais 'agendado' (ex: concluído) nunca mostra os botões de ação.
   const exibirBotoes = showActions && status === "agendado";
 
-  // Se for usar os insumos no futuro, descomente esta linha e a DIV no JSX:
-  // const resumoInsumos = insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ");
+  const resumoInsumos = insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ");
+  const dataFormatada = formatarDataBR(sol_data_de_coleta);
 
   async function handleConcluir() {
     if (!onConcluir) return;
@@ -65,7 +64,16 @@ export default function AgendamentoCard({
           <p className="font-semibold text-gray-800">{paciente.pac_nome}</p>
           <p className="text-sm text-gray-500">CPF: {paciente.pac_cpf}</p>
           <p className="text-sm text-gray-500">Tel: {paciente.pac_telefone}</p>
+          <p className="text-sm text-gray-500">
+            Protocolo: {sol_protocolo ?? "—"} · Data: {dataFormatada}
+          </p>
         </div>
+      </div>
+
+      {/* Insumos solicitados */}
+      <div className="flex-1 min-w-[200px]">
+        <p className="text-sm font-medium text-gray-400">Insumos</p>
+        <p className="text-gray-700">{resumoInsumos}</p>
       </div>
 
       {/* Status + ações */}
@@ -95,4 +103,11 @@ export default function AgendamentoCard({
       </div>
     </div>
   );
+}
+
+function formatarDataBR(isoDate: string | null | undefined): string {
+  if (!isoDate) return "Data não informada";
+  const [ano, mes, dia] = isoDate.split("T")[0].split("-");
+  if (!ano || !mes || !dia) return "Data não informada";
+  return `${dia}/${mes}/${ano}`;
 }

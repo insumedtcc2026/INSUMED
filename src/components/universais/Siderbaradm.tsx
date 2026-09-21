@@ -13,7 +13,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { IoBandage, IoPersonSharp } from 'react-icons/io5';
+import { IoPersonSharp } from 'react-icons/io5';
 import { BsCalendarCheckFill } from 'react-icons/bs';
 import { GoHomeFill } from 'react-icons/go';
 
@@ -46,11 +46,6 @@ export default function Sidebar({
       label: 'Historico da prescrição',
       path: '/Historicodaprescricao',
     },
-    {
-      icon: IoBandage,
-      label: 'Historico',
-      path: '/Historicoadm',
-    },
 
     {
       icon: Files,
@@ -66,11 +61,6 @@ export default function Sidebar({
       icon: IoPersonSharp,
       label: 'Pacientes',
       path: '/Pacientesadm',
-    },
-    {
-      icon: IoPersonSharp,
-      label: 'TodosAgendamentos',
-      path: '/TodosAgendamentos',
     },
 
 

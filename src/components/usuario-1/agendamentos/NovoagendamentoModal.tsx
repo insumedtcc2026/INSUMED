@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
 import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
@@ -108,15 +109,30 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
 
     setEnviando(true);
     try {
-      await criarAgendamento({
+      const resultado = await criarAgendamento({
         paciente,
         sol_data_de_coleta: dataColeta,
         posto: postoSelecionado,
         itens,
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Agendamento criado com sucesso!",
+        text: `Protocolo: ${resultado.sol_protocolo}`,
+        confirmButtonColor: "#00ce11",
+      });
+
       onSuccess?.();
     } catch {
       setErro("Não foi possível salvar o agendamento. Tente novamente.");
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao criar agendamento!",
+        text: "Não foi possível salvar o agendamento.",
+        confirmButtonColor: "#dc3545",
+      });
     } finally {
       setEnviando(false);
     }

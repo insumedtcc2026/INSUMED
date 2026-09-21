@@ -4,6 +4,7 @@ import type {
   Agendamento,
   NovoAgendamentoPayload,
   ResultadoPaginado,
+  FiltrosAgendamento,
 } from "../types/agendamento";
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
@@ -12,68 +13,37 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-// ---------------------------------------------------------
-// LISTAR AGENDAMENTOS DE HOJE
-// ---------------------------------------------------------
-
-export async function listarAgendamentosDeHoje(): Promise<Agendamento[]> {
+function authHeader() {
   const token = localStorage.getItem("token");
+  return { Authorization: `Bearer ${token}` };
+}
 
+// ---------------------------------------------------------
+// LISTAR AGENDAMENTOS (ADM) — página única, com filtros
+// ---------------------------------------------------------
+// Substitui listarAgendamentosDeHoje / listarTodosAgendamentosExcetoHoje /
+// listarHistorico: agora é uma função só, parametrizada pelos filtros que
+// o próprio ADM escolhe na tela (status, busca por nome/CPF/protocolo,
+// intervalo de datas).
+
+export async function listarAgendamentos(
+  filtros: FiltrosAgendamento = {}
+): Promise<Agendamento[]> {
   const response = await api.get("/agendamentos", {
     params: {
-      status: "agendado",
-      data: "hoje",
+      status: filtros.status,
+      busca: filtros.busca || undefined,
+      data_inicio: filtros.dataInicio || undefined,
+      data_fim: filtros.dataFim || undefined,
     },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: authHeader(),
   });
 
   return response.data;
 }
 
 // ---------------------------------------------------------
-// LISTAR TODOS OS AGENDAMENTOS EXCETO HOJE
-// ---------------------------------------------------------
-
-export async function listarTodosAgendamentosExcetoHoje(): Promise<Agendamento[]> {
-  const token = localStorage.getItem("token");
-
-  const response = await api.get("/agendamentos", {
-    params: {
-      status: "agendado",
-      excluir_data: "hoje",
-      order: "proximidade",
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
-}
-
-// ---------------------------------------------------------
-// HISTÓRICO
-// ---------------------------------------------------------
-
-export async function listarHistorico(): Promise<Agendamento[]> {
-  const token = localStorage.getItem("token");
-
-  const response = await api.get("/agendamentos", {
-    params: {
-      status: "concluido",
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
-}
-
-// ---------------------------------------------------------
-// AGENDAMENTOS DO PACIENTE LOGADO
+// AGENDAMENTOS DO PACIENTE LOGADO (paginado)
 // ---------------------------------------------------------
 
 export async function listarAgendamentosDoPaciente(
@@ -81,17 +51,24 @@ export async function listarAgendamentosDoPaciente(
   pagina = 1,
   itensPorPagina = 4
 ): Promise<ResultadoPaginado<Agendamento>> {
-
-  const token = localStorage.getItem("token");
-
   const response = await api.get("/meus-agendamentos", {
     params: {
       page: pagina,
       porPagina: itensPorPagina,
     },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: authHeader(),
+  });
+
+  return response.data;
+}
+
+// ---------------------------------------------------------
+// PRÓXIMO AGENDAMENTO DO PACIENTE LOGADO (usado na Home)
+// ---------------------------------------------------------
+
+export async function buscarProximoAgendamento(): Promise<Agendamento | null> {
+  const response = await api.get("/meus-agendamentos/proximo", {
+    headers: authHeader(),
   });
 
   return response.data;
@@ -101,34 +78,11 @@ export async function listarAgendamentosDoPaciente(
 // CONCLUIR AGENDAMENTO
 // ---------------------------------------------------------
 
-export async function concluirAgendamento(
-  sol_id: number
-): Promise<Agendamento | undefined> {
-
-  const token = localStorage.getItem("token");
-
+export async function concluirAgendamento(sol_id: number): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/concluir`,
     {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  // Busca novamente o agendamento atualizado
-  const response = await api.get("/agendamentos", {
-    params: {
-      status: "concluido",
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data.find(
-    (agendamento: Agendamento) => agendamento.sol_id === sol_id
+    { headers: authHeader() }
   );
 }
 
@@ -136,23 +90,12 @@ export async function concluirAgendamento(
 // CANCELAR AGENDAMENTO
 // ---------------------------------------------------------
 
-export async function cancelarAgendamento(
-  sol_id: number
-): Promise<boolean> {
-
-  const token = localStorage.getItem("token");
-
+export async function cancelarAgendamento(sol_id: number): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/cancelar`,
     {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    { headers: authHeader() }
   );
-
-  return true;
 }
 
 // ---------------------------------------------------------
@@ -161,43 +104,10 @@ export async function cancelarAgendamento(
 
 export async function criarAgendamento(
   payload: NovoAgendamentoPayload
-): Promise<Agendamento> {
-
-  const token = localStorage.getItem("token");
-
-  const response = await api.post(
-    "/agendamentos",
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  /*
-   * O backend atualmente retorna:
-   *
-   * {
-   *   message: "Agendamento criado com sucesso",
-   *   sol_id: 10
-   * }
-   *
-   * Portanto buscamos o agendamento recém-criado
-   * para devolver um objeto Agendamento completo.
-   */
-
-  const agendamentos = await api.get("/agendamentos", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+): Promise<{ sol_id: number; sol_protocolo: string }> {
+  const response = await api.post("/agendamentos", payload, {
+    headers: authHeader(),
   });
 
-  const novoAgendamento = agendamentos.data.find(
-    (agendamento: Agendamento) =>
-      agendamento.sol_id ===
-      (response.data.sol_id?.sol_id ?? response.data.sol_id)
-  );
-
-  return novoAgendamento;
+  return response.data;
 }
