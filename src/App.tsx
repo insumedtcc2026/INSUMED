@@ -19,6 +19,7 @@ import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
 import AutorizarPrescricao from './Administrador/AutorizarPrescricao'
 import Historicodaprescricao from './Administrador/Historicodaprescricao'
 import CadastroAUT from './Autorizador/CadastroAUT';
+import HomeAut from './Autorizador/HomeAut';
 import './index.css';
 
 function App() {
@@ -71,6 +72,13 @@ function App() {
       <Route
         path="/cadastroaut"
         element={<CadastroAUT />}
+
+      />
+
+      
+      <Route
+        path="/homeaut"
+        element={<HomeAut />}
 
       />
 

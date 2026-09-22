@@ -73,7 +73,7 @@ if (tipo === "PACIENTE") {
     navigate("/home");
 }
 else if (tipo === "AUTORIZADOR") {
-    navigate("/homePrescritor");
+    navigate("/homeaut");
 }
 else if (tipo === "ADMIN") {
     navigate("/homeadmin");
