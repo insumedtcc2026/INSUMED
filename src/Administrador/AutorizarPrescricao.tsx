@@ -423,7 +423,7 @@ navigate('/VerSolicitaçoes')
 
             <div className="campo">
 
-              <label>
+              <label className="observacao-label">
                 Observações (opcional)
               </label>
 
