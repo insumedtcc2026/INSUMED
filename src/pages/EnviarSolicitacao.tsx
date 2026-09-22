@@ -33,17 +33,17 @@ interface Posto {
 // ==============================
 // CONVERTER IMAGEM PARA BASE64
 // ==============================
-
+// Converte um arquivo selecionado pelo usuário para Base64.
 function fileToBase64(file: File): Promise<string> {
-
+  // Cria uma Promise para controlar a leitura assíncrona do arquivo.
     return new Promise((resolve, reject) => {
-
+// FileReader permite ler o conteúdo de arquivos no navegador.
         const reader = new FileReader();
-
+// Executado quando a leitura do arquivo é finalizada.
         reader.onloadend = () => {
-
+         // Obtém o resultado da leitura.
             const result = reader.result;
-
+          // Verifica se o resultado é uma string.
             if (typeof result !== 'string') {
 
                 reject(
@@ -54,13 +54,14 @@ function fileToBase64(file: File): Promise<string> {
 
                 return;
             }
-
-            // Remove "data:image/...;base64,"
+            // Remove o prefixo "data:image/...;base64,"
+            // e retorna somente o conteúdo em Base64.
+           
             resolve(
                 result.split(',')[1]
             );
         };
-
+         // Trata possíveis erros durante a leitura do arquivo.
         reader.onerror = () => {
 
             reject(
@@ -70,7 +71,7 @@ function fileToBase64(file: File): Promise<string> {
             );
 
         };
-
+// Lê o arquivo e o transforma em uma Data URL.
         reader.readAsDataURL(file);
     });
 }

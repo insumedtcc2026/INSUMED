@@ -210,6 +210,7 @@ export default function Pendencias() {
 
 
                     {prescricoes.map((prescricao) => (
+                        
 
                         <div
                             className="card-pendencia"
@@ -219,7 +220,9 @@ export default function Pendencias() {
                             {/* ÍCONE */}
 
                             <div className="icone-paciente">
-                                👤
+
+                                
+                                {prescricao.pac_avatar}
                             </div>
 
 

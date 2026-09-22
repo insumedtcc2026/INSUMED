@@ -10,6 +10,7 @@ export interface PrescricaoPendente {
     pac_nome: string;
     pac_cpf: string;
     sol_prescricao: string;
+    pac_avatar: string
 }
 
 // Usada na LISTAGEM — bate com o que "prescicaodopaciente" retorna

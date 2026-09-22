@@ -240,7 +240,7 @@ export default function Historico() {
 
                         <div className="historico-avatar">
 
-                            <span> 👤</span>
+                           {prescricao.pac_avatar}
 
                         </div>
 
