@@ -130,7 +130,7 @@ export const buscarHistoricoPrescricoes =
     const token = localStorage.getItem("token");
 
     const response = await axios.get(
-        "https://backend-insumed-lhac.vercel.app/prescricoes/aprovadas",
+        "https://backend-insumed-lhac.vercel.app/prescricao/aprovadas",
         {
             headers: {
                 Authorization: `Bearer ${token}`,
