@@ -123,6 +123,46 @@ export const buscarHistoricoPrescricoes =
         return response.data;
     };
 
+
+
+
+    export async function buscarPrescricoesAprovadas() {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+        "https://backend-insumed-lhac.vercel.app/prescricoes/aprovadas",
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    return response.data;
+}
+export interface PrescricaoAprovada {
+    sol_id: number;
+    pac_id: number;
+    pos_id: number;
+
+    sol_status: string;
+    sol_data_solicitacao: string;
+    sol_data_vencimento?: string | null;
+
+    sol_motivo_reenvio?: string | null;
+    sol_observacao?: string | null;
+    sol_prescricao_tipo?: string | null;
+
+    pac_nome: string;
+    pac_cpf: string;
+    pac_avatar?: string | null;
+
+    ins_nome?: string | null;
+    pos_nome?: string | null;
+}
+
+
+
 export async function enviarPrescricao (
   pos_id: number,
   sol_prescricao: string,
