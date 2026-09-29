@@ -76,10 +76,13 @@ const [motivo, setMotivo] = useState("");
           dadosResponse.data
         );
 
-        setSolicitacao(dadosResponse.data.sol_data_vencimento
-    ? dadosResponse.data.sol_data_vencimento.substring(0, 10)
-    : "");
+       setSolicitacao(dadosResponse.data);
 
+setDataVencimento(
+  dadosResponse.data.sol_data_vencimento
+    ? dadosResponse.data.sol_data_vencimento.substring(0, 10)
+    : ""
+);
 
         // BUSCAR IMAGEM DA PRESCRIÇÃO
         
