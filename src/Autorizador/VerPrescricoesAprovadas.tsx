@@ -12,7 +12,7 @@ import type {
 import { useValidarToken } from "../hook/Validartoken.tsx";
 
 import Sidebaradm from "../components/universais/Siderbaradm.tsx";
-import Header from "../components/universais/HeaderAdm.tsx";
+import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
 import "../css/home/VerSolicitaçoes.css";
@@ -224,23 +224,9 @@ export default function Autorizador() {
 
                             <div className="icone-paciente">
 
-                                {prescricao.pac_avatar ? (
-
-                                    <img
-                                        src={prescricao.pac_avatar}
-                                        alt={`Avatar de ${prescricao.pac_nome}`}
-                                    />
-
-                                ) : (
-
-                                    <span>
-                                        👤
-                                    </span>
-
-                                )}
-
+                                
+                                {prescricao.pac_avatar}
                             </div>
-
 
                             {/* =========================
                                 PACIENTE
@@ -301,7 +287,7 @@ export default function Autorizador() {
 
                             <div className="status-pendente">
 
-                                Aprovado
+                                Pendente
 
                             </div>
 
