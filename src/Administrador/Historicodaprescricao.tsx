@@ -296,12 +296,14 @@ export default function Historico() {
                                 )}
                             </span>
 
-                            <span>
-                                Data de Análise:{" "}
-                                {formatarData(
-                                    prescricao.sol_data_analise
-                                )}
-                            </span>
+                          <span>
+                     Data de Vencimento:{" "}
+               {prescricao.sol_data_vencimento
+                     ? new Date(
+          prescricao.sol_data_vencimento
+         ).toLocaleDateString("pt-BR")
+             : "--/--/----"}
+                        </span>
 
                         </div>
 

@@ -92,6 +92,8 @@ export interface HistoricoPrescricao {
 
     sol_data_solicitacao: string;
 
+    sol_data_vencimento?: string;
+
     sol_data_analise?: string;
 
     sol_motivo_reenvio?: string;
@@ -104,12 +106,19 @@ export interface HistoricoPrescricao {
 
 export const buscarHistoricoPrescricoes =
     async (): Promise<HistoricoPrescricao[]> => {
-
+       const token = localStorage.getItem("token");
         const response =
             await axios.get<HistoricoPrescricao[]>(
-                `${API_URL}/prescricoes/historico`
+                `${API_URL}/prescricoes/historico`,
+
+                {
+
+                 headers:{
+                    Authorization: `Bearer ${token}`
+                 }
+                }
             );
-             console.log("HISTÓRICO RETORNADO PELA API:", response.data);
+             
 
         return response.data;
     };

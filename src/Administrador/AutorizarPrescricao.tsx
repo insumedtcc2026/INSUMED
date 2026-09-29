@@ -16,6 +16,8 @@ interface Solicitacao {
   sol_status: string;
   sol_observacao: string | null;
 
+  sol_data_vencimento:string|null;
+
   pac_nome: string;
   pac_cpf: string;
 
@@ -33,6 +35,7 @@ function EnviarPrescricao() {
   const [carregando, setCarregando] = useState(true);
 
   const navigate = useNavigate();
+  const [dataVencimento, setDataVencimento] = useState("");
   
 
   const [solicitacao, setSolicitacao] =
@@ -184,12 +187,23 @@ const enviarSolicitacao = async () => {
       alert("Token não encontrado.");
       return;
     }
+     if (!dataVencimento) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Data de vencimento",
+        text: "Informe a data de vencimento da prescrição antes de aprovar.",
+        confirmButtonColor: "#3085d6"
+      });
+
+      return;
+    }
 
     await axios.patch(
       `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
-        sol_status: "Aprovado"
+        sol_status: "Aprovado",
+        sol_data_vencimento: dataVencimento
       },
       {
         headers: {
@@ -390,11 +404,11 @@ navigate('/VerSolicitaçoes')
                 </label>
 
                 <input
-                  type="text"
-                  value="Data máxima de resposta..."
-                  readOnly
-                />
-
+                  type="date"
+                  
+                  value={dataVencimento}
+  onChange={(e) => setDataVencimento(e.target.value)}
+/>
               </div>
 
             </div>
