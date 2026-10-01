@@ -121,9 +121,8 @@ export default function Perfil() {
       return;
     }
 
-   const resposta= await axios.put(
+    const resposta = await axios.put(
       "https://backend-insumed-lhac.vercel.app/pacientes/perfil",
-      // ("http://localhost:3344/pacientes/perfil"),
       {
         campo,
         valor
@@ -135,13 +134,24 @@ export default function Perfil() {
       }
     );
 
-      console.log("Resposta do backend:", resposta.data);
+    console.log("================================");
+    console.log("RESPOSTA DO BACKEND:");
+    console.log(resposta.data);
+    console.log("================================");
 
-    // Salva o usuário atualizado
-    localStorage.setItem(
-      "usuario",
-      JSON.stringify(resposta.data.usuario)
-    );
+    // Se o backend retornar o usuário atualizado
+    if (resposta.data.usuario) {
+
+      localStorage.setItem(
+        "usuario",
+        JSON.stringify(resposta.data.usuario)
+      );
+
+      console.log(
+        "USUÁRIO SALVO NO LOCALSTORAGE:",
+        JSON.parse(localStorage.getItem("usuario") || "{}")
+      );
+    }
 
     await Swal.fire({
       icon: "success",
@@ -154,7 +164,7 @@ export default function Perfil() {
 
   } catch (error: any) {
 
-    console.error(error);
+    console.error("ERRO AO ATUALIZAR:", error);
 
     Swal.fire({
       icon: "error",
