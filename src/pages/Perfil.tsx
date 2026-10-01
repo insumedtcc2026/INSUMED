@@ -121,7 +121,7 @@ export default function Perfil() {
       return;
     }
 
-    await axios.put(
+   const resposta= await axios.put(
       "https://backend-insumed-lhac.vercel.app/pacientes/perfil",
       // ("http://localhost:3344/pacientes/perfil"),
       {
@@ -133,6 +133,14 @@ export default function Perfil() {
           Authorization: `Bearer ${token}`
         }
       }
+    );
+
+      console.log("Resposta do backend:", resposta.data);
+
+    // Salva o usuário atualizado
+    localStorage.setItem(
+      "usuario",
+      JSON.stringify(resposta.data.usuario)
     );
 
     await Swal.fire({
@@ -314,9 +322,9 @@ const editarDataNascimento = async () => {
       className="btn-editar"
       onClick={() =>
         editarInformacao(
-          'cpf',
-          'CPF',
-          user.cpf
+          'cep',
+          'Cep',
+          user.cep
         )
       }
     > <img src={lapis} alt="Editar" /></button>
