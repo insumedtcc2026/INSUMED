@@ -340,3 +340,42 @@ h1 {
     max-height: 300px;
   }
 }
+
+.input-com-editar {
+    position: relative;
+    width: 100%;
+}
+
+.input-com-editar input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 45px;
+}
+
+.btn-editar {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+
+    cursor: pointer;
+}
+
+.btn-editar img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+}

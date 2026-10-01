@@ -8,6 +8,10 @@ import { useValidarToken } from '../hook/Validartoken.tsx';
 import { usePrescricao } from '../hook/Pacienteprescriao.tsx';
 import { useDetalhesPrescricao } from '../hook/Detalhesprescricao.tsx';
 import Swal from 'sweetalert2';
+import lapis from '../assets/home-log/lapis.png'
+import axios from 'axios';
+
+
 
 
 function extensaoPorMimetype(mimetype: string | null | undefined): string {
@@ -100,6 +104,128 @@ export default function Perfil() {
     };
   }, [pdfBlobUrl]);
 
+  const atualizarPaciente = async (
+  campo: string,
+  valor: string
+) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Sessão expirada. Faça login novamente."
+      });
+
+      return;
+    }
+
+    await axios.put(
+      "https://backend-insumed-lhac.vercel.app/pacientes/perfil",
+      // ("http://localhost:3344/pacientes/perfil"),
+      {
+        campo,
+        valor
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    await Swal.fire({
+      icon: "success",
+      title: "Alterado!",
+      text: "Sua informação foi atualizada com sucesso.",
+      confirmButtonColor: "#0057ff"
+    });
+
+    window.location.reload();
+
+  } catch (error: any) {
+
+    console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text:
+        error.response?.data?.erro ||
+        "Não foi possível atualizar sua informação."
+    });
+  }
+};
+
+const editarDataNascimento = async () => {
+  const dataAtual = user.data_nascimento
+    ? new Date(user.data_nascimento).toISOString().split("T")[0]
+    : "";
+
+  const resultado = await Swal.fire({
+    title: "Alterar data de nascimento",
+    input: "date",
+    inputValue: dataAtual,
+    showCancelButton: true,
+    confirmButtonText: "Salvar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#0057ff",
+    cancelButtonColor: "#d33",
+  });
+
+  if (resultado.isConfirmed) {
+    await atualizarPaciente("data_nascimento", resultado.value);
+  }
+};
+  const editarInformacao = async (
+  campo: string,
+  titulo: string,
+  valorAtual: string
+) => {
+
+
+
+  
+
+  const resultado = await Swal.fire({
+    title: `Alterar ${titulo}`,
+    input: 'text',
+    inputValue: valorAtual,
+   
+
+    showCancelButton: true,
+    confirmButtonText: 'Salvar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#0057ff',
+    cancelButtonColor: '#d33',
+    inputAttributes: {
+      autocomplete: 'off'
+    },
+    inputValidator: (value) => {
+      if (!value.trim()) {
+        return 'Digite uma informação válida!';
+      }
+
+      return null;
+    }
+  });
+
+  if (resultado.isConfirmed) {
+    await atualizarPaciente(
+      campo,
+      resultado.value
+    )
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Alterado!',
+      text: `${titulo} foi alterado com sucesso.`,
+      confirmButtonColor: '#0057ff'
+    });
+  }
+};
+
   // Antes esse Swal.fire rodava direto no corpo do componente,
   // disparando de novo a CADA re-render enquanto "erro" fosse verdadeiro
   // (ex: abrir/fechar sidebar, abrir/fechar modal, etc).
@@ -142,21 +268,64 @@ export default function Perfil() {
       <div className="perfil-container-form">
         <label>
           <p>Nome Completo</p>
+          <div className="input-com-editar">
           <input type="text" value={user.nome} />
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'nome',
+          'Nome ',
+          user.nome
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
 
         <label>
           <p>CPF</p>
+           <div className="input-com-editar">
           <input type="text" value={user.cpf} />
+             <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'cpf',
+          'CPF',
+          user.cpf
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+
+          </div>
         </label>
+
+
 
         <label>
           <p>CEP</p>
+          <div className="input-com-editar">
           <input type="text" value={user.cep} />
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'cpf',
+          'CPF',
+          user.cpf
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
 
         <label>
   <p>Data de Nascimento</p>
+  <div className="input-com-editar">
   <input 
     type="text" 
     value={
@@ -165,26 +334,89 @@ export default function Perfil() {
         : ''
     } 
   />
+  <button
+  type="button"
+  className="btn-editar"
+  onClick={editarDataNascimento}
+>
+  <img src={lapis} alt="Editar" />
+</button>
+
+  </div>
 </label>
 
         <label>
           <p>Endereço de Email</p>
+          <div className="input-com-editar">
           <input type="text" value={user.email} />
+
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'email',
+          'Email',
+          user.email
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
 
         <label>
           <p>Endereço</p>
+          <div className="input-com-editar">
           <input type="text" value={user.endereco} />
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'endereco',
+          'Endereço',
+          user.endereco
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
 
         <label>
           <p>Telefone</p>
+          <div className="input-com-editar">
           <input type="text" value={user.telefone} />
+
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'telefone',
+          'Telefone',
+          user.telefone
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
 
         <label>
           <p>Raça/Cor</p>
+          <div className="input-com-editar">
           <input type="text" value={user.raca} />
+           <button
+      type="button"
+      className="btn-editar"
+      onClick={() =>
+        editarInformacao(
+          'raca',
+          'Raça/Cor',
+          user.raca
+        )
+      }
+    > <img src={lapis} alt="Editar" /></button>
+          </div>
         </label>
       </div>
 
