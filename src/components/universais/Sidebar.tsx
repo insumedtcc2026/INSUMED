@@ -35,6 +35,7 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/agendamentos',
     },
+   
 
     {
       icon: Upload,

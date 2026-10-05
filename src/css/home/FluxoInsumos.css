@@ -1,0 +1,735 @@
+/* =========================================================
+   FluxoInsumo.css  -  página "Insumos" (admin)
+
+   Todas as classes começam com "ins-". O Vite junta o CSS de TODAS
+   as páginas num arquivo só, então um nome genérico (como "campo")
+   pega regras de outras páginas. Com o prefixo isso não acontece.
+   ========================================================= */
+
+/* ---------- 1. Cores (tiradas da imagem de referência) ---------- */
+.ins-pagina {
+  --azul-titulo-1: #0036ff;   /* início do degradê do título */
+  --azul-titulo-2: #0060ff;   /* fim do degradê do título */
+  --azul-escuro: #12009e;     /* lado esquerdo dos botões */
+  --azul-claro: #0380f2;      /* lado direito dos botões */
+  --azul-marca: #0033ff;      /* quadradinho do ícone da marca */
+  --azul-cabecalho: #2d7ff9;  /* texto do cabeçalho da tabela */
+  --azul-paginacao: #001ebf;  /* paginação (mesmo azul do rodapé) */
+  --cinza-caixa: #f0f0f0;     /* caixa grande e colunas claras */
+  --cinza-coluna: #d9d9d9;    /* colunas escuras da tabela */
+  --cinza-borda: #d4d4d4;     /* borda dos inputs */
+  --texto: #333333;
+  --texto-suave: #7f7f7f;
+  --icone-azul-fundo: #dbeafe;
+  --icone-azul: #006cf5;
+  --icone-laranja-fundo: #ffedd5;
+  --icone-laranja: #fbbc09;
+  --vermelho: #dd3333;        /* mesmo vermelho dos alertas de erro */
+
+  min-height: 100vh;
+  background: #ffffff;
+  color: var(--texto);
+}
+
+/* Faz largura e altura contarem com a borda e o padding (evita input "vazando") */
+.ins-main *,
+.ins-main *::before,
+.ins-main *::after,
+.ins-modal-fundo *,
+.ins-modal-fundo *::before,
+.ins-modal-fundo *::after {
+  box-sizing: border-box;
+}
+
+/* Esconde da tela, mas leitores de tela continuam lendo */
+.ins-escondido {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- 2. Área central ---------- */
+.ins-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 16px 56px;
+}
+
+/* ---------- 3. Título com degradê ---------- */
+.ins-titulo {
+  margin: 0 0 28px;
+  text-align: center;
+  font-size: 2.25rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--azul-titulo-1); /* reserva se o degradê não funcionar */
+  background: linear-gradient(90deg, var(--azul-titulo-1), var(--azul-titulo-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 4. Formulário de cadastro ---------- */
+/* Grid: 4 colunas no PC (nome, marca, quantidade, botão).
+   minmax(0, X) = a coluna pode encolher até 0, então nunca corta nada. */
+.ins-form-cadastro {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 200px) minmax(0, 150px) auto;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.ins-campo {
+  min-width: 0;
+  margin: 0;
+}
+
+/* Inputs e selects da página */
+.ins-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ins-input::placeholder {
+  color: #a0a0a0;
+  opacity: 1;
+}
+
+.ins-input:hover { border-color: #bdbdbd; }
+
+.ins-input:focus {
+  border-color: var(--azul-claro);
+  box-shadow: 0 0 0 3px rgba(3, 128, 242, 0.18);
+}
+
+/* Select com setinha própria (a do navegador muda de um para outro) */
+.ins-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f7f7f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  cursor: pointer;
+}
+
+/* ---------- 5. Botões ---------- */
+.ins-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  margin: 0;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.1s, background-color 0.2s;
+}
+
+.ins-btn:active   { transform: translateY(1px); }
+.ins-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.ins-btn:focus-visible {
+  outline: 3px solid rgba(3, 128, 242, 0.35);
+  outline-offset: 2px;
+}
+
+/* Azul com degradê (igual à imagem) */
+.ins-btn-primario {
+  background: linear-gradient(90deg, var(--azul-escuro), var(--azul-claro));
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+}
+
+.ins-btn-primario:hover:not(:disabled) { filter: brightness(1.1); }
+
+/* Branco com borda (Cancelar) */
+.ins-btn-secundario {
+  background: #ffffff;
+  color: var(--texto);
+  border-color: var(--cinza-borda);
+}
+
+.ins-btn-secundario:hover { background: var(--cinza-caixa); }
+
+.ins-btn-movimentar {
+  height: 56px;
+  padding: 0 32px;
+  font-size: 1rem;
+}
+
+/* ---------- 6. Caixa cinza (cards + tabela) ---------- */
+.ins-painel {
+  background: var(--cinza-caixa);
+  border-radius: 36px;
+  padding-top: 24px;
+  overflow: hidden;
+}
+
+.ins-topo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px 40px;
+  padding: 0 32px 24px;
+}
+
+.ins-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* ---------- 7. Cards "Total" e "Acabando" ---------- */
+.ins-card {
+  width: 220px;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.ins-card-rotulo {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--texto);
+}
+
+.ins-card-valor {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #000000;
+}
+
+.ins-card-icone {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.ins-card-icone svg { width: 18px; height: 18px; }
+
+.ins-icone-azul    { background: var(--icone-azul-fundo);    color: var(--icone-azul); }
+.ins-icone-laranja { background: var(--icone-laranja-fundo); color: var(--icone-laranja); }
+
+/* ---------- 8. Tabela ---------- */
+.ins-tabela-wrapper {
+  background: var(--cinza-coluna);
+  border-radius: 36px;
+  overflow-x: auto; /* tela média: a tabela rola para o lado */
+  padding-bottom: 8px;
+}
+
+.ins-tabela {
+  width: 100%;
+  min-width: 640px;
+  margin: 0;
+  border: 0;
+  table-layout: fixed;   /* largura das colunas não muda com o texto */
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ins-tabela th,
+.ins-tabela td {
+  padding: 12px 16px;
+  border: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* texto grande demais vira "..." */
+  color: var(--texto);
+}
+
+.ins-tabela th:first-child { width: 28%; } /* coluna da marca um pouco maior */
+
+/* Colunas 2 e 4 mais claras: cria as listras da imagem */
+.ins-tabela th:nth-child(even),
+.ins-tabela td:nth-child(even) {
+  background: var(--cinza-caixa);
+}
+
+.ins-tabela th {
+  padding-top: 22px;
+  padding-bottom: 14px;
+  color: var(--azul-cabecalho);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+.ins-tabela th:first-child,
+.ins-tabela td:first-child {
+  text-align: left;
+  padding-left: 32px;
+}
+
+.ins-marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ins-marca-icone {
+  width: 28px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--azul-marca);
+  color: #ffffff;
+}
+
+.ins-marca-icone svg { width: 14px; height: 14px; }
+
+.ins-marca-nome {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ins-vazio {
+  margin: 0;
+  padding: 40px 16px 56px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+}
+
+/* ---------- 9. Paginação ---------- */
+.ins-paginacao {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px 16px;
+}
+
+.ins-paginacao button {
+  min-width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--azul-paginacao);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.ins-paginacao button:hover { background: rgba(0, 30, 191, 0.08); }
+
+.ins-paginacao .ins-pagina-ativa,
+.ins-paginacao .ins-pagina-ativa:hover {
+  background: var(--azul-paginacao);
+  color: #ffffff;
+}
+
+/* ---------- 10. Modal de movimentação ---------- */
+
+/* Fundo escuro que cobre a tela toda, inclusive o cabeçalho */
+.ins-modal-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(17, 24, 39, 0.55);
+  backdrop-filter: blur(2px);
+  animation: ins-aparecer 0.18s ease-out;
+}
+
+/* A caixa branca. max-height + rolagem no meio = nunca passa da tela */
+.ins-modal {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  min-height: 0;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  overflow: hidden;
+  background: #ffffff;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+  animation: ins-subir 0.22s ease-out;
+}
+
+/* Cabeçalho: ícone + título + botão X */
+.ins-modal-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px 20px 18px 24px;
+  border-bottom: 1px solid var(--cinza-caixa);
+}
+
+.ins-modal-icone {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--icone-azul-fundo);
+  color: var(--icone-azul);
+}
+
+.ins-modal-icone svg { width: 22px; height: 22px; }
+
+.ins-modal-textos {
+  flex: 1;
+  min-width: 0;
+}
+
+.ins-modal-titulo {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--azul-titulo-1);
+}
+
+.ins-modal-subtitulo {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--texto-suave);
+}
+
+.ins-modal-fechar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.ins-modal-fechar svg { width: 20px; height: 20px; }
+.ins-modal-fechar:hover { background: var(--cinza-caixa); color: var(--texto); }
+
+/* Meio do modal: os campos. Se não couber, só essa parte rola */
+.ins-modal-corpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 24px;
+}
+
+.ins-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* Botões Entrada / Saída lado a lado */
+.ins-tipos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ins-tipo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.ins-tipo svg {
+  width: 18px;
+  height: 18px;
+  color: var(--texto-suave);
+}
+
+.ins-tipo:hover { border-color: #bdbdbd; background: #fafafa; }
+
+.ins-tipo-entrada.ins-tipo-ativo {
+  border-color: var(--icone-azul);
+  background: var(--icone-azul-fundo);
+}
+.ins-tipo-entrada.ins-tipo-ativo svg { color: var(--icone-azul); }
+
+.ins-tipo-saida.ins-tipo-ativo {
+  border-color: var(--icone-laranja);
+  background: var(--icone-laranja-fundo);
+}
+.ins-tipo-saida.ins-tipo-ativo svg { color: var(--icone-laranja); }
+
+/* Caixinha cinza com "Estoque atual" e "Estoque depois" */
+.ins-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--cinza-caixa);
+  font-size: 0.9rem;
+}
+
+.ins-resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ins-resumo-linha strong { color: #000000; }
+
+.ins-resumo-erro,
+.ins-resumo-erro strong {
+  color: var(--vermelho);
+  font-weight: 600;
+}
+
+/* Rodapé do modal: Cancelar e Confirmar */
+.ins-modal-rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--cinza-caixa);
+  background: #fafafa;
+}
+
+/* Animações de abrir */
+@keyframes ins-aparecer {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ins-subir {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- 11. Responsividade ---------- */
+
+/* Tablet */
+@media (max-width: 860px) {
+  .ins-titulo { font-size: 2rem; }
+
+  /* Nome na linha toda; marca e quantidade dividem a de baixo; botão embaixo */
+  .ins-form-cadastro {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    justify-content: stretch;
+  }
+  .ins-campo-nome,
+  .ins-btn-cadastrar { grid-column: 1 / -1; }
+
+  .ins-painel,
+  .ins-tabela-wrapper { border-radius: 24px; }
+
+  /* Tela média: o texto quebra linha em vez de virar "..." */
+  .ins-tabela th:first-child { width: 26%; }
+  .ins-tabela td { white-space: normal; overflow-wrap: anywhere; }
+
+  .ins-topo { padding: 0 20px 20px; }
+  .ins-cards { flex: 1 1 100%; }
+  .ins-card { flex: 1 1 200px; width: auto; }
+  .ins-btn-movimentar { flex: 1 1 100%; }
+}
+
+/* Celular: a tabela vira uma lista de cards */
+@media (max-width: 640px) {
+  .ins-main { padding: 20px 16px 40px; }
+  .ins-titulo { font-size: 1.75rem; margin-bottom: 20px; }
+
+  /* 16px no input evita o iPhone dar zoom ao tocar no campo */
+  .ins-input { height: 46px; font-size: 16px; }
+
+  .ins-form-cadastro { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .ins-btn-cadastrar { height: 46px; }
+
+  .ins-painel { padding-top: 16px; }
+  .ins-topo { gap: 12px; padding: 0 16px 16px; }
+  .ins-cards { gap: 12px; }
+  .ins-card { flex: 1 1 140px; min-height: 84px; padding: 14px; }
+  .ins-card-icone { width: 34px; height: 34px; }
+  .ins-btn-movimentar { height: 50px; }
+
+  .ins-tabela-wrapper {
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+    padding: 0 16px 8px;
+  }
+
+  .ins-tabela { min-width: 0; table-layout: auto; }
+
+  /* Esconde o cabeçalho da tabela (o nome da coluna aparece em cada card) */
+  .ins-tabela thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .ins-tabela,
+  .ins-tabela tbody,
+  .ins-tabela tr,
+  .ins-tabela td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Cada linha vira um card branco */
+  .ins-tabela tr {
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  .ins-tabela td,
+  .ins-tabela td:first-child,
+  .ins-tabela td:nth-child(even) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    background: none;
+    text-align: right;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Nome da coluna à esquerda, vindo do data-label */
+  .ins-tabela td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: var(--azul-cabecalho);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  /* Primeira linha do card: só o ícone e a marca */
+  .ins-tabela td:first-child {
+    justify-content: flex-start;
+    padding: 0 0 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--cinza-caixa);
+    text-align: left;
+  }
+  .ins-tabela td:first-child::before { content: none; }
+
+  .ins-paginacao { padding: 4px 0 8px; }
+
+  /* Modal sobe de baixo, ocupando a largura toda */
+  .ins-modal-fundo { align-items: flex-end; padding: 0; }
+
+  .ins-modal {
+    max-width: none;
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .ins-modal-cabecalho { padding: 18px 16px 14px 20px; }
+  .ins-modal-icone { width: 40px; height: 40px; }
+  .ins-modal-corpo { padding: 18px 20px; }
+
+  .ins-modal-rodape {
+    flex-direction: column-reverse; /* Confirmar em cima, Cancelar embaixo */
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  }
+  .ins-modal-rodape .ins-btn { width: 100%; height: 48px; }
+}
+
+/* Quem desativou animações no sistema não vê animação */
+@media (prefers-reduced-motion: reduce) {
+  .ins-modal-fundo,
+  .ins-modal { animation: none; }
+}

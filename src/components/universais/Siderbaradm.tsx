@@ -41,6 +41,11 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/Agendamentosadm',
     },
+     {
+      icon: BsCalendarCheckFill,
+      label: 'Insumos',
+      path: '/insumos',
+    },
     {
       icon: RotateCcwIcon,
       label: 'Historico da prescrição',

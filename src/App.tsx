@@ -21,6 +21,7 @@ import Historicodaprescricao from './Administrador/Historicodaprescricao'
 import CadastroAUT from './Autorizador/CadastroAUT';
 import HomeAut from './Autorizador/HomeAut';
 import VerPrescricoesAprovadas from './Autorizador/VerPrescricoesAprovadas';
+import FluxoInsumo from './Administrador/fluxoinsumo';
 import './index.css';
 
 function App() {
@@ -32,6 +33,10 @@ function App() {
       <Route
         path="/agendamentos"
         element={<Agendamentos />}
+      />
+      <Route
+        path="/insumos"
+        element={<FluxoInsumo />}
       />
 
       <Route
