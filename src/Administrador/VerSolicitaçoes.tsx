@@ -278,18 +278,20 @@ export default function Pendencias() {
                  </div>
 
                             {/* BOTÃO */}
-
-                           <button
-                              className="btn-ver-mais"
-                          onClick={() =>
-    navigate(
-        `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
-    )
-}
-                    >
-                             VER MAIS
+                     <button
+                        className="btn-ver-mais"
+                        onClick={() => {
+                        if (prescricao.sol_status === "Autorizado") {
+                      navigate(`/Agendamentosadm/${prescricao.sol_id}`);
+                       } else {
+                      navigate(
+                  `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
+                );
+              }
+    }}
+                 >
+                       VER MAIS
                               </button>
-         
                         </div>
 
                     ))}
