@@ -268,12 +268,14 @@ export default function Pendencias() {
 
                             {/* STATUS */}
                              <div
-                               className={
-                                    prescricao.sol_status === "Autorizado"
-                                     ? "status-autorizado"
-                                     : "status-pendente"
-                        }
-                             >
+                                className={
+    prescricao.sol_status === "Autorizado"
+      ? "status-autorizado"
+      : prescricao.sol_status === "Enviado"
+      ? "status-enviado"
+      : "status-pendente"
+  }
+  >
               {prescricao.sol_status}
                  </div>
 
