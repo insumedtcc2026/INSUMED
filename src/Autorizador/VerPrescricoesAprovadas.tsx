@@ -77,11 +77,10 @@ export default function Autorizador() {
 
             const dados =
                 await buscarPrescricoesAprovadas();
-
-            console.log(
-                "Prescrições aprovadas recebidas:",
-                dados
-            );
+console.log(
+    "DADOS AUTORIZADOR:",
+    JSON.stringify(dados, null, 2)
+);
 
             setPrescricoes(dados);
 

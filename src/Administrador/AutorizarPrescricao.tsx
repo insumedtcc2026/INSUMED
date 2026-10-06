@@ -5,9 +5,12 @@ import Swal from 'sweetalert2';
 import Header from "../components/universais/HeaderAdm";
 import Sidebar from "../components/universais/Siderbaradm";
 import { useNavigate } from "react-router-dom";
+import { useDadosInsumos } from "../hook/Insumosposto";
 
 import "../css/home/AutorizarPrescricao.css";
 
+
+ 
 interface Solicitacao {
   sol_id: number;
   pac_id: number;
@@ -34,9 +37,20 @@ function EnviarPrescricao() {
 
   const [carregando, setCarregando] = useState(true);
 
+ const {
+  insumos,
+  movimentarInsumo
+} = useDadosInsumos();
+
+const [insumoMovId, setInsumoMovId] = useState("");
+const [tipoMovimento, setTipoMovimento] = useState<"entrada" | "saida">("entrada");
+const [quantidade, setQuantidade] = useState("");
+const listaInsumos = insumos ?? [];
+
   const navigate = useNavigate();
   const [dataVencimento, setDataVencimento] = useState("");
-  
+   
+    
 
   const [solicitacao, setSolicitacao] =
     useState<Solicitacao | null>(null);
@@ -46,7 +60,42 @@ const [mostrarMotivos, setMostrarMotivos] = useState(false);
 const [motivo, setMotivo] = useState("");
  
   // BUSCAR DADOS DA SOLICITAÇÃO E PRESCRIÇÃO
+async function handleMovimentar() {
+  if (!insumoMovId) {
+    alert("Selecione um insumo.");
+    return;
+  }
 
+  const qtd = Number(quantidade);
+
+  if (!qtd || qtd <= 0) {
+    alert("Digite uma quantidade válida.");
+    return;
+  }
+
+  try {
+    await movimentarInsumo(
+      Number(insumoMovId),
+      tipoMovimento,
+      qtd
+    );
+
+    alert("Movimentação realizada com sucesso!");
+
+    setInsumoMovId("");
+    setQuantidade("");
+    setTipoMovimento("entrada");
+
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Erro ao movimentar insumo."
+    );
+  }
+}
 
   useEffect(() => {
 
@@ -436,8 +485,54 @@ navigate('/VerSolicitaçoes')
               />
 
             </div>
+{/* INSUMO + QUANTIDADE */}
 
+<div className="linha-insumo">
 
+  <div className="ins-campo insumo-select">
+    <label className="ins-label">
+      Insumo
+    </label>
+
+    <select
+      className="ins-input ins-select"
+      value={insumoMovId}
+      onChange={(e) => setInsumoMovId(e.target.value)}
+    >
+      <option value="">
+        Selecione o insumo
+      </option>
+
+      {listaInsumos.map((insumo) => (
+        <option
+          key={insumo.ins_id}
+          value={insumo.ins_id}
+        >
+          {insumo.ins_nome}
+          {insumo.ins_marca
+            ? ` - ${insumo.ins_marca}`
+            : ""}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="ins-campo quantidade-campo">
+    <label className="ins-label">
+      Quantidade
+    </label>
+
+    <input
+      type="number"
+      min="1"
+      className="ins-input"
+      value={quantidade}
+      onChange={(e) => setQuantidade(e.target.value)}
+      placeholder="Qtd."
+    />
+  </div>
+
+</div>
             {/* OBSERVAÇÃO */}
 
             <div className="campo">

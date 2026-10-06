@@ -504,6 +504,7 @@ return (
                                     </label>
 
                                     <textarea
+                                    className="observacao-prescricao"
                                         id="observacao"
                                         value={observacao}
                                         onChange={e =>

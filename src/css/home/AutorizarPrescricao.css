@@ -15,13 +15,14 @@
 
 .enviar-prescricao-content {
   margin-left: 150px;
-  padding: 140px 30px 120px;
+  padding: 90px 30px 100px;
+  box-sizing: border-box;
 }
 
 .enviar-prescricao-content h1 {
   color: #0645ff;
   font-size: 20px;
-  margin: 0 0 12px 0;
+  margin: 0 0 15px 0;
 }
 
 
@@ -31,8 +32,25 @@
 
 .prescricao-container {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 15px;
+
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   ÁREA DA IMAGEM
+========================================= */
+
+.prescricao-preview {
+  flex: 1;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+
+  display: flex;
 }
 
 
@@ -40,14 +58,10 @@
    QUADRADO DA PRESCRIÇÃO
 ========================================= */
 
-.prescricao-preview {
-  width: 65%;
-  max-width: 700px;
-}
-
 .prescricao-imagem {
   width: 100%;
-  height: 500px;
+  height: auto;
+  min-height: 100%;
 
   border: 1px solid #cccccc;
   border-radius: 12px;
@@ -59,6 +73,8 @@
   justify-content: center;
 
   overflow: hidden;
+
+  box-sizing: border-box;
 }
 
 .prescricao-imagem img {
@@ -66,6 +82,7 @@
   height: 100%;
 
   object-fit: contain;
+
   display: block;
 }
 
@@ -80,8 +97,12 @@
 ========================================= */
 
 .informacoes-prescricao {
-  width: 450px;
-  height: 500px;
+  flex: 0 0 425px;
+
+  width: 425px;
+
+  min-height: 500px;
+  height: auto;
 
   border: 1px solid #bdbdbd;
   border-radius: 12px;
@@ -89,6 +110,8 @@
   padding: 10px;
 
   box-sizing: border-box;
+
+  overflow: visible;
 }
 
 .informacoes-prescricao h2 {
@@ -105,18 +128,21 @@
 
 .campo {
   width: 100%;
+
   margin-bottom: 7px;
+
+  box-sizing: border-box;
 }
 
 .campo label {
   display: block;
 
-  font-size: 9px;
+  font-size: 14px;
   font-weight: bold;
 
   color: #222;
 
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 .campo input,
@@ -126,42 +152,84 @@
   box-sizing: border-box;
 
   border: 1px solid #d5d5d5;
-  border-radius: 6px;
+  border-radius: 7px;
 
   background-color: #ffffff;
 
-  font-size: 14px;
   color: #555;
 
-  padding: 7px;
-}
-
-.campo input {
-  height: 25px;
-}
-
-.campo textarea {
-  height: 140px;
-  font-size: 18px;
-
-  resize: none;
+  outline: none;
 
   font-family: Arial, sans-serif;
 }
 
 
 /* =========================================
-   CPF + COD
+   INPUTS
+========================================= */
+
+.campo input {
+  height: 36px;
+
+  padding: 7px 9px;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   OBSERVAÇÕES
+========================================= */
+
+.campo textarea {
+  width: 100%;
+
+  height: 100px;
+
+  box-sizing: border-box;
+
+  padding: 10px;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+
+  color: #555;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 14px;
+
+  resize: none;
+
+  outline: none;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+  border-color: #2997ff;
+
+  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
+}
+
+
+/* =========================================
+   CPF + CÓDIGO
 ========================================= */
 
 .linha-campos {
   display: flex;
+
   gap: 8px;
+
   width: 100%;
 }
 
 .linha-campos .campo {
   flex: 1;
+
+  min-width: 0;
 }
 
 
@@ -169,9 +237,236 @@
    DATA DE VENCIMENTO
 ========================================= */
 
-
 .vencimento label {
   color: #ff3333;
+}
+
+
+/* =========================================
+   INSUMO + QUANTIDADE
+========================================= */
+
+.linha-insumo {
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 10px;
+
+  width: 100%;
+
+  margin-bottom: 8px;
+
+  box-sizing: border-box;
+}
+
+.linha-insumo .ins-campo {
+  margin-bottom: 0;
+}
+/* =========================================
+   INSUMO + QUANTIDADE
+========================================= */
+
+.linha-insumo {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.insumo-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.quantidade-campo {
+  width: 85px;
+  flex: 0 0 85px;
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.ins-label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+
+/* =========================================
+   SELECT E QUANTIDADE
+========================================= */
+
+.ins-input {
+  width: 100%;
+  height: 36px;
+
+  box-sizing: border-box;
+
+  padding: 7px 9px;
+
+  border: 1px solid #d5d5d5 !important;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+
+  color: #555;
+
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+
+  outline: none;
+
+  appearance: auto;
+}
+
+
+/* =========================================
+   FOCO
+========================================= */
+
+.ins-input:focus {
+  border: 1px solid #2997ff !important;
+
+  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.ins-select {
+  cursor: pointer;
+}
+
+
+/* =========================================
+   QUANTIDADE
+========================================= */
+
+.quantidade-campo input[type="number"] {
+  width: 100%;
+  height: 36px;
+
+  border: 1px solid #d5d5d5 !important;
+  border-radius: 7px;
+
+  box-sizing: border-box;
+
+  padding: 7px 9px;
+
+  background-color: #ffffff;
+
+  font-size: 14px;
+}
+
+/* =========================================
+   CAMPO DE INSUMO
+========================================= */
+
+.ins-campo {
+  width: 100%;
+
+  margin-bottom: 7px;
+
+  box-sizing: border-box;
+}
+
+.insumo-select {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+/* =========================================
+   QUANTIDADE
+========================================= */
+
+.quantidade-campo {
+  width: 85px;
+
+  flex: 0 0 85px;
+}
+
+
+/* =========================================
+   LABEL DOS INSUMOS
+========================================= */
+
+.ins-label {
+  display: block;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  color: #222;
+
+  margin-bottom: 4px;
+}
+
+
+/* =========================================
+   INPUT / SELECT DOS INSUMOS
+========================================= */
+
+.ins-input {
+  width: 100%;
+
+  height: 36px;
+
+  box-sizing: border-box;
+
+  padding: 7px 9px;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+
+  color: #555;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+.ins-input:focus {
+  border-color: #2997ff;
+
+  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.ins-select {
+  cursor: pointer;
+  
+}
+
+
+
+/* =========================================
+   QUANTIDADE
+========================================= */
+
+.ins-campo input[type="number"] {
+  height: 36px;
+
+  font-size: 14px;
 }
 
 
@@ -179,7 +474,11 @@
    MOTIVOS
 ========================================= */
 
+.motivos {
+  width: 180px;
 
+  margin-top: 10px;
+}
 
 .motivos h2 {
   font-size: 13px;
@@ -191,16 +490,21 @@
   padding: 7px 0;
 
   border: 1px solid #ddd;
+
   border-bottom: none;
 
   color: #111;
 }
 
 .motivos label {
+  display: block;
+
   background-color: #0019c9;
+
   color: #ffffff;
 
   font-size: 11px;
+
   font-weight: bold;
 
   padding: 8px 5px;
@@ -219,15 +523,13 @@
    BOTÕES
 ========================================= */
 
-/* =========================================
-   BOTÕES
-========================================= */
-
 .prescricao-buttons {
   display: flex !important;
+
   flex-direction: row !important;
 
   align-items: flex-start !important;
+
   justify-content: flex-start !important;
 
   width: auto !important;
@@ -235,17 +537,21 @@
   gap: 10px !important;
 
   margin: 15px 0 0 0 !important;
+
   padding: 0 !important;
 }
 
 .reenvio-area {
   display: flex !important;
+
   flex-direction: column !important;
+
   align-items: center !important;
 
   width: 115px !important;
 
   margin: 0 !important;
+
   padding: 0 !important;
 }
 
@@ -254,6 +560,7 @@
   display: block !important;
 
   width: 115px !important;
+
   height: 35px !important;
 
   margin: 0 !important;
@@ -261,11 +568,13 @@
   padding: 0 !important;
 
   border: none !important;
+
   border-radius: 6px !important;
 
   color: white !important;
 
   font-size: 11px !important;
+
   font-weight: bold !important;
 
   cursor: pointer;
@@ -279,62 +588,133 @@
   background-color: #28d34f !important;
 }
 
-.motivos {
-  width: 180px;
-  margin-top: 10px;
-}
-
 .btn-reenvio:hover {
-  background-color: #c90000;
+  background-color: #c90000 !important;
 }
 
 .btn-enviar:hover {
-  background-color: #1db83f;
+  background-color: #1db83f !important;
 }
 
 
 /* =========================================
-   RESPONSIVIDADE
+   RESPONSIVIDADE - 1100PX
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .enviar-prescricao-content {
+    margin-left: 120px;
+  }
+
+  .informacoes-prescricao {
+    flex: 0 0 400px;
+
+    width: 400px;
+
+    min-height: 500px;
+
+    height: auto;
+
+    overflow: visible;
+  }
+}
+
+
+/* =========================================
+   RESPONSIVIDADE - 900PX
 ========================================= */
 
 @media (max-width: 900px) {
 
   .enviar-prescricao-content {
     margin-left: 0;
-    padding: 20px;
+
+    padding: 90px 20px 40px;
   }
 
   .prescricao-container {
     flex-direction: column;
+
+    align-items: stretch;
   }
 
   .prescricao-preview {
     width: 100%;
+
     max-width: none;
+
+    display: flex;
+  }
+
+  .prescricao-imagem {
+    width: 100%;
+
+    min-height: 350px;
+
+    height: 350px;
   }
 
   .informacoes-prescricao {
+    flex: none;
+
     width: 100%;
+
     max-width: 500px;
+
+    min-height: 500px;
+
+    height: auto;
+
+    overflow: visible;
   }
 
   .prescricao-buttons {
     margin-left: 0;
+
     justify-content: center;
   }
-
 }
 
 
+/* =========================================
+   RESPONSIVIDADE - 500PX
+========================================= */
+
 @media (max-width: 500px) {
+
+  .enviar-prescricao-content {
+    padding: 80px 15px 30px;
+  }
 
   .prescricao-imagem {
     height: 350px;
+
+    min-height: 350px;
   }
 
   .linha-campos {
     flex-direction: column;
+
     gap: 0;
+  }
+
+  .linha-insumo {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0;
+  }
+
+  .insumo-select {
+    width: 100%;
+  }
+
+  .quantidade-campo {
+    width: 100%;
+
+    flex: none;
   }
 
   .motivos {
@@ -342,11 +722,10 @@
   }
 
   .prescricao-buttons {
-    flex-direction: column;
+    flex-direction: column !important;
   }
 
   .prescricao-buttons button {
     width: 180px;
   }
-
 }
