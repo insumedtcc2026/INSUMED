@@ -282,7 +282,7 @@ export default function Pendencias() {
                         className="btn-ver-mais"
                         onClick={() => {
                         if (prescricao.sol_status === "Autorizado") {
-                      navigate(`/Agendamentosadm/${prescricao.sol_id}`);
+                      navigate(`/Agendamentosadm`);
                        } else {
                       navigate(
                   `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
