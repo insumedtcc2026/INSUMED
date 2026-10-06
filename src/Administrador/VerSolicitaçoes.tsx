@@ -277,11 +277,11 @@ export default function Pendencias() {
 
                            <button
                               className="btn-ver-mais"
-                              onClick={() =>
-                               navigate(
-                               `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
-                             )
-                         }
+                             onClick={() =>
+    navigate(
+        `/autorizador/solicitacao/${prescricao.sol_id}`
+    )
+}
                     >
                              VER MAIS
                               </button>

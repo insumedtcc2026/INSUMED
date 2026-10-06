@@ -1,0 +1,258 @@
+.autorizar-page {
+    min-height: calc(100vh - 80px);
+    padding: 110px 35px 100px;
+    box-sizing: border-box;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.autorizar-header {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.autorizar-header h1 {
+    margin: 0;
+    color: #0648f5;
+    font-size: 24px;
+}
+
+.autorizar-header p {
+    margin: 6px 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.btn-voltar {
+    border: none;
+    background: transparent;
+    color: #0648f5;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 7px 0;
+}
+
+.autorizar-container {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(350px, 0.7fr);
+
+    gap: 20px;
+    align-items: stretch;
+}
+
+.prescricao-visualizacao,
+.informacoes-autorizador {
+    background: #ffffff;
+    border: 1px solid #d5d5d5;
+    border-radius: 12px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+}
+
+.prescricao-visualizacao h2,
+.informacoes-autorizador h2 {
+    margin: 0 0 18px;
+    color: #222;
+    font-size: 18px;
+}
+
+.prescricao-imagem-autorizador {
+    width: 100%;
+    min-height: 500px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    background: #f8f8f8;
+    overflow: hidden;
+}
+
+.prescricao-imagem-autorizador img {
+    width: 100%;
+    height: 500px;
+
+    object-fit: contain;
+    display: block;
+}
+
+.prescricao-imagem-autorizador p {
+    color: #777;
+    font-size: 14px;
+}
+
+.informacoes-autorizador {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.informacao-grupo {
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.informacao-grupo h3 {
+    margin: 0 0 8px;
+    color: #0648f5;
+    font-size: 14px;
+}
+
+.informacao-grupo p {
+    margin: 5px 0;
+    color: #444;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.observacao-autorizador {
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 7px;
+    min-height: 50px;
+    box-sizing: border-box;
+}
+
+.status-atual {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 11px 13px;
+
+    background: #e8f1ff;
+    border: 1px solid #b9d3ff;
+    border-radius: 8px;
+
+    color: #0648f5;
+    font-size: 13px;
+}
+
+.status-atual span {
+    font-weight: bold;
+}
+
+.acoes-autorizador {
+    width: 100%;
+    max-width: 1150px;
+    margin: 22px auto 0;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-nao-autorizar,
+.btn-autorizar {
+    min-width: 155px;
+    height: 46px;
+
+    border: none;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-nao-autorizar {
+    background: #eeeeee;
+    color: #333;
+}
+
+.btn-nao-autorizar:hover:not(:disabled) {
+    background: #dddddd;
+}
+
+.btn-autorizar {
+    background: #0648f5;
+    color: #ffffff;
+}
+
+.btn-autorizar:hover:not(:disabled) {
+    background: #003bd0;
+}
+
+.btn-nao-autorizar:disabled,
+.btn-autorizar:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.autorizar-carregando,
+.autorizar-erro {
+    width: 100%;
+    max-width: 1150px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.autorizar-erro h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.autorizar-erro button {
+    padding: 11px 25px;
+    border: none;
+    border-radius: 7px;
+    background: #0648f5;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+
+    .autorizar-container {
+        grid-template-columns: 1fr;
+    }
+
+    .prescricao-imagem-autorizador,
+    .prescricao-imagem-autorizador img {
+        min-height: 400px;
+        height: 400px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .autorizar-page {
+        padding: 95px 15px 80px;
+    }
+
+    .autorizar-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .autorizar-header h1 {
+        font-size: 21px;
+    }
+
+    .acoes-autorizador {
+        flex-direction: column;
+    }
+
+    .btn-nao-autorizar,
+    .btn-autorizar {
+        width: 100%;
+    }
+
+}

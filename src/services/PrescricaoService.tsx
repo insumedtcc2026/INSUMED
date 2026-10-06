@@ -144,7 +144,7 @@ export interface PrescricaoAprovada {
     sol_id: number;
     pac_id: number;
     pos_id: number;
-
+   sol_insumo_quant: number;
     sol_status: string;
     sol_data_solicitacao: string;
     sol_data_vencimento?: string | null;

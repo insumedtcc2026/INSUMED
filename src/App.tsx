@@ -21,6 +21,7 @@ import Historicodaprescricao from './Administrador/Historicodaprescricao'
 import CadastroAUT from './Autorizador/CadastroAUT';
 import HomeAut from './Autorizador/HomeAut';
 import VerPrescricoesAprovadas from './Autorizador/VerPrescricoesAprovadas';
+import AutorizarPrescricaoAutorizador from './Autorizador/AutorizarPrescricoesAut';
 import FluxoInsumo from './Administrador/fluxoinsumo';
 import './index.css';
 
@@ -92,6 +93,12 @@ function App() {
       <Route
         path="/verprescricoesaprovadas"
         element={<VerPrescricoesAprovadas />}
+
+      />
+
+      <Route
+        path="/autorizarprescricoesaut"
+        element={<AutorizarPrescricaoAutorizador />}
 
       />
 
