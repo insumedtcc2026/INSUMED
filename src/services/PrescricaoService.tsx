@@ -125,11 +125,8 @@ export const buscarHistoricoPrescricoes =
 
 
 
-
-   export async function buscarPrescricoesAprovadas() {
+export async function buscarPrescricoesAprovadas() {
     const token = localStorage.getItem("token");
-
-    console.log("TOKEN EXISTE?", !!token);
 
     try {
         const response = await axios.get(
@@ -141,14 +138,14 @@ export const buscarHistoricoPrescricoes =
             }
         );
 
-        console.log("STATUS:", response.status);
-        console.log("DADOS DA API:", response.data);
+        console.log("STATUS DA API:", response.status);
+        console.log("RESPOSTA DA API:", response.data);
         console.log("QUANTIDADE:", response.data.length);
 
         return response.data;
 
     } catch (error) {
-        console.error("ERRO API PRESCRIÇÕES:", error);
+        console.error("ERRO AO BUSCAR PRESCRIÇÕES:", error);
         throw error;
     }
 }
