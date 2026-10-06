@@ -8,7 +8,7 @@ import Sidebaradm from "../components/universais/Siderbaradm.tsx";
 import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
-import "../css/home/AutorizarPrescicoesAut.css";
+import "../css/home/AutorizarPrescricao.css";
 
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
