@@ -244,11 +244,6 @@ const editarDataNascimento = async () => {
   }
 };
 
-  // Antes esse Swal.fire rodava direto no corpo do componente,
-  // disparando de novo a CADA re-render enquanto "erro" fosse verdadeiro
-  // (ex: abrir/fechar sidebar, abrir/fechar modal, etc).
-  // Com useEffect + [erro], ele só dispara quando o valor de "erro"
-  // realmente muda de um render pro outro.
   useEffect(() => {
     if (erro) {
       Swal.fire({
@@ -548,7 +543,7 @@ const editarDataNascimento = async () => {
         </div>
       )}
 
-      {/* Erro ao carregar o detalhe (ex: token expirado, acesso negado) */}
+      {/* Erro ao carregar o detalhe */}
       {erroDetalhes && (
         <div className="modal-overlay" onClick={fecharDetalhes}>
           <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
