@@ -197,11 +197,11 @@
 .status-enviado {
   background-color: #2196f3;
   color: white;
-  padding: 8px 18px;
-  border-radius: 20px;
+  padding: 5px 18px;
+  border-radius: 15px;
   font-size: 12px;
-  font-weight: bold;
-  text-align: center;
+   text-transform: lowercase;
+    margin-left: auto;
 }
 
 
