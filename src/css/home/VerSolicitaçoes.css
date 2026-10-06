@@ -195,6 +195,16 @@
 }
 
 
+.status-autorizado {
+    color: #ffffff;
+    background-color: #28d34f;
+    padding: 5px 18px;
+    border-radius: 15px;
+    font-size: 9px;
+    text-transform: lowercase;
+    margin-left: auto;
+}
+
 /* =========================
    BOTÃO VER MAIS
 ========================= */
