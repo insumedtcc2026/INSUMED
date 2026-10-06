@@ -298,10 +298,10 @@ console.log(
                             <button
                                 className="btn-ver-mais"
                                 onClick={() =>
-                                    navigate(
-                                        `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
-                                    )
-                                }
+    navigate(
+        `/autorizador/solicitacao/${prescricao.sol_id}`
+    )
+}
                             >
                                 VER MAIS
                             </button>
