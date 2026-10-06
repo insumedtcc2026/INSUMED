@@ -126,19 +126,31 @@ export const buscarHistoricoPrescricoes =
 
 
 
-    export async function buscarPrescricoesAprovadas() {
+   export async function buscarPrescricoesAprovadas() {
     const token = localStorage.getItem("token");
 
-    const response = await axios.get(
-        "https://backend-insumed-lhac.vercel.app/prescricao/aprovadas",
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    console.log("TOKEN EXISTE?", !!token);
 
-    return response.data;
+    try {
+        const response = await axios.get(
+            `https://backend-insumed-lhac.vercel.app/prescricao/aprovadas?t=${Date.now()}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        console.log("STATUS:", response.status);
+        console.log("DADOS DA API:", response.data);
+        console.log("QUANTIDADE:", response.data.length);
+
+        return response.data;
+
+    } catch (error) {
+        console.error("ERRO API PRESCRIÇÕES:", error);
+        throw error;
+    }
 }
 export interface PrescricaoAprovada {
     sol_id: number;
