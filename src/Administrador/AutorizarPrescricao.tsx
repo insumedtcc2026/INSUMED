@@ -39,11 +39,11 @@ function EnviarPrescricao() {
 
  const {
   insumos,
-  movimentarInsumo
+ 
 } = useDadosInsumos();
 
 const [insumoMovId, setInsumoMovId] = useState("");
-const [tipoMovimento, setTipoMovimento] = useState<"entrada" | "saida">("entrada");
+
 const [quantidade, setQuantidade] = useState("");
 const listaInsumos = insumos ?? [];
 
@@ -60,42 +60,7 @@ const [mostrarMotivos, setMostrarMotivos] = useState(false);
 const [motivo, setMotivo] = useState("");
  
   // BUSCAR DADOS DA SOLICITAÇÃO E PRESCRIÇÃO
-async function handleMovimentar() {
-  if (!insumoMovId) {
-    alert("Selecione um insumo.");
-    return;
-  }
 
-  const qtd = Number(quantidade);
-
-  if (!qtd || qtd <= 0) {
-    alert("Digite uma quantidade válida.");
-    return;
-  }
-
-  try {
-    await movimentarInsumo(
-      Number(insumoMovId),
-      tipoMovimento,
-      qtd
-    );
-
-    alert("Movimentação realizada com sucesso!");
-
-    setInsumoMovId("");
-    setQuantidade("");
-    setTipoMovimento("entrada");
-
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      error instanceof Error
-        ? error.message
-        : "Erro ao movimentar insumo."
-    );
-  }
-}
 
   useEffect(() => {
 
