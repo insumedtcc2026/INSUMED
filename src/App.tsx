@@ -97,7 +97,7 @@ function App() {
       />
 
       <Route
-        path="/autorizarprescricoesaut"
+        path="/autorizador/solicitacao/:id"
         element={<AutorizarPrescricaoAutorizador />}
 
       />
