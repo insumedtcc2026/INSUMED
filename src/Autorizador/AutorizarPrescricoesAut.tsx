@@ -10,6 +10,7 @@ import Footer from "../components/universais/Footer.tsx";
 
 // Mesmo CSS da página do administrador, para ficar idêntica
 import "../css/home/AutorizarPrescricao.css";
+import Swal from "sweetalert2";
 
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
@@ -161,29 +162,28 @@ export default function AutorizarPrescricaoAutorizador() {
           },
         }
       );
-
-      alert(
-        status === "Autorizado"
-          ? "Prescrição autorizada com sucesso!"
-          : "Prescrição não autorizada."
-      );
+        Swal.fire({
+          icon: 'success',
+          title: 'Prescriação autorizada com sucesso!',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Ir para solicitaçoes '
+        })
 
       navigate("/verprescricoesaprovadas");
 
-    } catch (error) {
-      console.error("Erro ao alterar status:", error);
+    } catch (error: any) {
+      console.error("Erro ao autorizar prescrição:", error);
 
-      if (axios.isAxiosError(error) && error.response?.data?.error) {
-        alert(error.response.data.error);
-      } else {
-        alert("Erro ao alterar o status da prescrição.");
+       await Swal.fire({
+        icon: 'error',
+        title: 'Ops...',
+        text: error.response?.data?.error ||
+              error.response?.data?.message ||
+              'Ocorreu um erro ao autorizar a prescrição. Por favor, tente novamente.',
+        confirmButtonColor: '#d33'
+      });
       }
-    } finally {
-      setProcessando(false);
-    }
-  };
-
-
+    };
   // =====================================================
   // VALIDANDO TOKEN
   // =====================================================
