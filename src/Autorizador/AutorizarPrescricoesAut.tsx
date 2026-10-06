@@ -8,6 +8,7 @@ import Sidebaradm from "../components/universais/Siderbaradm.tsx";
 import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
+// Mesmo CSS da página do administrador, para ficar idêntica
 import "../css/home/AutorizarPrescricao.css";
 
 
@@ -15,658 +16,395 @@ const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 
 interface SolicitacaoAprovada {
-    sol_id: number;
-    pac_id: number;
-    pos_id: number;
-    ins_id: number;
+  sol_id: number;
+  pac_id: number;
+  pos_id: number;
+  ins_id: number;
 
-    sol_status: string;
+  sol_status: string;
 
-    sol_data_solicitacao: string;
-    sol_data_vencimento?: string | null;
+  sol_data_solicitacao: string;
+  sol_data_vencimento?: string | null;
 
-    sol_observacao?: string | null;
-    sol_prescricao_tipo?: string | null;
+  sol_observacao?: string | null;
+  sol_prescricao_tipo?: string | null;
 
-    sol_insumo_quant: number;
+  sol_insumo_quant: number;
 
-    pac_nome: string;
-    pac_cpf: string;
-    pac_avatar?: string | null;
+  pac_nome: string;
+  pac_cpf: string;
+  pac_avatar?: string | null;
 
-    pos_nome?: string | null;
+  pos_nome?: string | null;
 
-    ins_nome?: string | null;
-    ins_marca?: string | null;
+  ins_nome?: string | null;
+  ins_marca?: string | null;
+}
+
+
+// Formata datas para dd/mm/aaaa.
+// utc = true evita que "2026-09-01" vire 31/08 por causa do fuso.
+function formatarData(data?: string | null, utc = false) {
+  if (!data) return "";
+
+  return new Date(data).toLocaleDateString(
+    "pt-BR",
+    utc ? { timeZone: "UTC" } : undefined
+  );
 }
 
 
 export default function AutorizarPrescricaoAutorizador() {
 
-    const { id } = useParams();
-
-    const navigate = useNavigate();
-
-    const { verificando } = useValidarToken();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { verificando } = useValidarToken();
 
 
-    // =====================================================
-    // ESTADOS
-    // =====================================================
+  // =====================================================
+  // ESTADOS
+  // =====================================================
 
-    const [solicitacao, setSolicitacao] =
-        useState<SolicitacaoAprovada | null>(null);
+  const [solicitacao, setSolicitacao] =
+    useState<SolicitacaoAprovada | null>(null);
 
-    const [imagemPrescricao, setImagemPrescricao] =
-        useState<string | null>(null);
+  const [imagemPrescricao, setImagemPrescricao] =
+    useState<string | null>(null);
 
-    const [carregando, setCarregando] =
-        useState(true);
-
-    const [sidebarOpen, setSidebarOpen] =
-        useState(false);
-
-    const [processando, setProcessando] =
-        useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [processando, setProcessando] = useState(false);
 
 
-    // =====================================================
-    // SIDEBAR
-    // =====================================================
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
 
-    const toggleSidebar = () => {
-        setSidebarOpen((prev) => !prev);
+
+  // =====================================================
+  // BUSCAR DADOS
+  // =====================================================
+
+  useEffect(() => {
+
+    if (!id) return;
+
+    let urlCriada: string | null = null;
+
+    const carregarDados = async () => {
+      try {
+        setCarregando(true);
+
+        const token = localStorage.getItem("token");
+
+        // INFORMAÇÕES DA SOLICITAÇÃO
+        const response = await axios.get<SolicitacaoAprovada>(
+          `${API_URL}/autorizador/solicitacao/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setSolicitacao(response.data);
+
+        // IMAGEM DA PRESCRIÇÃO
+        const imagemResponse = await axios.get(
+          `${API_URL}/autorizador/solicitacao/${id}/prescricao`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: "blob",
+          }
+        );
+
+        urlCriada = URL.createObjectURL(imagemResponse.data);
+        setImagemPrescricao(urlCriada);
+
+      } catch (error) {
+        console.error("Erro ao buscar prescrição:", error);
+        alert("Não foi possível carregar a prescrição.");
+        navigate("/verprescricoesaprovadas");
+      } finally {
+        setCarregando(false);
+      }
     };
 
+    carregarDados();
 
-    // =====================================================
-    // BUSCAR DADOS
-    // =====================================================
+    // Libera a URL da imagem ao sair da página
+    return () => {
+      if (urlCriada) URL.revokeObjectURL(urlCriada);
+    };
 
-    useEffect(() => {
+  }, [id]);
 
-        if (!id) {
-            return;
+
+  // =====================================================
+  // ALTERAR STATUS
+  // =====================================================
+
+  const alterarStatus = async (
+    status: "Autorizado" | "Nao Autorizado"
+  ) => {
+
+    if (!id) return;
+
+    try {
+      setProcessando(true);
+
+      const token = localStorage.getItem("token");
+
+      await axios.patch(
+        `${API_URL}/autorizador/solicitacao/${id}`,
+        { sol_status: status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const carregarDados = async () => {
+      alert(
+        status === "Autorizado"
+          ? "Prescrição autorizada com sucesso!"
+          : "Prescrição não autorizada."
+      );
 
-            try {
+      navigate("/verprescricoesaprovadas");
 
-                setCarregando(true);
+    } catch (error) {
+      console.error("Erro ao alterar status:", error);
 
-                const token =
-                    localStorage.getItem("token");
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("Erro ao alterar o status da prescrição.");
+      }
+    } finally {
+      setProcessando(false);
+    }
+  };
 
 
-                // =========================================
-                // BUSCAR INFORMAÇÕES DA SOLICITAÇÃO
-                // =========================================
+  // =====================================================
+  // VALIDANDO TOKEN
+  // =====================================================
 
-                const response =
-                    await axios.get<SolicitacaoAprovada>(
-                        `${API_URL}/autorizador/solicitacao/${id}`,
-                        {
-                            headers: {
-                                Authorization:
-                                    `Bearer ${token}`
-                            }
-                        }
-                    );
+  if (verificando) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Carregando seus dados...</p>
+      </div>
+    );
+  }
 
 
-                console.log(
-                    "Solicitação aprovada:",
-                    response.data
-                );
+  // =====================================================
+  // PÁGINA
+  // =====================================================
 
+  return (
+    <div className="enviar-prescricao-page">
 
-                setSolicitacao(
-                    response.data
-                );
+      <Header onMenuClick={toggleSidebar} />
 
+      <Sidebaradm
+        isOpen={sidebarOpen}
+        onClose={toggleSidebar}
+      />
 
-                // =========================================
-                // BUSCAR IMAGEM DA PRESCRIÇÃO
-                // =========================================
 
-                const imagemResponse =
-                    await axios.get(
-                        `${API_URL}/autorizador/solicitacao/${id}/prescricao`,
-                        {
-                            headers: {
-                                Authorization:
-                                    `Bearer ${token}`
-                            },
+      <main className="enviar-prescricao-content">
 
-                            responseType: "blob"
-                        }
-                    );
+        <h1>Prescrição:</h1>
 
+        {!carregando && !solicitacao ? (
 
-                const imagemUrl =
-                    URL.createObjectURL(
-                        imagemResponse.data
-                    );
+          <p>Prescrição não encontrada.</p>
 
+        ) : (
+          <>
+            <div className="prescricao-container">
 
-                setImagemPrescricao(
-                    imagemUrl
-                );
+              {/* IMAGEM DA PRESCRIÇÃO */}
 
+              <section className="prescricao-preview">
+                <div className="prescricao-imagem">
 
-            } catch (error) {
+                  {carregando ? (
+                    <p>Carregando prescrição...</p>
+                  ) : imagemPrescricao ? (
+                    <img
+                      src={imagemPrescricao}
+                      alt="Prescrição enviada pelo paciente"
+                    />
+                  ) : (
+                    <p>Prescrição não encontrada.</p>
+                  )}
 
-                console.error(
-                    "Erro ao buscar prescrição:",
-                    error
-                );
+                </div>
+              </section>
 
-                alert(
-                    "Não foi possível carregar a prescrição."
-                );
 
-                navigate(
-                    "/verprescricoesaprovadas"
-                );
+              {/* INFORMAÇÕES DA PRESCRIÇÃO */}
 
-            } finally {
+              <section className="informacoes-prescricao">
 
-                setCarregando(false);
+                <h2>Informações da prescrição</h2>
 
-            }
 
-        };
+                {/* NOME */}
 
-
-        carregarDados();
-
-
-        return () => {
-
-            if (imagemPrescricao) {
-                URL.revokeObjectURL(
-                    imagemPrescricao
-                );
-            }
-
-        };
-
-    }, [id]);
-
-
-    // =====================================================
-    // ALTERAR STATUS
-    // =====================================================
-
-    const alterarStatus =
-        async (
-            status: "Autorizado" | "Nao Autorizado"
-        ) => {
-
-            if (!id) {
-                return;
-            }
-
-
-            try {
-
-                setProcessando(true);
-
-                const token =
-                    localStorage.getItem("token");
-
-
-                await axios.patch(
-                    `${API_URL}/autorizador/solicitacao/${id}`,
-                    {
-                        sol_status: status
-                    },
-                    {
-                        headers: {
-                            Authorization:
-                                `Bearer ${token}`,
-
-                            "Content-Type":
-                                "application/json"
-                        }
-                    }
-                );
-
-
-                alert(
-                    status === "Autorizado"
-                        ? "Prescrição autorizada com sucesso!"
-                        : "Prescrição não autorizada."
-                );
-
-
-                navigate(
-                    "/verprescricoesaprovadas"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Erro ao alterar status:",
-                    error
-                );
-
-                if (
-                    axios.isAxiosError(error) &&
-                    error.response?.data?.error
-                ) {
-
-                    alert(
-                        error.response.data.error
-                    );
-
-                } else {
-
-                    alert(
-                        "Erro ao alterar o status da prescrição."
-                    );
-
-                }
-
-            } finally {
-
-                setProcessando(false);
-
-            }
-
-        };
-
-
-    // =====================================================
-    // CARREGANDO TOKEN
-    // =====================================================
-
-    if (verificando) {
-
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-
-                <p>
-                    Carregando seus dados...
-                </p>
+                <div className="campo">
+                  <label>Nome paciente</label>
+                  <input
+                    type="text"
+                    value={solicitacao?.pac_nome || ""}
+                    readOnly
+                  />
+                </div>
+
+
+                {/* CPF + COD */}
+
+                <div className="linha-campos">
+
+                  <div className="campo">
+                    <label>CPF:</label>
+                    <input
+                      type="text"
+                      value={solicitacao?.pac_cpf || ""}
+                      readOnly
+                    />
+                  </div>
+
+                  <div className="campo">
+                    <label>COD:</label>
+                    <input
+                      type="text"
+                      value={solicitacao?.sol_id || ""}
+                      readOnly
+                    />
+                  </div>
+
+                </div>
+
+
+                {/* DATAS */}
+
+                <div className="linha-campos">
+
+                  <div className="campo">
+                    <label>DATA DE ENVIO:</label>
+                    <input
+                      type="text"
+                      value={formatarData(solicitacao?.sol_data_solicitacao)}
+                      readOnly
+                    />
+                  </div>
+
+                  <div className="campo vencimento">
+                    <label>DATA DE VENCIMENTO:</label>
+                    <input
+                      type="text"
+                      value={formatarData(solicitacao?.sol_data_vencimento, true)}
+                      placeholder="Não informada"
+                      readOnly
+                    />
+                  </div>
+
+                </div>
+
+
+                {/* UNIDADE DE SAÚDE */}
+
+                <div className="campo">
+                  <label>Unidade de Saúde</label>
+                  <input
+                    type="text"
+                    value={solicitacao?.pos_nome || ""}
+                    placeholder="Não informada"
+                    readOnly
+                  />
+                </div>
+
+
+                {/* INSUMO + QUANTIDADE */}
+
+                <div className="linha-insumo">
+
+                  <div className="ins-campo insumo-select">
+                    <label className="ins-label">Insumo</label>
+                   <input
+            type="text"
+            className="ins-input"
+            value={solicitacao?.ins_nome || ""}
+            readOnly
+        />
+
+                  </div>
+
+                  <div className="ins-campo quantidade-campo">
+                    <label className="ins-label">Quantidade</label>
+                    <input
+                      type="text"
+                      className="ins-input"
+                      value={solicitacao?.sol_insumo_quant ?? ""}
+                      readOnly
+                    />
+                  </div>
+
+                </div>
+
+
+                {/* OBSERVAÇÃO */}
+
+                <div className="campo">
+                  <label className="observacao-label">
+                    Observações (opcional)
+                  </label>
+                  <textarea
+                    value={solicitacao?.sol_observacao || ""}
+                    placeholder="Nenhuma observação informada."
+                    readOnly
+                  />
+                </div>
+
+              </section>
 
             </div>
-        );
 
-    }
 
+            {/* BOTÕES */}
 
-    // =====================================================
-    // CARREGANDO DADOS
-    // =====================================================
+            <div className="prescricao-buttons">
 
-    if (carregando) {
+              <button
+                className="btn-reenvio"
+                type="button"
+                disabled={processando || carregando}
+                style={{ opacity: processando ? 0.6 : 1 }}
+                onClick={() => alterarStatus("Nao Autorizado")}
+              >
+                NÃO AUTORIZAR
+              </button>
 
-        return (
-            <>
-                <Header
-                    onMenuClick={toggleSidebar}
-                />
+              <button
+                className="btn-enviar"
+                type="button"
+                disabled={processando || carregando}
+                style={{ opacity: processando ? 0.6 : 1 }}
+                onClick={() => alterarStatus("Autorizado")}
+              >
+                AUTORIZAR
+              </button>
 
-                <Sidebaradm
-                    isOpen={sidebarOpen}
-                    onClose={toggleSidebar}
-                />
+            </div>
+          </>
+        )}
 
-                <main className="autorizar-page">
+      </main>
 
-                    <div className="autorizar-carregando">
+      <Footer />
 
-                        <p>
-                            Carregando prescrição...
-                        </p>
-
-                    </div>
-
-                </main>
-
-                <Footer />
-            </>
-        );
-
-    }
-
-
-    // =====================================================
-    // CASO NÃO ENCONTRE
-    // =====================================================
-
-    if (!solicitacao) {
-
-        return (
-            <>
-                <Header
-                    onMenuClick={toggleSidebar}
-                />
-
-                <Sidebaradm
-                    isOpen={sidebarOpen}
-                    onClose={toggleSidebar}
-                />
-
-                <main className="autorizar-page">
-
-                    <div className="autorizar-erro">
-
-                        <h2>
-                            Prescrição não encontrada
-                        </h2>
-
-                        <button
-                            onClick={() =>
-                                navigate(
-                                    "/verprescricoesaprovadas"
-                                )
-                            }
-                        >
-                            VOLTAR
-                        </button>
-
-                    </div>
-
-                </main>
-
-                <Footer />
-            </>
-        );
-
-    }
-
-
-    // =====================================================
-    // PÁGINA
-    // =====================================================
-
-    return (
-        <>
-
-            <Header
-                onMenuClick={toggleSidebar}
-            />
-
-            <Sidebaradm
-                isOpen={sidebarOpen}
-                onClose={toggleSidebar}
-            />
-
-
-            <main className="autorizar-page">
-
-                {/* =========================================
-                    TÍTULO
-                ========================================= */}
-
-                <div className="autorizar-header">
-
-                    <button
-                        className="btn-voltar"
-                        onClick={() =>
-                            navigate(
-                                "/verprescricoesaprovadas"
-                            )
-                        }
-                    >
-                        ← VOLTAR
-                    </button>
-
-                    <div>
-
-                        <h1>
-                            Autorizar Prescrição
-                        </h1>
-
-                        <p>
-                            Analise a prescrição aprovada
-                            pelo administrador.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                {/* =========================================
-                    CONTEÚDO
-                ========================================= */}
-
-                <div className="autorizar-container">
-
-
-                    {/* =====================================
-                        PRESCRIÇÃO
-                    ===================================== */}
-
-                    <section className="prescricao-visualizacao">
-
-                        <h2>
-                            Prescrição médica
-                        </h2>
-
-                        <div className="prescricao-imagem-autorizador">
-
-                            {imagemPrescricao ? (
-
-                                <img
-                                    src={imagemPrescricao}
-                                    alt="Prescrição médica"
-                                />
-
-                            ) : (
-
-                                <p>
-                                    Imagem da prescrição
-                                    não encontrada.
-                                </p>
-
-                            )}
-
-                        </div>
-
-                    </section>
-
-
-                    {/* =====================================
-                        INFORMAÇÕES
-                    ===================================== */}
-
-                    <section className="informacoes-autorizador">
-
-                        <h2>
-                            Informações da solicitação
-                        </h2>
-
-
-                        {/* PACIENTE */}
-
-                        <div className="informacao-grupo">
-
-                            <h3>
-                                Paciente
-                            </h3>
-
-                            <p>
-                                <strong>
-                                    Nome:
-                                </strong>{" "}
-                                {solicitacao.pac_nome}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    CPF:
-                                </strong>{" "}
-                                {solicitacao.pac_cpf}
-                            </p>
-
-                        </div>
-
-
-                        {/* SOLICITAÇÃO */}
-
-                        <div className="informacao-grupo">
-
-                            <h3>
-                                Solicitação
-                            </h3>
-
-                            <p>
-                                <strong>
-                                    Código:
-                                </strong>{" "}
-                                {solicitacao.sol_id}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Data:
-                                </strong>{" "}
-
-                                {new Date(
-                                    solicitacao.sol_data_solicitacao
-                                ).toLocaleDateString(
-                                    "pt-BR"
-                                )}
-
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Posto:
-                                </strong>{" "}
-
-                                {solicitacao.pos_nome ||
-                                    "Não informado"}
-
-                            </p>
-
-                        </div>
-
-
-                        {/* INSUMO */}
-
-                        <div className="informacao-grupo">
-
-                            <h3>
-                                Insumo
-                            </h3>
-
-                            <p>
-                                <strong>
-                                    Nome:
-                                </strong>{" "}
-
-                                {solicitacao.ins_nome ||
-                                    "Não informado"}
-
-                            </p>
-
-                            {solicitacao.ins_marca && (
-
-                                <p>
-                                    <strong>
-                                        Marca:
-                                    </strong>{" "}
-
-                                    {solicitacao.ins_marca}
-
-                                </p>
-
-                            )}
-
-                            <p>
-                                <strong>
-                                    Quantidade:
-                                </strong>{" "}
-
-                                {solicitacao.sol_insumo_quant}
-
-                            </p>
-
-                        </div>
-
-
-                        {/* OBSERVAÇÃO */}
-
-                        <div className="informacao-grupo">
-
-                            <h3>
-                                Observação
-                            </h3>
-
-                            <p className="observacao-autorizador">
-
-                                {solicitacao.sol_observacao ||
-                                    "Nenhuma observação informada."}
-
-                            </p>
-
-                        </div>
-
-
-                        {/* STATUS */}
-
-                        <div className="status-atual">
-
-                            <strong>
-                                Status atual:
-                            </strong>
-
-                            <span>
-                                {solicitacao.sol_status}
-                            </span>
-
-                        </div>
-
-                    </section>
-
-                </div>
-
-
-                {/* =========================================
-                    AÇÕES
-                ========================================= */}
-
-                <div className="acoes-autorizador">
-
-                    <button
-                        className="btn-nao-autorizar"
-                        disabled={processando}
-                        onClick={() =>
-                            alterarStatus(
-                                "Nao Autorizado"
-                            )
-                        }
-                    >
-                        NÃO AUTORIZAR
-                    </button>
-
-
-                    <button
-                        className="btn-autorizar"
-                        disabled={processando}
-                        onClick={() =>
-                            alterarStatus(
-                                "Autorizado"
-                            )
-                        }
-                    >
-                        AUTORIZAR
-                    </button>
-
-                </div>
-
-            </main>
-
-
-            <Footer />
-
-        </>
-    );
+    </div>
+  );
 }

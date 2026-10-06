@@ -1,166 +1,136 @@
+/* =========================================================
+   AUTORIZAR PRESCRIÇÃO - AUTORIZADOR
+   Visual copiado de AutorizarPrescricao.css
+   Tudo fica "preso" dentro de .autorizar-page para não
+   conflitar com a página do administrador.
+========================================================= */
+
+
 /* =========================================
    PÁGINA
 ========================================= */
 
 .autorizar-page {
-    min-height: 100vh;
-    background-color: #ffffff;
-    font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: Arial, sans-serif;
 
-    margin-left: 150px;
-
-    padding: 90px 30px 100px;
-
-    box-sizing: border-box;
+  margin-left: 150px;
+  padding: 90px 30px 100px;
+  box-sizing: border-box;
 }
 
 
 /* =========================================
-   CABEÇALHO
+   CABEÇALHO (VOLTAR + TÍTULO)
 ========================================= */
 
-.autorizar-header {
-    width: 100%;
-
-    margin-bottom: 15px;
+.autorizar-page .autorizar-header {
+  width: 100%;
+  margin-bottom: 15px;
 }
 
-.autorizar-header h1 {
-    color: #0645ff;
-
-    font-size: 20px;
-
-    margin: 0 0 5px 0;
+.autorizar-page .autorizar-header h1 {
+  color: #0645ff;
+  font-size: 20px;
+  margin: 0 0 5px 0;
 }
 
-.autorizar-header p {
-    color: #555;
+.autorizar-page .autorizar-header p {
+  color: #555;
+  font-size: 14px;
+  margin: 0;
+}
 
-    font-size: 14px;
+.autorizar-page .btn-voltar {
+  width: 115px;
+  height: 35px;
+  margin-bottom: 15px;
 
-    margin: 0;
+  border: none;
+  border-radius: 6px;
+
+  background-color: #0645ff;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.autorizar-page .btn-voltar:hover {
+  background-color: #0035cc;
 }
 
 
 /* =========================================
-   BOTÃO VOLTAR
+   CONTAINER DA PRESCRIÇÃO + INFORMAÇÕES
 ========================================= */
 
-.btn-voltar {
-    width: 115px;
+.autorizar-page .autorizar-container {
+  display: flex;
+  align-items: stretch;
+  gap: 15px;
 
-    height: 35px;
-
-    margin-bottom: 15px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background-color: #0645ff;
-
-    color: white;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-.btn-voltar:hover {
-    opacity: 0.9;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
 /* =========================================
-   CONTAINER PRINCIPAL
+   ÁREA DA IMAGEM
 ========================================= */
 
-.autorizar-container {
-    display: flex;
+.autorizar-page .prescricao-visualizacao {
+  flex: 1;
+  min-width: 0;
 
-    align-items: stretch;
+  display: flex;
+  flex-direction: column;
+}
 
-    gap: 15px;
-
-    width: 100%;
-
-    box-sizing: border-box;
+.autorizar-page .prescricao-visualizacao h2 {
+  font-size: 16px;
+  color: #111;
+  margin: 0 0 8px 0;
 }
 
 
 /* =========================================
-   PRESCRIÇÃO
+   QUADRADO DA PRESCRIÇÃO
 ========================================= */
 
-.prescricao-visualizacao {
-    flex: 1;
+.autorizar-page .prescricao-imagem-autorizador {
+  flex: 1;
+  width: 100%;
+  min-height: 500px;
 
-    width: auto;
+  border: 1px solid #cccccc;
+  border-radius: 12px;
 
-    max-width: none;
+  background-color: #ffffff;
 
-    min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    display: flex;
-
-    flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.prescricao-visualizacao h2 {
-    color: #333;
+.autorizar-page .prescricao-imagem-autorizador img {
+  width: 100%;
+  height: 100%;
 
-    font-size: 16px;
-
-    margin: 0 0 8px 0;
+  object-fit: contain;
+  display: block;
 }
 
-
-/* =========================================
-   IMAGEM DA PRESCRIÇÃO
-========================================= */
-
-.prescricao-imagem-autorizador {
-    width: 100%;
-
-    min-height: 500px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 12px;
-
-    background-color: #ffffff;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    box-sizing: border-box;
-}
-
-.prescricao-imagem-autorizador img {
-    width: 100%;
-
-    height: 100%;
-
-    max-height: 650px;
-
-    object-fit: contain;
-
-    display: block;
-}
-
-.prescricao-imagem-autorizador p {
-    color: #777;
-
-    font-size: 14px;
-
-    text-align: center;
+.autorizar-page .prescricao-imagem-autorizador p {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
 }
 
 
@@ -168,356 +138,299 @@
    CARD DE INFORMAÇÕES
 ========================================= */
 
-.informacoes-autorizador {
-    flex: 0 0 425px;
+.autorizar-page .informacoes-autorizador {
+  flex: 0 0 425px;
+  width: 425px;
 
-    width: 425px;
+  min-height: 500px;
+  height: auto;
 
-    min-height: 500px;
+  border: 1px solid #bdbdbd;
+  border-radius: 12px;
 
-    border: 1px solid #bdbdbd;
+  padding: 10px;
+  box-sizing: border-box;
 
-    border-radius: 12px;
-
-    padding: 10px;
-
-    box-sizing: border-box;
-
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
-.informacoes-autorizador h2 {
-    color: #333;
-
-    font-size: 16px;
-
-    margin: 0 0 15px 0;
+.autorizar-page .informacoes-autorizador h2 {
+  font-size: 16px;
+  color: #111;
+  margin: 0 0 8px 0;
 }
 
 
 /* =========================================
-   GRUPO
+   GRUPOS (Paciente, Solicitação, Insumo...)
 ========================================= */
 
-.informacao-grupo {
-    width: 100%;
+.autorizar-page .informacao-grupo {
+  width: 100%;
+  margin-bottom: 7px;
+  box-sizing: border-box;
+}
 
-    margin-bottom: 12px;
+.autorizar-page .informacao-grupo h3 {
+  display: block;
+
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+
+  margin: 0 0 4px 0;
 }
 
 
 /* =========================================
-   LABEL
+   "CAMPOS" (os <p> parecem inputs readOnly)
 ========================================= */
 
-.informacao-grupo h3 {
-    color: #111;
+.autorizar-page .informacao-grupo p {
+  width: 100%;
+  min-height: 36px;
 
-    font-size: 14px;
+  margin: 0 0 6px 0;
+  padding: 7px 9px;
+  box-sizing: border-box;
 
-    font-weight: bold;
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
 
-    margin: 0 0 5px 0;
+  background-color: #ffffff;
+  color: #555;
+
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+}
+
+.autorizar-page .informacao-grupo p:last-child {
+  margin-bottom: 0;
+}
+
+.autorizar-page .informacao-grupo p strong {
+  color: #222;
+  margin-right: 5px;
 }
 
 
 /* =========================================
-   CAMPOS
+   OBSERVAÇÃO (igual ao textarea)
 ========================================= */
 
-.informacao-grupo p {
-    width: 100%;
-
-    min-height: 38px;
-
-    margin: 0;
-
-    padding: 9px 10px;
-
-    box-sizing: border-box;
-
-    border: 1px solid #d5d5d5;
-
-    border-radius: 7px;
-
-    background-color: #ffffff;
-
-    color: #555;
-
-    font-family: Arial, sans-serif;
-
-    font-size: 14px;
-
-    display: flex;
-
-    align-items: center;
+.autorizar-page .informacao-grupo .observacao-autorizador {
+  min-height: 100px;
+  align-items: flex-start;
+  padding: 10px;
+  line-height: 1.4;
+  white-space: pre-wrap;
 }
 
 
 /* =========================================
-   TEXTO EM NEGRITO DENTRO DO CAMPO
+   STATUS ATUAL
 ========================================= */
 
-.informacao-grupo p strong {
-    color: #111;
+.autorizar-page .status-atual {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-    margin-right: 5px;
+  margin-top: 10px;
+  padding: 9px;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+
+  background-color: #f5f5f5;
+  font-size: 14px;
+}
+
+.autorizar-page .status-atual strong {
+  color: #222;
+}
+
+.autorizar-page .status-atual span {
+  color: #0645ff;
+  font-weight: bold;
 }
 
 
 /* =========================================
-   OBSERVAÇÃO
+   BOTÕES (mesmo estilo de Reenvio / Enviar)
 ========================================= */
 
-.observacao-autorizador {
-    min-height: 100px !important;
+.autorizar-page .acoes-autorizador {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
 
-    align-items: flex-start !important;
+  gap: 10px;
+  margin: 15px 0 0 0;
+  padding: 0;
+}
 
-    padding: 10px !important;
+.autorizar-page .btn-nao-autorizar,
+.autorizar-page .btn-autorizar {
+  display: block;
 
-    line-height: 1.4;
+  width: 115px;
+  height: 35px;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  border-radius: 6px;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.autorizar-page .btn-nao-autorizar {
+  background-color: red;
+}
+
+.autorizar-page .btn-nao-autorizar:hover {
+  background-color: #c90000;
+}
+
+.autorizar-page .btn-autorizar {
+  background-color: #28d34f;
+}
+
+.autorizar-page .btn-autorizar:hover {
+  background-color: #1db83f;
+}
+
+.autorizar-page .btn-nao-autorizar:disabled,
+.autorizar-page .btn-autorizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 
 /* =========================================
-   STATUS
+   CARREGANDO / ERRO
 ========================================= */
 
-.status-atual {
-    display: flex;
+.autorizar-page .autorizar-carregando,
+.autorizar-page .autorizar-erro {
+  min-height: 400px;
 
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-    gap: 8px;
-
-    margin-top: 10px;
-
-    padding: 10px;
-
-    border-radius: 7px;
-
-    background-color: #f5f5f5;
-
-    font-size: 14px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
 }
 
-.status-atual strong {
-    color: #111;
+.autorizar-page .autorizar-erro h2 {
+  color: #0645ff;
+  font-size: 20px;
+  margin: 0 0 15px 0;
 }
 
-.status-atual span {
-    color: #0645ff;
+.autorizar-page .autorizar-erro button {
+  width: 115px;
+  height: 35px;
 
-    font-weight: bold;
-}
+  border: none;
+  border-radius: 6px;
 
+  background-color: #0645ff;
+  color: #ffffff;
 
-/* =========================================
-   AÇÕES
-========================================= */
+  font-size: 11px;
+  font-weight: bold;
 
-.acoes-autorizador {
-    display: flex;
-
-    justify-content: flex-end;
-
-    gap: 10px;
-
-    width: 100%;
-
-    margin-top: 15px;
-
-    box-sizing: border-box;
+  cursor: pointer;
 }
 
 
 /* =========================================
-   NÃO AUTORIZAR
-========================================= */
-
-.btn-nao-autorizar {
-    width: 115px;
-
-    height: 35px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background-color: #ff3333;
-
-    color: white;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-.btn-nao-autorizar:hover {
-    opacity: 0.9;
-}
-
-
-/* =========================================
-   AUTORIZAR
-========================================= */
-
-.btn-autorizar {
-    width: 115px;
-
-    height: 35px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background-color: #28d34f;
-
-    color: white;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-.btn-autorizar:hover {
-    opacity: 0.9;
-}
-
-
-/* =========================================
-   DESABILITADO
-========================================= */
-
-.btn-nao-autorizar:disabled,
-.btn-autorizar:disabled {
-    opacity: 0.6;
-
-    cursor: not-allowed;
-}
-
-
-/* =========================================
-   CARREGANDO
-========================================= */
-
-.autorizar-carregando {
-    min-height: 400px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: #555;
-
-    font-size: 14px;
-}
-
-
-/* =========================================
-   ERRO
-========================================= */
-
-.autorizar-erro {
-    min-height: 400px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-}
-
-.autorizar-erro h2 {
-    color: #0645ff;
-
-    font-size: 20px;
-
-    margin-bottom: 15px;
-}
-
-.autorizar-erro button {
-    width: 115px;
-
-    height: 35px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background-color: #0645ff;
-
-    color: white;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-
-/* =========================================
-   RESPONSIVO
+   RESPONSIVIDADE - 1100PX
 ========================================= */
 
 @media (max-width: 1100px) {
 
-    .autorizar-container {
-        flex-direction: column;
-    }
+  .autorizar-page {
+    margin-left: 120px;
+  }
 
-    .informacoes-autorizador {
-        width: 100%;
-
-        flex: none;
-    }
-
-    .prescricao-imagem-autorizador {
-        min-height: 450px;
-    }
+  .autorizar-page .informacoes-autorizador {
+    flex: 0 0 400px;
+    width: 400px;
+  }
 }
 
+
+/* =========================================
+   RESPONSIVIDADE - 900PX
+========================================= */
 
 @media (max-width: 900px) {
 
-    .autorizar-page {
-        margin-left: 0;
+  .autorizar-page {
+    margin-left: 0;
+    padding: 90px 20px 40px;
+  }
 
-        padding: 90px 20px 100px;
-    }
+  .autorizar-page .autorizar-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .autorizar-page .prescricao-imagem-autorizador {
+    min-height: 350px;
+    height: 350px;
+  }
+
+  .autorizar-page .informacoes-autorizador {
+    flex: none;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .autorizar-page .acoes-autorizador {
+    justify-content: center;
+  }
 }
 
 
+/* =========================================
+   RESPONSIVIDADE - 500PX
+========================================= */
+
 @media (max-width: 500px) {
 
-    .autorizar-page {
-        padding: 85px 15px 80px;
-    }
+  .autorizar-page {
+    padding: 80px 15px 30px;
+  }
 
-    .prescricao-imagem-autorizador {
-        min-height: 350px;
-    }
+  .autorizar-page .prescricao-imagem-autorizador {
+    min-height: 350px;
+    height: 350px;
+  }
 
-    .acoes-autorizador {
-        flex-direction: column;
+  .autorizar-page .acoes-autorizador {
+    flex-direction: column;
+    align-items: center;
+  }
 
-        align-items: stretch;
-    }
-
-    .btn-nao-autorizar,
-    .btn-autorizar {
-        width: 100%;
-    }
+  .autorizar-page .btn-nao-autorizar,
+  .autorizar-page .btn-autorizar {
+    width: 180px;
+  }
 }

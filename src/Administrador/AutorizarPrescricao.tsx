@@ -221,8 +221,10 @@ const enviarSolicitacao = async () => {
       `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
-        sol_status: "Aprovado",
-        sol_data_vencimento: dataVencimento
+         sol_status: "Aprovado",
+    sol_data_vencimento: dataVencimento,
+    ins_id: Number(insumoMovId),
+    sol_insumo_quant: Number(quantidade)
       },
       {
         headers: {
