@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-
+//"Primeiro o sistema obtém a localização do usuário através do navegador ou através do CEP. Depois ele pega a latitude e longitude dos postos cadastrados. Em vez de calcular somente uma distância em linha reta, eu utilizo um serviço de roteamento para calcular a distância de carro pelas ruas. Depois adiciono essa distância aos dados de cada posto e utilizo o método sort() para ordenar os postos da menor distância para a maior."
 // Corrigindo o ícone padrão do Leaflet
 const icon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -130,23 +130,30 @@ const [buscandoCep, setBuscandoCep] = useState(false);
 const [focoPosto, setFocoPosto] = useState(false);
 
 
-  useEffect(() => {
-    if (postos.length === 0) return;
+ useEffect(() => {
+  if (postos.length === 0) return;
 
-    setPostos((postosAnteriores) =>
-      postosAnteriores.map((posto) => ({
-        ...posto,
+  const atualizarDistancias = async () => {
+    try {
+      const postosComDistancia = await calcularDistanciasPorRota(
+        posicao,
+        postos
+      );
 
-        distancia: calcularDistancia(
+      const postosOrdenados = [...postosComDistancia].sort(
+        (a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity)
+      );
 
-          posicao[0],
-          posicao[1],
-          Number(posto.pos_latitude),
-          Number(posto.pos_longitude)
-        ),
-      }))
-    );
-  }, [posicao]);
+      setPostos(postosOrdenados);
+    } catch (error) {
+      console.error("Erro ao atualizar distâncias:", error);
+    }
+  };
+
+  atualizarDistancias();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [posicao, postos.length]);
 
 
   // função que pede permissão para obter a localização
@@ -181,57 +188,67 @@ const [focoPosto, setFocoPosto] = useState(false);
 }, []);
 
 
-  useEffect(() => {
+useEffect(() => {
+//buscar os postos primeiros e guarda, depois que calcula
+  axios
+    .get("https://backend-insumed-lhac.vercel.app/postos")
+    .then((res) => {
 
-    axios.get("https://backend-insumed-lhac.vercel.app/postos")
-      //axios.get("http://localhost:3344/postos")
-      .then((res) => {
- const postosComDistancia = res.data.map((posto: Posto) => ({
-        ...posto,
-        distancia: calcularDistancia(
-          posicao[0],
-          posicao[1],
-          Number(posto.pos_latitude),
-          Number(posto.pos_longitude)
-        ),
-      }));
+      setPostos(res.data);
 
-      setPostos(postosComDistancia);
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Erro ao buscar postos:", err);
     });
+
 }, []);
 
 
-  function calcularDistancia(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ) {
+ async function calcularDistanciasPorRota(
+  origem: [number, number],
+  postos: Posto[]
+) {
+  if (postos.length === 0) return [];
 
-    const R = 6371;
+  const coordenadas = [
+    `${origem[1]},${origem[0]}`,
+    ...postos.map(
+      (posto) =>
+        `${Number(posto.pos_longitude)},${Number(posto.pos_latitude)}`
+    ),
+  ].join(";");
 
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
+  try {
+    //pega pela rota de carros 
+    // antes a gente fazia o calculo seguir em linah reta 
+    const resposta = await axios.get(
+      `https://router.project-osrm.org/table/v1/driving/${coordenadas}`,
+      {
+        params: {
+          sources: 0,
+          annotations: "distance",//recebe a distanci em metros
+        },
+      }
+    );
 
-    const a =
+    const distancias = resposta.data.distances[0];
 
-      Math.sin(dLat / 2) ** 2 +
+    return postos.map((posto, index) => ({
+      ...posto,
+      distancia:
+        distancias[index + 1] != null
+          ? distancias[index + 1] / 1000//transforma em km
+          : Infinity,
+    }));
+  } catch (error) {
+    console.error("Erro ao calcular distâncias por rota:", error);
 
-      Math.cos(lat1 * Math.PI / 180) *
-
-      Math.cos(lat2 * Math.PI / 180) *
-
-      Math.sin(dLon / 2) ** 2;
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
-
+    return postos.map((posto) => ({
+      ...posto,
+      distancia: Infinity,
+    }));
   }
-
+}
 
   const abrirRota = (posto: Posto) => {
 
