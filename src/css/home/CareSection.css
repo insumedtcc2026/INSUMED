@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .care-section {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--fonte-texto);
   background: linear-gradient(180deg, #ffffff 0%, #f4f6f9 100%);
   text-align: center;
   position: relative;        
@@ -21,7 +21,7 @@
 .care-section__title {
   font-size: 3.2rem;
   font-weight: 800;
-  color: #0000eb;
+  color: var(--cor-primaria-escura);
   line-height: 1.15;
   margin-bottom: 28px;
   letter-spacing: -0.02em;
@@ -29,7 +29,7 @@
 
 .care-section__subtitle {
   font-size: 1.15rem;
-  color: #2c2c2c;
+  color: var(--cor-texto);
   max-width: 530px;
   line-height: 1.5;
   
@@ -137,7 +137,7 @@
 
 .care-card__description {
   font-size: 0.85rem;
-  color: #3d3d3d;
+  color: var(--cor-texto);
   line-height: 1.45;
   margin: 0;
   text-align: center;

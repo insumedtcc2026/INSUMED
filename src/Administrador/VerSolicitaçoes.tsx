@@ -14,6 +14,7 @@ import Header from "../components/universais/HeaderAdm.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
 import "../css/home/VerSolicitaçoes.css";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 
 export default function Pendencias() {
@@ -169,6 +170,10 @@ export default function Pendencias() {
 
 
             <div className="pagina-pendencias">
+
+            <div className="barra-voltar barra-voltar--logado">
+              <BotaoVoltar para="/homeadmin" />
+            </div>
 
                 <h1>
                     Pendências

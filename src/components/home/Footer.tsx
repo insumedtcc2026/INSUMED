@@ -34,9 +34,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <a href="">Termos de Uso</a>
-            <a href="">Política de Privacidade</a>
-            <a href="">Segurança de Dados</a>
+            <a href="/termos">Termos de Uso</a>
+            <a href="/privacidade">Política de Privacidade</a>
+            <a href="/seguranca">Segurança de Dados</a>
           </div>
 
           <div>

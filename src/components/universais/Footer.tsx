@@ -63,6 +63,7 @@ export default function Footer() {
 
         <div className="footer-links">
           <div className="footer-column">
+            <p className="footer-column-titulo">Navegação</p>
             {linksPrincipais.map((link) => (
               <a key={link.href} href={link.href}>
                 {link.label}
@@ -71,6 +72,7 @@ export default function Footer() {
           </div>
 
           <div className="footer-column">
+            <p className="footer-column-titulo">Atendimento</p>
             <a href="/ajuda">Central de Ajuda</a>
             <a href="/sobre">Sobre</a>
             <a href="/contato">Fale Conosco</a>
@@ -78,12 +80,14 @@ export default function Footer() {
           </div>
 
           <div className="footer-column">
+            <p className="footer-column-titulo">Jurídico</p>
             <a href="/termos">Termos de Uso</a>
             <a href="/privacidade">Política de Privacidade</a>
             <a href="/seguranca">Segurança de Dados</a>
           </div>
 
           <div className="footer-social">
+            <p className="footer-column-titulo">Redes sociais</p>
             <a href="/">
               <FaInstagram size={18} />
               Instagram
@@ -105,6 +109,13 @@ export default function Footer() {
             </a>
           </div>
         </div>
+      </div>
+
+      <div className="footer-base">
+        <p>© {new Date().getFullYear()} INSUMED. Todos os direitos reservados.</p>
+        <p>
+          Seus dados são tratados conforme a LGPD (Lei nº 13.709/2018).
+        </p>
       </div>
     </footer>
   );

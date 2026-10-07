@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
+import NavInferiorPaciente from "../components/universais/NavInferiorPaciente";
 import { useValidarToken } from "../hook/Validartoken.tsx";
 import { useDadosUser } from "../hook/Dadosuser";
 import { listarAgendamentosDoPaciente } from "../services/AgendamentoService";
@@ -65,11 +67,15 @@ export default function Agendamentos() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="pagina-paciente min-h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
       <Header onMenuClick={toggleSidebar} />
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <div className="barra-voltar barra-voltar--logado">
+        <BotaoVoltar para="/home" />
+      </div>
+
+      <main className="pagina-conteudo mx-auto max-w-7xl px-6 py-8">
         <div className="mx-auto max-w-5xl">
           <h1 className="mb-6 text-center text-2xl font-bold text-blue-700">
             Meus Agendamentos
@@ -114,6 +120,8 @@ export default function Agendamentos() {
       </main>
 
       <Footer />
+
+      <NavInferiorPaciente />
     </div>
   );
 }

@@ -4,7 +4,7 @@
 
 .app-features {
   width: 100%;
-  background: #0b19b8;
+  background: var(--cor-primaria-escura);
   border-radius: 40px;
   overflow: hidden;
   position: relative;
@@ -88,7 +88,7 @@
 
 .button-home:hover {
   background: #fff;
-  color: #0b19b8;
+  color: var(--cor-primaria-escura);
   transform: translateY(-3px);
 }
 
@@ -131,7 +131,7 @@
 
   padding: 14px;
 
-  background: #09159f;
+  background: var(--cor-primaria-escura);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
 
@@ -147,7 +147,7 @@
 
   border-radius: 50%;
 
-  background: #1f67ff;
+  background: var(--cor-primaria);
 
   display: flex;
   align-items: center;

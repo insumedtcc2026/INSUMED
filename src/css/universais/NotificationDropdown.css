@@ -9,13 +9,14 @@
   right: 0;
 
   width: 400px;
+  max-width: calc(100vw - 32px);
   min-height: 220px;
 
-  background: white;
+  background: var(--cor-superficie, #fff);
 
-  border-radius: 12px;
+  border-radius: var(--raio-lg, 22px);
 
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-card-hover, 0 4px 20px rgba(0, 0, 0, 0.15));
 
   overflow: hidden;
 
@@ -25,13 +26,14 @@
 .notification-header {
   padding: 16px;
 
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--cor-borda, var(--cor-borda));
 }
 
 .notification-header h3 {
   margin: 0;
 
-  font-size: 20px;
+  font-size: 18px;
+  color: var(--cor-primaria, #0042ec);
 }
 
 .notification-empty {
@@ -42,7 +44,7 @@
 
   height: 160px;
 
-  color: #777;
+  color: var(--cor-texto-suave, var(--cor-texto-suave));
 
   font-size: 15px;
 }

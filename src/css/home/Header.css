@@ -158,11 +158,11 @@
 .nav-link {
   position: relative;
 
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--fonte-botao);
   font-weight: 500;
   font-size: 0.95rem;
 
-  color: #1f1f1f;
+  color: var(--cor-texto);
   text-decoration: none;
 
   transition:
@@ -172,7 +172,7 @@
 }
 
 .nav-link:hover {
-  color: #2C67DD;
+  color: var(--cor-primaria);
 
   text-shadow:
     0 0 8px rgba(44, 103, 221, 0.35),
@@ -182,7 +182,7 @@
 }
 
 .nav-link:hover {
-  color: #2C67DD;
+  color: var(--cor-primaria);
   transform: translateY(-2px);
 }
 
@@ -199,7 +199,7 @@
   align-items: center;
   justify-content: center;
 
-  font-family: "Montserrat", "Trebuchet MS", sans-serif;
+  font-family: var(--fonte-botao);
   font-weight: 700;
   font-size: 0.9375rem;
 
@@ -212,8 +212,8 @@
 
   background: linear-gradient(
     135deg,
-    #0C299A,
-    #0066FF
+    var(--cor-primaria-escura),
+    var(--cor-primaria)
   );
 
   flex-shrink: 0;

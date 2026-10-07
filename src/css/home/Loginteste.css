@@ -53,7 +53,7 @@ label {
   margin-bottom: 8px;
   display: block;
   font-size: clamp(14px, 3.5vw, 16px);
-  color: #333;
+  color: var(--cor-texto);
 }
 
 input {
@@ -91,7 +91,7 @@ input {
   margin-top: 30px;
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--cor-texto-suave);
 }
 
 .register-text span {

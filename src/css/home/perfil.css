@@ -1,20 +1,17 @@
 
-h1 {
-  font-size: 3rem;
-  color: #2563eb;
-  margin-bottom: 12px;
-}
+/* O estilo global de h1 agora fica em css/universais/tema.css
+   (antes este arquivo deixava TODOS os h1 do site com 3rem). */
 
 .perfil-container-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px 40px;
-  background: #eff0f173;
+  background: var(--cor-superficie-suave);
   padding: 40px;
-  border-radius: 20px;
+  border-radius: var(--raio-lg);
   max-width: 900px;
   margin: 0 auto;
-  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  box-shadow: var(--sombra-card);
 }
 
 .perfil-container-form label {
@@ -25,7 +22,7 @@ h1 {
 }
 
 .perfil-container-form label p {
-  color: #2563eb;
+  color: var(--cor-primaria);
   font-weight: 600;
   font-size: .9rem;
   margin: 0;
@@ -35,8 +32,8 @@ h1 {
   width: 100%;
   padding: 14px 16px;
   box-sizing: border-box;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
   background: #fff;
   font-size: .95rem;
   outline: none;
@@ -45,7 +42,7 @@ h1 {
 }
 
 .perfil-container-form input:focus {
-  border-color: #2b26d3;
+  border-color: var(--cor-primaria-escura);
 }
 
 
@@ -65,11 +62,12 @@ h1 {
   min-height: 200px;
   padding: 32px 50px;
   box-sizing: border-box;
-  background: #f2f2f2;
-  border-radius: 35px;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 13px 30px rgba(0,0,0,.1);
+  box-shadow: var(--sombra-card);
   transition: .2s;
 }
 
@@ -81,7 +79,7 @@ h1 {
 .prescricao-data {
   margin: 0 0 25px;
   font-size: 20px;
-  color: #111;
+  color: var(--cor-texto);
 }
 
 .prescricao-arquivo {
@@ -91,9 +89,9 @@ h1 {
   padding: 12px 18px;
   margin-bottom: 28px;
   box-sizing: border-box;
-  background: #d9d9d9;
-  border-radius: 8px;
-  color: #333;
+  background: var(--cor-superficie-suave);
+  border-radius: var(--raio-sm);
+  color: var(--cor-texto);
   font-size: 15px;
   display: flex;
   align-items: center;
@@ -110,20 +108,21 @@ h1 {
   display: flex;
   justify-content: right; 
   align-items: center;
-  font-family: arial, sans-serif;
+  font-family: var(--fonte-texto);
   gap: 12px;
 }
 
 .status-badge,
 .btn-ver-mais {
   min-width: 155px;
-  height: 28px;
+  height: 34px;
   padding: 0 22px;
   box-sizing: border-box;
   border-radius: 20px;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
+  font-family: var(--fonte-botao);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,19 +130,19 @@ h1 {
 }
 
 .status-aprovado {
-  background: #32D74B;
+  background: var(--cor-sucesso);
 }
 
 .status-pendente {
-  background: #fbb404;
+  background: var(--cor-alerta);
 }
 
 .status-reenvio {
-  background: #ff4b4b;
+  background: var(--cor-erro);
 }
 
 .btn-ver-mais {
-  background: #0b25d2;
+  background: var(--cor-primaria);
   text-decoration: none;
   gap: 8px;
   transition: .2s;
@@ -152,7 +151,7 @@ h1 {
 }
 
 .btn-ver-mais:hover {
-  background: #081a9c;
+  background: var(--cor-primaria-escura);
   transform: scale(1.03);
 }
 
@@ -247,13 +246,13 @@ h1 {
 .modal-conteudo h2 {
   margin: 0 0 8px;
   font-size: 22px;
-  color: #111;
+  color: var(--cor-texto);
 }
 
 .modal-conteudo p {
   margin: 0;
   font-size: 15px;
-  color: #333;
+  color: var(--cor-texto);
   line-height: 1.5;
 }
 
@@ -268,7 +267,7 @@ h1 {
   border: none;
   border-radius: 50%;
   background: #f1f1f1;
-  color: #333;
+  color: var(--cor-texto);
 
   font-size: 20px;
   line-height: 1;
@@ -292,7 +291,7 @@ h1 {
 
   border-radius: 12px;
   margin-top: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--cor-borda);
 }
 
 /* Preview de PDF dentro do modal */
@@ -300,7 +299,7 @@ h1 {
   width: 100%;
   height: 400px;
   margin-top: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--cor-borda);
   border-radius: 12px;
 }
 
@@ -309,7 +308,7 @@ h1 {
   margin-top: 10px;
   padding: 10px 18px;
   border-radius: 10px;
-  background: #2563eb;
+  background: var(--cor-primaria);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
@@ -319,7 +318,7 @@ h1 {
 }
 
 .modal-abrir-pdf:hover {
-  background: #1d4ed8;
+  background: var(--cor-primaria-escura);
 }
 
 @media (max-width: 600px) {

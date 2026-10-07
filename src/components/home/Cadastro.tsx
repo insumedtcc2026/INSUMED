@@ -6,6 +6,7 @@ import olhoAberto from '../../assets/home-log/olho aberto.png';
 import olhoFechado from '../../assets/home-log/olho fechado.png';
 import { useState } from "react";
 import "../../css/home/Cadastro.css";
+import BotaoVoltar from "../universais/BotaoVoltar";
 
 function Cadastro(){
 
@@ -111,6 +112,7 @@ const limparFormulario = () => {
 
 
      <div className="login-form-panel">
+       <BotaoVoltar para="/login" className="botao-voltar--flutuante" />
         <div className="form-wrapper">
     <div className="Text-Cadastro">Cadastre-se</div>
 

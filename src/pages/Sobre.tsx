@@ -3,6 +3,8 @@ import { useState } from 'react';
 import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
+import BotaoVoltar from '../components/universais/BotaoVoltar';
+import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import BannerAbout from "../components/sobre/BannerAbout";
 import TeamCarousel from '../components/sobre/TeamCarousel';
@@ -28,10 +30,14 @@ export default function Sobre() {
     }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="pagina-paciente min-h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <Header onMenuClick={toggleSidebar} />
+
+      <div className="barra-voltar barra-voltar--logado">
+        <BotaoVoltar para="/home" />
+      </div>
 
 <>
       <BannerAbout />
@@ -46,6 +52,8 @@ export default function Sobre() {
       </main>
 
       <Footer />
+
+      <NavInferiorPaciente />
     </div>
   );
 }

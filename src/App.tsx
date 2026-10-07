@@ -23,6 +23,9 @@ import HomeAut from './Autorizador/HomeAut';
 import VerPrescricoesAprovadas from './Autorizador/VerPrescricoesAprovadas';
 import AutorizarPrescricaoAutorizador from './Autorizador/AutorizarPrescricoesAut';
 import FluxoInsumo from './Administrador/fluxoinsumo';
+import TermosDeUso from './pages/TermosDeUso';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+import SegurancaDados from './pages/SegurancaDados';
 import './index.css';
 
 function App() {
@@ -152,6 +155,11 @@ function App() {
         path="/cadastro"
         element={<Cadastro />}
       />
+
+      {/* Páginas jurídicas (públicas, linkadas no footer) */}
+      <Route path="/termos" element={<TermosDeUso />} />
+      <Route path="/privacidade" element={<PoliticaPrivacidade />} />
+      <Route path="/seguranca" element={<SegurancaDados />} />
     </Routes>
   );
 }

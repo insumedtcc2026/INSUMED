@@ -1,0 +1,394 @@
+/* =====================================================
+   ESTILO APLICATIVO - SOMENTE PÁGINAS DO PACIENTE
+   Tudo aqui vale apenas para celular (até 768px) e
+   apenas dentro de elementos com a classe .pagina-paciente.
+   No computador as páginas continuam com o layout normal.
+   Referência: protótipo do Figma da home do paciente.
+===================================================== */
+
+/* Barra inferior: escondida fora do celular */
+.nav-inferior-paciente {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* ---------- PÁGINA ---------- */
+  .pagina-paciente {
+    --logged-header-height: 92px;
+    --altura-nav-inferior: 72px;
+
+    min-height: 100vh;
+    background: var(--cor-fundo);
+  }
+
+  /* ---------- HEADER AZUL ARREDONDADO ---------- */
+  .pagina-paciente .header {
+    min-height: var(--logged-header-height);
+    padding: 12px 18px 16px;
+    align-items: flex-end;
+
+    background: var(--gradiente-escuro);
+    border-bottom: none;
+    border-radius: 0 0 var(--raio-xl) var(--raio-xl);
+    box-shadow: 0 10px 24px rgba(0, 30, 160, 0.25);
+  }
+
+  .pagina-paciente .header-title {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .pagina-paciente .header-user-highlight {
+    background: none;
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .pagina-paciente .header-user-highlight::after {
+    display: none;
+  }
+
+  .pagina-paciente .menu-button,
+  .pagina-paciente .notification-button {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+  }
+
+  .pagina-paciente .menu-button:hover,
+  .pagina-paciente .notification-button:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.26);
+  }
+
+  .pagina-paciente .menu-icon,
+  .pagina-paciente .notification-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ---------- TÍTULOS ---------- */
+  .pagina-paciente h1,
+  .pagina-paciente .titulo-secao {
+    font-size: 24px;
+    text-align: left;
+    margin-bottom: 14px;
+  }
+
+  /* ---------- BOTÃO VOLTAR ---------- */
+  .pagina-paciente .barra-voltar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* ---------- BANNER (HOME) ---------- */
+  .pagina-paciente .banner {
+    padding: calc(var(--logged-header-height) + 18px) 16px 0;
+  }
+
+  .pagina-paciente .banner-container {
+    border-radius: var(--raio-lg);
+    box-shadow: var(--sombra-card);
+  }
+
+  /* ---------- CARDS DE ATALHO (HOME) ---------- */
+  .pagina-paciente .info-section {
+    padding: 0 16px;
+    margin-top: 22px;
+  }
+
+  .pagina-paciente .info-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .pagina-paciente .info-card {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    border-radius: var(--raio-lg);
+    box-shadow: var(--sombra-card);
+  }
+
+  .pagina-paciente .info-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .pagina-paciente .info-card-image {
+    height: 100%;
+    object-position: top;
+  }
+
+  .pagina-paciente .info-card-titulo {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 18px 6px 8px;
+
+    background: linear-gradient(to top, rgba(0, 20, 120, 0.85), transparent);
+    color: #fff;
+
+    font-family: var(--fonte-botao);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  /* ---------- PRÓXIMA COLETA (HOME) ---------- */
+  .pagina-paciente .proxima-coleta {
+    padding: 22px 16px 4px;
+  }
+
+  .pagina-paciente .proxima-coleta h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- CARDS DE AGENDAMENTO ---------- */
+  .pagina-paciente .agendamento-card-paciente {
+    padding: 16px 18px;
+    border-radius: var(--raio-lg);
+    font-size: 14px;
+  }
+
+  /* ---------- TUTORIAL (HOME) ---------- */
+  .pagina-paciente .tutorial-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 0 12px;
+    padding: 32px 16px 0;
+  }
+
+  .pagina-paciente .tutorial-left {
+    display: contents;
+  }
+
+  .pagina-paciente .tutorial-title {
+    grid-column: 1 / -1;
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .pagina-paciente .tutorial-description {
+    grid-column: 1 / -1;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .pagina-paciente .tutorial-video-wrapper {
+    width: 100%;
+    align-self: center;
+    margin-bottom: 24px;
+    border-radius: var(--raio-md);
+  }
+
+  .pagina-paciente .tutorial-video {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .pagina-paciente .tutorial-right {
+    justify-content: flex-end;
+  }
+
+  .pagina-paciente .tutorial-image {
+    width: 100%;
+    max-width: 220px;
+    margin: 0 -16px -5px 0;
+  }
+
+  /* ---------- AGENDAMENTOS ---------- */
+  .pagina-paciente .pagina-conteudo {
+    padding: 8px 16px 24px;
+  }
+
+  /* ---------- PERFIL ---------- */
+  .pagina-paciente .perfil-container-form {
+    margin: 0 16px;
+    padding: 20px 16px;
+    gap: 16px;
+    border-radius: var(--raio-lg);
+    background: var(--cor-superficie);
+    box-shadow: var(--sombra-card);
+  }
+
+  .pagina-paciente .perfil-container-form input {
+    font-size: 15px;
+    background: var(--cor-superficie-suave);
+    border-color: var(--cor-borda);
+  }
+
+  .pagina-paciente .prescricao-list {
+    width: calc(100% - 32px);
+    margin: 16px auto 24px;
+    gap: 14px;
+  }
+
+  .pagina-paciente .prescricao-card {
+    background: var(--cor-superficie);
+    border-radius: var(--raio-lg);
+    padding: 18px 16px;
+  }
+
+  .pagina-paciente .prescricao-data {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  /* ---------- ENVIAR PRESCRIÇÃO ---------- */
+  .pagina-paciente .solicitacao-page {
+    padding: 12px 16px 24px;
+    background: transparent;
+    min-height: auto;
+  }
+
+  .pagina-paciente .campo-card {
+    border-radius: var(--raio-lg);
+    border-color: var(--cor-borda);
+    box-shadow: var(--sombra-card);
+    min-height: auto;
+  }
+
+  .pagina-paciente .btn-enviar,
+  .pagina-paciente .btn-selecionar {
+    border-radius: var(--raio-md);
+  }
+
+  /* ---------- PONTOS DE COLETA ---------- */
+  .pagina-paciente .cep-container {
+    width: calc(100% - 32px);
+    margin: 0 auto 18px;
+  }
+
+  .pagina-paciente .mapa-wrapper {
+    width: calc(100% - 32px);
+    border-radius: var(--raio-lg);
+  }
+
+  .pagina-paciente .mapa-wrapper .leaflet-container {
+    height: 300px !important;
+  }
+
+  .pagina-paciente .postos-container {
+    width: calc(100% - 32px);
+  }
+
+  .pagina-paciente .posto-card {
+    border-radius: var(--raio-lg);
+  }
+
+  /* ---------- FOOTER COMPACTO ---------- */
+  .pagina-paciente .footer {
+    padding: 32px 20px 0;
+    padding-bottom: calc(var(--altura-nav-inferior) + 28px + env(safe-area-inset-bottom));
+    border-radius: var(--raio-xl) var(--raio-xl) 0 0;
+    margin-top: 24px;
+  }
+
+  .pagina-paciente .footer-container {
+    gap: 24px;
+  }
+
+  .pagina-paciente .footer-logo {
+    width: 180px;
+  }
+
+  .pagina-paciente .footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+  }
+
+  .pagina-paciente .footer-column a,
+  .pagina-paciente .footer-social a {
+    font-size: 14px;
+  }
+
+  .pagina-paciente .footer-base {
+    margin-top: 24px;
+    font-size: 12px;
+  }
+
+  /* ---------- BARRA DE NAVEGAÇÃO INFERIOR ---------- */
+  .pagina-paciente .nav-inferior-paciente {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 1500; /* acima do conteúdo, abaixo do sidebar (2000) */
+
+    height: var(--altura-nav-inferior);
+    padding: 0 8px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-lg);
+    box-shadow: 0 10px 30px rgba(16, 24, 64, 0.18);
+  }
+
+  .nav-inferior-item {
+    height: 56px;
+    margin: 0 4px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    border-radius: var(--raio-md);
+    color: var(--cor-primaria);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .nav-inferior-icone {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav-inferior-texto {
+    font-family: var(--fonte-botao);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .nav-inferior-item:hover {
+    background: var(--cor-primaria-clara);
+  }
+
+  .nav-inferior-item-ativo {
+    background: var(--gradiente-primario);
+    color: #fff;
+    box-shadow: var(--sombra-botao);
+  }
+
+  .nav-inferior-item-ativo:hover {
+    background: var(--gradiente-primario);
+  }
+}
+
+/* Título dos cards de atalho só aparece no estilo aplicativo */
+.info-card-titulo {
+  display: none;
+}
+
+/* Card de agendamento do paciente (padrão de cards do sistema) */
+.agendamento-card-paciente {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-card);
+}

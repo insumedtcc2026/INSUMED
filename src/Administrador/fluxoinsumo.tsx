@@ -7,6 +7,7 @@ import { useDadosInsumos } from "../hook/Insumosposto";
 import Swal from "sweetalert2";
 import axios from "axios";
 import "../css/home/FluxoInsumos.css";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 const LIMITE = 15;          
 const ITENS_POR_PAGINA = 9; 
@@ -182,6 +183,10 @@ const estoqueInsuficiente = insumoSelecionado !== undefined && estoqueDepois < 0
       </div>
 
       <div style={{ height: alturaHeader }} aria-hidden="true" />
+
+      <div className="barra-voltar ">
+        <BotaoVoltar para="/homeadmin" />
+      </div>
 
       <main className="ins-main">
         <h1 className="ins-titulo">Insumos</h1>

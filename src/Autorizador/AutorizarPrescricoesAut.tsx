@@ -11,6 +11,7 @@ import Footer from "../components/universais/Footer.tsx";
 // Mesmo CSS da página do administrador, para ficar idêntica
 import "../css/home/AutorizarPrescricao.css";
 import Swal from "sweetalert2";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
@@ -213,6 +214,10 @@ export default function AutorizarPrescricaoAutorizador() {
 
 
       <main className="enviar-prescricao-content">
+
+        <div className="barra-voltar barra-voltar--interna">
+          <BotaoVoltar para="/verprescricoesaprovadas" />
+        </div>
 
         <h1>Prescrição:</h1>
 

@@ -6,6 +6,7 @@ import olhoAberto from '../assets/home-log/olho aberto.png';
 import olhoFechado from '../assets/home-log/olho fechado.png';
 import { useState, useEffect } from "react";
 import "../css/home/Cadastro.css"
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 interface Posto {
     pos_id: number;   
@@ -118,6 +119,7 @@ const senhasIguais = password === confirmacaodesenha;
         </div>
 
         <div className="login-form-panel">
+          <BotaoVoltar para="/homeadmin" className="botao-voltar--flutuante" />
         <div className="form-wrapper">
         <div className="Text-Cadastro">Cadastre-se Administrador</div>
 

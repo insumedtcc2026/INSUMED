@@ -4,6 +4,7 @@ import Sidebaradm from '../components/universais/Siderbaradm';
 import Footer from '../components/universais/Footer';
 import type { Paciente } from '../types/agendamento';
 import { buscarPacientesPorCpf } from '../services/PacientesServices';
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 export default function Pacientes() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,6 +43,10 @@ export default function Pacientes() {
       />
 
       <Header onMenuClick={toggleSidebar} />
+
+      <div className="barra-voltar barra-voltar--logado">
+        <BotaoVoltar para="/homeadmin" />
+      </div>
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         <h1 className="text-3xl font-semibold text-gray-900">

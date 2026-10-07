@@ -1,0 +1,123 @@
+/* =====================================================
+   BOTÃO VOLTAR (padrão de todas as páginas)
+===================================================== */
+
+/* Faixa que posiciona o botão alinhado ao conteúdo */
+.barra-voltar {
+  width: 100%;
+  max-width: var(--largura-conteudo, 1200px);
+  margin: 0 auto;
+  padding: 20px 24px 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+/* Use nas páginas com header fixo (área logada) */
+.barra-voltar--logado {
+  padding-top: calc(var(--logged-header-height, 84px) + 20px);
+}
+
+.botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  height: 40px;
+  padding: 0 18px 0 6px;
+
+  border: 1px solid var(--cor-borda, #dfe3ea);
+  border-radius: var(--raio-pill, 999px);
+  background: var(--cor-superficie, #fff);
+  color: var(--cor-primaria, #0042ec);
+
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-size: var(--texto-sm, 14px);
+  font-weight: 700;
+
+  cursor: pointer;
+  box-shadow: var(--sombra-sm, 0 2px 8px rgba(16, 24, 64, 0.06));
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.botao-voltar-icone {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: var(--cor-primaria, #0042ec);
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.botao-voltar:hover {
+  background: var(--cor-primaria-clara, #e8f0ff);
+  box-shadow: var(--sombra-card, 0 6px 20px rgba(16, 24, 64, 0.08));
+}
+
+.botao-voltar:hover .botao-voltar-icone {
+  transform: translateX(-3px);
+}
+
+/* Variação para fundos azuis/escuros */
+.botao-voltar--claro {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+  box-shadow: none;
+}
+
+.botao-voltar--claro .botao-voltar-icone {
+  background: #fff;
+  color: var(--cor-primaria, #0042ec);
+}
+
+.botao-voltar--claro:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Variação flutuante (telas de login/cadastro com imagem) */
+.botao-voltar--flutuante {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .barra-voltar {
+    padding: 14px 16px 0;
+  }
+
+  .barra-voltar--logado {
+    padding-top: calc(var(--logged-header-height, 84px) + 14px);
+  }
+
+  .botao-voltar {
+    height: 36px;
+    padding: 0 14px 0 4px;
+    font-size: 13px;
+  }
+}
+
+/* Dentro de conteúdos que já têm espaçamento próprio */
+.barra-voltar--interna {
+  max-width: none;
+  margin: 0;
+  padding: 0 0 16px;
+}
+
+/* Telas de login e cadastro: o botão flutua no canto do formulário */
+.login-form-panel {
+  position: relative;
+}
+
+@media (max-width: 991px) {
+  .login-form-panel:has(> .botao-voltar--flutuante) {
+    padding-top: 76px;
+  }
+}

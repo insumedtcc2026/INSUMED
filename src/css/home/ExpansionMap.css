@@ -20,7 +20,7 @@
 .expansion-title {
   font-size: 40px;
   font-weight: 800;
-  color: #0a2a7a;
+  color: var(--cor-primaria-escura);
   margin-bottom: 40px;
   line-height: 1.2;
 }
@@ -36,7 +36,7 @@
   align-items: center;
   gap: 16px;
   background: #fff;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--cor-borda);
   border-radius: 16px;
   padding: 18px 20px;
   min-height: 78px;
@@ -46,14 +46,14 @@
 .expansion-card p {
   font-size: 15px;
   line-height: 1.5;
-  color: #2c3e50;
+  color: var(--cor-texto);
 }
 
 /* ICONS */
 .icon {
   width: 44px;
   height: 44px;
-  background: #0a2a7a;
+  background: var(--cor-primaria-escura);
   border-radius: 10px;
   flex-shrink: 0;
   display: flex;

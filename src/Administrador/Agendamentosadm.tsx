@@ -10,6 +10,7 @@ import {
   cancelarAgendamento,
 } from "../services/AgendamentoService";
 import type { Agendamento, StatusAgendamento } from "../types/agendamento";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 type FiltroStatus = "todos" | StatusAgendamento;
 
@@ -72,6 +73,10 @@ export default function Agendamentosadm() {
     <div className="min-h-screen bg-slate-50">
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
       <HeaderAdm onMenuClick={toggleSidebar} />
+
+      <div className="barra-voltar barra-voltar--logado">
+        <BotaoVoltar para="/homeadmin" />
+      </div>
 
       <main className="mx-auto max-w-5xl px-6 py-8">
         <header className="mb-6">

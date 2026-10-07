@@ -5,14 +5,14 @@
 
     background: #ffffff;
 
-    font-family: Arial, sans-serif;
+    font-family: var(--fonte-texto);
 }
 
 
 .historico-page h1 {
     text-align: center;
 
-    color: #003cff;
+    color: var(--cor-primaria);
 
     font-size: 22px;
 
@@ -51,7 +51,7 @@
 
 
 .historico-pesquisa span {
-    color: #aaa;
+    color: var(--cor-texto-claro);
 
     font-size: 11px;
 }
@@ -95,7 +95,7 @@
     width: 150px;
     height: 46px;
     padding: 0 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--cor-borda);
     border-radius: 6px;
 }
 
@@ -115,7 +115,7 @@
 
 .historico-filtros select,
 .historico-filtros input {
-    border: 1px solid #ddd;
+    border: 1px solid var(--cor-borda);
 
     border-radius: 9px;
 
@@ -277,12 +277,12 @@
 
 
 .historico-status.aprovada {
-    background: #1ac74e;
+    background: var(--cor-sucesso);
 }
 
 
 .historico-status.reenvio {
-    background: #ed0000;
+    background: var(--cor-erro);
 }
 
 
@@ -297,7 +297,7 @@
 
     border: none;
 
-    background: #0b20d8;
+    background: var(--cor-primaria);
 
     color: white;
 
@@ -317,7 +317,7 @@
 
 
 .historico-vermais:hover {
-    background: #0616a5;
+    background: var(--cor-primaria-escura);
 }
 
 
@@ -328,7 +328,7 @@
 
     padding: 40px;
 
-    color: #777;
+    color: var(--cor-texto-suave);
 
     font-size: 14px;
 }

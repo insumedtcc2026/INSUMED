@@ -10,9 +10,9 @@
   text-align: center;
   font-size: 64px;
   font-weight: 700;
-  color: #2f49f5;
+  color: var(--cor-primaria);
   margin-bottom: 60px;
-  font-family: sans-serif;
+  font-family: var(--fonte-texto);
 }
 
 .carousel-wrapper {
@@ -34,7 +34,7 @@
   height: 390px;
   border-radius: 28px;
   overflow: hidden;
-  background: #2f49f5;
+  background: var(--cor-primaria);
   flex-shrink: 0;
 }
 

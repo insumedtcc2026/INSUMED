@@ -103,6 +103,7 @@ export default function InfoSection({
               alt={card.title}
               className="info-card-image"
             />
+            <span className="info-card-titulo">{card.title}</span>
           </a>
         ))}
       </div>

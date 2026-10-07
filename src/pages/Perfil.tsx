@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
+import BotaoVoltar from '../components/universais/BotaoVoltar';
+import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import '../css/home/perfil.css';
 import { useDadosUser } from '../hook/Dadosuser.tsx';
 import { useValidarToken } from '../hook/Validartoken.tsx';
@@ -269,12 +271,16 @@ const editarDataNascimento = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="pagina-paciente min-h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <Header onMenuClick={toggleSidebar} />
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <div className="barra-voltar barra-voltar--logado">
+        <BotaoVoltar para="/home" />
+      </div>
+
+      <main className="pagina-conteudo mx-auto max-w-7xl px-6 py-8">
         <h1 className="titulo-secao">Meu Perfil</h1>
       </main>
 
@@ -554,6 +560,8 @@ const editarDataNascimento = async () => {
       )}
 
       <Footer />
+
+      <NavInferiorPaciente />
     </div>
   );
 }

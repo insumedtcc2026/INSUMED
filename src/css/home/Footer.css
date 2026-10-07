@@ -3,10 +3,10 @@
     width:100%;
 background: linear-gradient(
         180deg,
-        #014CDB 0%,
-        #001499 100%
+        var(--cor-primaria) 0%,
+        var(--cor-primaria-profunda) 100%
     );    overflow:hidden;
-    font-family:"Inter",sans-serif;
+    font-family: var(--fonte-texto);
 }
 
 /* =============================== */
@@ -99,7 +99,7 @@ background: linear-gradient(
 
     color:white;
         margin-top: 60px;
-    font-family:"Inter",sans-serif;
+    font-family: var(--fonte-texto);
 transform: translateX(-65px);
     font-size:310px;
 

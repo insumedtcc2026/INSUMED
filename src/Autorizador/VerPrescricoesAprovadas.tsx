@@ -16,6 +16,7 @@ import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
 import "../css/home/VerSolicitaçoes.css";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 
 export default function Autorizador() {
@@ -164,6 +165,10 @@ console.log(
 
 
             <div className="pagina-pendencias">
+
+            <div className="barra-voltar barra-voltar--logado">
+              <BotaoVoltar para="/verprescricoesaprovadas" />
+            </div>
 
                 <h1>
                     Prescrições aprovadas

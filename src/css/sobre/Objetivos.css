@@ -47,7 +47,7 @@
 
 .objectives-icon {
   font-size: 32px;
-  color: #2f49f5;
+  color: var(--cor-primaria);
 
   margin-bottom: 18px;
 }
@@ -55,7 +55,7 @@
 .objectives-title {
   font-size: 20px;
   font-weight: 700;
-  color: #2f49f5;
+  color: var(--cor-primaria);
 
   margin-bottom: 16px;
   line-height: 1.2;
@@ -63,7 +63,7 @@
 
 .objectives-description {
   font-size: 16px;
-  color: #333;
+  color: var(--cor-texto);
 
   line-height: 1.5;
 }

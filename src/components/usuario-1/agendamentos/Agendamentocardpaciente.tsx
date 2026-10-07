@@ -18,7 +18,7 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
   const dataFormatada = formatarDataBR(sol_data_de_coleta);
  
   return (
-    <div className="rounded-3xl bg-gray-50 px-6 py-5 shadow-sm">
+    <div className="agendamento-card-paciente rounded-3xl bg-white px-6 py-5 shadow-sm">
       <p className="text-gray-700">
         <span className="font-bold">Protocolo:</span> {sol_protocolo ?? "—"}
       </p>

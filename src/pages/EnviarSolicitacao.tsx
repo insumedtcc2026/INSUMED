@@ -13,6 +13,8 @@ import Sidebar from '../components/universais/Sidebar.tsx';
 import api from '../services/SoliciatcaoService';
 import Header from '../components/universais/Header';
 import Footer from '../components/universais/Footer.tsx';
+import BotaoVoltar from '../components/universais/BotaoVoltar';
+import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
@@ -311,13 +313,17 @@ function EnviarSolicitaçao() {
     // HTML
     // ==============================
 return (
-    <>
+    <div className="pagina-paciente">
         <Header onMenuClick={toggleSidebar} />
 
         <Sidebar
             isOpen={sidebarOpen}
             onClose={toggleSidebar}
         />
+
+        <div className="barra-voltar barra-voltar--logado">
+            <BotaoVoltar para="/home" />
+        </div>
 
         <main className="solicitacao-page">
 
@@ -577,7 +583,9 @@ return (
         </main>
 
         <Footer />
-    </>
+
+        <NavInferiorPaciente />
+    </div>
 );
 }
 

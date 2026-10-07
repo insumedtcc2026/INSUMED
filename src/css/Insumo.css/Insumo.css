@@ -19,7 +19,7 @@
 
 .insumo-info p {
     margin: 2px 0;
-    color: #444;
+    color: var(--cor-texto-suave);
 }
 }
 .status{
@@ -35,11 +35,11 @@
 }
 
 .disponivel {
-    background-color: #35d14f;
+    background-color: var(--cor-sucesso);
 }
 
 .indisponivel {
-    background-color: #d60000;
+    background-color: var(--cor-erro);
 }
 .insumo-imagem {
     width: 110px;

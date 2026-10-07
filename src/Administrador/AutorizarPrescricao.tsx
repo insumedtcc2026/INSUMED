@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDadosInsumos } from "../hook/Insumosposto";
 
 import "../css/home/AutorizarPrescricao.css";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 
  
@@ -282,6 +283,10 @@ navigate('/VerSolicitaçoes')
 
 
       <main className="enviar-prescricao-content">
+
+        <div className="barra-voltar barra-voltar--interna">
+          <BotaoVoltar para="/versolicitaçoes" />
+        </div>
 
         <h1>Prescrição:</h1>
 

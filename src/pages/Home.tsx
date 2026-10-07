@@ -9,6 +9,7 @@ import {useValidarToken} from '../hook/Validartoken.tsx';
 import Sidebar from '../components/universais/Sidebar.tsx';
 
 import Header from '../components/universais/Header';
+import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import AgendamentoCardPaciente from '../components/usuario-1/agendamentos/Agendamentocardpaciente';
 import { buscarProximoAgendamento } from '../services/AgendamentoService';
 import type { Agendamento } from '../types/agendamento';
@@ -42,7 +43,7 @@ export default function Home() {
 
   
   return (
-    <>
+    <div className="pagina-paciente">
    <Header onMenuClick={toggleSidebar} />
 
       {/* Coloque Sidebar apenas se você já tiver sidebarOpen e toggleSidebar */}
@@ -60,7 +61,7 @@ export default function Home() {
 
       {/* Próximo agendamento, logo abaixo dos cards de atalho */}
       {!carregandoAgendamento && proximoAgendamento && (
-        <section className="mx-auto max-w-2xl px-6 py-4">
+        <section className="proxima-coleta mx-auto max-w-2xl px-6 py-4">
           <h2 className="mb-3 text-lg font-semibold text-gray-800">
             Seu próximo agendamento
           </h2>
@@ -71,6 +72,8 @@ export default function Home() {
       <TutorialSection />
 
       <Footer />
-    </>
+
+      <NavInferiorPaciente />
+    </div>
   );
 }

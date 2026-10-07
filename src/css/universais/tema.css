@@ -1,0 +1,170 @@
+/* =====================================================
+   TEMA GLOBAL DO INSUMED
+   Paleta, tipografia, raios, sombras e tamanhos padrão.
+   Baseado na documentação do TCC (Elementos do Design):
+   - Títulos: Inter
+   - Textos: Inter e Poppins
+   - Menus e botões: Montserrat
+   - Botões: #12009E, #0042EC, #001ED3 e #0192FE
+   Altere as cores do sistema inteiro somente aqui.
+===================================================== */
+
+:root {
+  /* ---------- CORES DA MARCA ---------- */
+  --cor-primaria: #0042ec;          /* azul principal (botões, links, títulos) */
+  --cor-primaria-hover: #001ed3;    /* hover dos botões */
+  --cor-primaria-escura: #001ed3;   /* azul escuro (destaques, header) */
+  --cor-primaria-profunda: #12009e; /* azul profundo (gradientes, footer) */
+  --cor-secundaria: #0192fe;        /* azul claro (detalhes, ícones) */
+
+  --cor-primaria-clara: #e8f0ff;    /* fundo de avisos / ícones */
+  --cor-primaria-borda: #9dbcff;    /* borda de caixas informativas */
+  --cor-foco: rgba(0, 66, 236, 0.16);
+
+  --gradiente-primario: linear-gradient(90deg, #001ed3 0%, #0042ec 55%, #0192fe 100%);
+  --gradiente-escuro: linear-gradient(180deg, #0042ec 0%, #12009e 100%);
+
+  /* ---------- CORES DE STATUS ---------- */
+  --cor-sucesso: #22c55e;
+  --cor-sucesso-escura: #16a34a;
+  --cor-alerta: #fbb404;
+  --cor-erro: #d30000;
+  --cor-erro-escura: #b00000;
+
+  /* ---------- NEUTROS ---------- */
+  --cor-texto: #1f2430;
+  --cor-texto-suave: #5b6475;
+  --cor-texto-claro: #8a93a3;
+  --cor-borda: #dfe3ea;
+  --cor-fundo: #f5f7fb;
+  --cor-superficie: #ffffff;
+  --cor-superficie-suave: #f2f4f8;
+
+  /* ---------- TIPOGRAFIA ---------- */
+  --fonte-titulo: "Inter", system-ui, -apple-system, sans-serif;
+  --fonte-texto: "Inter", "Poppins", system-ui, -apple-system, sans-serif;
+  --fonte-botao: "Montserrat", "Inter", system-ui, sans-serif;
+
+  --texto-xs: 0.75rem;   /* 12px */
+  --texto-sm: 0.875rem;  /* 14px */
+  --texto-md: 1rem;      /* 16px */
+  --texto-lg: 1.125rem;  /* 18px */
+  --texto-xl: 1.375rem;  /* 22px */
+  --titulo-pagina: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
+
+  /* ---------- RAIOS ---------- */
+  --raio-sm: 8px;
+  --raio-md: 14px;
+  --raio-lg: 22px;
+  --raio-xl: 28px;
+  --raio-pill: 999px;
+
+  /* ---------- SOMBRAS ---------- */
+  --sombra-sm: 0 2px 8px rgba(16, 24, 64, 0.06);
+  --sombra-card: 0 6px 20px rgba(16, 24, 64, 0.08);
+  --sombra-card-hover: 0 12px 30px rgba(16, 24, 64, 0.14);
+  --sombra-botao: 0 6px 16px rgba(0, 66, 236, 0.25);
+
+  /* ---------- TAMANHOS ---------- */
+  --altura-botao: 46px;
+  --altura-input: 46px;
+  --largura-conteudo: 1200px;
+}
+
+/* =====================================================
+   BASE
+===================================================== */
+
+body {
+  margin: 0;
+  font-family: var(--fonte-texto);
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fonte-titulo);
+}
+
+/* Títulos de página (antes cada tela tinha um tamanho/cor diferente) */
+h1 {
+  font-size: var(--titulo-pagina);
+  font-weight: 700;
+  color: var(--cor-primaria);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+button,
+select {
+  font-family: var(--fonte-botao);
+}
+
+input,
+textarea {
+  font-family: var(--fonte-texto);
+}
+
+/* =====================================================
+   CLASSES UTILITÁRIAS REAPROVEITÁVEIS
+===================================================== */
+
+.titulo-secao {
+  font-family: var(--fonte-titulo);
+  font-size: var(--titulo-pagina);
+  font-weight: 700;
+  color: var(--cor-primaria);
+  margin: 0 0 12px;
+}
+
+.card-padrao {
+  background: var(--cor-superficie);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-card);
+  border: 1px solid var(--cor-borda);
+}
+
+.botao-primario {
+  height: var(--altura-botao);
+  padding: 0 24px;
+  border: none;
+  border-radius: var(--raio-md);
+  background: var(--cor-primaria);
+  color: #fff;
+  font-family: var(--fonte-botao);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.botao-primario:hover {
+  background: var(--cor-primaria-hover);
+  transform: translateY(-1px);
+}
+
+/* Espaço para o header fixo das áreas logadas */
+.compensa-header {
+  padding-top: var(--logged-header-height, 84px);
+}
+
+/* Foco visível e consistente para acessibilidade */
+:focus-visible {
+  outline: 3px solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+/* Alertas do SweetAlert2 seguindo as fontes do sistema */
+.swal2-popup {
+  font-family: var(--fonte-texto) !important;
+  border-radius: var(--raio-lg) !important;
+}
+
+.swal2-styled {
+  font-family: var(--fonte-botao) !important;
+  border-radius: var(--raio-md) !important;
+}

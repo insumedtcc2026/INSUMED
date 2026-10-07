@@ -8,23 +8,23 @@
 
 /* ---------- 1. Cores (tiradas da imagem de referência) ---------- */
 .ins-pagina {
-  --azul-titulo-1: #0036ff;   /* início do degradê do título */
-  --azul-titulo-2: #0060ff;   /* fim do degradê do título */
+  --azul-titulo-1: var(--cor-primaria);   /* início do degradê do título */
+  --azul-titulo-2: var(--cor-primaria);   /* fim do degradê do título */
   --azul-escuro: #12009e;     /* lado esquerdo dos botões */
-  --azul-claro: #0380f2;      /* lado direito dos botões */
-  --azul-marca: #0033ff;      /* quadradinho do ícone da marca */
-  --azul-cabecalho: #2d7ff9;  /* texto do cabeçalho da tabela */
-  --azul-paginacao: #001ebf;  /* paginação (mesmo azul do rodapé) */
+  --azul-claro: var(--cor-secundaria);      /* lado direito dos botões */
+  --azul-marca: var(--cor-primaria);      /* quadradinho do ícone da marca */
+  --azul-cabecalho: var(--cor-secundaria);  /* texto do cabeçalho da tabela */
+  --azul-paginacao: var(--cor-primaria-escura);  /* paginação (mesmo azul do rodapé) */
   --cinza-caixa: #f0f0f0;     /* caixa grande e colunas claras */
   --cinza-coluna: #d9d9d9;    /* colunas escuras da tabela */
   --cinza-borda: #d4d4d4;     /* borda dos inputs */
   --texto: #333333;
   --texto-suave: #7f7f7f;
-  --icone-azul-fundo: #dbeafe;
-  --icone-azul: #006cf5;
+  --icone-azul-fundo: var(--cor-primaria-clara);
+  --icone-azul: var(--cor-primaria);
   --icone-laranja-fundo: #ffedd5;
-  --icone-laranja: #fbbc09;
-  --vermelho: #dd3333;        /* mesmo vermelho dos alertas de erro */
+  --icone-laranja: var(--cor-alerta);
+  --vermelho: var(--cor-erro);        /* mesmo vermelho dos alertas de erro */
 
   min-height: 100vh;
   background: #ffffff;
@@ -117,7 +117,7 @@
 }
 
 .ins-input::placeholder {
-  color: #a0a0a0;
+  color: var(--cor-texto-claro);
   opacity: 1;
 }
 

@@ -7,6 +7,7 @@ import olhoAberto from '../../assets/home-log/olho aberto.png'
 import olhoFechado from '../../assets/home-log/olho fechado.png'
 
 import images from "../../assets/home-log/teste login.png"; 
+import BotaoVoltar from "../universais/BotaoVoltar";
 
 
 
@@ -105,6 +106,7 @@ const handleSignUp = () => { navigate("/cadastro"); };
 
    
       <div className="login-form-panel">
+        <BotaoVoltar para="/" className="botao-voltar--flutuante" />
         <div className="form-wrapper">
           
           <div className="login-left">Bem-vindo</div>

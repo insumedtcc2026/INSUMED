@@ -1,1 +1,13 @@
 @import "tailwindcss";
+@import "./css/universais/tema.css";
+
+/* Alinha as cores e a fonte padrão do Tailwind com a paleta do INSUMED
+   (assim as classes text-blue-*, bg-blue-* etc. seguem a documentação). */
+@theme {
+  --font-sans: "Inter", "Poppins", system-ui, -apple-system, sans-serif;
+
+  --color-blue-500: #0192fe;
+  --color-blue-600: #0042ec;
+  --color-blue-700: #001ed3;
+  --color-blue-800: #12009e;
+}

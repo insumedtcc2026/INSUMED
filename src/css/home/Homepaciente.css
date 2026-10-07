@@ -68,7 +68,7 @@
 
     font-size:15px;
 
-    color:#555;
+    color:var(--cor-texto-suave);
 
 }
 
@@ -80,11 +80,11 @@
 .saudacao {
 
 
-    font-family:"Montserrat",sans-serif;
+    font-family: var(--fonte-botao);
 
     font-size:12px;
 
-    color:#333;
+    color:var(--cor-texto);
 
 
 }
@@ -94,7 +94,7 @@
 .saudacao span {
 
 
-    color:#0057ff;
+    color:var(--cor-primaria);
 
     font-weight:600;
 
@@ -150,8 +150,8 @@
 
     linear-gradient(
         135deg,
-        #0C299A,
-        #0066FF
+        var(--cor-primaria-escura),
+        var(--cor-primaria)
     );
 
 
@@ -264,7 +264,7 @@
     cursor:pointer;
 
 
-    color:#111;
+    color:var(--cor-texto);
 
 
     font-size:14px;

@@ -9,6 +9,7 @@ import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
 
 import "../css/home/Historicodaprescricao.css";
+import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 
 export default function Historico() {
@@ -142,6 +143,9 @@ export default function Historico() {
             <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
             <HeaderAdm onMenuClick={toggleSidebar} />
 
+            <div className="barra-voltar barra-voltar--logado">
+              <BotaoVoltar para="/homeadmin" />
+            </div>
             <div className="historico-page">
 
             <h1>HISTÓRICO</h1>
