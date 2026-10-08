@@ -9,7 +9,10 @@ const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 interface NovoAgendamentoModalProps {
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess: () => void;
+  cpfInicial?: string;
+    insumoInicial?: string;
+  quantidadeInicial?: number;
 }
 
 /**
@@ -20,11 +23,31 @@ interface NovoAgendamentoModalProps {
  * seleção de um item já cadastrado). O backend decide, ao salvar, se
  * reaproveita um insumo já existente com esse nome ou cria um novo.
  */
-export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendamentoModalProps) {
+export default function NovoAgendamentoModal({ onClose, onSuccess,   cpfInicial = "",  insumoInicial = "",
+  quantidadeInicial = 0, }: NovoAgendamentoModalProps) {
   // --- paciente ---
   const [buscaPaciente, setBuscaPaciente] = useState("");
   const [resultadosPaciente, setResultadosPaciente] = useState<Paciente[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
+
+  useEffect(() => {
+  if (cpfInicial) {
+    setBuscaPaciente(cpfInicial);
+  }
+}, [cpfInicial]);
+useEffect(() => {
+  if (cpfInicial) {
+    setBuscaPaciente(cpfInicial);
+  }
+
+  if (insumoInicial) {
+    setNomeProduto(insumoInicial);
+  }
+
+  if (quantidadeInicial > 0) {
+    setQuantidade(String(quantidadeInicial));
+  }
+}, [cpfInicial, insumoInicial, quantidadeInicial]);
 
   // --- produto sendo adicionado no momento (digitado, não buscado) ---
   const [nomeProduto, setNomeProduto] = useState("");
@@ -73,6 +96,18 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
     return () => clearTimeout(debounceRef.current);
   }, [buscaPaciente, paciente]);
 
+
+
+  useEffect(() => {
+  if (insumoInicial && quantidadeInicial > 0) {
+    setItens([
+      {
+        ins_nome: insumoInicial,
+        quantidade: quantidadeInicial,
+      },
+    ]);
+  }
+}, [insumoInicial, quantidadeInicial]);
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
     setBuscaPaciente(`${p.pac_nome} — ${p.pac_cpf}`);
@@ -212,10 +247,11 @@ export default function NovoAgendamentoModal({ onClose, onSuccess }: NovoAgendam
 
           {/* Produto (digitado, não buscado) */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-600">Produto *</label>
+            <label className="mb-1 block text-sm font-medium text-gray-600">Insumo *</label>
             <input
               type="text"
               value={nomeProduto}
+              readOnly
               onChange={(e) => setNomeProduto(e.target.value)}
               placeholder="Digite o nome do produto"
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"

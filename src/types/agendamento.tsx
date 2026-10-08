@@ -60,6 +60,8 @@ export interface ResultadoPaginado<T> {
   totalPaginas: number;
 }
 
+
+
 // Filtros da página única de agendamentos do ADM (substitui as antigas
 // páginas separadas de "hoje" / "todos" / "histórico").
 export interface FiltrosAgendamento {

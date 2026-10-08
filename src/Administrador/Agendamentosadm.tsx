@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
@@ -11,6 +12,7 @@ import {
 } from "../services/AgendamentoService";
 import type { Agendamento, StatusAgendamento } from "../types/agendamento";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import axios from "axios";
 
 type FiltroStatus = "todos" | StatusAgendamento;
 
@@ -21,6 +23,10 @@ type FiltroStatus = "todos" | StatusAgendamento;
  * no mesmo padrão de filtro/busca da página de Histórico da Prescrição.
  */
 export default function Agendamentosadm() {
+    const [searchParams] = useSearchParams();
+
+  const cpfUrl = searchParams.get("cpf");
+  const solIdUrl = searchParams.get("sol_id");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
 
@@ -32,6 +38,8 @@ export default function Agendamentosadm() {
   const [statusFiltro, setStatusFiltro] = useState<FiltroStatus>("agendado");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
+  const [insumoInicial, setInsumoInicial] = useState("");
+const [quantidadeInicial, setQuantidadeInicial] = useState(0);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -53,11 +61,53 @@ export default function Agendamentosadm() {
     }
   }, [statusFiltro, busca, dataInicio, dataFim]);
 
+useEffect(() => {
+  async function carregarDadosSolicitacao() {
+    if (!solIdUrl) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const resposta = await axios.get(
+        `https://backend-insumed-lhac.vercel.app/solicitacao/${solIdUrl}`,
+      // `"http://localhost:3344/solicitacao/${solIdUrl}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Solicitação recebida:", resposta.data);
+
+      setInsumoInicial(resposta.data.ins_nome || "");
+      setQuantidadeInicial(
+        Number(resposta.data.sol_insumo_quant || 0)
+      );
+    } catch (error) {
+      console.error(
+        "Erro ao buscar dados da solicitação:",
+        error
+      );
+    }
+  }
+
+  carregarDadosSolicitacao();
+}, [solIdUrl]);
+  
   useEffect(() => {
     // Pequeno debounce pra busca/data não disparar uma chamada a cada tecla
     const t = setTimeout(carregar, 300);
     return () => clearTimeout(t);
   }, [carregar]);
+
+  useEffect(() => {
+  if (cpfUrl) {
+    setBusca(cpfUrl);
+    setModalAberto(true);
+  }
+}, [cpfUrl]);
+
 
   async function handleConcluir(sol_id: number) {
     await concluirAgendamento(sol_id);
@@ -165,7 +215,11 @@ export default function Agendamentosadm() {
       </button>
 
       {modalAberto && (
+        
         <NovoAgendamentoModal
+        cpfInicial={cpfUrl || ""}
+         insumoInicial={insumoInicial}
+  quantidadeInicial={quantidadeInicial}
           onClose={() => setModalAberto(false)}
           onSuccess={() => {
             setModalAberto(false);
