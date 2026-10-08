@@ -289,12 +289,15 @@ console.log(
                                 STATUS
                             ========================= */}
 
-                            <div className="status-pendente">
-
-                                Pendente
-
-                            </div>
-
+                            <div
+  className={
+    prescricao.sol_status === "Enviado"
+      ? "status-enviado"
+      : "status-pendente"
+  }
+>
+  {prescricao.sol_status}
+</div>
 
                             {/* =========================
                                 BOTÃO
