@@ -277,7 +277,7 @@ export default function Pendencias() {
     prescricao.sol_status === "Autorizado"
       ? "status-autorizado"
       : prescricao.sol_status === "Enviado"
-      ? "status-enviado"
+      ? "status-revisado"
       : "status-pendente"
   }
   >

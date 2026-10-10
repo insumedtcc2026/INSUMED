@@ -291,8 +291,8 @@ console.log(
 
                             <div
   className={
-    prescricao.sol_status === "Enviado"
-      ? "status-enviado"
+    prescricao.sol_status === "Revisado"
+      ? "status-revisado"
       : "status-pendente"
   }
 >
