@@ -9,7 +9,7 @@ import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
 // Mesmo CSS da página do administrador, para ficar idêntica
-import "../css/home/AutorizarPrescricao.css";
+import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 

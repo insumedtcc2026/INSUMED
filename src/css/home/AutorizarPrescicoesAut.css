@@ -1,436 +1,431 @@
-/* =========================================================
-   AUTORIZAR PRESCRIÇÃO - AUTORIZADOR
-   Visual copiado de AutorizarPrescricao.css
-   Tudo fica "preso" dentro de .autorizar-page para não
-   conflitar com a página do administrador.
-========================================================= */
-
 
 /* =========================================
-   PÁGINA
+   AUTORIZAR PRESCRIÇÃO - AUTORIZADOR
 ========================================= */
 
-.autorizar-page {
+/* PÁGINA */
+.enviar-prescricao-page {
+  width: 100%;
   min-height: 100vh;
-  background-color: #ffffff;
+  background: #fff;
   font-family: var(--fonte-texto);
-
-  margin-left: 150px;
-  padding: 90px 30px 100px;
   box-sizing: border-box;
 }
 
+/* CONTEÚDO */
+.enviar-prescricao-content {
+  width: auto;
+  min-width: 0;
+  margin-left: 150px;
+  padding: 90px 30px 40px;
+  box-sizing: border-box;
+}
 
-/* =========================================
-   CABEÇALHO (VOLTAR + TÍTULO)
-========================================= */
+.enviar-prescricao-content h1 {
+  margin: 0 0 15px;
+  color: var(--cor-primaria);
+  font-size: 20px;
+}
 
-.autorizar-page .autorizar-header {
+.enviar-prescricao-content > p {
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+}
+
+/* BARRA VOLTAR */
+.enviar-prescricao-content .barra-voltar {
   width: 100%;
   margin-bottom: 15px;
 }
 
-.autorizar-page .autorizar-header h1 {
-  color: var(--cor-primaria);
-  font-size: 20px;
-  margin: 0 0 5px 0;
-}
-
-.autorizar-page .autorizar-header p {
-  color: var(--cor-texto-suave);
-  font-size: 14px;
-  margin: 0;
-}
-
-.autorizar-page .btn-voltar {
-  width: 115px;
-  height: 35px;
-  margin-bottom: 15px;
-
-  border: none;
-  border-radius: 6px;
-
-  background-color: var(--cor-primaria);
-  color: #ffffff;
-
-  font-size: 11px;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-.autorizar-page .btn-voltar:hover {
-  background-color: var(--cor-primaria-escura);
-}
-
-
-/* =========================================
-   CONTAINER DA PRESCRIÇÃO + INFORMAÇÕES
-========================================= */
-
-.autorizar-page .autorizar-container {
-  display: flex;
+/* LAYOUT PRINCIPAL */
+.enviar-prescricao-content .prescricao-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
   align-items: stretch;
   gap: 15px;
 
   width: 100%;
+  max-width: 1150px;
+  min-width: 0;
+  margin: 0;
   box-sizing: border-box;
 }
 
-
-/* =========================================
-   ÁREA DA IMAGEM
-========================================= */
-
-.autorizar-page .prescricao-visualizacao {
-  flex: 1;
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.autorizar-page .prescricao-visualizacao h2 {
-  font-size: 16px;
-  color: var(--cor-texto);
-  margin: 0 0 8px 0;
-}
-
-
-/* =========================================
-   QUADRADO DA PRESCRIÇÃO
-========================================= */
-
-.autorizar-page .prescricao-imagem-autorizador {
-  flex: 1;
+/* SEÇÃO DA IMAGEM */
+.enviar-prescricao-content .prescricao-preview {
   width: 100%;
-  min-height: 500px;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-
-  background-color: #ffffff;
-
+.enviar-prescricao-content .prescricao-imagem {
   display: flex;
   align-items: center;
   justify-content: center;
 
+  width: 100%;
+  height: 450px;
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+
   overflow: hidden;
+  box-sizing: border-box;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.enviar-prescricao-content .prescricao-imagem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.autorizar-page .prescricao-imagem-autorizador img {
-  width: 100%;
-  height: 100%;
-
-  object-fit: contain;
-  display: block;
-}
-
-.autorizar-page .prescricao-imagem-autorizador p {
+.enviar-prescricao-content .prescricao-imagem p {
+  margin: 0;
+  padding: 10px;
   color: var(--cor-texto-suave);
   font-size: 14px;
   text-align: center;
 }
 
-
-/* =========================================
-   CARD DE INFORMAÇÕES
-========================================= */
-
-.autorizar-page .informacoes-autorizador {
-  flex: 0 0 425px;
-  width: 425px;
-
-  min-height: 500px;
-  height: auto;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-
-  padding: 10px;
-  box-sizing: border-box;
-
-  background-color: #ffffff;
-}
-
-.autorizar-page .informacoes-autorizador h2 {
-  font-size: 16px;
-  color: var(--cor-texto);
-  margin: 0 0 8px 0;
-}
-
-
-/* =========================================
-   GRUPOS (Paciente, Solicitação, Insumo...)
-========================================= */
-
-.autorizar-page .informacao-grupo {
-  width: 100%;
-  margin-bottom: 7px;
-  box-sizing: border-box;
-}
-
-.autorizar-page .informacao-grupo h3 {
-  display: block;
-
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--cor-texto);
-
-  margin: 0 0 4px 0;
-}
-
-
-/* =========================================
-   "CAMPOS" (os <p> parecem inputs readOnly)
-========================================= */
-
-.autorizar-page .informacao-grupo p {
-  width: 100%;
-  min-height: 36px;
-
-  margin: 0 0 6px 0;
-  padding: 7px 9px;
-  box-sizing: border-box;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 7px;
-
-  background-color: #ffffff;
-  color: var(--cor-texto-suave);
-
-  font-family: var(--fonte-texto);
-  font-size: 14px;
-
+/* CARD DE INFORMAÇÕES
+   Mesma altura da seção da imagem */
+.enviar-prescricao-content .informacoes-prescricao {
   display: flex;
-  align-items: center;
-}
-
-.autorizar-page .informacao-grupo p:last-child {
-  margin-bottom: 0;
-}
-
-.autorizar-page .informacao-grupo p strong {
-  color: var(--cor-texto);
-  margin-right: 5px;
-}
-
-
-/* =========================================
-   OBSERVAÇÃO (igual ao textarea)
-========================================= */
-
-.autorizar-page .informacao-grupo .observacao-autorizador {
-  min-height: 100px;
-  align-items: flex-start;
-  padding: 10px;
-  line-height: 1.4;
-  white-space: pre-wrap;
-}
-
-
-/* =========================================
-   STATUS ATUAL
-========================================= */
-
-.autorizar-page .status-atual {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  margin-top: 10px;
-  padding: 9px;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 7px;
-
-  background-color: #f5f5f5;
-  font-size: 14px;
-}
-
-.autorizar-page .status-atual strong {
-  color: var(--cor-texto);
-}
-
-.autorizar-page .status-atual span {
-  color: var(--cor-primaria);
-  font-weight: bold;
-}
-
-
-/* =========================================
-   BOTÕES (mesmo estilo de Reenvio / Enviar)
-========================================= */
-
-.autorizar-page .acoes-autorizador {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: flex-start;
+  gap: 0;
 
-  gap: 10px;
-  margin: 15px 0 0 0;
-  padding: 0;
-}
-
-.autorizar-page .btn-nao-autorizar,
-.autorizar-page .btn-autorizar {
-  display: block;
-
-  width: 115px;
-  height: 35px;
+  width: 320px;
+  height: 450px;
+  min-width: 0;
+  min-height: 450px;
+  max-width: 100%;
 
   margin: 0;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  align-self: stretch;
+
+  overflow-y: auto;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.enviar-prescricao-content .informacoes-prescricao h2 {
+  margin: 0 0 8px;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* CAMPOS */
+.enviar-prescricao-content .campo {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 7px;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .campo label {
+  display: block;
+  margin: 0 0 3px;
+
+  color: var(--cor-texto);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* INPUTS */
+.enviar-prescricao-content .campo input,
+.enviar-prescricao-content .ins-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--cor-texto);
+
+  font-family: var(--fonte-texto);
+  font-size: 12px;
+}
+
+.enviar-prescricao-content .campo input:focus,
+.enviar-prescricao-content .ins-input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+}
+
+/* CPF, CÓDIGO E DATAS */
+.enviar-prescricao-content .linha-campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .linha-campos .campo {
+  min-width: 0;
+}
+
+/* RÓTULO DE VENCIMENTO */
+.enviar-prescricao-content .campo.vencimento label {
+  color: #e53935;
+}
+
+/* INSUMO E QUANTIDADE */
+.enviar-prescricao-content .linha-insumo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 68px;
+  align-items: start;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 7px;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .ins-campo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .ins-label {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--cor-texto);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.enviar-prescricao-content .ins-input {
+  height: 32px;
+}
+
+.enviar-prescricao-content .quantidade-campo {
+  width: 100%;
+  min-width: 0;
+}
+
+/* OBSERVAÇÕES */
+.enviar-prescricao-content .campo textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 55px;
+  padding: 8px;
+  margin: 0;
+  box-sizing: border-box;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--cor-texto);
+
+  font-family: var(--fonte-texto);
+  font-size: 12px;
+  line-height: 1.5;
+
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+
+.enviar-prescricao-content .campo textarea:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+}
+
+/* BOTÕES ABAIXO DA IMAGEM */
+.enviar-prescricao-content .prescricao-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  /* Mesma largura da coluna da imagem */
+  width: calc(100% - 335px);
+  max-width: 815px;
+  min-width: 0;
+
+  margin: 10px 0 0;
   padding: 0;
+  box-sizing: border-box;
+
+  position: static;
+}
+
+/* ESTILO DOS BOTÕES */
+.enviar-prescricao-content .btn-reenvio,
+.enviar-prescricao-content .btn-enviar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 130px;
+  height: 38px;
+  padding: 0 15px;
+  margin: 0;
+  box-sizing: border-box;
 
   border: none;
   border-radius: 6px;
+  color: #fff;
 
-  color: #ffffff;
-
-  font-size: 11px;
+  font-family: var(--fonte-texto);
+  font-size: 12px;
   font-weight: bold;
 
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.autorizar-page .btn-nao-autorizar {
-  background-color: red;
+.enviar-prescricao-content .btn-reenvio {
+  background-color: #e53935;
 }
 
-.autorizar-page .btn-nao-autorizar:hover {
-  background-color: var(--cor-erro-escura);
+.enviar-prescricao-content .btn-reenvio:hover {
+  background-color: #c62828;
 }
 
-.autorizar-page .btn-autorizar {
+.enviar-prescricao-content .btn-enviar {
   background-color: var(--cor-sucesso);
 }
 
-.autorizar-page .btn-autorizar:hover {
+.enviar-prescricao-content .btn-enviar:hover {
   background-color: var(--cor-sucesso-escura);
 }
 
-.autorizar-page .btn-nao-autorizar:disabled,
-.autorizar-page .btn-autorizar:disabled {
+.enviar-prescricao-content .btn-reenvio:disabled,
+.enviar-prescricao-content .btn-enviar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-
-/* =========================================
-   CARREGANDO / ERRO
-========================================= */
-
-.autorizar-page .autorizar-carregando,
-.autorizar-page .autorizar-erro {
-  min-height: 400px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-  color: var(--cor-texto-suave);
-  font-size: 14px;
-}
-
-.autorizar-page .autorizar-erro h2 {
-  color: var(--cor-primaria);
-  font-size: 20px;
-  margin: 0 0 15px 0;
-}
-
-.autorizar-page .autorizar-erro button {
-  width: 115px;
-  height: 35px;
-
-  border: none;
-  border-radius: 6px;
-
-  background-color: var(--cor-primaria);
-  color: #ffffff;
-
-  font-size: 11px;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-
-/* =========================================
-   RESPONSIVIDADE - 1100PX
-========================================= */
-
-@media (max-width: 1100px) {
-
-  .autorizar-page {
+/* NOTEBOOKS */
+@media (max-width: 1200px) {
+  .enviar-prescricao-content {
     margin-left: 120px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
 
-  .autorizar-page .informacoes-autorizador {
-    flex: 0 0 400px;
-    width: 400px;
+  .enviar-prescricao-content .prescricao-container {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+
+  .enviar-prescricao-content .informacoes-prescricao {
+    width: 300px;
+  }
+
+  .enviar-prescricao-content .prescricao-buttons {
+    width: calc(100% - 315px);
   }
 }
 
-
-/* =========================================
-   RESPONSIVIDADE - 900PX
-========================================= */
-
+/* TABLETS */
 @media (max-width: 900px) {
-
-  .autorizar-page {
+  .enviar-prescricao-content {
     margin-left: 0;
     padding: 90px 20px 40px;
   }
 
-  .autorizar-page .autorizar-container {
-    flex-direction: column;
-    align-items: stretch;
+  .enviar-prescricao-content .prescricao-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+    max-width: 650px;
   }
 
-  .autorizar-page .prescricao-imagem-autorizador {
-    min-height: 350px;
-    height: 350px;
+  .enviar-prescricao-content .prescricao-imagem {
+    height: 400px;
   }
 
-  .autorizar-page .informacoes-autorizador {
-    flex: none;
+  .enviar-prescricao-content .informacoes-prescricao {
     width: 100%;
-    max-width: 500px;
+    height: 400px;
+    min-height: 400px;
   }
 
-  .autorizar-page .acoes-autorizador {
-    justify-content: center;
+  .enviar-prescricao-content .prescricao-buttons {
+    width: 100%;
+    max-width: 650px;
   }
 }
 
-
-/* =========================================
-   RESPONSIVIDADE - 500PX
-========================================= */
-
+/* CELULARES */
 @media (max-width: 500px) {
-
-  .autorizar-page {
-    padding: 80px 15px 30px;
+  .enviar-prescricao-content {
+    padding: 80px 12px 30px;
   }
 
-  .autorizar-page .prescricao-imagem-autorizador {
-    min-height: 350px;
-    height: 350px;
+  .enviar-prescricao-content h1 {
+    font-size: 18px;
   }
 
-  .autorizar-page .acoes-autorizador {
-    flex-direction: column;
+  .enviar-prescricao-content .prescricao-imagem {
+    height: 320px;
+    padding: 6px;
+  }
+
+  .enviar-prescricao-content .informacoes-prescricao {
+    height: 320px;
+    min-height: 320px;
+    padding: 10px;
+  }
+
+  .enviar-prescricao-content .linha-campos {
+    gap: 8px;
+  }
+
+  .enviar-prescricao-content .linha-insumo {
+    grid-template-columns: minmax(0, 1fr) 75px;
+    gap: 8px;
+  }
+
+  .enviar-prescricao-content .prescricao-buttons {
+    flex-direction: row;
     align-items: center;
+    width: 100%;
   }
 
-  .autorizar-page .btn-nao-autorizar,
-  .autorizar-page .btn-autorizar {
-    width: 180px;
+  .enviar-prescricao-content .btn-reenvio,
+  .enviar-prescricao-content .btn-enviar {
+    min-width: 0;
+    flex: 1;
   }
 }

@@ -1,731 +1,531 @@
+
 /* =========================================
-   PÁGINA
+   AUTORIZAR PRESCRIÇÃO - ADMINISTRADOR
 ========================================= */
 
+/* PÁGINA */
 .enviar-prescricao-page {
+  width: 100%;
   min-height: 100vh;
-  background-color: #ffffff;
+  background: #fff;
   font-family: var(--fonte-texto);
+  box-sizing: border-box;
 }
 
-
-/* =========================================
-   CONTEÚDO PRINCIPAL
-========================================= */
-
+/* CONTEÚDO PRINCIPAL */
 .enviar-prescricao-content {
+  width: auto;
+  min-width: 0;
   margin-left: 150px;
-  padding: 90px 30px 100px;
+  padding: 90px 30px 40px;
   box-sizing: border-box;
 }
 
 .enviar-prescricao-content h1 {
+  margin: 0 0 15px;
   color: var(--cor-primaria);
   font-size: 20px;
-  margin: 0 0 15px 0;
 }
 
+.enviar-prescricao-content > p {
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+}
+
+/* BOTÃO VOLTAR */
+.enviar-prescricao-content .barra-voltar {
+  width: 100%;
+  margin-bottom: 15px;
+}
 
 /* =========================================
-   CONTAINER DA PRESCRIÇÃO + INFORMAÇÕES
+   LAYOUT DA PRESCRIÇÃO
 ========================================= */
 
-.prescricao-container {
-  display: flex;
+.enviar-prescricao-content .prescricao-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
   align-items: stretch;
   gap: 15px;
 
   width: 100%;
+  max-width: 1150px;
+  min-width: 0;
+  margin: 0;
   box-sizing: border-box;
 }
 
-
 /* =========================================
-   ÁREA DA IMAGEM
+   SEÇÃO DA IMAGEM
 ========================================= */
 
-.prescricao-preview {
-  flex: 1;
-  width: auto;
-  max-width: none;
+.enviar-prescricao-content .prescricao-preview {
+  width: 100%;
   min-width: 0;
-
-  display: flex;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-
-/* =========================================
-   QUADRADO DA PRESCRIÇÃO
-========================================= */
-
-.prescricao-imagem {
-  width: 100%;
-  height: auto;
-  min-height: 100%;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-
-  background-color: #ffffff;
-
+.enviar-prescricao-content .prescricao-imagem {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  overflow: hidden;
-
-  box-sizing: border-box;
-}
-
-.prescricao-imagem img {
   width: 100%;
-  height: 100%;
-
-  object-fit: contain;
-
-  display: block;
-}
-
-.prescricao-imagem p {
-  color: var(--cor-texto-suave);
-  font-size: 14px;
-}
-
-
-/* =========================================
-   INFORMAÇÕES DA PRESCRIÇÃO
-========================================= */
-
-.informacoes-prescricao {
-  flex: 0 0 425px;
-
-  width: 425px;
-
-  min-height: 500px;
-  height: auto;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-
+  height: 450px;
+  min-width: 0;
+  margin: 0;
   padding: 10px;
 
+  overflow: hidden;
   box-sizing: border-box;
 
-  overflow: visible;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: #fff;
 }
 
-.informacoes-prescricao h2 {
-  font-size: 16px;
-  color: var(--cor-texto);
-
-  margin: 0 0 8px 0;
+.enviar-prescricao-content .prescricao-imagem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+.enviar-prescricao-content .prescricao-imagem p {
+  margin: 0;
+  padding: 10px;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  text-align: center;
+}
 
 /* =========================================
-   CAMPOS
+   CARD DE INFORMAÇÕES
 ========================================= */
 
-.campo {
+.enviar-prescricao-content .informacoes-prescricao {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+
+  width: 320px;
+  height: 450px;
+  min-width: 0;
+  min-height: 450px;
+  max-width: 100%;
+
+  margin: 0;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  align-self: stretch;
+
+  overflow-y: auto;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.enviar-prescricao-content .informacoes-prescricao h2 {
+  margin: 0 0 8px;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =========================================
+   CAMPOS E RÓTULOS
+========================================= */
+
+.enviar-prescricao-content .campo {
+  display: flex;
+  flex-direction: column;
+
   width: 100%;
-
-  margin-bottom: 7px;
-
+  min-width: 0;
+  margin: 0 0 7px;
   box-sizing: border-box;
 }
 
-.campo label {
+.enviar-prescricao-content .campo label {
   display: block;
-
-  font-size: 14px;
-  font-weight: bold;
+  margin: 0 0 3px;
 
   color: var(--cor-texto);
-
-  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.campo input,
-.campo textarea {
+.enviar-prescricao-content .campo input,
+.enviar-prescricao-content .campo textarea {
+  display: block;
   width: 100%;
-
+  min-width: 0;
   box-sizing: border-box;
 
   border: 1px solid var(--cor-borda);
   border-radius: 7px;
-
-  background-color: #ffffff;
-
-  color: var(--cor-texto-suave);
-
-  outline: none;
+  background: #fff;
+  color: var(--cor-texto);
 
   font-family: var(--fonte-texto);
+  font-size: 12px;
 }
 
+.enviar-prescricao-content .campo input {
+  height: 32px;
+  padding: 6px 8px;
+}
+
+.enviar-prescricao-content .campo input:focus,
+.enviar-prescricao-content .campo textarea:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
+}
 
 /* =========================================
-   INPUTS
+   CPF, CÓDIGO E DATAS
 ========================================= */
 
-.campo input {
-  height: 36px;
+.enviar-prescricao-content .linha-campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
 
-  padding: 7px 9px;
-
-  font-size: 14px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
+.enviar-prescricao-content .linha-campos .campo {
+  min-width: 0;
+}
+
+.enviar-prescricao-content .campo.vencimento label {
+  color: var(--cor-erro);
+}
+
+/* =========================================
+   INSUMO E QUANTIDADE
+========================================= */
+
+.enviar-prescricao-content .linha-insumo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 75px;
+  align-items: start;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 7px;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .ins-campo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .ins-label {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--cor-texto);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.enviar-prescricao-content .ins-input {
+  display: block;
+  width: 100%;
+  height: 32px;
+  min-width: 0;
+  padding: 6px 8px;
+  box-sizing: border-box;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--cor-texto);
+
+  font-family: var(--fonte-texto);
+  font-size: 12px;
+}
+
+.enviar-prescricao-content .ins-input:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
+}
+
+.enviar-prescricao-content .ins-select {
+  cursor: pointer;
+}
+
+.enviar-prescricao-content .quantidade-campo {
+  width: 100%;
+  min-width: 0;
+}
 
 /* =========================================
    OBSERVAÇÕES
 ========================================= */
 
-.campo textarea {
-  width: 100%;
-
-  height: 100px;
-
-  box-sizing: border-box;
-
-  padding: 10px;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 7px;
-
-  background-color: #ffffff;
-
-  color: var(--cor-texto-suave);
-
-  font-family: var(--fonte-texto);
-
-  font-size: 14px;
-
-  resize: none;
-
-  outline: none;
+.enviar-prescricao-content .campo textarea {
+  min-height: 55px;
+  padding: 8px;
+  margin: 0;
+  line-height: 1.5;
+  resize: vertical;
+  overflow-wrap: anywhere;
 }
-
-.campo input:focus,
-.campo textarea:focus {
-  border-color: var(--cor-secundaria);
-
-  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
-}
-
 
 /* =========================================
-   CPF + CÓDIGO
+   BOTÕES ABAIXO DA IMAGEM
 ========================================= */
 
-.linha-campos {
+.enviar-prescricao-content > .prescricao-buttons {
   display: flex;
-
-  gap: 8px;
-
-  width: 100%;
-}
-
-.linha-campos .campo {
-  flex: 1;
-
-  min-width: 0;
-}
-
-
-/* =========================================
-   DATA DE VENCIMENTO
-========================================= */
-
-.vencimento label {
-  color: var(--cor-erro);
-}
-
-
-/* =========================================
-   INSUMO + QUANTIDADE
-========================================= */
-
-.linha-insumo {
-  display: flex;
-
-  align-items: flex-end;
-
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 10px;
 
-  width: 100%;
+  /* Largura da coluna da imagem */
+  width: calc(100% - 335px);
+  max-width: 815px;
+  min-width: 0;
 
-  margin-bottom: 8px;
-
+  margin: 10px 0 0;
+  padding: 0;
   box-sizing: border-box;
+
+  position: static;
 }
 
-.linha-insumo .ins-campo {
-  margin-bottom: 0;
-}
-/* =========================================
-   INSUMO + QUANTIDADE
-========================================= */
-
-.linha-insumo {
+/* ÁREA DO REENVIO */
+.enviar-prescricao-content .reenvio-area {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 8px;
-  box-sizing: border-box;
-}
+  flex-direction: column;
+  align-items: flex-start;
 
-.insumo-select {
-  flex: 1;
+  width: auto;
   min-width: 0;
+  margin: 0;
+  padding: 0;
 }
 
-.quantidade-campo {
-  width: 85px;
-  flex: 0 0 85px;
-}
+/* BOTÕES */
+.enviar-prescricao-content .prescricao-buttons .btn-reenvio,
+.enviar-prescricao-content .prescricao-buttons .btn-enviar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-
-/* =========================================
-   LABEL
-========================================= */
-
-.ins-label {
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--cor-texto);
-  margin-bottom: 4px;
-}
-
-
-/* =========================================
-   SELECT E QUANTIDADE
-========================================= */
-
-.ins-input {
-  width: 100%;
-  height: 36px;
-
+  min-width: 130px;
+  min-height: 38px;
+  padding: 0 12px;
+  margin: 0;
   box-sizing: border-box;
 
-  padding: 7px 9px;
-
-  border: 1px solid var(--cor-borda) !important;
-  border-radius: 7px;
-
-  background-color: #ffffff;
-
-  color: var(--cor-texto-suave);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
 
   font-family: var(--fonte-texto);
-  font-size: 14px;
-
-  outline: none;
-
-  appearance: auto;
-}
-
-
-/* =========================================
-   FOCO
-========================================= */
-
-.ins-input:focus {
-  border: 1px solid var(--cor-secundaria) !important;
-
-  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
-}
-
-
-/* =========================================
-   SELECT
-========================================= */
-
-.ins-select {
-  cursor: pointer;
-}
-
-
-/* =========================================
-   QUANTIDADE
-========================================= */
-
-.quantidade-campo input[type="number"] {
-  width: 100%;
-  height: 36px;
-
-  border: 1px solid var(--cor-borda) !important;
-  border-radius: 7px;
-
-  box-sizing: border-box;
-
-  padding: 7px 9px;
-
-  background-color: #ffffff;
-
-  font-size: 14px;
-}
-
-/* =========================================
-   CAMPO DE INSUMO
-========================================= */
-
-.ins-campo {
-  width: 100%;
-
-  margin-bottom: 7px;
-
-  box-sizing: border-box;
-}
-
-.insumo-select {
-  flex: 1;
-
-  min-width: 0;
-}
-
-
-/* =========================================
-   QUANTIDADE
-========================================= */
-
-.quantidade-campo {
-  width: 85px;
-
-  flex: 0 0 85px;
-}
-
-
-/* =========================================
-   LABEL DOS INSUMOS
-========================================= */
-
-.ins-label {
-  display: block;
-
-  font-size: 14px;
+  font-size: 11px;
   font-weight: bold;
-
-  color: var(--cor-texto);
-
-  margin-bottom: 4px;
-}
-
-
-/* =========================================
-   INPUT / SELECT DOS INSUMOS
-========================================= */
-
-.ins-input {
-  width: 100%;
-
-  height: 36px;
-
-  box-sizing: border-box;
-
-  padding: 7px 9px;
-
-  border: 1px solid var(--cor-borda);
-  border-radius: 7px;
-
-  background-color: #ffffff;
-
-  color: var(--cor-texto-suave);
-
-  font-family: var(--fonte-texto);
-
-  font-size: 14px;
-
-  outline: none;
-}
-
-.ins-input:focus {
-  border-color: var(--cor-secundaria);
-
-  box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.12);
-}
-
-
-/* =========================================
-   SELECT
-========================================= */
-
-.ins-select {
-  cursor: pointer;
-  
-}
-
-
-
-/* =========================================
-   QUANTIDADE
-========================================= */
-
-.ins-campo input[type="number"] {
-  height: 36px;
-
-  font-size: 14px;
-}
-
-
-/* =========================================
-   MOTIVOS
-========================================= */
-
-.motivos {
-  width: 180px;
-
-  margin-top: 10px;
-}
-
-.motivos h2 {
-  font-size: 13px;
-
   text-align: center;
 
-  margin: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
-  padding: 7px 0;
+.enviar-prescricao-content .btn-reenvio {
+  background: #e53935;
+}
+
+.enviar-prescricao-content .btn-reenvio:hover {
+  background: #c62828;
+}
+
+.enviar-prescricao-content .btn-enviar {
+  background: var(--cor-sucesso);
+}
+
+.enviar-prescricao-content .btn-enviar:hover {
+  background: var(--cor-sucesso-escura);
+}
+
+.enviar-prescricao-content .btn-reenvio:disabled,
+.enviar-prescricao-content .btn-enviar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   CAIXA DE MOTIVOS DO REENVIO
+========================================= */
+
+.enviar-prescricao-content .motivos {
+  width: 220px;
+  max-width: 100%;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.enviar-prescricao-content .motivos h2 {
+  margin: 0;
+  padding: 7px 8px;
 
   border: 1px solid var(--cor-borda);
-
   border-bottom: none;
 
   color: var(--cor-texto);
+  font-size: 13px;
+  text-align: center;
 }
 
-.motivos label {
+.enviar-prescricao-content .motivos label {
   display: block;
+  padding: 8px 7px;
 
-  background-color: var(--cor-primaria-escura);
-
-  color: #ffffff;
+  border-bottom: 2px solid #fff;
+  background: var(--cor-primaria-escura);
+  color: #fff;
 
   font-size: 11px;
-
   font-weight: bold;
-
-  padding: 8px 5px;
-
-  border-bottom: 2px solid #ffffff;
-
   cursor: pointer;
 }
 
-.motivos input {
+.enviar-prescricao-content .motivos input {
   margin-right: 5px;
 }
 
+/* O botão de confirmar fica dentro da caixa de motivos */
+.enviar-prescricao-content .motivos .btn-enviar {
+  width: 100%;
+  margin-top: 8px;
+}
 
 /* =========================================
-   BOTÕES
+   NOTEBOOKS
 ========================================= */
 
-.prescricao-buttons {
-  display: flex !important;
-
-  flex-direction: row !important;
-
-  align-items: flex-start !important;
-
-  justify-content: flex-start !important;
-
-  width: auto !important;
-
-  gap: 10px !important;
-
-  margin: 15px 0 0 0 !important;
-
-  padding: 0 !important;
-}
-
-.reenvio-area {
-  display: flex !important;
-
-  flex-direction: column !important;
-
-  align-items: center !important;
-
-  width: 115px !important;
-
-  margin: 0 !important;
-
-  padding: 0 !important;
-}
-
-.prescricao-buttons .btn-reenvio,
-.prescricao-buttons .btn-enviar {
-  display: block !important;
-
-  width: 115px !important;
-
-  height: 35px !important;
-
-  margin: 0 !important;
-
-  padding: 0 !important;
-
-  border: none !important;
-
-  border-radius: 6px !important;
-
-  color: white !important;
-
-  font-size: 11px !important;
-
-  font-weight: bold !important;
-
-  cursor: pointer;
-}
-
-.btn-reenvio {
-  background-color: red !important;
-}
-
-.btn-enviar {
-  background-color: var(--cor-sucesso) !important;
-}
-
-.btn-reenvio:hover {
-  background-color: var(--cor-erro-escura) !important;
-}
-
-.btn-enviar:hover {
-  background-color: var(--cor-sucesso-escura) !important;
-}
-
-
-/* =========================================
-   RESPONSIVIDADE - 1100PX
-========================================= */
-
-@media (max-width: 1100px) {
-
+@media (max-width: 1200px) {
   .enviar-prescricao-content {
     margin-left: 120px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
 
-  .informacoes-prescricao {
-    flex: 0 0 400px;
+  .enviar-prescricao-content .prescricao-container {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
 
-    width: 400px;
+  .enviar-prescricao-content .informacoes-prescricao {
+    width: 300px;
+  }
 
-    min-height: 500px;
-
-    height: auto;
-
-    overflow: visible;
+  .enviar-prescricao-content > .prescricao-buttons {
+    width: calc(100% - 315px);
   }
 }
 
-
 /* =========================================
-   RESPONSIVIDADE - 900PX
+   TABLETS
 ========================================= */
 
 @media (max-width: 900px) {
-
   .enviar-prescricao-content {
     margin-left: 0;
-
     padding: 90px 20px 40px;
   }
 
-  .prescricao-container {
-    flex-direction: column;
-
-    align-items: stretch;
+  .enviar-prescricao-content .prescricao-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+    max-width: 650px;
   }
 
-  .prescricao-preview {
+  .enviar-prescricao-content .prescricao-imagem {
+    height: 400px;
+  }
+
+  .enviar-prescricao-content .informacoes-prescricao {
     width: 100%;
-
-    max-width: none;
-
-    display: flex;
+    height: 400px;
+    min-height: 400px;
   }
 
-  .prescricao-imagem {
+  .enviar-prescricao-content > .prescricao-buttons {
     width: 100%;
-
-    min-height: 350px;
-
-    height: 350px;
-  }
-
-  .informacoes-prescricao {
-    flex: none;
-
-    width: 100%;
-
-    max-width: 500px;
-
-    min-height: 500px;
-
-    height: auto;
-
-    overflow: visible;
-  }
-
-  .prescricao-buttons {
-    margin-left: 0;
-
-    justify-content: center;
+    max-width: 650px;
   }
 }
 
-
 /* =========================================
-   RESPONSIVIDADE - 500PX
+   CELULARES
 ========================================= */
 
 @media (max-width: 500px) {
-
   .enviar-prescricao-content {
-    padding: 80px 15px 30px;
+    padding: 80px 12px 30px;
   }
 
-  .prescricao-imagem {
-    height: 350px;
-
-    min-height: 350px;
+  .enviar-prescricao-content h1 {
+    font-size: 18px;
   }
 
-  .linha-campos {
-    flex-direction: column;
-
-    gap: 0;
+  .enviar-prescricao-content .prescricao-imagem {
+    height: 320px;
+    padding: 6px;
   }
 
-  .linha-insumo {
-    flex-direction: column;
-
-    align-items: stretch;
-
-    gap: 0;
+  .enviar-prescricao-content .informacoes-prescricao {
+    height: 320px;
+    min-height: 320px;
+    padding: 10px;
   }
 
-  .insumo-select {
+  .enviar-prescricao-content .linha-campos {
+    gap: 8px;
+  }
+
+  .enviar-prescricao-content .linha-insumo {
+    grid-template-columns: minmax(0, 1fr) 75px;
+    gap: 8px;
+  }
+
+  .enviar-prescricao-content > .prescricao-buttons {
     width: 100%;
+    flex-wrap: wrap;
   }
 
-  .quantidade-campo {
+  .enviar-prescricao-content .prescricao-buttons .btn-reenvio,
+  .enviar-prescricao-content .prescricao-buttons .btn-enviar {
+    min-width: 0;
+  }
+
+  .enviar-prescricao-content .motivos {
     width: 100%;
-
-    flex: none;
-  }
-
-  .motivos {
-    width: 100%;
-  }
-
-  .prescricao-buttons {
-    flex-direction: column !important;
-  }
-
-  .prescricao-buttons button {
-    width: 180px;
   }
 }
