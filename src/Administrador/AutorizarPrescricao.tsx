@@ -37,6 +37,7 @@ function EnviarPrescricao() {
   const [imagem, setImagem] = useState<string | null>(null);
 
   const [carregando, setCarregando] = useState(true);
+ 
 
  const {
   insumos,
@@ -55,6 +56,7 @@ const listaInsumos = insumos ?? [];
 
   const [solicitacao, setSolicitacao] =
     useState<Solicitacao | null>(null);
+     const somenteVisualizacao = solicitacao?.sol_status === "Revisado";
 
 const [mostrarMotivos, setMostrarMotivos] = useState(false);
 
@@ -92,6 +94,18 @@ const [motivo, setMotivo] = useState("");
         );
 
        setSolicitacao(dadosResponse.data);
+
+       setInsumoMovId(
+  dadosResponse.data.ins_id
+    ? String(dadosResponse.data.ins_id)
+    : ""
+);
+
+setQuantidade(
+  dadosResponse.data.sol_insumo_quant != null
+    ? String(dadosResponse.data.sol_insumo_quant)
+    : ""
+);
 
 setDataVencimento(
   dadosResponse.data.sol_data_vencimento
@@ -434,6 +448,7 @@ navigate('/VerSolicitaçoes')
                   
                   value={dataVencimento}
   onChange={(e) => setDataVencimento(e.target.value)}
+    disabled={somenteVisualizacao}
 />
               </div>
 
@@ -470,6 +485,7 @@ navigate('/VerSolicitaçoes')
       className="ins-input ins-select"
       value={insumoMovId}
       onChange={(e) => setInsumoMovId(e.target.value)}
+        disabled={somenteVisualizacao}
     >
       <option value="">
         Selecione o insumo
@@ -501,6 +517,8 @@ navigate('/VerSolicitaçoes')
       value={quantidade}
       onChange={(e) => setQuantidade(e.target.value)}
       placeholder="Qtd."
+
+        disabled={somenteVisualizacao}
     />
   </div>
 
@@ -531,11 +549,12 @@ navigate('/VerSolicitaçoes')
         {/* 
             MOTIVOS
      */}
-
+{!somenteVisualizacao && (
        <div className="prescricao-buttons">
 
   <div className="reenvio-area">
-
+  
+      
     <button
       className="btn-reenvio"
       type="button"
@@ -615,12 +634,14 @@ navigate('/VerSolicitaçoes')
 </button>
 
   </div>
+)}
 
 
       </main>
-
+  
     </div>
-  );
+        );
 }
+
 
 export default EnviarPrescricao;

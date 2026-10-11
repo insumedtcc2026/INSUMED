@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { buscarPrescricoesPendentes } from "../services/PrescricaoService";
 import type { PrescricaoPendente } from "../services/PrescricaoService";
 
-import type { Paciente } from "../types/agendamento";
-import { buscarPacientesPorCpf } from "../services/PacientesServices";
+
 
 import { useValidarToken } from "../hook/Validartoken.tsx";
 
@@ -25,10 +24,10 @@ export default function Pendencias() {
     // ESTADOS
 
 
-    const [cpf, setCpf] = useState("");
+    
 
-    const [, setPacientes] =
-        useState<Paciente[]>([]);
+    const [busca, setBusca] =
+        useState("");
 
     const [prescricoes, setPrescricoes] =
         useState<PrescricaoPendente[]>([]);
@@ -38,7 +37,8 @@ export default function Pendencias() {
 
     const [, setCarregando] =
         useState(true);
-
+const [statusFiltro, setStatusFiltro] =
+        useState("Todos");
 
    
     // VALIDAÇÃO DO TOKEN
@@ -53,7 +53,41 @@ export default function Pendencias() {
     const toggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
     };
+  
+   
+    const prescricoesFiltradas =
+        prescricoes.filter((prescricao) => {
 
+            const termo =
+                busca.toLowerCase();
+
+            const correspondeBusca =
+                prescricao.pac_nome
+                    .toLowerCase()
+                    .includes(termo)
+                ||
+                prescricao.pac_cpf
+                    .toLowerCase()
+                    .includes(termo);
+
+
+            const correspondeStatus =
+                statusFiltro === "Todos"
+                ||
+                prescricao.sol_status === statusFiltro;
+
+
+            let correspondeData = true;
+
+
+
+
+            return (
+                correspondeBusca &&
+                correspondeStatus &&
+                correspondeData
+            );
+        });
 
  
     // BUSCAR PENDÊNCIAS
@@ -97,43 +131,7 @@ export default function Pendencias() {
     };
 
 
-    // =========================
-    // BUSCAR PACIENTE POR CPF
-    // =========================
-
-    const handleBuscar = async (valor: string) => {
-
-        setCpf(valor);
-
-        if (!valor.trim()) {
-
-            setPacientes([]);
-
-            return;
-        }
-
-        setCarregando(true);
-
-        try {
-
-            const resultado =
-                await buscarPacientesPorCpf(valor);
-
-            setPacientes(resultado);
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao buscar paciente:",
-                error
-            );
-
-        } finally {
-
-            setCarregando(false);
-
-        }
-    };
+    
 
 
     // =========================
@@ -185,23 +183,37 @@ export default function Pendencias() {
                 <div className="barra-pesquisa">
 
                     <input
-                        id="cpf"
-                        type="text"
-                        value={cpf}
-                        onChange={(e) =>
-                            handleBuscar(e.target.value)
-                        }
-                        placeholder="🔍 Digite o CPF"
-                    />
+                    type="text"
+                    placeholder="Busque o Paciente por CPF ou Nome"
+                    value={busca}
+                    onChange={(e) =>
+                        setBusca(e.target.value)
+                    }
+                />
 
                 </div>
+                
+                 {/* FILTRO DE STATUS */}
+<div className="barra-filtro">
+    <select
+        value={statusFiltro}
+        onChange={(e) => setStatusFiltro(e.target.value)}
+        aria-label="Filtrar por status"
+    >
+        <option value="Todos">Todos</option>
+        <option value="Pendente">Pendente</option>
+        <option value="Revisado">Revisado</option>
+        <option value="Autorizado">Autorizado</option>
+        <option value="Nao Autorizado">Não Autorizado</option>
+    </select>
+</div>
 
 
                 {/* LISTA */}
 
                 <div className="lista-pendencias">
 
-                    {prescricoes.length === 0 && (
+                    {prescricoesFiltradas.length === 0 && (
 
                         <div className="sem-pendencias">
 
@@ -214,7 +226,7 @@ export default function Pendencias() {
                     )}
 
 
-                    {prescricoes.map((prescricao) => (
+                    {prescricoesFiltradas.map((prescricao) => (
                         
 
                         <div
@@ -271,17 +283,22 @@ export default function Pendencias() {
                             </div>
 
 
-                            {/* STATUS */}
-                             <div
-                                className={
+     <div                      
+  className={
     prescricao.sol_status === "Autorizado"
       ? "status-autorizado"
-      : prescricao.sol_status === "Enviado"
+      : prescricao.sol_status === "Nao Autorizado"
+      ? "status-nao-autorizado"
+      : prescricao.sol_status === "Revisado"
       ? "status-revisado"
       : "status-pendente"
   }
-  >
-              {prescricao.sol_status}
+>
+  {prescricao.sol_status === "Nao Autorizado"
+    ? "Não Autorizado"
+    : prescricao.sol_status}
+
+              
                  </div>
 
                             {/* BOTÃO */}

@@ -32,11 +32,7 @@ export default function Historico() {
     const [statusFiltro, setStatusFiltro] =
         useState("TODOS");
 
-    const [dataInicio, setDataInicio] =
-        useState("");
-
-    const [dataFim, setDataFim] =
-        useState("");
+   
 
     const [carregando, setCarregando] =
         useState(true);
@@ -153,13 +149,13 @@ export default function Historico() {
 
             {/* PESQUISA */}
 
-            <div className="historico-pesquisa">
+            <div className="barra-pesquisa">
 
-                <span>⌕</span>
+                
 
                 <input
                     type="text"
-                    placeholder="Search"
+                    placeholder= "Busque o Paciente por CPF ou Nome"
                     value={busca}
                     onChange={(e) =>
                         setBusca(e.target.value)
@@ -171,7 +167,7 @@ export default function Historico() {
 
             {/* FILTROS */}
 
-            <div className="historico-filtros">
+            <div className="barra-filtro">
 
                 <select
                     value={statusFiltro}
@@ -184,37 +180,14 @@ export default function Historico() {
                         Todos os status
                     </option>
 
-                    <option value="Aprovado">
-                        Aprovada
+                    <option value="Revisado">
+                        Revisado
                     </option>
 
                     <option value="Reenvio">
                         Reenvios
                     </option>
-
-                </select>
-
-
-                <input
-                    type="date"
-                    value={dataInicio}
-                    onChange={(e) =>
-                        setDataInicio(e.target.value)
-                    }
-                />
-
-
-                <span>até</span>
-
-
-                <input
-                    type="date"
-                    value={dataFim}
-                    onChange={(e) =>
-                        setDataFim(e.target.value)
-                    }
-                />
-
+</select>
             </div>
 
 
@@ -318,16 +291,17 @@ export default function Historico() {
                             className={
                                 `historico-status ${
                                     prescricao.sol_status ===
-                                    "Aprovado"
-                                        ? "aprovada"
+                                    "Revisado"
+                                        ? "revisado"
+                                        
                                         : "reenvio"
                                 }`
                             }
                         >
 
                             {prescricao.sol_status ===
-                            "Aprovado"
-                                ? "Aprovado"
+                            "Revisado"
+                                ? "Revisado"
                                 : "Reenvio"}
 
                         </div>

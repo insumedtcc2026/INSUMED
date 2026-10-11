@@ -173,6 +173,36 @@
 }
 
 
+/* FILTRO DE STATUS */
+
+.barra-filtro {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 1100px;
+    margin: -10px auto 20px;
+}
+
+.barra-filtro select {
+    width: 160px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #1109A4;
+    font-family: var(--fonte-texto);
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+}
+
+.barra-filtro select:focus {
+    box-shadow: 0 0 0 2px rgba(17, 9, 164, 0.2);
+}
+
+
+
 /* =========================
    STATUS
 ========================= */
@@ -182,7 +212,7 @@
 
     color: #ffffff;
 
-    font-size: 9px;
+    font-size: 12px;
     font-weight: bold;
 
     padding: 5px 18px;
@@ -195,8 +225,8 @@
 }
 
 .status-revisado {
-  background-color: var(--cor-secundaria);
-  color: white;
+      background-color: rgb(1, 146, 254) !important;
+  color: rgb(255, 255, 255) !important;
   padding: 5px 18px;
   border-radius: 15px;
   font-size: 12px;
@@ -210,9 +240,18 @@
     background-color: var(--cor-sucesso);
     padding: 5px 18px;
     border-radius: 15px;
-    font-size: 9px;
+    font-size: 12px;
     text-transform: lowercase;
     margin-left: auto;
+}
+
+.status-nao-autorizado {
+  background-color: #e53935;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
 }
 
 /* =========================

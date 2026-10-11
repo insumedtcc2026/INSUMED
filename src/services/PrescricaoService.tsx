@@ -31,6 +31,9 @@ export interface DetalhesPrescricao {
     sol_observacao: string | null;
     sol_prescricao_base64: string | null;
     sol_prescricao_mimetype: string | null; // NOVO
+      ins_id: number | null;
+  ins_nome: string | null;
+  sol_insumo_quant: number | null;
 }
 
 export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]> => {
@@ -101,6 +104,9 @@ export interface HistoricoPrescricao {
     sol_observacao?: string;
 
     sol_prescricao_tipo?: string;
+      ins_id: number | null;
+  
+  sol_insumo_quant: number | null;
 }
 
 
@@ -153,7 +159,7 @@ export interface PrescricaoAprovada {
     sol_id: number;
     pac_id: number;
     pos_id: number;
-   sol_insumo_quant: number;
+  
     sol_status: string;
     sol_data_solicitacao: string;
     sol_data_vencimento?: string | null;
@@ -166,7 +172,9 @@ export interface PrescricaoAprovada {
     pac_cpf: string;
     pac_avatar?: string | null;
 
-    ins_nome?: string | null;
+     ins_id: number | null;
+  ins_nome: string | null;
+  sol_insumo_quant: number | null;
     pos_nome?: string | null;
 }
 
