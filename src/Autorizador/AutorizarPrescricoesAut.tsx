@@ -30,7 +30,7 @@ interface SolicitacaoAprovada {
 
   sol_observacao?: string | null;
   sol_prescricao_tipo?: string | null;
-
+  sol_motivo_nao_autorizado?: string | null;
   sol_insumo_quant: number;
 
   pac_nome: string;
@@ -77,7 +77,9 @@ export default function AutorizarPrescricaoAutorizador() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [processando, setProcessando] = useState(false);
 
-
+const somenteVisualizacao =
+    solicitacao?.sol_status === "Nao Autorizado" ||
+    solicitacao?.sol_status === "Autorizado";
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
@@ -416,7 +418,25 @@ const alterarStatus = async (
               </section>
 
             </div>
+{solicitacao?.sol_status === "Nao Autorizado" && (
+    <div className="campo">
+        <label>Motivo da não autorização</label>
 
+        <textarea
+            value={
+                solicitacao.sol_motivo_nao_autorizado ||
+                "Motivo não informado."
+            }
+            readOnly
+        />
+    </div>
+)}
+{!somenteVisualizacao && (
+    <div className="prescricao-buttons">
+        {/* Mantenha aqui os dois botões atuais */}
+        {/* NÃO AUTORIZAR e AUTORIZAR */}
+    </div>
+)}
 
             {/* BOTÕES */}
 
