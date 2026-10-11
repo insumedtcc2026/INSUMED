@@ -19,7 +19,7 @@ interface Solicitacao {
   sol_data_solicitacao: string;
   sol_status: string;
   sol_observacao: string | null;
-
+sol_motivo_nao_autorizado?: string | null;
   sol_data_vencimento:string|null;
 
   pac_nome: string;
@@ -56,7 +56,11 @@ const listaInsumos = insumos ?? [];
 
   const [solicitacao, setSolicitacao] =
     useState<Solicitacao | null>(null);
-     const somenteVisualizacao = solicitacao?.sol_status === "Revisado";
+     
+const somenteVisualizacao =
+    solicitacao?.sol_status === "Revisado" ||
+    solicitacao?.sol_status === "Autorizado" ||
+    solicitacao?.sol_status === "Nao Autorizado";
 
 const [mostrarMotivos, setMostrarMotivos] = useState(false);
 
@@ -612,13 +616,87 @@ navigate('/VerSolicitaçoes')
           OUTRO...
         </label>
 
+
+{!somenteVisualizacao && (
+    <div className="prescricao-buttons">
+        <div className="reenvio-area">
+            <button
+                className="btn-reenvio"
+                type="button"
+                onClick={() => setMostrarMotivos(!mostrarMotivos)}
+            >
+                PEDIR REENVIO DA PRESCRIÇÃO
+            </button>
+
+            {mostrarMotivos && (
+                <section className="motivos">
+                    <h2>Motivo:</h2>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="motivo"
+                            value="FOTO_SEM_QUALIDADE"
+                            checked={motivo === "FOTO_SEM_QUALIDADE"}
+                            onChange={(e) => setMotivo(e.target.value)}
+                        />
+                        FOTO SEM QUALIDADE
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="motivo"
+                            value="PRESCRICAO_VENCIDA"
+                            checked={motivo === "PRESCRICAO_VENCIDA"}
+                            onChange={(e) => setMotivo(e.target.value)}
+                        />
+                        PRESCRIÇÃO VENCIDA
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="motivo"
+                            value="INFORMACAO_DIFERENTE"
+                            checked={motivo === "INFORMACAO_DIFERENTE"}
+                            onChange={(e) => setMotivo(e.target.value)}
+                        />
+                        INFORMAÇÃO DIFERENTE
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="motivo"
+                            value="OUTRO"
+                            checked={motivo === "OUTRO"}
+                            onChange={(e) => setMotivo(e.target.value)}
+                        />
+                        OUTRO
+                    </label>
+
+                    <button
+                        type="button"
+                        className="btn-enviar"
+                        onClick={confirmarReenvio}
+                    >
+                        CONFIRMAR REENVIO
+                    </button>
+                </section>
+            )}
+        </div>
+
         <button
-          type="button"
-          className="btn-enviar"
-          onClick={confirmarReenvio}
+            className="btn-enviar"
+            type="button"
+            onClick={enviarSolicitacao}
         >
-          CONFIRMAR REENVIO
+            ENVIAR
         </button>
+    </div>
+)}
+
 
       </section>
     )}

@@ -290,13 +290,20 @@ console.log(
                             ========================= */}
 
                             <div
-  className={
-    prescricao.sol_status === "Revisado"
-      ? "status-revisado"
-      : "status-nao-autorizado"
-  }
+     className={
+        prescricao.sol_status === "Revisado"
+            ? "status-revisado"
+            : prescricao.sol_status === "Autorizado"
+            ? "status-autorizado"
+            : prescricao.sol_status === "Nao Autorizado"
+            ? "status-nao-autorizado"
+            : "status-pendente"
+    }
 >
-  {prescricao.sol_status}
+    {prescricao.sol_status === "Nao Autorizado"
+        ? "Não Autorizado"
+        : prescricao.sol_status}
+
 </div>
 
                             {/* =========================

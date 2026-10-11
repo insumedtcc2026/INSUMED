@@ -77,9 +77,11 @@ export default function AutorizarPrescricaoAutorizador() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [processando, setProcessando] = useState(false);
 
+
 const somenteVisualizacao =
-    solicitacao?.sol_status === "Nao Autorizado" ||
-    solicitacao?.sol_status === "Autorizado";
+    solicitacao?.sol_status === "Autorizado" ||
+    solicitacao?.sol_status === "Nao Autorizado";
+
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
@@ -431,18 +433,10 @@ const alterarStatus = async (
         />
     </div>
 )}
+
 {!somenteVisualizacao && (
     <div className="prescricao-buttons">
-        {/* Mantenha aqui os dois botões atuais */}
-        {/* NÃO AUTORIZAR e AUTORIZAR */}
-    </div>
-)}
-
-            {/* BOTÕES */}
-
-            <div className="prescricao-buttons">
-
-              <button
+        <button
                 className="btn-reenvio"
                 type="button"
                 disabled={processando || carregando}
@@ -461,8 +455,13 @@ const alterarStatus = async (
               >
                 AUTORIZAR
               </button>
+    </div>
+)}
 
-            </div>
+
+            {/* BOTÕES */}
+
+
           </>
         )}
 

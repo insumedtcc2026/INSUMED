@@ -100,35 +100,23 @@ const [statusFiltro, setStatusFiltro] =
     }, []);
 
 
-    const carregarPrescricoes = async () => {
+   
+const carregarPrescricoes = async () => {
+    try {
+        setCarregando(true);
 
-        try {
+        const dados = await buscarPrescricoesPendentes();
 
-            setCarregando(true);
+        console.log("Pendências recebidas:", dados);
 
-            const dados =
-                await buscarPrescricoesPendentes();
+        setPrescricoes(dados);
+    } catch (error) {
+        console.error("Erro ao carregar pendências:", error);
+    } finally {
+        setCarregando(false);
+    }
+};
 
-            console.log(
-                "Pendências recebidas:",
-                dados
-            );
-
-            setPrescricoes(dados);
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao carregar pendências:",
-                error
-            );
-
-        } finally {
-
-            setCarregando(false);
-
-        }
-    };
 
 
     
@@ -303,27 +291,26 @@ const [statusFiltro, setStatusFiltro] =
 
                             {/* BOTÃO */}
                      <button
-                        className="btn-ver-mais"
-                       onClick={() => {
-    if (prescricao.sol_status === "Autorizado") {
-        navigate(
-            `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
-        );
-    } else {
-        navigate(
-            `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`,
-            {
-                state: {
-                    somenteVisualizacao:
-                        prescricao.sol_status === "Nao Autorizado"
-                }
-            }
-        );
-    }
-}}
-                 >
-                       VER MAIS
-                              </button>
+    className="btn-ver-mais"
+    onClick={() => {
+        if (prescricao.sol_status === "Autorizado") {
+            navigate(
+                `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
+            );
+        } else if (prescricao.sol_status === "Nao Autorizado") {
+            navigate(
+                `/autorizador/solicitacao/${prescricao.sol_id}`,
+                { state: { somenteVisualizacao: true } }
+            );
+        } else {
+            navigate(
+                `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
+            );
+        }
+    }}
+>
+    Ver Mais
+</button>
                         </div>
 
                     ))}
