@@ -304,15 +304,23 @@ const [statusFiltro, setStatusFiltro] =
                             {/* BOTÃO */}
                      <button
                         className="btn-ver-mais"
-                        onClick={() => {
-                        if (prescricao.sol_status === "Autorizado") {
-                      navigate(`/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`);
-                       } else {
-                      navigate(
-                  `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
-                );
-              }
-    }}
+                       onClick={() => {
+    if (prescricao.sol_status === "Autorizado") {
+        navigate(
+            `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
+        );
+    } else {
+        navigate(
+            `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`,
+            {
+                state: {
+                    somenteVisualizacao:
+                        prescricao.sol_status === "Nao Autorizado"
+                }
+            }
+        );
+    }
+}}
                  >
                        VER MAIS
                               </button>

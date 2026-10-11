@@ -142,49 +142,89 @@ export default function AutorizarPrescricaoAutorizador() {
   // ALTERAR STATUS
   // =====================================================
 
-  const alterarStatus = async (
+ 
+const alterarStatus = async (
     status: "Autorizado" | "Nao Autorizado"
-  ) => {
-
+) => {
     if (!id) return;
 
+    let motivo = "";
+
+    // Solicita o motivo quando não autorizar
+    if (status === "Nao Autorizado") {
+        const resultado = await Swal.fire({
+            title: "Não autorizar prescrição",
+            text: "Informe o motivo da não autorização.",
+            input: "textarea",
+            inputPlaceholder: "Escreva o motivo aqui...",
+            inputAttributes: {
+                "aria-label": "Motivo da não autorização",
+                maxlength: "1000"
+            },
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#d33",
+            inputValidator: (valor) => {
+                if (!valor || !valor.trim()) {
+                    return "Você precisa informar o motivo.";
+                }
+                return null;
+            }
+        });
+
+        if (!resultado.isConfirmed) return;
+
+        motivo = resultado.value.trim();
+    }
+
     try {
-      setProcessando(true);
+        setProcessando(true);
 
-      const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-      await axios.patch(
-        `${API_URL}/autorizador/solicitacao/${id}`,
-        { sol_status: status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-        Swal.fire({
-          icon: 'success',
-          title: 'Prescriação autorizada com sucesso!',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ir para solicitaçoes '
-        })
+        await axios.patch(
+            `${API_URL}/autorizador/solicitacao/${id}`,
+            {
+                sol_status: status,
+                sol_motivo_nao_autorizado: motivo || null
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
-      navigate("/verprescricoesaprovadas");
+        await Swal.fire({
+            icon: "success",
+            title: status === "Autorizado"
+                ? "Prescrição autorizada!"
+                : "Prescrição não autorizada!",
+            text: status === "Autorizado"
+                ? "A prescrição foi autorizada com sucesso."
+                : "O motivo da não autorização foi salvo.",
+            confirmButtonText: "Continuar",
+            confirmButtonColor: "#3085d6"
+        });
+
+        navigate("/verprescricoesaprovadas");
 
     } catch (error: any) {
-      console.error("Erro ao autorizar prescrição:", error);
+        console.error("Erro ao atualizar prescrição:", error);
 
-       await Swal.fire({
-        icon: 'error',
-        title: 'Ops...',
-        text: error.response?.data?.error ||
-              error.response?.data?.message ||
-              'Ocorreu um erro ao autorizar a prescrição. Por favor, tente novamente.',
-        confirmButtonColor: '#d33'
-      });
-      }
-    };
+        await Swal.fire({
+            icon: "error",
+            title: "Ops...",
+            text: error.response?.data?.error ||
+                "Não foi possível atualizar a prescrição.",
+            confirmButtonColor: "#d33"
+        });
+    } finally {
+        setProcessando(false);
+    }
+};
   // =====================================================
   // VALIDANDO TOKEN
   // =====================================================

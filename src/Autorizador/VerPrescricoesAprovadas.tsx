@@ -293,7 +293,7 @@ console.log(
   className={
     prescricao.sol_status === "Revisado"
       ? "status-revisado"
-      : "status-pendente"
+      : "status-nao-autorizado"
   }
 >
   {prescricao.sol_status}
