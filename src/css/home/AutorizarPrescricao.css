@@ -548,3 +548,23 @@
   margin: 0 !important;
   flex: 0 0 104px;
 }
+
+
+.motivo-nao-autorizacao {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.motivo-nao-autorizacao textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    color: #334155;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    box-sizing: border-box;
+}

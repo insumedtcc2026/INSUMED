@@ -549,6 +549,22 @@ navigate('/VerSolicitaçoes')
 
         </div>
 
+        
+{solicitacao?.sol_status === "Nao Autorizado" && (
+    <div className="campo motivo-nao-autorizacao">
+        <label>Motivo da não autorização</label>
+
+        <textarea
+            value={
+                solicitacao.sol_motivo_nao_autorizado?.trim() ||
+                "Motivo não informado."
+            }
+            readOnly
+        />
+    </div>
+)}
+
+
 
         {/* 
             MOTIVOS

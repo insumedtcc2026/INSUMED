@@ -290,7 +290,8 @@ const carregarPrescricoes = async () => {
                  </div>
 
                             {/* BOTÃO */}
-                     <button
+                    
+<button
     className="btn-ver-mais"
     onClick={() => {
         if (prescricao.sol_status === "Autorizado") {
@@ -298,10 +299,7 @@ const carregarPrescricoes = async () => {
                 `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
             );
         } else if (prescricao.sol_status === "Nao Autorizado") {
-            navigate(
-                `/autorizador/solicitacao/${prescricao.sol_id}`,
-                { state: { somenteVisualizacao: true } }
-            );
+            navigate(`/autorizador/solicitacao/${prescricao.sol_id}`);
         } else {
             navigate(
                 `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
@@ -309,8 +307,9 @@ const carregarPrescricoes = async () => {
         }
     }}
 >
-    Ver Mais
+    Ver mais
 </button>
+
                         </div>
 
                     ))}
