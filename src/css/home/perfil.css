@@ -140,6 +140,15 @@
 .status-reenvio {
   background: var(--cor-erro);
 }
+.status-agendado{
+  background-color: rgb(29, 78, 216) 
+  
+}
+
+.status-concluido{
+  background-color: var(--cor-sucesso);
+  
+}
 
 .btn-ver-mais {
   background: var(--cor-primaria);

@@ -38,7 +38,7 @@ export interface DetalhesPrescricao {
 
 export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]> => {
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_admin");
 
     const response = await axios.get<PrescricaoPendente[]>(
         `${API_URL}/pendentes`,
@@ -55,7 +55,7 @@ export const buscarPrescricoesPendentes = async (): Promise<PrescricaoPendente[]
 
 // LISTA: chama /solicitacao/pacienteid
 export const prescricaopaciente = async (): Promise<SolicitacaoPaciente[]> => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_paciente");
     const response = await axios.get<SolicitacaoPaciente[]>(
         `${API_URL}/solicitacao/pacienteid`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -67,7 +67,7 @@ export const prescricaopaciente = async (): Promise<SolicitacaoPaciente[]> => {
 export const buscarDetalhesPrescricao = async (
     sol_id: number
 ): Promise<DetalhesPrescricao> => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_paciente");
     const response = await axios.get<DetalhesPrescricao>(
         `${API_URL}/solicitacao/${sol_id}/detalhes`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -112,7 +112,7 @@ export interface HistoricoPrescricao {
 
 export const buscarHistoricoPrescricoes =
     async (): Promise<HistoricoPrescricao[]> => {
-       const token = localStorage.getItem("token");
+       const token = localStorage.getItem("token_admin");
         const response =
             await axios.get<HistoricoPrescricao[]>(
                 `${API_URL}/prescricoes/historico`,
@@ -132,7 +132,7 @@ export const buscarHistoricoPrescricoes =
 
 
 export async function buscarPrescricoesAprovadas() {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_autorizador");
 
     try {
         const response = await axios.get(
@@ -186,7 +186,7 @@ export async function enviarPrescricao (
   sol_observacao: string,
   sol_prescricao_tipo: string, 
 ) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token_paciente");
 
   const response = await axios.post(
     `${API_URL}/solicitacoes`,

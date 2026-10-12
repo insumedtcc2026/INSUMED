@@ -60,7 +60,7 @@ export default function AutorizarPrescricaoAutorizador() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { verificando } = useValidarToken();
+  const { verificando } = useValidarToken("AUTORIZADOR");
 
 
   // =====================================================
@@ -92,16 +92,22 @@ const somenteVisualizacao =
   // =====================================================
 
   useEffect(() => {
+  console.log("TELA DO AUTORIZADOR CARREGADA");
 
-    if (!id) return;
+  if (!id) {
+    console.log("ID DA SOLICITAÇÃO NÃO ENCONTRADO");
+    return;
+  }
 
-    let urlCriada: string | null = null;
+  let urlCriada: string | null = null;
 
-    const carregarDados = async () => {
-      try {
-        setCarregando(true);
+  const carregarDados = async () => {
+    console.log("ENTROU NA FUNÇÃO carregarDados");
 
-        const token = localStorage.getItem("token");
+    try {
+      setCarregando(true);
+
+        const token = localStorage.getItem("token_autorizador");
 
         // INFORMAÇÕES DA SOLICITAÇÃO
         const response = await axios.get<SolicitacaoAprovada>(
@@ -109,7 +115,18 @@ const somenteVisualizacao =
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        setSolicitacao(response.data);
+       setSolicitacao(response.data);
+
+
+       
+
+    // TESTE: verificar se o motivo está chegando do backend
+    console.log("Dados recebidos:", response.data);
+    console.log("Status:", response.data.sol_status);
+    console.log(
+      "Motivo da não autorização:",
+      response.data.sol_motivo_nao_autorizado
+    );
 
         // IMAGEM DA PRESCRIÇÃO
         const imagemResponse = await axios.get(
@@ -123,13 +140,23 @@ const somenteVisualizacao =
         urlCriada = URL.createObjectURL(imagemResponse.data);
         setImagemPrescricao(urlCriada);
 
-      } catch (error) {
-        console.error("Erro ao buscar prescrição:", error);
-        alert("Não foi possível carregar a prescrição.");
-        navigate("/verprescricoesaprovadas");
-      } finally {
-        setCarregando(false);
-      }
+      
+
+} catch (error) {
+    if (axios.isAxiosError(error)) {
+        console.error("URL que falhou:", error.config?.url);
+        console.error("Status HTTP:", error.response?.status);
+        console.error("Resposta do backend:", error.response?.data);
+    } else {
+        console.error("Erro ao carregar prescrição:", error);
+    }
+
+    alert("Não foi possível carregar a prescrição.");
+} finally {
+    setCarregando(false);
+}
+
+
     };
 
     carregarDados();
@@ -185,7 +212,7 @@ const alterarStatus = async (
     try {
         setProcessando(true);
 
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token_autorizador");
 
         await axios.patch(
             `${API_URL}/autorizador/solicitacao/${id}`,
@@ -350,8 +377,8 @@ const alterarStatus = async (
                     />
                   </div>
 
-                  <div className="campo vencimento">
-                    <label>DATA DE VENCIMENTO:</label>
+                  <div className="campo">
+                    <label className= "label-vencimento">DATA DE VENCIMENTO:</label>
                     <input
                       type="text"
                       value={formatarData(solicitacao?.sol_data_vencimento, true)}
@@ -425,10 +452,8 @@ const alterarStatus = async (
         <label>Motivo da não autorização</label>
 
         <textarea
-            value={
-                solicitacao.sol_motivo_nao_autorizado ||
-                "Motivo não informado."
-            }
+            value={solicitacao.sol_motivo_nao_autorizado ?? ""}
+            placeholder="O motivo não foi registrado."
             readOnly
         />
     </div>

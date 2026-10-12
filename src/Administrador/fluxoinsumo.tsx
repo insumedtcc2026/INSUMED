@@ -34,7 +34,7 @@ export default function FluxoInsumo() {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const { verificando } = useValidarToken();
+  const { verificando } = useValidarToken("ADMIN");
   const { insumos, carregarInsumos, movimentarInsumo } = useDadosInsumos();
   const carregando = verificando || insumos === null;
 

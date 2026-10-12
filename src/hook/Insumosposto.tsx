@@ -13,7 +13,7 @@ export function useDadosInsumos() {
 
     async function carregarInsumos(){
         try{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token_admin");
             const resposta = await fetch("https://backend-insumed-lhac.vercel.app/insumos/listar", {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -34,7 +34,7 @@ export function useDadosInsumos() {
     }
 
     async function movimentarInsumo(id: number, tipo: "entrada" | "saida", quantidade: number) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token_admin");
 
   const resposta = await fetch(`https://backend-insumed-lhac.vercel.app/insumos/${id}`, {
     method: "PATCH",

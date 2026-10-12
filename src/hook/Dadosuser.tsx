@@ -27,7 +27,7 @@ const ErroUser: User = {
 
 export function useDadosUser() {
   const [user] = useState<User>(() => {
-    const dados = localStorage.getItem("usuario");
+    const dados = localStorage.getItem("usuario_paciente");
 
     if (dados) {
       try {

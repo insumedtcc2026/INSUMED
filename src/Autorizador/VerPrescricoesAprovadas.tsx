@@ -24,10 +24,9 @@ export default function Autorizador() {
     const navigate = useNavigate();
 
 
-    // =========================
+   
     // ESTADOS
-    // =========================
-
+   
     const [prescricoes, setPrescricoes] =
         useState<PrescricaoAprovada[]>([]);
 
@@ -41,16 +40,16 @@ export default function Autorizador() {
         useState(true);
 
 
-    // =========================
+   
     // VALIDAÇÃO DO TOKEN
-    // =========================
+    
 
-    const { verificando } = useValidarToken();
+    const { verificando } = useValidarToken("AUTORIZADOR");
 
 
-    // =========================
+    
     // SIDEBAR
-    // =========================
+   
 
     const toggleSidebar = () => {
 
@@ -59,9 +58,9 @@ export default function Autorizador() {
     };
 
 
-    // =========================
+    
     // BUSCAR PRESCRIÇÕES
-    // =========================
+    
 
     useEffect(() => {
 
@@ -101,10 +100,9 @@ console.log(
     };
 
 
-    // =========================
+    
     // FILTRO
-    // =========================
-
+   
     const prescricoesFiltradas =
         prescricoes.filter((prescricao) => {
 
@@ -131,9 +129,9 @@ console.log(
         });
 
 
-    // =========================
+   
     // CARREGANDO TOKEN
-    // =========================
+    
 
     if (verificando) {
 
@@ -194,9 +192,7 @@ console.log(
                 </div>
 
 
-                {/* =========================
-                    LISTA
-                ========================= */}
+                {/*  LISTA*/}
 
                 <div className="lista-pendencias">
 
@@ -222,9 +218,9 @@ console.log(
                         >
 
 
-                            {/* =========================
+                            {/*
                                 ÍCONE / AVATAR
-                            ========================= */}
+                             */}
 
                             <div className="icone-paciente">
 
@@ -232,9 +228,9 @@ console.log(
                                 {prescricao.pac_avatar}
                             </div>
 
-                            {/* =========================
+                            {/* 
                                 PACIENTE
-                            ========================= */}
+                             */}
 
                             <div className="info-paciente">
 
@@ -253,9 +249,9 @@ console.log(
                             </div>
 
 
-                            {/* =========================
+                            {/* 
                                 INFORMAÇÕES
-                            ========================= */}
+                            */}
 
                             <div className="info-envio">
 
@@ -285,9 +281,9 @@ console.log(
                             </div>
 
 
-                            {/* =========================
+                            {/* 
                                 STATUS
-                            ========================= */}
+                             */}
 
                             <div
      className={
@@ -306,20 +302,17 @@ console.log(
 
 </div>
 
-                            {/* =========================
+                            {/* 
                                 BOTÃO
-                            ========================= */}
-
+                             */}
                             <button
-                                className="btn-ver-mais"
-                                onClick={() =>
-    navigate(
-        `/autorizador/solicitacao/${prescricao.sol_id}`
-    )
-}
-                            >
-                                VER MAIS
-                            </button>
+                                 className="btn-ver-mais"
+                                 onClick={() =>
+                                navigate(`/autorizador/solicitacao/${prescricao.sol_id}`)
+                                  }
+                              >
+                         Ver Mais
+                        </button>
 
 
                         </div>

@@ -68,7 +68,7 @@ export default function Perfil() {
     setSidebarOpen((prev) => !prev);
   };
 
-  const { verificando } = useValidarToken();
+  const { verificando } = useValidarToken("PACIENTE");
   const user = useDadosUser();
   const { prescricoes, carregando, erro } = usePrescricao();
 
@@ -111,7 +111,7 @@ export default function Perfil() {
   valor: string
 ) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_paciente");
 
     if (!token) {
       Swal.fire({
@@ -151,7 +151,7 @@ export default function Perfil() {
 
       console.log(
         "USUÁRIO SALVO NO LOCALSTORAGE:",
-        JSON.parse(localStorage.getItem("usuario") || "{}")
+        JSON.parse(localStorage.getItem("usuario_paciente") || "{}")
       );
     }
 
@@ -178,97 +178,111 @@ export default function Perfil() {
   }
 };
 
-const editarDataNascimento = async () => {
-  const dataAtual = user.data_nascimento
-    ? new Date(user.data_nascimento).toISOString().split("T")[0]
-    : "";
-
+  
+const editarInformacao = async (
+  campo: string,
+  titulo: string,
+  valorAtual: string
+) => {
   const resultado = await Swal.fire({
-    title: "Alterar data de nascimento",
-    input: "date",
-    inputValue: dataAtual,
+    title: `Alterar ${titulo}`,
+    input: "text",
+    inputValue: valorAtual || "",
     showCancelButton: true,
     confirmButtonText: "Salvar",
     cancelButtonText: "Cancelar",
     confirmButtonColor: "#0057ff",
     cancelButtonColor: "#d33",
-  });
-
-  if (resultado.isConfirmed) {
-    await atualizarPaciente("data_nascimento", resultado.value);
-  }
-};
-  const editarInformacao = async (
-  campo: string,
-  titulo: string,
-  valorAtual: string
-) => {
-
-
-
-  
-
-  const resultado = await Swal.fire({
-    title: `Alterar ${titulo}`,
-    input: 'text',
-    inputValue: valorAtual,
-   
-
-    showCancelButton: true,
-    confirmButtonText: 'Salvar',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#0057ff',
-    cancelButtonColor: '#d33',
     inputAttributes: {
-      autocomplete: 'off'
+      autocomplete: "off",
     },
+
     inputValidator: (value) => {
-      if (!value.trim()) {
-        return 'Digite uma informação válida!';
+      const texto = (value || "").trim();
+
+      if (!texto) {
+        return "Este campo não pode ficar vazio!";
+      }
+
+      switch (campo) {
+        case "nome":
+          if (/\d/.test(texto)) {
+            return "O nome não pode conter números!";
+          }
+          if (texto.length < 3) {
+            return "Digite um nome com pelo menos 3 caracteres.";
+          }
+          break;
+
+        case "cep": {
+          const cep = texto.replace(/\D/g, "");
+          if (cep.length !== 8) {
+            return "O CEP deve conter exatamente 8 números.";
+          }
+          break;
+        }
+
+        case "email":
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto)) {
+            return "Digite um endereço de e-mail válido.";
+          }
+          break;
+
+        case "endereco":
+          if (texto.length < 3) {
+            return "Digite um endereço válido.";
+          }
+          break;
+
+        case "telefone": {
+          const telefone = texto.replace(/\D/g, "");
+          if (telefone.length !== 10 && telefone.length !== 11) {
+            return "Digite um telefone com DDD e 10 ou 11 números.";
+          }
+          break;
+        }
       }
 
       return null;
-    }
+    },
   });
 
-  if (resultado.isConfirmed) {
-    await atualizarPaciente(
-      campo,
-      resultado.value
-    )
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Alterado!',
-      text: `${titulo} foi alterado com sucesso.`,
-      confirmButtonColor: '#0057ff'
-    });
+  if (
+    resultado.isConfirmed &&
+    typeof resultado.value === "string"
+  ) {
+    await atualizarPaciente(campo, resultado.value.trim());
   }
 };
 
-  useEffect(() => {
-    if (erro) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: erro
-      });
-    }
-  }, [erro]);
-
-  if (verificando) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-xl text-gray-600">Carregando seus dados...</p>
-      </div>
-    );
+useEffect(() => {
+  if (erro) {
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text: erro,
+    });
   }
+}, [erro]);
 
-  if (carregando) {
-    return (
-      <p className="text-xl text-gray-600">Carregando seus dados...</p>
-    );
-  }
+if (verificando) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <p className="text-xl text-gray-600">
+        Carregando seus dados...
+      </p>
+    </div>
+  );
+}
+
+if (carregando) {
+  return (
+    <p className="text-xl text-gray-600">
+      Carregando seus dados...
+    </p>
+  );
+}
+
 
   return (
     <div className="pagina-paciente min-h-screen bg-gray-50">
@@ -304,23 +318,14 @@ const editarDataNascimento = async () => {
         </label>
 
         <label>
-          <p>CPF</p>
-           <div className="input-com-editar">
-          <input type="text" value={user.cpf} />
-             <button
-      type="button"
-      className="btn-editar"
-      onClick={() =>
-        editarInformacao(
-          'cpf',
-          'CPF',
-          user.cpf
-        )
-      }
-    > <img src={lapis} alt="Editar" /></button>
+  <p>CPF</p>
+  <div className="input-com-editar">
+    <input type="text" value={user.cpf} />
+  </div>
+</label>
 
-          </div>
-        </label>
+      
+    
 
 
 
@@ -353,13 +358,7 @@ const editarDataNascimento = async () => {
         : ''
     } 
   />
-  <button
-  type="button"
-  className="btn-editar"
-  onClick={editarDataNascimento}
->
-  <img src={lapis} alt="Editar" />
-</button>
+  
 
   </div>
 </label>
@@ -424,17 +423,7 @@ const editarDataNascimento = async () => {
           <p>Raça/Cor</p>
           <div className="input-com-editar">
           <input type="text" value={user.raca} />
-           <button
-      type="button"
-      className="btn-editar"
-      onClick={() =>
-        editarInformacao(
-          'raca',
-          'Raça/Cor',
-          user.raca
-        )
-      }
-    > <img src={lapis} alt="Editar" /></button>
+          
           </div>
         </label>
       </div>

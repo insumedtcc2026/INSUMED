@@ -359,11 +359,11 @@
 }
 
 .enviar-prescricao-content .btn-reenvio {
-  background: #e53935;
+  background: #e53935 !important;
 }
 
 .enviar-prescricao-content .btn-reenvio:hover {
-  background: #c62828;
+  background: #c62828 !important;
 }
 
 .enviar-prescricao-content .btn-enviar {

@@ -26,13 +26,9 @@ const Loginteste: React.FC = () => {
 
     try {
 
-        // Limpa token antigo
-        localStorage.removeItem("token");
-        localStorage.removeItem("usuario");
-
-        const response = await axios.post(
+        
+const response = await axios.post(
             "https://backend-insumed-lhac.vercel.app/login",
-              //"http://localhost:3344/login",
             {
                 email,
                 senha: password
@@ -41,44 +37,49 @@ const Loginteste: React.FC = () => {
 
         console.log("RESPOSTA DO LOGIN:", response.data);
 
-        
-
         const token = response.data.token;
+        const usuario = response.data.usuario;
 
-if (!token) {
-    console.error("Token não veio na resposta!");
-    throw new Error("Token não recebido");
-}
+        if (!token) {
+            throw new Error("Token não recebido");
+        }
 
-localStorage.setItem("token", token);
+        const tipo = (
+            usuario?.tipo || response.data.tipo || ""
+        ).toUpperCase();
 
-const usuario = response.data.usuario;
+        // Cada perfil mantém seu próprio token e seus dados.
+        if (tipo === "ADMIN") {
+            localStorage.setItem("token_admin", token);
+            localStorage.setItem(
+                "usuario_admin",
+                JSON.stringify(usuario)
+            );
+            navigate("/homeadmin");
 
-localStorage.setItem(
-    "usuario",
-    JSON.stringify(usuario)
-);
+        } else if (tipo === "AUTORIZADOR") {
+            localStorage.setItem("token_autorizador", token);
+            localStorage.setItem(
+                "usuario_autorizador",
+                JSON.stringify(usuario)
+            );
+            navigate("/verprescricoesaprovadas");
 
-console.log("USUÁRIO SALVO:", usuario);
-console.log("TOKEN SALVO:", localStorage.getItem("token"));
+        } else if (tipo === "PACIENTE") {
+            localStorage.setItem("token_paciente", token);
+            localStorage.setItem(
+                "usuario_paciente",
+                JSON.stringify(usuario)
+            );
+            navigate("/home");
 
-const tipo =
-    usuario?.tipo ||
-    response.data.tipo;
+        } else {
+            throw new Error(
+                `Tipo de usuário desconhecido: ${tipo || "não informado"}`
+            );
+        }
 
-localStorage.setItem("tipo", tipo);
-
-console.log("TIPO DO USUÁRIO:", tipo);
-
-if (tipo === "PACIENTE") {
-    navigate("/home");
-}
-else if (tipo === "AUTORIZADOR") {
-    navigate("/VerPrescricoesAprovadas");
-}
-else if (tipo === "ADMIN") {
-    navigate("/homeadmin");
-}
+        console.log("TIPO DO USUÁRIO:", tipo);
     } catch (error: any) {
 
         console.error(

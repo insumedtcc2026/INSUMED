@@ -14,7 +14,7 @@ const ErroAdmin: Admin = {
 
 export function useDadosAdmin(): Admin {
 
-    const dados = localStorage.getItem("usuario");
+    const dados = localStorage.getItem("usuario_admin");
 
     console.log("================================");
     console.log("DADOS DO LOCALSTORAGE:", dados);

@@ -9,7 +9,7 @@ export async function buscarPacientesPorCpf(
   if (!termo.trim()) return [];
 
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_admin");
 
     const resposta = await axios.get<Paciente[]>(
       `${API_URL}/pacientes`,

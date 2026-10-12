@@ -14,7 +14,7 @@ const ErroAutorizador: Autorizador = {
 
 export function useDadosAutorizador(): Autorizador {
 
-    const dados = localStorage.getItem("usuario");
+    const dados = localStorage.getItem("usuario_autorizador");
 
     console.log("================================");
     console.log("DADOS DO LOCALSTORAGE:", dados);

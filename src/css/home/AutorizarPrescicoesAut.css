@@ -290,6 +290,32 @@
   position: static;
 }
 
+.linha-campos {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.linha-campos .campo {
+  flex: 1;
+  min-width: 0;
+}
+
+.linha-campos .campo input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.linha-campos .campo label {
+  white-space: nowrap;
+  display: block;
+  font-size: 12px;
+}
+.label-vencimento {
+  color: red !important;
+  white-space: nowrap;
+}
+
 /* ESTILO DOS BOTÕES */
 .enviar-prescricao-content .btn-reenvio,
 .enviar-prescricao-content .btn-enviar {

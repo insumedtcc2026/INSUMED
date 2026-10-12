@@ -23,7 +23,7 @@ export default function Agendamentos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const { verificando } = useValidarToken();
+  const { verificando } = useValidarToken("PACIENTE");
   const { cpf } = useDadosUser();
   // O hook devolve uma string de erro fixa quando não há paciente logado
   // (ex: sessão de administrador) — tratamos isso como "sem CPF válido".

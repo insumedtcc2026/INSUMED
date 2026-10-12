@@ -19,7 +19,7 @@ export default function Sobre() {
     setSidebarOpen((prev) => !prev);
   };
 
-   const { verificando } = useValidarToken();
+   const { verificando } = useValidarToken("PACIENTE");
   
     if (verificando) {
       return (

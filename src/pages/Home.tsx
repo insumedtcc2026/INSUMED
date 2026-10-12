@@ -20,7 +20,7 @@ export default function Home() {
    const [proximoAgendamento, setProximoAgendamento] = useState<Agendamento | null>(null);
    const [carregandoAgendamento, setCarregandoAgendamento] = useState(true);
 
-   const { verificando } = useValidarToken();
+   const { verificando } = useValidarToken("PACIENTE");
 
    useEffect(() => {
      buscarProximoAgendamento()

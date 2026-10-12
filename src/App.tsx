@@ -26,6 +26,8 @@ import FluxoInsumo from './Administrador/fluxoinsumo';
 import TermosDeUso from './pages/TermosDeUso';
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import SegurancaDados from './pages/SegurancaDados';
+import VerPrescricaoNaoAutorizada from
+    "./Administrador/VerPrescricaoNaoAutorizada";
 import './index.css';
 
 function App() {
@@ -116,7 +118,10 @@ function App() {
         path="/versolicitaçoes"
         element={<VerSolicitaçoes />}
       />
-
+<Route
+    path="/administrador/prescricao/nao-autorizada/:id"
+    element={<VerPrescricaoNaoAutorizada />}
+/>
       <Route
     path="/administrador/prescricao/:id"
     element={<VerSolicitaçoes />}

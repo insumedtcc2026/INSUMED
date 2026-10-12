@@ -83,7 +83,7 @@ export default function PontosColeta() {
   useEffect(() => {
 
     const validarToken = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token_paciente");
 
       if (!token) navigate("/login");
 
@@ -118,7 +118,7 @@ export default function PontosColeta() {
     validarToken();
   }, []);
 
-  const dados = localStorage.getItem("usuario");
+  const dados = localStorage.getItem("usuario_paciente");
 
   const [posicao, setPosicao] = useState<[number, number]>([-22.523, -44.104]);
   const [postoSelecionado, setPostoSelecionado] =

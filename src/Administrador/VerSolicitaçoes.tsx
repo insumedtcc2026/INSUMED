@@ -44,7 +44,7 @@ const [statusFiltro, setStatusFiltro] =
     // VALIDAÇÃO DO TOKEN
   
 
-    const { verificando } = useValidarToken();
+    const { verificando } = useValidarToken("ADMIN");
 
 
     // SIDEBAR
@@ -292,24 +292,25 @@ const carregarPrescricoes = async () => {
                             {/* BOTÃO */}
                     
 <button
-    className="btn-ver-mais"
-    onClick={() => {
-        if (prescricao.sol_status === "Autorizado") {
-            navigate(
-                `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
-            );
-        } else if (prescricao.sol_status === "Nao Autorizado") {
-            navigate(`/autorizador/solicitacao/${prescricao.sol_id}`);
-        } else {
-            navigate(
-                `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
-            );
-        }
-    }}
+  className="btn-ver-mais"
+  onClick={() => {
+    if (prescricao.sol_status === "Autorizado") {
+      navigate(
+        `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
+      );
+    } else if (prescricao.sol_status === "Nao Autorizado") {
+      navigate(
+  `/administrador/prescricao/nao-autorizada/${prescricao.sol_id}`
+);
+    } else {
+      navigate(
+        `/administrador/prescricao/autorizarprescricao/${prescricao.sol_id}`
+      );
+    }
+  }}
 >
-    Ver mais
+  Ver mais
 </button>
-
                         </div>
 
                     ))}

@@ -75,7 +75,7 @@ const [motivo, setMotivo] = useState("");
 
       try {
 
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token_admin");
 
 
       
@@ -569,68 +569,7 @@ navigate('/VerSolicitaçoes')
         {/* 
             MOTIVOS
      */}
-{!somenteVisualizacao && (
-       <div className="prescricao-buttons">
 
-  <div className="reenvio-area">
-  
-      
-    <button
-      className="btn-reenvio"
-      type="button"
-      onClick={() => setMostrarMotivos(!mostrarMotivos)}
-    >
-      Pedir reenvio da prescrição
-    </button>
-
-    {mostrarMotivos && (
-      <section className="motivos">
-
-        <h2>Motivo:</h2>
-
-        <label>
-          <input
-            type="radio"
-            name="motivo"
-            value="FOTO_SEM_QUALIDADE"
-            checked={motivo === "FOTO_SEM_QUALIDADE"}
-            onChange={(e) => setMotivo(e.target.value)}
-          />
-          FOTO SEM QUALIDADE
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="motivo"
-            value="PRESCRICAO_VENCIDA"
-            checked={motivo === "PRESCRICAO_VENCIDA"}
-            onChange={(e) => setMotivo(e.target.value)}
-          />
-          PRESCRIÇÃO VENCIDA
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="motivo"
-            value="INFORMACAO_DIFERENTE"
-            checked={motivo === "INFORMACAO_DIFERENTE"}
-            onChange={(e) => setMotivo(e.target.value)}
-          />
-          INFORMAÇÃO DIFERENTE
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="motivo"
-            value="OUTRO"
-            checked={motivo === "OUTRO"}
-            onChange={(e) => setMotivo(e.target.value)}
-          />
-          OUTRO...
-        </label>
 
 
 {!somenteVisualizacao && (
@@ -714,21 +653,15 @@ navigate('/VerSolicitaçoes')
 )}
 
 
-      </section>
-    )}
+     
+    
 
-  </div>
+  
 
-  <button
-  className="btn-enviar"
-  type="button"
-  onClick={enviarSolicitacao}
->
-  ENVIAR
-</button>
+ 
 
-  </div>
-)}
+  
+
 
 
       </main>

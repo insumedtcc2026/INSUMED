@@ -66,7 +66,7 @@ useEffect(() => {
     if (!solIdUrl) return;
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token_admin");
 
       const resposta = await axios.get(
         `https://backend-insumed-lhac.vercel.app/solicitacao/${solIdUrl}`,
