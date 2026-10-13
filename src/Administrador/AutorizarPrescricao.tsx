@@ -169,7 +169,7 @@ setDataVencimento(
 
   try {
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_admin");
 
     await axios.patch(
      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
@@ -219,7 +219,7 @@ setDataVencimento(
 
 const enviarSolicitacao = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token_admin");
 
     if (!token) {
       alert("Token não encontrado.");
