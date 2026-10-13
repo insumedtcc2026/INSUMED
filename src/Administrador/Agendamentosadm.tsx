@@ -34,7 +34,8 @@ export default function Agendamentosadm() {
   // "Ver agendamento" na lista de solicitações abre já filtrado pelo CPF
   const buscaUrl = searchParams.get("busca");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [modalAberto, setModalAberto] = useState(false);
+  // "Novo Agendamento" no menu lateral chega aqui com ?novo=1
+  const [modalAberto, setModalAberto] = useState(searchParams.get("novo") === "1");
 
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -119,6 +120,12 @@ useEffect(() => {
   }
 }, [cpfUrl]);
 
+  // clicar em "Novo Agendamento" no menu estando já nesta página
+  const novoUrl = searchParams.get("novo");
+  useEffect(() => {
+    if (novoUrl === "1") setModalAberto(true);
+  }, [novoUrl]);
+
 
   function protocoloDe(sol_id: number) {
     return agendamentos.find((a) => a.sol_id === sol_id)?.sol_protocolo ?? `#${sol_id}`;
@@ -180,12 +187,23 @@ useEffect(() => {
         <BotaoVoltar para="/homeadmin" />
       </div>
 
-      <main className="mx-auto max-w-5xl px-4 py-6 pb-28 sm:px-6 sm:py-8">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800">Agendamentos</h1>
-          <p className="text-sm text-gray-500">
-            Busque, filtre por status e veja todos os agendamentos de coleta.
-          </p>
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-800">Agendamentos</h1>
+            <p className="text-sm text-gray-500">
+              Busque, filtre por status e veja todos os agendamentos de coleta.
+            </p>
+          </div>
+
+          {/* Botão no fluxo da página (antes era flutuante e cobria o rodapé) */}
+          <button
+            type="button"
+            onClick={() => setModalAberto(true)}
+            className="botao-novo-agendamento"
+          >
+            <span className="text-lg leading-none" aria-hidden="true">+</span> Novo Agendamento
+          </button>
         </header>
 
         {/* Busca */}
@@ -281,14 +299,6 @@ useEffect(() => {
           </div>
         )}
       </main>
-
-      <button
-        type="button"
-        onClick={() => setModalAberto(true)}
-        className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-4 z-30 flex min-h-12 items-center gap-2 rounded-full bg-indigo-600 px-5 py-3 font-medium text-white shadow-lg transition hover:bg-indigo-700 sm:bottom-8 sm:right-8 sm:px-6"
-      >
-        <span className="text-lg leading-none" aria-hidden="true">+</span> Novo Agendamento
-      </button>
 
       {modalAberto && (
 

@@ -14,6 +14,7 @@ import Footer from "../components/universais/Footer.tsx";
 
 import "../css/home/VerSolicitaçoes.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { exibirCPF } from "../utils/validacoes";
 
 
 export default function Pendencias() {
@@ -240,7 +241,7 @@ const carregarPrescricoes = async () => {
                                 </strong>
 
                                 <span>
-                                    CPF: {prescricao.pac_cpf}
+                                    CPF: {exibirCPF(prescricao.pac_cpf)}
                                 </span>
 
                                 <span>

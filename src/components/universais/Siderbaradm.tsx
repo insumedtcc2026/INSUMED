@@ -10,6 +10,7 @@ import {
   CalendarPlus,
   Files,
   LogOut,
+  Package,
   RotateCcwIcon,
   X,
 } from 'lucide-react';
@@ -42,26 +43,26 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/Agendamentosadm',
     },
-     {
-      icon: BsCalendarCheckFill,
-      label: 'Insumos',
-      path: '/insumos',
-    },
     {
-      icon: RotateCcwIcon,
-      label: 'Historico da prescrição',
-      path: '/Historicodaprescricao',
+      // abre o formulário direto na página de agendamentos
+      icon: CalendarPlus,
+      label: 'Novo Agendamento',
+      path: '/Agendamentosadm?novo=1',
     },
-
     {
       icon: Files,
       label: 'Solicitações',
       path: '/VerSolicitaçoes',
     },
     {
-      icon: CalendarPlus,
-      label: 'Novo Agendamento',
-      path: '/NovoAgendamento',
+      icon: RotateCcwIcon,
+      label: 'Histórico da prescrição',
+      path: '/Historicodaprescricao',
+    },
+    {
+      icon: Package,
+      label: 'Insumos',
+      path: '/insumos',
     },
     {
       icon: IoPersonSharp,

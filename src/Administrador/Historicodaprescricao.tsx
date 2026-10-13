@@ -10,6 +10,7 @@ import Footer from "../components/universais/Footer";
 
 import "../css/home/Historicodaprescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { exibirCPF } from "../utils/validacoes";
 
 
 export default function Historico() {
@@ -231,7 +232,7 @@ export default function Historico() {
                             </strong>
 
                             <span>
-                                CPF: {prescricao.pac_cpf}
+                                CPF: {exibirCPF(prescricao.pac_cpf)}
                             </span>
 
                             <span>

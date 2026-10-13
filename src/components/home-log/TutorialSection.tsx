@@ -1,6 +1,6 @@
 import '../../css/home-log/TutorialSection.css';
 
-import elderlyImage from '../../assets/home-log/idosa.png';
+import elderlyImage from '../../assets/home-log/idosa.webp';
 
 export default function TutorialSection() {
   return (

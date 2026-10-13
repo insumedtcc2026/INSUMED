@@ -168,3 +168,39 @@ textarea {
   font-family: var(--fonte-botao) !important;
   border-radius: var(--raio-md) !important;
 }
+
+/* Botão de ação principal de página (ex.: "Novo Agendamento") */
+.botao-novo-agendamento {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--gradiente-primario);
+  color: #fff;
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-weight: 600;
+  box-shadow: var(--sombra-botao, 0 10px 20px rgba(37, 99, 235, 0.25));
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.botao-novo-agendamento:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.botao-novo-agendamento:focus-visible {
+  outline: 3px solid var(--cor-primaria);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .botao-novo-agendamento {
+    width: 100%;
+  }
+}

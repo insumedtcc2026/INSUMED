@@ -9,6 +9,7 @@ import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 import "../css/home/AutorizarPrescicoesAut.css";
+import { exibirCPF } from "../utils/validacoes";
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
 
@@ -207,7 +208,7 @@ const toggleSidebar = () => {
                                     <div className="campo">
                                         <label>CPF</label>
                                         <input
-                                            value={solicitacao.pac_cpf || ""}
+                                            value={solicitacao.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : ""}
                                             readOnly
                                         />
                                     </div>

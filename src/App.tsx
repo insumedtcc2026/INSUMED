@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import HomeHome from './pages/HomeHome';
 import Home from './pages/Home';
@@ -12,7 +12,6 @@ import Cadastro from "./components/home/Cadastro"
 import CadastroADM from "../src/Administrador/CadastroADM"
 import Agendamentosadm from './Administrador/Agendamentosadm';
 import HomeAdmin from './Administrador/HomeAdmin';
-import NovoAgendamento from './Administrador/NovoAgendamento';
 import  Pacientesadm  from './Administrador/Pacientesadm';
 import EnviarSolicitaçao from './pages/EnviarSolicitacao';
 import VerSolicitaçoes from './Administrador/VerSolicitaçoes'
@@ -57,7 +56,7 @@ function App() {
 
          <Route
         path="/novoagendamento"
-        element={<NovoAgendamento/>}
+        element={<Navigate to="/Agendamentosadm?novo=1" replace />}
       />
 
 

@@ -7,7 +7,7 @@ import { mensagemErroApi, validarEmail } from "../../utils/validacoes";
 import olhoAberto from '../../assets/home-log/olho aberto.png'
 import olhoFechado from '../../assets/home-log/olho fechado.png'
 
-import images from "../../assets/home-log/teste login.png"; 
+import images from "../../assets/home-log/teste login.webp"; 
 import BotaoVoltar from "../universais/BotaoVoltar";
 
 

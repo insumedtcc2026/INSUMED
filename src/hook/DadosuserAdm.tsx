@@ -1,3 +1,5 @@
+import { exibirCPF, exibirTelefone } from "../utils/validacoes";
+
 export interface Admin {
     nome: string;
     cpf: string;
@@ -16,8 +18,6 @@ export function useDadosAdmin(): Admin {
 
     const dados = localStorage.getItem("usuario_admin");
 
-    console.log("================================");
-    console.log("DADOS DO LOCALSTORAGE:", dados);
 
     if (!dados) {
         console.log("Nenhum usuário encontrado");
@@ -28,15 +28,12 @@ export function useDadosAdmin(): Admin {
 
         const dadosAdmin = JSON.parse(dados);
 
-        console.log("ADMIN ENCONTRADO:", dadosAdmin);
-        console.log("NOME:", dadosAdmin.adm_nome);
-        console.log("CPF:", dadosAdmin.adm_cpf);
 
         return {
             nome: dadosAdmin.adm_nome || ErroAdmin.nome,
-            cpf: dadosAdmin.adm_cpf || ErroAdmin.cpf,
+            cpf: dadosAdmin.adm_cpf ? exibirCPF(dadosAdmin.adm_cpf) : ErroAdmin.cpf,
             email: dadosAdmin.adm_email || ErroAdmin.email,
-            telefone: dadosAdmin.adm_tel || ErroAdmin.telefone,
+            telefone: dadosAdmin.adm_tel ? exibirTelefone(dadosAdmin.adm_tel) : ErroAdmin.telefone,
         };
 
     } catch (error) {

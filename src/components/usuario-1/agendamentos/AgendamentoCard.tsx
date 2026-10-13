@@ -2,6 +2,7 @@ import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 import MotivoCancelamento from "./MotivoCancelamento";
 import type { Agendamento } from "../../../types/agendamento";
+import { exibirCPF, exibirTelefone } from "../../../utils/validacoes";
 
 interface AgendamentoCardProps {
   agendamento: Agendamento;
@@ -80,8 +81,8 @@ export default function AgendamentoCard({
         </span>
         <div className="min-w-0">
           <p className="break-words font-semibold text-gray-800">{paciente.pac_nome}</p>
-          <p className="text-sm text-gray-500">CPF: {paciente.pac_cpf}</p>
-          <p className="text-sm text-gray-500">Tel: {paciente.pac_telefone}</p>
+          <p className="text-sm text-gray-500">CPF: {exibirCPF(paciente.pac_cpf)}</p>
+          <p className="text-sm text-gray-500">Tel: {exibirTelefone(paciente.pac_telefone)}</p>
           <p className="text-sm text-gray-500">
             Protocolo: {sol_protocolo ?? "—"} · Data: {dataFormatada}
           </p>

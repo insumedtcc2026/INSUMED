@@ -1,8 +1,8 @@
 import "../../css/home/AppFeatures.css";
 import { Link } from "react-router-dom";
 
-import celularImg from "../../assets/home/celular.png";
-import mulheresImg from "../../assets/home/2mulheres.png";
+import celularImg from "../../assets/home/celular.webp";
+import mulheresImg from "../../assets/home/2mulheres.webp";
 
 const AppFeatures = () => {
   return (

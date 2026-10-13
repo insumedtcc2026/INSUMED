@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
 import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
-import { hojeISO, mensagemErroApi } from "../../../utils/validacoes";
+import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
 
@@ -114,7 +114,7 @@ useEffect(() => {
 }, [insumoInicial, quantidadeInicial]);
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
-    setBuscaPaciente(`${p.pac_nome} — ${p.pac_cpf}`);
+    setBuscaPaciente(`${p.pac_nome} — ${exibirCPF(p.pac_cpf)}`);
     setResultadosPaciente([]);
   }
 
@@ -218,7 +218,7 @@ useEffect(() => {
                     onClick={() => selecionarPaciente(p)}
                     className="cursor-pointer px-3 py-2 text-sm hover:bg-indigo-50"
                   >
-                    {p.pac_nome} — {p.pac_cpf}
+                    {p.pac_nome} — {exibirCPF(p.pac_cpf)}
                   </li>
                 ))}
               </ul>

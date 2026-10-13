@@ -1,5 +1,5 @@
 import axios from 'axios'
-import images from "../assets/home-log/teste cadastro.png"; 
+import images from "../assets/home-log/teste cadastro.webp"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import olhoAberto from '../assets/home-log/olho aberto.png';

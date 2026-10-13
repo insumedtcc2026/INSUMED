@@ -13,6 +13,7 @@ import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
+import { exibirCPF } from "../utils/validacoes";
 
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
@@ -343,7 +344,7 @@ const alterarStatus = async (
                     <label>CPF:</label>
                     <input
                       type="text"
-                      value={solicitacao?.pac_cpf || ""}
+                      value={solicitacao?.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : ""}
                       readOnly
                     />
                   </div>

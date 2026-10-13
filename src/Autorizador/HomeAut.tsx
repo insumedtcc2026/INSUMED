@@ -1,6 +1,6 @@
 import Banner from '../components/home-log/Banner.tsx';
 import Footer from '../components/universais/Footer.tsx';
-import bannerInsumed from '../assets/home-log/banner-insumed.png';
+import bannerInsumed from '../assets/home-log/banner-insumed.webp';
 import InfoSection from '../components/home-log/InfoSection.tsx';
 import '../css/home/Homepaciente.css';
 import { useState } from 'react';

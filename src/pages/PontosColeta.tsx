@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from '../components/universais/Header';
-import iconpng from '../assets/home-log/ubs.png'
+import iconpng from '../assets/home-log/ubs.webp'
 import '../css/home/PontosColeta.css'
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';

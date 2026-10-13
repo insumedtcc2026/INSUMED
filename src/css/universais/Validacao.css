@@ -78,3 +78,10 @@ button:disabled {
 .forca-senha-requisitos li.ok {
   color: var(--cor-sucesso-escura);
 }
+
+/* Marca campos que o usuário pode deixar em branco */
+.rotulo-opcional {
+  font-weight: 400;
+  font-size: 0.85em;
+  color: #64748b;
+}

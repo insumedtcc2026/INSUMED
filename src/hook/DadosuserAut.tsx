@@ -1,3 +1,5 @@
+import { exibirCPF, exibirTelefone } from "../utils/validacoes";
+
 export interface Autorizador {
     nome: string;
     cpf: string;
@@ -16,8 +18,6 @@ export function useDadosAutorizador(): Autorizador {
 
     const dados = localStorage.getItem("usuario_autorizador");
 
-    console.log("================================");
-    console.log("DADOS DO LOCALSTORAGE:", dados);
 
     if (!dados) {
         console.log("Nenhum autorizador encontrado");
@@ -28,17 +28,12 @@ export function useDadosAutorizador(): Autorizador {
 
         const dadosAutorizador = JSON.parse(dados);
 
-        console.log("AUTORIZADOR ENCONTRADO:", dadosAutorizador);
-        console.log("NOME:", dadosAutorizador.aut_nome);
-        console.log("CPF:", dadosAutorizador.aut_cpf);
-        console.log("EMAIL:", dadosAutorizador.aut_email);
-        console.log("TELEFONE:", dadosAutorizador.aut_tel);
 
         return {
             nome: dadosAutorizador.aut_nome || ErroAutorizador.nome,
-            cpf: dadosAutorizador.aut_cpf || ErroAutorizador.cpf,
+            cpf: dadosAutorizador.aut_cpf ? exibirCPF(dadosAutorizador.aut_cpf) : ErroAutorizador.cpf,
             email: dadosAutorizador.aut_email || ErroAutorizador.email,
-            telefone: dadosAutorizador.aut_tel || ErroAutorizador.telefone,
+            telefone: dadosAutorizador.aut_tel ? exibirTelefone(dadosAutorizador.aut_tel) : ErroAutorizador.telefone,
         };
 
     } catch (error) {

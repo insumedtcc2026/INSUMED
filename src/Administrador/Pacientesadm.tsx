@@ -5,6 +5,7 @@ import Footer from '../components/universais/Footer';
 import type { Paciente } from '../types/agendamento';
 import { buscarPacientesPorCpf } from '../services/PacientesServices';
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { exibirCPF, exibirTelefone, mascaraCPF } from "../utils/validacoes";
 
 export default function Pacientes() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function Pacientes() {
   }; 
 
   const handleBuscar = async (valor: string) => {
-    setCpf(valor);
+    setCpf(mascaraCPF(valor));
 
     if (!valor.trim()) {
       setPacientes([]);
@@ -66,7 +67,8 @@ export default function Pacientes() {
             type="text"
             value={cpf}
             onChange={(e) => handleBuscar(e.target.value)}
-            placeholder="Digite o CPF"
+            placeholder="000.000.000-00"
+            inputMode="numeric"
             className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
           />
 
@@ -88,11 +90,11 @@ export default function Pacientes() {
                   </p>
 
                   <p className="text-gray-600">
-                    CPF: {paciente.pac_cpf}
+                    CPF: {exibirCPF(paciente.pac_cpf)}
                   </p>
 
                   <p className="text-gray-600">
-                    Telefone: {paciente.pac_telefone}
+                    Telefone: {exibirTelefone(paciente.pac_telefone)}
                   </p>
                 </div>
               ))}

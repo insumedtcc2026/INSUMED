@@ -1,5 +1,5 @@
 import axios from 'axios'
-import images from "../../assets/home-log/teste cadastro.png";
+import images from "../../assets/home-log/teste cadastro.webp";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import olhoAberto from '../../assets/home-log/olho aberto.png';
@@ -11,7 +11,7 @@ import ForcaSenha, { MensagemErro } from "../universais/ForcaSenha";
 import {
   mascaraCEP, mascaraCPF, mascaraTelefone, mensagemErroApi, temErros,
   validarCEP, validarConfirmacaoSenha, validarCPF, validarDataNascimento,
-  validarEmail, validarNome, validarObrigatorio, validarSenha, validarTelefone,
+  validarEmail, validarNome, validarSenha, validarTelefone,
   type ErrosFormulario,
 } from "../../utils/validacoes";
 
@@ -38,10 +38,11 @@ function validarFormulario(f: typeof formularioVazio): ErrosFormulario<Campo> {
     cpf: validarCPF(f.cpf),
     email: validarEmail(f.email),
     dataNasc: validarDataNascimento(f.dataNasc),
-    sexo: validarObrigatorio(f.sexo, "o gênero"),
+    // gênero e cor/raça são opcionais (vazio = "prefiro não responder")
+    sexo: null,
     senha: validarSenha(f.senha),
     confirmacao: validarConfirmacaoSenha(f.senha, f.confirmacao),
-    cor: validarObrigatorio(f.cor, "a cor/raça"),
+    cor: null,
     cep: validarCEP(f.cep),
     endereco: f.endereco.trim().length < 5 ? "Informe o endereço completo." : null,
   };
@@ -223,7 +224,7 @@ const limparFormulario = () => {
       </div>
 
       <div className="campo">
-        <label className='labels'>Gênero</label>
+        <label className='labels'>Gênero <span className="rotulo-opcional">(opcional)</span></label>
         <select
           {...propsCampo("sexo")}
           onChange={(e) => alterar("sexo", e.target.value)}
@@ -290,17 +291,17 @@ const limparFormulario = () => {
 
       <div className="campo">
 
-        <label className='text'>Cor</label>
+        <label className='text'>Raça/Cor <span className="rotulo-opcional">(opcional)</span></label>
          <select
           {...propsCampo("cor")}
           onChange={(e) => alterar("cor", e.target.value)}
 >
           <option value="">Selecione</option>
-          <option>Branco</option>
-          <option>Preto</option>
-          <option>Pardo</option>
-          <option>Amarelo</option>
-          <option>Indigena</option>
+          <option>Branca</option>
+          <option>Preta</option>
+          <option>Parda</option>
+          <option>Amarela</option>
+          <option>Indígena</option>
           <option>Prefiro não responder</option>
         </select>
         <MensagemErro erro={erroDe("cor")} />

@@ -169,3 +169,20 @@ export function hojeISO() {
   const dois = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
 }
+
+// ---------- Exibição ----------
+// Formata CPF/telefone vindos do banco para exibição, mesmo que tenham sido
+// salvos sem pontuação (cadastros antigos). Valor fora do padrão é mostrado
+// como veio, para não esconder dado; vazio vira "—".
+
+export function exibirCPF(cpf?: string | null) {
+  const d = somenteDigitos(cpf ?? "");
+  if (!d) return "—";
+  return d.length === 11 ? mascaraCPF(d) : String(cpf);
+}
+
+export function exibirTelefone(telefone?: string | null) {
+  const d = somenteDigitos(telefone ?? "");
+  if (!d) return "—";
+  return d.length === 10 || d.length === 11 ? mascaraTelefone(d) : String(telefone);
+}
