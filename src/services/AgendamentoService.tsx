@@ -14,7 +14,7 @@ const api = axios.create({
 });
 
 function authHeader() {
-  const token = localStorage.getItem("token_admin");
+  const token = localStorage.getItem("token_paciente");
   return { Authorization: `Bearer ${token}` };
 }
 
