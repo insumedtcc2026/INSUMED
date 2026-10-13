@@ -1,24 +1,33 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-
-    baseURL: 'https://backend-insumed-lhac.vercel.app'
-
+  baseURL: "https://backend-insumed-lhac.vercel.app",
 });
-
 
 api.interceptors.request.use((config) => {
+  const tokenAdmin = localStorage.getItem("token_admin");
+  const tokenPaciente = localStorage.getItem("token_paciente");
+  const tokenAutorizador = localStorage.getItem("token_autorizador");
 
-    const token = localStorage.getItem("token_admin");
+  const tokenValido = (token: string | null) =>
+    token && token !== "null" && token !== "undefined" && token.trim() !== ""
+      ? token
+      : null;
 
-    console.log("TOKEN ENVIADO:", token);
+  const token =
+    tokenValido(tokenAdmin) ||
+    tokenValido(tokenPaciente) ||
+    tokenValido(tokenAutorizador);
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
+  }
 
-    return config;
+  console.log("TOKEN ENVIADO:", token ? "Token encontrado" : "Nenhum token válido");
+
+  return config;
 });
-
 
 export default api;
