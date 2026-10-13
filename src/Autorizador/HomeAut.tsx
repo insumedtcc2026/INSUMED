@@ -20,7 +20,7 @@ import HeaderAdm from '../components/universais/HeaderAdm.tsx';
 export default function HomeAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { verificando } = useValidarToken();
+  const { verificando } = useValidarToken("AUTORIZADOR");
 
   if (verificando) {
     return (
