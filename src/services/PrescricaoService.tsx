@@ -10,7 +10,9 @@ export interface PrescricaoPendente {
     pac_nome: string;
     pac_cpf: string;
     sol_prescricao: string;
-    pac_avatar: string
+    pac_avatar: string;
+    // true quando a prescrição autorizada já tem agendamento ativo
+    agendamento_ativo?: boolean;
 }
 
 // Usada na LISTAGEM — bate com o que "prescicaodopaciente" retorna

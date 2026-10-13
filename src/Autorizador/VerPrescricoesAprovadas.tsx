@@ -11,7 +11,7 @@ import type {
 
 import { useValidarToken } from "../hook/Validartoken.tsx";
 
-import Sidebaradm from "../components/universais/Siderbaradm.tsx";
+import SidebarAut from "../components/universais/SidebarAut.tsx";
 import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
@@ -156,7 +156,7 @@ console.log(
                 onMenuClick={toggleSidebar}
             />
 
-            <Sidebaradm
+            <SidebarAut
                 isOpen={sidebarOpen}
                 onClose={toggleSidebar}
             />

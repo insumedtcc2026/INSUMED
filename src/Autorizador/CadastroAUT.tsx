@@ -7,6 +7,12 @@ import olhoFechado from '../assets/home-log/olho fechado.png';
 import { useState } from "react";
 import "../css/home/Cadastro.css"
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import ForcaSenha, { MensagemErro } from "../components/universais/ForcaSenha";
+import {
+  mascaraCPF, mascaraTelefone, mensagemErroApi, temErros,
+  validarConfirmacaoSenha, validarCPF, validarEmail, validarNome,
+  validarSenha, validarTelefone,
+} from "../utils/validacoes";
 
 
 function CadastroAUT(){
@@ -14,22 +20,25 @@ function CadastroAUT(){
 const navigate = useNavigate();
     
 const handleCadastro = async () => {
- if (password !== confirmacaodesenha) {
+ setTentouEnviar(true);
+  if (temErros(erros)) {
     Swal.fire({
       icon: 'error',
-      title: 'Ops...',
-      text: 'Os campos referente a senha devem ter a mesma senha, tente novamente!',
+      title: 'Confira os dados',
+      text: 'Alguns campos estão incorretos ou não foram preenchidos. Corrija os campos destacados.',
       confirmButtonColor: '#d33'
     });
-    return; // Muda essa parte
+    return;
   }
+  setEnviando(true);
   try {
     const response = await axios.post('https://backend-insumed-lhac.vercel.app/autorizador', {  
-  nome: text1,
-  email: email,
+  nome: text1.trim().replace(/\s+/g, " "),
+  email: email.trim().toLowerCase(),
   telefone: tel,
   cpf: cpf,
   senha: password,
+  confirmacao_senha: confirmacaodesenha,
 });
     console.log(response.data);
    Swal.fire({
@@ -46,9 +55,11 @@ const handleCadastro = async () => {
     Swal.fire({
       icon: 'error',
       title: 'Ops...',
-      text: 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.',
+      text: mensagemErroApi(error, 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.'),
       confirmButtonColor: '#d33'
     });
+  } finally {
+    setEnviando(false);
   }
 }
 
@@ -60,6 +71,7 @@ const limparFormulario = () => {
   setTel("");
   setPassword("");
   setConfirmacao("");
+  setTentouEnviar(false);
 
 };
       const [email, setEmail] = useState("");
@@ -73,6 +85,18 @@ const limparFormulario = () => {
       
       const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       const senhasIguais = password===confirmacaodesenha
+const [tentouEnviar, setTentouEnviar] = useState(false);
+const [enviando, setEnviando] = useState(false);
+const erros = {
+    nome: validarNome(text1),
+    telefone: validarTelefone(tel),
+    cpf: validarCPF(cpf),
+    email: validarEmail(email),
+    senha: validarSenha(password),
+    confirmacao: validarConfirmacaoSenha(password, confirmacaodesenha),
+};
+const erroDe = (campo: keyof typeof erros) => (tentouEnviar ? erros[campo] : null);
+const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : "");
       return(
         <>
    <div className="login-fullscreen-container">
@@ -89,7 +113,7 @@ const limparFormulario = () => {
 
       
   
-     <form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
+     <form className="formulario" noValidate onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
         
         
         <div className="Alinha-campos">
@@ -105,7 +129,9 @@ const limparFormulario = () => {
             name="text"
             required
             value={text1}
+            className={classeDe("nome")}
             onChange={(e) => setText1(e.target.value)} />
+            <MensagemErro erro={erroDe("nome")} />
         </div>
         
         <div className="campo">
@@ -115,7 +141,9 @@ const limparFormulario = () => {
             placeholder="(24) 99999-9999"
             required
             value={tel}
-            onChange={(e) => setTel(e.target.value)} />
+            className={classeDe("telefone")}
+            onChange={(e) => setTel(mascaraTelefone(e.target.value))} />
+            <MensagemErro erro={erroDe("telefone")} />
         </div>
       </div>
 
@@ -127,7 +155,9 @@ const limparFormulario = () => {
             placeholder="123.456.789-00"
             required
             value={cpf}
-            onChange={(e) => setCpf(e.target.value)} />
+            className={classeDe("cpf")}
+            onChange={(e) => setCpf(mascaraCPF(e.target.value))} />
+            <MensagemErro erro={erroDe("cpf")} />
         </div>
 
 
@@ -138,7 +168,9 @@ const limparFormulario = () => {
             placeholder="Digite o seu Email"
             required
             value={email}
+            className={classeDe("email")}
             onChange={(e) => setEmail(e.target.value)} />
+            <MensagemErro erro={erroDe("email")} />
         </div>
       </div>
 
@@ -149,10 +181,9 @@ const limparFormulario = () => {
         <input
           type={olhoPassword? 'text': 'password'}
           placeholder="Crie sua senha"
-          pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
-          title="A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiuscula, uma letra minúscula, qualquer caractere especial e um número."
           value={password}
-          onChange={(e) => setPassword(e.target.value)} />
+          className={classeDe("senha")}
+            onChange={(e) => setPassword(e.target.value)} />
 
           <img  src={olhoPassword ? olhoAberto : olhoFechado}
         alt="Mostrar senha"
@@ -160,6 +191,8 @@ const limparFormulario = () => {
         onClick={() => setOlhoPassword(!olhoPassword)}
         />
       </div>
+            <ForcaSenha senha={password} />
+            <MensagemErro erro={erroDe("senha")} />
       </div>
 
       <div className="campo">
@@ -185,14 +218,15 @@ const limparFormulario = () => {
         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
         />
       
-       </div>   
+       </div>
+        <MensagemErro erro={confirmacaodesenha || tentouEnviar ? erros.confirmacao : null} />   
       </div>
 
 </div>
 
 <div className='btn-login'>
  
-      <button type="submit"> Cadastrar</button>
+      <button type="submit" disabled={enviando}>{enviando ? "Cadastrando..." : "Cadastrar"}</button>
 
 
     </div>

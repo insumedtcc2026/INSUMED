@@ -107,10 +107,12 @@ export async function concluirAgendamento(sol_id: number): Promise<void> {
 // CANCELAR AGENDAMENTO
 // ---------------------------------------------------------
 
-export async function cancelarAgendamento(sol_id: number): Promise<void> {
+// O motivo é obrigatório (validado também no backend) e fica salvo no
+// agendamento para consulta posterior pelo admin e pelo paciente.
+export async function cancelarAgendamento(sol_id: number, motivo: string): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/cancelar`,
-    {},
+    { motivo },
     { headers: authHeader("ADMIN") }
   );
 }

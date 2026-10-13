@@ -8,7 +8,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token_paciente");
 
-  console.log("Token do paciente encontrado:", Boolean(token));
+  
 
   if (token && token !== "null" && token !== "undefined" && token.trim() !== "") {
     config.headers.Authorization = `Bearer ${token}`;

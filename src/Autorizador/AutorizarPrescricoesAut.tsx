@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { useValidarToken } from "../hook/Validartoken.tsx";
 
-import Sidebaradm from "../components/universais/Siderbaradm.tsx";
+import SidebarAut from "../components/universais/SidebarAut.tsx";
 import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
@@ -12,6 +12,7 @@ import Footer from "../components/universais/Footer.tsx";
 import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
 
 
 const API_URL = "https://backend-insumed-lhac.vercel.app";
@@ -190,18 +191,13 @@ const alterarStatus = async (
             inputPlaceholder: "Escreva o motivo aqui...",
             inputAttributes: {
                 "aria-label": "Motivo da não autorização",
-                maxlength: "1000"
+                maxlength: String(MOTIVO_MAX)
             },
             showCancelButton: true,
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             confirmButtonColor: "#d33",
-            inputValidator: (valor) => {
-                if (!valor || !valor.trim()) {
-                    return "Você precisa informar o motivo.";
-                }
-                return null;
-            }
+            inputValidator: (valor) => validarMotivo(valor)
         });
 
         if (!resultado.isConfirmed) return;
@@ -278,7 +274,7 @@ const alterarStatus = async (
 
       <Header onMenuClick={toggleSidebar} />
 
-      <Sidebaradm
+      <SidebarAut
         isOpen={sidebarOpen}
         onClose={toggleSidebar}
       />

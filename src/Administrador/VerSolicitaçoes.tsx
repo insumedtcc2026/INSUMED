@@ -294,7 +294,10 @@ const carregarPrescricoes = async () => {
 <button
   className="btn-ver-mais"
   onClick={() => {
-    if (prescricao.sol_status === "Autorizado") {
+    if (prescricao.sol_status === "Autorizado" && prescricao.agendamento_ativo) {
+      // já agendada: abre a lista de agendamentos filtrada pelo CPF
+      navigate(`/Agendamentosadm?busca=${encodeURIComponent(prescricao.pac_cpf)}`);
+    } else if (prescricao.sol_status === "Autorizado") {
       navigate(
         `/Agendamentosadm?cpf=${prescricao.pac_cpf}&sol_id=${prescricao.sol_id}`
       );
@@ -309,7 +312,11 @@ const carregarPrescricoes = async () => {
     }
   }}
 >
-  Ver mais
+  {prescricao.sol_status !== "Autorizado"
+    ? "Ver mais"
+    : prescricao.agendamento_ativo
+    ? "Ver agendamento"
+    : "Agendar"}
 </button>
                         </div>
 

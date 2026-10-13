@@ -18,6 +18,7 @@ import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
+import { mensagemErroApi } from '../utils/validacoes';
 
 
 
@@ -292,10 +293,12 @@ function EnviarSolicitaçao() {
 
         } catch (error) {
 
+            // mostra o motivo vindo do backend (ex.: prescrição já enviada,
+            // arquivo acima de 5 MB) em vez de uma mensagem genérica
             Swal.fire({
                 icon: 'error',
                 title: 'Erro ao enviar prescrição!',
-                text: 'Não foi possível enviar a prescrição.',
+                text: mensagemErroApi(error, 'Não foi possível enviar a prescrição.'),
                 confirmButtonColor: '#dc3545',
             });
 

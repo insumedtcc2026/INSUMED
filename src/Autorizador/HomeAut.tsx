@@ -5,19 +5,14 @@ import InfoSection from '../components/home-log/InfoSection.tsx';
 import '../css/home/Homepaciente.css';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
-import Sidebaradm from '../components/universais/Siderbaradm.tsx';
-import HeaderAdm from '../components/universais/HeaderAdm.tsx';
+import SidebarAut from '../components/universais/SidebarAut.tsx';
+import HeaderAut from '../components/universais/HeaderAut.tsx';
 
 /**
- * Home do administrador — equivalente a pages/Home.tsx (paciente), só que
- * com o Header/Sidebar de admin e os cards de atalho voltados pra quem
- * administra o sistema (InfoSection já tinha um conjunto de cards pronto
- * pra userType="administrador", só não existia nenhuma página usando).
- *
- * Esta é a página que "Início" no menu do ADM deve abrir — não a lista de
- * agendamentos.
+ * Home do autorizador: header e menu lateral próprios do perfil e o atalho
+ * para a fila de prescrições que aguardam análise.
  */
-export default function HomeAdmin() {
+export default function HomeAut() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { verificando } = useValidarToken("AUTORIZADOR");
@@ -35,16 +30,16 @@ export default function HomeAdmin() {
   };
 
   return (
-    <div className="home-admin-page">
-      <HeaderAdm onMenuClick={toggleSidebar} />
+    <div className="home-admin-page home-aut-page">
+      <HeaderAut onMenuClick={toggleSidebar} />
 
-      <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
+      <SidebarAut isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <main className="conteudo-home">
         <Banner imageUrl={bannerInsumed} alt="Banner Insumed" />
       </main>
 
-      <InfoSection userType="administrador" />
+      <InfoSection userType="autorizador" />
 
       <Footer />
     </div>

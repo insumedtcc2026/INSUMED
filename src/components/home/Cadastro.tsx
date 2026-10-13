@@ -1,5 +1,5 @@
 import axios from 'axios'
-import images from "../../assets/home-log/teste cadastro.png"; 
+import images from "../../assets/home-log/teste cadastro.png";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import olhoAberto from '../../assets/home-log/olho aberto.png';
@@ -7,46 +7,112 @@ import olhoFechado from '../../assets/home-log/olho fechado.png';
 import { useState } from "react";
 import "../../css/home/Cadastro.css";
 import BotaoVoltar from "../universais/BotaoVoltar";
+import ForcaSenha, { MensagemErro } from "../universais/ForcaSenha";
+import {
+  mascaraCEP, mascaraCPF, mascaraTelefone, mensagemErroApi, temErros,
+  validarCEP, validarConfirmacaoSenha, validarCPF, validarDataNascimento,
+  validarEmail, validarNome, validarObrigatorio, validarSenha, validarTelefone,
+  type ErrosFormulario,
+} from "../../utils/validacoes";
+
+const formularioVazio = {
+  nome: "",
+  telefone: "",
+  cpf: "",
+  email: "",
+  dataNasc: "",
+  sexo: "",
+  senha: "",
+  confirmacao: "",
+  cor: "",
+  cep: "",
+  endereco: "",
+};
+
+type Campo = keyof typeof formularioVazio;
+
+function validarFormulario(f: typeof formularioVazio): ErrosFormulario<Campo> {
+  return {
+    nome: validarNome(f.nome),
+    telefone: validarTelefone(f.telefone),
+    cpf: validarCPF(f.cpf),
+    email: validarEmail(f.email),
+    dataNasc: validarDataNascimento(f.dataNasc),
+    sexo: validarObrigatorio(f.sexo, "o gênero"),
+    senha: validarSenha(f.senha),
+    confirmacao: validarConfirmacaoSenha(f.senha, f.confirmacao),
+    cor: validarObrigatorio(f.cor, "a cor/raça"),
+    cep: validarCEP(f.cep),
+    endereco: f.endereco.trim().length < 5 ? "Informe o endereço completo." : null,
+  };
+}
 
 function Cadastro(){
 
 const navigate = useNavigate();
-    
+const [form, setForm] = useState(formularioVazio);
+const [tocados, setTocados] = useState<Partial<Record<Campo, boolean>>>({});
+const [tentouEnviar, setTentouEnviar] = useState(false);
+const [enviando, setEnviando] = useState(false);
+const [olhoPassword, setOlhoPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+const erros = validarFormulario(form);
+
+// Mostra o erro de um campo só depois que o usuário saiu dele ou tentou enviar.
+const erroDe = (campo: Campo) => (tocados[campo] || tentouEnviar ? erros[campo] : null);
+
+const classeDe = (campo: Campo) => {
+  if (!tocados[campo] && !tentouEnviar) return "";
+  return erros[campo] ? "input-erro" : "input-correto";
+};
+
+// A confirmação dá retorno imediato assim que o usuário começa a digitar.
+const confirmacaoVisivel = form.confirmacao !== "" || Boolean(tocados.confirmacao) || tentouEnviar;
+
+const alterar = (campo: Campo, valor: string) => setForm((f) => ({ ...f, [campo]: valor }));
+const sair = (campo: Campo) => setTocados((t) => ({ ...t, [campo]: true }));
+
+const propsCampo = (campo: Campo) => ({
+  value: form[campo],
+  onBlur: () => sair(campo),
+  className: classeDe(campo),
+  "aria-invalid": Boolean(erroDe(campo)),
+});
+
 const handleCadastro = async () => {
-  if (password !== confirmacaodesenha) {
+  setTentouEnviar(true);
+
+  if (temErros(erros)) {
     Swal.fire({
       icon: 'error',
-      title: 'Ops...',
-      text: 'Os campos referente a senha devem ter a mesma senha, tente novamente!',
+      title: 'Confira os dados',
+      text: 'Alguns campos estão incorretos ou não foram preenchidos. Corrija os campos destacados em vermelho.',
       confirmButtonColor: '#d33'
     });
     return;
   }
 
-  console.log(sexo);
-
+  setEnviando(true);
   try {
-    console.log(sexo);
-
-    const response = await axios.post(
+    await axios.post(
       'https://backend-insumed-lhac.vercel.app/pacientes',
       {
-        nome: text1,
-        email: email,
-        telefone: tel,
-        cpf: cpf,
-        data_nasc: date,
-        sexo: sexo,
-        endereco: endereco,
-        raca: cor,
-        senha: password,
-        cep: cep,
+        nome: form.nome.trim().replace(/\s+/g, " "),
+        email: form.email.trim().toLowerCase(),
+        telefone: form.telefone,
+        cpf: form.cpf,
+        data_nasc: form.dataNasc,
+        sexo: form.sexo,
+        endereco: form.endereco.trim(),
+        raca: form.cor,
+        senha: form.senha,
+        confirmacao_senha: form.confirmacao,
+        cep: form.cep,
       }
     );
 
-    console.log(response.data);
-
-    Swal.fire({
+    await Swal.fire({
       icon: 'success',
       title: 'Cadastro realizado!',
       text: 'Seu cadastro foi efetuado com êxito.',
@@ -57,55 +123,30 @@ const handleCadastro = async () => {
     limparFormulario();
     navigate('/login');
 
-  } catch (error: any) {
-    console.error("Erro:", error);
-
-    // Pega os erros enviados pelo backend
-    const erros = error.response?.data?.erros;
+  } catch (error) {
+    console.error("Erro no cadastro:", error);
 
     Swal.fire({
       icon: 'error',
-      title: 'Ops...',
-      text: erros
-        ? erros.join('\n')
-        : 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.',
+      title: 'Não foi possível cadastrar',
+      text: mensagemErroApi(error, 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.'),
       confirmButtonColor: '#d33'
     });
+  } finally {
+    setEnviando(false);
   }
 };
 
 const limparFormulario = () => {
-  setEmail("");
-  setCpf("");
-  setText1("");
-  setDate("");
-  setSexo("");
-  setTel("");
-  setPassword("");
-  setConfirmacao("");
-  setCor("");
-  setCep("");
-    setEndereco("");
+  setForm(formularioVazio);
+  setTocados({});
+  setTentouEnviar(false);
 };
-      const [email, setEmail] = useState("");
-      const [cpf, setCpf] = useState("");
-      const [text1, setText1] = useState("");
-      const [date, setDate] = useState("");
-      const [sexo, setSexo] = useState("");
-  const [tel, setTel] = useState("");
-   const [password, setPassword] = useState(""); 
-   const [cor, setCor] = useState("");
-     const [cep, setCep] = useState("");
-     const [endereco, setEndereco] = useState("");
-     const [confirmacaodesenha, setConfirmacao] = useState("");
-     const[olhoPassword, setOlhoPassword] =useState(false);
-      
-      const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-      const senhasIguais = password===confirmacaodesenha
+
       return(
         <>
    <div className="login-fullscreen-container">
-    
+
       <div className="login-image-panel">
         <img src={images} alt="Login Background" />
       </div>
@@ -116,28 +157,33 @@ const limparFormulario = () => {
         <div className="form-wrapper">
     <div className="Text-Cadastro">Cadastre-se</div>
 
-      
-  
-     <form className="formulario" onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
- 
+
+
+     <form className="formulario" noValidate onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
+
       <div className="Alinha-campos">
         <div className="campo">
           <label>Seu Nome Completo</label>
           <input
             type="text"
             placeholder="Digite o seu nome completo"
-            name="text"
-            required
-            onChange={(e) => setText1(e.target.value)} />
+            name="nome"
+            autoComplete="name"
+            maxLength={100}
+            {...propsCampo("nome")}
+            onChange={(e) => alterar("nome", e.target.value)} />
+          <MensagemErro erro={erroDe("nome")} />
         </div>
         <div className="campo">
           <label>Numero de Telefone</label>
           <input
             type="tel"
             placeholder="(24) 99999-9999"
-            required
-            value={tel}
-            onChange={(e) => setTel(e.target.value)} />
+            autoComplete="tel"
+            inputMode="numeric"
+            {...propsCampo("telefone")}
+            onChange={(e) => alterar("telefone", mascaraTelefone(e.target.value))} />
+          <MensagemErro erro={erroDe("telefone")} />
         </div>
       </div>
 
@@ -147,18 +193,21 @@ const limparFormulario = () => {
           <input
             type="text"
             placeholder="123.456.789-00"
-            required
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)} />
+            inputMode="numeric"
+            {...propsCampo("cpf")}
+            onChange={(e) => alterar("cpf", mascaraCPF(e.target.value))} />
+          <MensagemErro erro={erroDe("cpf")} />
         </div>
         <div className="campo">
           <label>Email</label>
           <input
             type="email"
             placeholder="Digite o seu Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} />
+            autoComplete="email"
+            maxLength={254}
+            {...propsCampo("email")}
+            onChange={(e) => alterar("email", e.target.value)} />
+          <MensagemErro erro={erroDe("email")} />
         </div>
       </div>
 
@@ -167,20 +216,17 @@ const limparFormulario = () => {
         <label>Data de Nascimento</label>
         <input
           type="date"
-          placeholder="Digite sua Data de Nascimento"
-          value={date}
-          required
-          onChange={(e) => setDate(e.target.value)} />
-      
+          max={new Date().toISOString().slice(0, 10)}
+          {...propsCampo("dataNasc")}
+          onChange={(e) => alterar("dataNasc", e.target.value)} />
+        <MensagemErro erro={erroDe("dataNasc")} />
       </div>
 
       <div className="campo">
         <label className='labels'>Gênero</label>
         <select
-      
-      value={sexo}
-      required
-      onChange={(e) => setSexo(e.target.value)}
+          {...propsCampo("sexo")}
+          onChange={(e) => alterar("sexo", e.target.value)}
         >
          <option value="">Selecione</option>
           <option value='Feminino'>Feminino</option>
@@ -188,6 +234,7 @@ const limparFormulario = () => {
           <option value='Outro'>Outro</option>
           <option value='Prefiro não responder'>Prefiro não responder</option>
         </select>
+        <MensagemErro erro={erroDe("sexo")} />
       </div>
       </div>
 <div className="Alinha-campos">
@@ -197,10 +244,10 @@ const limparFormulario = () => {
         <input
           type={olhoPassword? 'text': 'password'}
           placeholder="Crie sua senha"
-          pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
-          title="A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiuscula, uma letra minúscula, qualquer caractere especial e um número."
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} />
+          autoComplete="new-password"
+          maxLength={64}
+          {...propsCampo("senha")}
+          onChange={(e) => alterar("senha", e.target.value)} />
 
           <img  src={olhoPassword ? olhoAberto : olhoFechado}
         alt="Mostrar senha"
@@ -208,6 +255,8 @@ const limparFormulario = () => {
         onClick={() => setOlhoPassword(!olhoPassword)}
         />
       </div>
+        <ForcaSenha senha={form.senha} />
+        <MensagemErro erro={erroDe("senha")} />
       </div>
 
       <div className="campo">
@@ -216,15 +265,11 @@ const limparFormulario = () => {
         <input
           type={showConfirmPassword? 'text': 'password'}
           placeholder="Confirme sua senha"
-          value={confirmacaodesenha}
-          onChange={(e)=>setConfirmacao(e.target.value)}
-          className={
-        confirmacaodesenha === ""
-        ? ""// sem classe css
-        : senhasIguais//compara as senha
-        ? "input-correto"
-        : "input-erro"
-    }
+          autoComplete="new-password"
+          maxLength={64}
+          {...propsCampo("confirmacao")}
+          className={confirmacaoVisivel ? (erros.confirmacao ? "input-erro" : "input-correto") : ""}
+          onChange={(e)=>alterar("confirmacao", e.target.value)}
           />
 
             <img  src={showConfirmPassword ? olhoAberto : olhoFechado}
@@ -232,8 +277,9 @@ const limparFormulario = () => {
         className="icone-olho"
         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
         />
-      
-       </div>   
+
+       </div>
+        <MensagemErro erro={confirmacaoVisivel ? erros.confirmacao : null} />
       </div>
 
 </div>
@@ -246,12 +292,10 @@ const limparFormulario = () => {
 
         <label className='text'>Cor</label>
          <select
-
-value={cor}
-required
-onChange={(e) => setCor(e.target.value)}
+          {...propsCampo("cor")}
+          onChange={(e) => alterar("cor", e.target.value)}
 >
-          <option></option>
+          <option value="">Selecione</option>
           <option>Branco</option>
           <option>Preto</option>
           <option>Pardo</option>
@@ -259,17 +303,20 @@ onChange={(e) => setCor(e.target.value)}
           <option>Indigena</option>
           <option>Prefiro não responder</option>
         </select>
+        <MensagemErro erro={erroDe("cor")} />
       </div>
-        
-        
+
+
       <div className="campo">
         <label>CEP</label>
         <input
           type="text"
           placeholder="00000-000"
-          required
-          value={cep}
-          onChange={(e) => setCep(e.target.value)} />
+          inputMode="numeric"
+          autoComplete="postal-code"
+          {...propsCampo("cep")}
+          onChange={(e) => alterar("cep", mascaraCEP(e.target.value))} />
+        <MensagemErro erro={erroDe("cep")} />
         </div>
         </div>
 <div className="Alinha-campos">
@@ -277,37 +324,39 @@ onChange={(e) => setCor(e.target.value)}
        <label>Endereço</label>
         <input
           type="text"
-          required
           placeholder=" Ex: rua blabla, n123 cidade, estado"
-          value={endereco}
-          onChange={(e) => setEndereco(e.target.value)} />
+          autoComplete="street-address"
+          maxLength={200}
+          {...propsCampo("endereco")}
+          onChange={(e) => alterar("endereco", e.target.value)} />
+        <MensagemErro erro={erroDe("endereco")} />
 </div>
       </div>
 
 <div className='btn-login'>
- 
-      <button type="submit"> Cadastrar</button>
+
+      <button type="submit" disabled={enviando}>{enviando ? "Cadastrando..." : "Cadastrar"}</button>
 
 
     </div>
 
     <div className='btn-login1'>
 
-    <button type="reset" onClick={limparFormulario}> Limpar</button>
+    <button type="reset" onClick={limparFormulario} disabled={enviando}> Limpar</button>
 </div>
 
     </form>
 
-      
+
  </div>
 
 
     </div>
     </div>
-    
+
     </>
 );
 }
-  
+
 
 export default Cadastro;

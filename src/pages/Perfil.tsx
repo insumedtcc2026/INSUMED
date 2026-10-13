@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { validarCEP, validarCPF, validarEmail, validarNome, validarTelefone } from "../utils/validacoes";
 import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
@@ -204,43 +205,18 @@ const editarInformacao = async (
         return "Este campo não pode ficar vazio!";
       }
 
-      switch (campo) {
-        case "nome":
-          if (/\d/.test(texto)) {
-            return "O nome não pode conter números!";
-          }
-          if (texto.length < 3) {
-            return "Digite um nome com pelo menos 3 caracteres.";
-          }
-          break;
-
-        case "cep": {
-          const cep = texto.replace(/\D/g, "");
-          if (cep.length !== 8) {
-            return "O CEP deve conter exatamente 8 números.";
-          }
-          break;
-        }
-
-        case "email":
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto)) {
-            return "Digite um endereço de e-mail válido.";
-          }
-          break;
-
-        case "endereco":
-          if (texto.length < 3) {
-            return "Digite um endereço válido.";
-          }
-          break;
-
-        case "telefone": {
-          const telefone = texto.replace(/\D/g, "");
-          if (telefone.length !== 10 && telefone.length !== 11) {
-            return "Digite um telefone com DDD e 10 ou 11 números.";
-          }
-          break;
-        }
+      // Mesmas regras do cadastro (o backend também valida).
+      const validadores: Record<string, (v: string) => string | null> = {
+        nome: validarNome,
+        cpf: validarCPF,
+        cep: validarCEP,
+        email: validarEmail,
+        telefone: validarTelefone,
+        endereco: (v) => (v.length < 5 ? "Informe o endereço completo." : null),
+      };
+      const erroCampo = validadores[campo]?.(texto);
+      if (erroCampo) {
+        return erroCampo;
       }
 
       return null;

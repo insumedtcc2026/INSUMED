@@ -3,6 +3,7 @@ import '../../css/universais/Sidebar.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
+import { sairDoPerfil } from './sessao';
 
 import { LogOut, Upload, X } from 'lucide-react';
 
@@ -57,8 +58,7 @@ export default function Sidebar({
       label: 'Sair',
       path: '/login',
        action: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sairDoPerfil('PACIENTE');
       }
     },
   ];
@@ -89,6 +89,7 @@ export default function Sidebar({
           <button
             onClick={onClose}
             className="sidebar-close-button"
+            aria-label="Fechar menu"
           >
             <X className="sidebar-close-icon" />
           </button>

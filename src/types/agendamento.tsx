@@ -42,6 +42,11 @@ export interface Agendamento {
   sol_data_de_coleta: string | null;
   sol_hora_coleta?: string;
   status: StatusAgendamento;
+  // preenchidos quando o admin cancela o agendamento
+  sol_motivo_cancelamento?: string | null;
+  sol_data_cancelamento?: string | null;
+  // prescrição autorizada que originou o agendamento (null nos antigos)
+  sol_origem_id?: number | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];
@@ -52,6 +57,7 @@ export interface NovoAgendamentoPayload {
   sol_data_de_coleta: string;
   posto?: Posto;
   itens: ItemNovoAgendamento[];
+  sol_origem_id?: number;
 }
 
 export interface ResultadoPaginado<T> {
