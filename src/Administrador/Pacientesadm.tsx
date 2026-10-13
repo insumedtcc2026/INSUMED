@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from '../components/universais/Header';
+import Header from '../components/universais/HeaderAdm';
 import Sidebaradm from '../components/universais/Siderbaradm';
 import Footer from '../components/universais/Footer';
 import type { Paciente } from '../types/agendamento';
@@ -8,14 +8,14 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 export default function Pacientes() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  
   const [cpf, setCpf] = useState('');
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [carregando, setCarregando] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
-  };
+  }; 
 
   const handleBuscar = async (valor: string) => {
     setCpf(valor);
