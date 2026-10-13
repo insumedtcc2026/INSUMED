@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const api = axios.create({
@@ -5,27 +6,23 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const tokenAdmin = localStorage.getItem("token_admin");
-  const tokenPaciente = localStorage.getItem("token_paciente");
-  const tokenAutorizador = localStorage.getItem("token_autorizador");
+  const token = localStorage.getItem("token_admin");
 
-  const tokenValido = (token: string | null) =>
-    token && token !== "null" && token !== "undefined" && token.trim() !== ""
-      ? token
-      : null;
-
-  const token =
-    tokenValido(tokenAdmin) ||
-    tokenValido(tokenPaciente) ||
-    tokenValido(tokenAutorizador);
-
-  if (token) {
+  if (
+    token &&
+    token !== "null" &&
+    token !== "undefined" &&
+    token.trim() !== ""
+  ) {
     config.headers.Authorization = `Bearer ${token}`;
   } else {
     delete config.headers.Authorization;
   }
 
-  console.log("TOKEN ENVIADO:", token ? "Token encontrado" : "Nenhum token válido");
+  console.log(
+    "Token administrativo válido:",
+    Boolean(token && token !== "null" && token !== "undefined" && token.trim() !== "")
+  );
 
   return config;
 });
