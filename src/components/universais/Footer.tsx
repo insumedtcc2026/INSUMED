@@ -27,6 +27,7 @@ const linksPaciente: FooterLink[] = [
 const linksAdministrador: FooterLink[] = [
   { label: 'Início', href: '/HomeAdmin' },
   { label: 'Agendamentos', href: '/Agendamentosadm' },
+  { label: 'Coletas de hoje', href: '/coletas-hoje' },
   { label: 'Solicitações', href: '/VerSolicitaçoes' },
   { label: 'Histórico de Prescrições', href: '/Historicodaprescricao' },
   { label: 'Insumos', href: '/insumos' },
@@ -46,9 +47,11 @@ const rotasAdministrador = [
   '/versolicitaçoes',
   '/historicodaprescricao',
   '/administrador/',
+  '/coletas-hoje',
+  '/perfil-admin',
 ];
 
-const rotasAutorizador = ['/homeaut', '/verprescricoesaprovadas', '/autorizador/'];
+const rotasAutorizador = ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'];
 
 // O perfil é deduzido pela página em que o rodapé aparece (antes ele lia
 // as chaves "tipo"/"usuario", que o login não grava mais, e o admin via

@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
 
-import { ClipboardCheck, LogOut, X } from 'lucide-react';
+import { ClipboardCheck, LogOut, UserCog, X } from 'lucide-react';
 import { GoHomeFill } from 'react-icons/go';
 
 import { sairDoPerfil } from './sessao';
@@ -37,6 +37,11 @@ const itensMenu: ItemMenu[] = [
     label: 'Prescrições para análise',
     path: '/verprescricoesaprovadas',
     ativoEm: (p) => p.startsWith('/autorizador/solicitacao/'),
+  },
+  {
+    icon: UserCog,
+    label: 'Meu perfil',
+    path: '/perfil-autorizador',
   },
   {
     icon: LogOut,

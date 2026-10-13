@@ -8,6 +8,8 @@ import { sairDoPerfil } from './sessao';
 
 import {
   CalendarPlus,
+  ClipboardCheck,
+  UserCog,
   Files,
   LogOut,
   Package,
@@ -50,6 +52,11 @@ export default function Sidebar({
       path: '/Agendamentosadm?novo=1',
     },
     {
+      icon: ClipboardCheck,
+      label: 'Coletas de hoje',
+      path: '/coletas-hoje',
+    },
+    {
       icon: Files,
       label: 'Solicitações',
       path: '/VerSolicitaçoes',
@@ -72,6 +79,11 @@ export default function Sidebar({
 
 
 
+    {
+      icon: UserCog,
+      label: 'Meu perfil',
+      path: '/perfil-admin',
+    },
     {
       icon: LogOut,
       label: 'Sair',

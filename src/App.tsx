@@ -25,6 +25,9 @@ import FluxoInsumo from './Administrador/fluxoinsumo';
 import TermosDeUso from './pages/TermosDeUso';
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import SegurancaDados from './pages/SegurancaDados';
+import ColetasHoje from './Administrador/ColetasHoje';
+import FichaPaciente from './Administrador/FichaPaciente';
+import PerfilEquipe from './components/universais/PerfilEquipe';
 import VerPrescricaoNaoAutorizada from
     "./Administrador/VerPrescricaoNaoAutorizada";
 import './index.css';
@@ -159,6 +162,12 @@ function App() {
         path="/cadastro"
         element={<Cadastro />}
       />
+
+      {/* Admin: balcão, ficha do paciente e perfil */}
+      <Route path="/coletas-hoje" element={<ColetasHoje />} />
+      <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
+      <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
+      <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
 
       {/* Páginas jurídicas (públicas, linkadas no footer) */}
       <Route path="/termos" element={<TermosDeUso />} />

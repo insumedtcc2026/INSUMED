@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { buscarPrescricoesPendentes } from "../services/PrescricaoService";
 import type { PrescricaoPendente } from "../services/PrescricaoService";
@@ -21,6 +21,9 @@ export default function Pendencias() {
 
     const navigate = useNavigate();
 
+    // a Home do admin abre esta tela já filtrada (ex.: ?status=ParaAgendar)
+    const [searchParams] = useSearchParams();
+
     
     // ESTADOS
 
@@ -39,7 +42,7 @@ export default function Pendencias() {
     const [, setCarregando] =
         useState(true);
 const [statusFiltro, setStatusFiltro] =
-        useState("Todos");
+        useState(searchParams.get("status") ?? "Todos");
 
    
     // VALIDAÇÃO DO TOKEN
@@ -72,10 +75,13 @@ const [statusFiltro, setStatusFiltro] =
                     .includes(termo);
 
 
+            // "ParaAgendar" = autorizada que ainda não virou agendamento
             const correspondeStatus =
                 statusFiltro === "Todos"
                 ||
-                prescricao.sol_status === statusFiltro;
+                (statusFiltro === "ParaAgendar"
+                    ? prescricao.sol_status === "Autorizado" && !prescricao.agendamento_ativo
+                    : prescricao.sol_status === statusFiltro);
 
 
             let correspondeData = true;
@@ -193,6 +199,7 @@ const carregarPrescricoes = async () => {
         <option value="Pendente">Pendente</option>
         <option value="Revisado">Revisado</option>
         <option value="Autorizado">Autorizado</option>
+        <option value="ParaAgendar">Autorizado, falta agendar</option>
         <option value="Nao Autorizado">Não Autorizado</option>
     </select>
 </div>

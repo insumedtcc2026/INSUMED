@@ -6,7 +6,16 @@ import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
 import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
+import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
+
 const API_URL = "https://backend-insumed-lhac.vercel.app";
+
+// "2026-10-15" -> "qua, 15/10"
+function formatarDiaCurto(data: string) {
+  const [a, m, d] = data.split("-").map(Number);
+  const semana = new Date(a, m - 1, d).toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+  return `${semana}, ${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}`;
+}
 
 interface NovoAgendamentoModalProps {
   onClose: () => void;
@@ -66,6 +75,23 @@ useEffect(() => {
   // --- posto de coleta ---
   const [postos, setPostos] = useState<Posto[]>([]);
   const [postoSelecionado, setPostoSelecionado] = useState<Posto | null>(null);
+
+  // --- datas sugeridas para o posto escolhido ---
+  const [sugestoes, setSugestoes] = useState<DatasSugeridas | null>(null);
+
+  useEffect(() => {
+    setSugestoes(null);
+    if (!postoSelecionado) return;
+    let ativo = true;
+    buscarDatasSugeridas(postoSelecionado.pos_id)
+      .then((d) => ativo && setSugestoes(d))
+      .catch(() => {
+        /* sem sugestões; o admin escolhe a data no calendário normalmente */
+      });
+    return () => {
+      ativo = false;
+    };
+  }, [postoSelecionado]);
 
   // --- envio ---
   const [enviando, setEnviando] = useState(false);
@@ -259,6 +285,37 @@ useEffect(() => {
               ))}
             </select>
           </div>
+
+          {/* Datas sugeridas: dias úteis com menos coletas no posto escolhido */}
+          {postoSelecionado && sugestoes && sugestoes.sugeridas.length > 0 && (
+            <div className="sm:col-span-2">
+              <p className="mb-2 text-sm font-medium text-gray-600">
+                Datas com menos coletas em {postoSelecionado.pos_nome}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {sugestoes.sugeridas.map((data) => {
+                  const qtd = sugestoes.datas.find((d) => d.data === data)?.agendados ?? 0;
+                  const ativa = dataColeta === data;
+                  return (
+                    <button
+                      key={data}
+                      type="button"
+                      onClick={() => setDataColeta(data)}
+                      aria-pressed={ativa}
+                      className={`min-h-11 rounded-full border px-4 text-sm transition ${
+                        ativa
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
+                      }`}
+                    >
+                      {formatarDiaCurto(data)} ·{" "}
+                      {qtd === 0 ? "livre" : `${qtd} ${qtd === 1 ? "coleta" : "coletas"}`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Produto (digitado, não buscado) */}
           <div>
