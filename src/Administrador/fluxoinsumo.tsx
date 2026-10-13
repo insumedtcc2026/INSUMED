@@ -87,7 +87,7 @@ export default function FluxoInsumo() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token_admin");
 
       const resposta = await axios.post(
         "https://backend-insumed-lhac.vercel.app/insumos",
