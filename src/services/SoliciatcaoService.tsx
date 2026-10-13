@@ -6,23 +6,15 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token_admin");
+  const token = localStorage.getItem("token_paciente");
 
-  if (
-    token &&
-    token !== "null" &&
-    token !== "undefined" &&
-    token.trim() !== ""
-  ) {
+  console.log("Token do paciente encontrado:", Boolean(token));
+
+  if (token && token !== "null" && token !== "undefined" && token.trim() !== "") {
     config.headers.Authorization = `Bearer ${token}`;
   } else {
     delete config.headers.Authorization;
   }
-
-  console.log(
-    "Token administrativo válido:",
-    Boolean(token && token !== "null" && token !== "undefined" && token.trim() !== "")
-  );
 
   return config;
 });
