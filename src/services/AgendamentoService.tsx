@@ -13,10 +13,27 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-function authHeader() {
-  const token = localStorage.getItem("token_paciente");
+
+type TipoUsuario = "ADMIN" | "PACIENTE" | "AUTORIZADOR";
+
+function authHeader(tipo: TipoUsuario) {
+  const chavesToken: Record<TipoUsuario, string> = {
+    ADMIN: "token_admin",
+    PACIENTE: "token_paciente",
+    AUTORIZADOR: "token_autorizador",
+  };
+
+  const token = localStorage.getItem(chavesToken[tipo]);
+
+  if (!token || token === "null" || token === "undefined" || !token.trim()) {
+    throw new Error(
+      `Token inválido para o perfil ${tipo}. Faça login novamente.`
+    );
+  }
+
   return { Authorization: `Bearer ${token}` };
 }
+
 
 // ---------------------------------------------------------
 // LISTAR AGENDAMENTOS (ADM) — página única, com filtros
@@ -36,7 +53,7 @@ export async function listarAgendamentos(
       data_inicio: filtros.dataInicio || undefined,
       data_fim: filtros.dataFim || undefined,
     },
-    headers: authHeader(),
+    headers: authHeader("ADMIN"),
   });
 
   return response.data;
@@ -56,7 +73,7 @@ export async function listarAgendamentosDoPaciente(
       page: pagina,
       porPagina: itensPorPagina,
     },
-    headers: authHeader(),
+    headers: authHeader("PACIENTE"),
   });
 
   return response.data;
@@ -68,7 +85,7 @@ export async function listarAgendamentosDoPaciente(
 
 export async function buscarProximoAgendamento(): Promise<Agendamento | null> {
   const response = await api.get("/meus-agendamentos/proximo", {
-    headers: authHeader(),
+    headers: authHeader("PACIENTE"),
   });
 
   return response.data;
@@ -82,7 +99,7 @@ export async function concluirAgendamento(sol_id: number): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/concluir`,
     {},
-    { headers: authHeader() }
+    { headers: authHeader("ADMIN") }
   );
 }
 
@@ -94,7 +111,7 @@ export async function cancelarAgendamento(sol_id: number): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/cancelar`,
     {},
-    { headers: authHeader() }
+    { headers: authHeader("ADMIN") }
   );
 }
 
@@ -106,7 +123,7 @@ export async function criarAgendamento(
   payload: NovoAgendamentoPayload
 ): Promise<{ sol_id: number; sol_protocolo: string }> {
   const response = await api.post("/agendamentos", payload, {
-    headers: authHeader(),
+    headers: authHeader("ADMIN"),
   });
 
   return response.data;
