@@ -13,6 +13,7 @@ import { useDetalhesPrescricao } from '../hook/Detalhesprescricao.tsx';
 import Swal from 'sweetalert2';
 import lapis from '../assets/home-log/lapis.png'
 import axios from 'axios';
+import { API_URL } from "../config";
 
 
 
@@ -125,7 +126,7 @@ export default function Perfil() {
     }
 
     const resposta = await axios.put(
-      "https://backend-insumed-lhac.vercel.app/pacientes/perfil",
+      `${API_URL}/pacientes/perfil`,
       {
         campo,
         valor

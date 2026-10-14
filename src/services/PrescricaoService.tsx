@@ -1,6 +1,6 @@
 import axios from "axios";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 export interface PrescricaoPendente {
     sol_id: number;
@@ -138,7 +138,7 @@ export async function buscarPrescricoesAprovadas() {
 
     try {
         const response = await axios.get(
-            `https://backend-insumed-lhac.vercel.app/prescricao/aprovadas?t=${Date.now()}`,
+            `${API_URL}/prescricao/aprovadas?t=${Date.now()}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`

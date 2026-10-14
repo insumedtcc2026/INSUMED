@@ -2,8 +2,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { salvarRecado, transferirUnidade } from "../../services/HistoricoService";
 import { MOTIVO_MAX, mensagemErroApi, validarMotivo } from "../../utils/validacoes";
+import { API_URL } from "../../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 export const RECADO_MAX = 300;
 
 const esc = (t: unknown) =>

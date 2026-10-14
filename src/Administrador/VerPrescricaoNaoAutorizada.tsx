@@ -10,8 +10,8 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 import "../css/home/AutorizarPrescicoesAut.css";
 import { exibirCPF } from "../utils/validacoes";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 interface Solicitacao {
     sol_id: number;

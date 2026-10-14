@@ -6,8 +6,8 @@ import type {
   ResultadoPaginado,
   FiltrosAgendamento,
 } from "../types/agendamento";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 const api = axios.create({
   baseURL: API_URL,

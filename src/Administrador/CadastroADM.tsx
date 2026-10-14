@@ -13,6 +13,7 @@ import {
   validarConfirmacaoSenha, validarCPF, validarEmail, validarNome,
   validarObrigatorio, validarSenha, validarTelefone,
 } from "../utils/validacoes";
+import { API_URL } from "../config";
 
 interface Posto {
     pos_id: number;   
@@ -52,7 +53,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
     useEffect(() => {
         async function carregarPostos() {
             try {
-                const response = await axios.get('https://backend-insumed-lhac.vercel.app/postos');
+                const response = await axios.get(`${API_URL}/postos`);
                 setPostos(response.data);
                 console.log("Postos carregados:", response.data);
             } catch (error) {
@@ -83,7 +84,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         setEnviando(true);
 
         try {
-            const response = await axios.post('https://backend-insumed-lhac.vercel.app/administrador', {
+            const response = await axios.post(`${API_URL}/administrador`, {
                 matricula: matricula,    
                 nome: text1.trim().replace(/\s+/g, " "),
                 email: email.trim().toLowerCase(),

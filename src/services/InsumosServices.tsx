@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { InsumoCatalogo } from "../types/agendamento";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 export async function buscarInsumos(
   termo: string

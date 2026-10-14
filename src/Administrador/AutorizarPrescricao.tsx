@@ -11,6 +11,7 @@ import "../css/home/AutorizarPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import ModalHistorico from "../components/universais/ModalHistorico";
 import { transferirComMotivo } from "../components/universais/acoesAdmin";
+import { API_URL } from "../config";
 
 
  
@@ -95,7 +96,7 @@ const [motivo, setMotivo] = useState("");
 
         const dadosResponse = await axios.get(
           //`http://localhost:3344/solicitacao/${id}`,
-          `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
+          `${API_URL}/solicitacao/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -132,7 +133,7 @@ setDataVencimento(
         
 
         const imagemResponse = await axios.get(
-          `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/prescricao`,
+          `${API_URL}/solicitacao/${id}/prescricao`,
           //`http://localhost:3344/solicitacao/${id}/prescricao`,
           {
             headers: {
@@ -183,7 +184,7 @@ setDataVencimento(
     const token = localStorage.getItem("token_admin");
 
     await axios.patch(
-     `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
+     `${API_URL}/solicitacao/${id}/reenvio`,
       //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
         motivo: motivo
@@ -248,7 +249,7 @@ const enviarSolicitacao = async () => {
     }
 
     await axios.patch(
-      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
+      `${API_URL}/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
          sol_status: "Revisado",

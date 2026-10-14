@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { API_URL } from "../config";
 
 type TipoUsuario = "ADMIN" | "AUTORIZADOR" | "PACIENTE";
 
@@ -34,7 +35,7 @@ export function useValidarToken(tipo: TipoUsuario) {
 
       try {
         const response = await axios.get(
-          "https://backend-insumed-lhac.vercel.app/validar",
+          `${API_URL}/validar`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

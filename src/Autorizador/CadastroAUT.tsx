@@ -13,6 +13,7 @@ import {
   validarConfirmacaoSenha, validarCPF, validarEmail, validarNome,
   validarSenha, validarTelefone,
 } from "../utils/validacoes";
+import { API_URL } from "../config";
 
 
 function CadastroAUT(){
@@ -32,7 +33,7 @@ const handleCadastro = async () => {
   }
   setEnviando(true);
   try {
-    const response = await axios.post('https://backend-insumed-lhac.vercel.app/autorizador', {  
+    const response = await axios.post(`${API_URL}/autorizador`, {  
   nome: text1.trim().replace(/\s+/g, " "),
   email: email.trim().toLowerCase(),
   telefone: tel,

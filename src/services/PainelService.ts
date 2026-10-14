@@ -1,6 +1,6 @@
 import axios from "axios";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 type Perfil = "ADMIN" | "AUTORIZADOR";
 

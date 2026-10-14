@@ -9,6 +9,7 @@ import olhoFechado from '../../assets/home-log/olho fechado.png'
 
 import images from "../../assets/home-log/teste login.webp"; 
 import BotaoVoltar from "../universais/BotaoVoltar";
+import { API_URL } from "../../config";
 
 
 
@@ -58,7 +59,7 @@ const Loginteste: React.FC = () => {
 
         
 const response = await axios.post(
-            "https://backend-insumed-lhac.vercel.app/login",
+            `${API_URL}/login`,
             {
                 email: email.trim().toLowerCase(),
                 senha: password

@@ -16,6 +16,7 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { useValidarToken } from "../hook/Validartoken";
 import { mensagemErroApi } from "../utils/validacoes";
 import axios from "axios";
+import { API_URL } from "../config";
 
 type FiltroStatus = "todos" | StatusAgendamento;
 
@@ -82,7 +83,7 @@ useEffect(() => {
       const token = localStorage.getItem("token_admin");
 
       const resposta = await axios.get(
-        `https://backend-insumed-lhac.vercel.app/solicitacao/${solIdUrl}`,
+        `${API_URL}/solicitacao/${solIdUrl}`,
       // `"http://localhost:3344/solicitacao/${solIdUrl}`,
         {
           headers: {

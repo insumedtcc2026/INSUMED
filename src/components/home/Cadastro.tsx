@@ -14,6 +14,7 @@ import {
   validarEmail, validarNome, validarSenha, validarTelefone,
   type ErrosFormulario,
 } from "../../utils/validacoes";
+import { API_URL } from "../../config";
 
 const formularioVazio = {
   nome: "",
@@ -97,7 +98,7 @@ const handleCadastro = async () => {
   setEnviando(true);
   try {
     await axios.post(
-      'https://backend-insumed-lhac.vercel.app/pacientes',
+      `${API_URL}/pacientes`,
       {
         nome: form.nome.trim().replace(/\s+/g, " "),
         email: form.email.trim().toLowerCase(),

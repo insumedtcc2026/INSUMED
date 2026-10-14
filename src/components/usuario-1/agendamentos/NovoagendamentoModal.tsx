@@ -7,8 +7,8 @@ import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agenda
 import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
 import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
+import { API_URL } from "../../../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 // "2026-10-15" -> "qua, 15/10"
 function formatarDiaCurto(data: string) {

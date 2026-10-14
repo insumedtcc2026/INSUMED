@@ -15,9 +15,9 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 import ModalHistorico from "../components/universais/ModalHistorico";
 import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
 import { exibirCPF } from "../utils/validacoes";
+import { API_URL } from "../config";
 
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 
 interface SolicitacaoAprovada {
