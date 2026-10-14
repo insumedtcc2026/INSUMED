@@ -19,7 +19,7 @@ function cabecalho(perfil: Perfil) {
 
 export interface PerfilEquipe {
   tipo: Perfil;
-  id: number;
+  id?: number; // só o autorizador tem id
   nome: string;
   email: string;
   telefone: string;
@@ -39,6 +39,8 @@ export async function atualizarMeuPerfil(
   dados: { nome: string; email: string; telefone: string },
 ): Promise<PerfilEquipe> {
   const { data } = await axios.put(`${API_URL}/perfil`, dados, { headers: cabecalho(perfil) });
+  // o admin é identificado pelo e-mail: se ele mudou, o backend manda um token novo
+  if (data.token) localStorage.setItem(chavesToken[perfil], data.token);
   return data.perfil;
 }
 
