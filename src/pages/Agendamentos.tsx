@@ -1,62 +1,71 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import NavInferiorPaciente from "../components/universais/NavInferiorPaciente";
 import { useValidarToken } from "../hook/Validartoken.tsx";
-import { useDadosUser } from "../hook/Dadosuser";
 import { listarAgendamentosDoPaciente } from "../services/AgendamentoService";
 import AgendamentoCardPaciente from "../components/usuario-1/agendamentos/Agendamentocardpaciente";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import type { Agendamento } from "../types/agendamento";
+import { hojeISO, mensagemErroApi } from "../utils/validacoes";
+import { formatarData } from "../utils/status";
 
 const ITENS_POR_PAGINA = 4;
 
+type Aba = "proximos" | "anteriores";
+
+// Quantos dias faltam para a coleta ("hoje", "amanhã", "em 5 dias")
+function faltam(data: string | null) {
+  if (!data) return "";
+  const alvo = Date.parse(data.slice(0, 10) + "T12:00:00");
+  const hoje = Date.parse(hojeISO() + "T12:00:00");
+  const dias = Math.round((alvo - hoje) / 86400000);
+  if (dias <= 0) return "é hoje";
+  if (dias === 1) return "é amanhã";
+  return `em ${dias} dias`;
+}
+
 /**
- * Página 5: "Meus Agendamentos" — visão do PACIENTE.
- * Mostra somente os agendamentos (qualquer status) do próprio paciente
- * logado. Somente leitura: sem botões de Concluir/Cancelar (isso é
- * exclusivo do ADM, nas outras 3 telas).
+ * "Meus agendamentos" do paciente, separado em "Próximos" (só coletas
+ * ainda marcadas, a mais próxima em destaque) e "Anteriores" (coletadas
+ * e canceladas).
  */
 export default function Agendamentos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   const { verificando } = useValidarToken("PACIENTE");
-  const { cpf } = useDadosUser();
-  // O hook devolve uma string de erro fixa quando não há paciente logado
-  // (ex: sessão de administrador) — tratamos isso como "sem CPF válido".
-  const cpfValido = cpf && !cpf.includes("não encontrado") ? cpf : null;
 
+  const [aba, setAba] = useState<Aba>("proximos");
   const [itens, setItens] = useState<Agendamento[]>([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
-  const carregar = useCallback(
-    async (pagina: number) => {
-      if (!cpfValido) return;
-      setCarregando(true);
-      setErro(null);
-      try {
-        const resultado = await listarAgendamentosDoPaciente(cpfValido, pagina, ITENS_POR_PAGINA);
-        setItens(resultado.itens);
-        setPaginaAtual(resultado.paginaAtual);
-        setTotalPaginas(resultado.totalPaginas);
-      } catch {
-        setErro("Não foi possível carregar seus agendamentos.");
-      } finally {
-        setCarregando(false);
-      }
-    },
-    [cpfValido]
-  );
+  const carregar = useCallback(async (pagina: number, qual: Aba) => {
+    setCarregando(true);
+    setErro(null);
+    try {
+      const resultado = await listarAgendamentosDoPaciente("", pagina, ITENS_POR_PAGINA, qual);
+      setItens(resultado.itens);
+      setPaginaAtual(resultado.paginaAtual);
+      setTotalPaginas(resultado.totalPaginas);
+    } catch (e) {
+      setErro(mensagemErroApi(e, "Não foi possível carregar seus agendamentos."));
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
 
   useEffect(() => {
-    carregar(1);
-  }, [carregar]);
+    if (verificando) return;
+    const t = setTimeout(() => carregar(1, aba), 0);
+    return () => clearTimeout(t);
+  }, [verificando, aba, carregar]);
 
   if (verificando) {
     return (
@@ -65,6 +74,10 @@ export default function Agendamentos() {
       </div>
     );
   }
+
+  // Em "Próximos", a primeira coleta (mais próxima) ganha destaque
+  const destaque = aba === "proximos" && paginaAtual === 1 ? itens[0] : undefined;
+  const demais = destaque ? itens.slice(1) : itens;
 
   return (
     <div className="pagina-paciente min-h-screen bg-gray-50">
@@ -75,48 +88,89 @@ export default function Agendamentos() {
         <BotaoVoltar para="/home" />
       </div>
 
-      <main className="pagina-conteudo mx-auto max-w-7xl px-6 py-8">
-        <div className="mx-auto max-w-5xl">
-          <h1 className="mb-6 text-center text-2xl font-bold text-blue-700">
-            Meus Agendamentos
-          </h1>
+      <main className="pagina-conteudo mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+        <h1 className="mb-5 text-2xl font-bold text-blue-700">Meus agendamentos</h1>
 
-          {!cpfValido && (
-            <p className="py-10 text-center text-gray-400">
-              Faça login para ver seus agendamentos.
+        <div className="mb-5 grid grid-cols-2 rounded-full bg-white p-1 shadow-sm" role="tablist" aria-label="Filtrar agendamentos">
+          {([
+            ["proximos", "Próximos"],
+            ["anteriores", "Anteriores"],
+          ] as const).map(([valor, texto]) => (
+            <button
+              key={valor}
+              type="button"
+              role="tab"
+              aria-selected={aba === valor}
+              onClick={() => setAba(valor)}
+              className={`min-h-11 rounded-full text-sm font-semibold transition ${
+                aba === valor ? "bg-blue-600 text-white shadow" : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {texto}
+            </button>
+          ))}
+        </div>
+
+        {carregando && <p className="py-10 text-center text-gray-400" role="status">Carregando…</p>}
+
+        {!carregando && erro && (
+          <div className="py-10 text-center" role="alert">
+            <p className="text-rose-500">{erro}</p>
+            <button
+              type="button"
+              onClick={() => carregar(paginaAtual, aba)}
+              className="mt-3 min-h-11 rounded-full border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        )}
+
+        {!carregando && !erro && itens.length === 0 && (
+          <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
+            <p className="text-gray-600">
+              {aba === "proximos" ? "Você não tem coletas marcadas." : "Nenhum agendamento anterior."}
             </p>
-          )}
+            {aba === "proximos" && (
+              <Link to="/prescricoes" className="mt-3 inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">
+                Acompanhar minhas prescrições →
+              </Link>
+            )}
+          </div>
+        )}
 
-          {cpfValido && carregando && (
-            <p className="py-10 text-center text-gray-400">Carregando…</p>
-          )}
+        {!carregando && !erro && destaque && (
+          <section className="mb-6" aria-labelledby="proxima-coleta">
+            <div className="mb-2 flex items-baseline justify-between gap-2">
+              <h2 id="proxima-coleta" className="text-lg font-semibold text-gray-800">Próxima coleta</h2>
+              <span className="text-sm font-semibold text-blue-700">
+                {formatarData(destaque.sol_data_de_coleta)} · {faltam(destaque.sol_data_de_coleta)}
+              </span>
+            </div>
+            <div className="rounded-[1.75rem] p-[2px]" style={{ background: "var(--gradiente-primario)" }}>
+              <AgendamentoCardPaciente agendamento={destaque} />
+            </div>
+          </section>
+        )}
 
-          {cpfValido && !carregando && erro && (
-            <p className="py-10 text-center text-rose-500">{erro}</p>
-          )}
-
-          {cpfValido && !carregando && !erro && itens.length === 0 && (
-            <p className="py-10 text-center text-gray-400">
-              Você ainda não tem nenhum agendamento.
-            </p>
-          )}
-
-          {cpfValido && !carregando && !erro && itens.length > 0 && (
+        {!carregando && !erro && demais.length > 0 && (
+          <>
+            {destaque && <h2 className="mb-3 text-lg font-semibold text-gray-800">Depois</h2>}
             <div className="flex flex-col gap-4">
-              {itens.map((agendamento) => (
+              {demais.map((agendamento) => (
                 <AgendamentoCardPaciente key={agendamento.sol_id} agendamento={agendamento} />
               ))}
             </div>
-          )}
+          </>
+        )}
 
-          {cpfValido && (
-            <Pagination
-              paginaAtual={paginaAtual}
-              totalPaginas={totalPaginas}
-              onMudarPagina={(p) => carregar(p)}
-            />
-          )}
-        </div>
+        {!carregando && !erro && totalPaginas > 1 && (
+          <Pagination
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            onMudarPagina={(p) => carregar(p, aba)}
+          />
+        )}
       </main>
 
       <Footer />

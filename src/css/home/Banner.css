@@ -19,3 +19,56 @@
   display: block;
   user-select: none;
 }
+/* ---------- Versão para celular ---------- */
+/* Texto de verdade sobre o mesmo azul da arte, e a ilustração embaixo */
+.bannercontainer.banner-mobile {
+  height: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--header-height, 72px) + 56px) 20px 0;
+  background: radial-gradient(120% 60% at 0% 0%, #166fce 0%, rgba(22, 111, 206, 0) 60%),
+    linear-gradient(180deg, #0d42c8 0%, #063bb4 100%);
+  color: #fff;
+}
+
+.banner-mobile-titulo {
+  margin: 0;
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-size: clamp(2rem, 9vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.banner-mobile-titulo span {
+  display: block;
+}
+
+.banner-mobile-texto {
+  margin: 16px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.banner-mobile-imagem {
+  display: block;
+  width: calc(100% + 40px);
+  max-width: none;
+  height: auto;
+  margin: 8px -20px 0;
+  user-select: none;
+}
+
+/* o tema pinta h1 de azul; aqui o título precisa ser branco */
+.bannercontainer.banner-mobile .banner-mobile-titulo {
+  color: #fff;
+}
+
+/* funde a borda de cima do recorte com o fundo */
+.banner-mobile-imagem {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
+}

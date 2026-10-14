@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import "../css/home/FluxoInsumos.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { API_URL } from "../config";
 
 const LIMITE = 15;          
 const ITENS_POR_PAGINA = 9; 
@@ -90,7 +91,7 @@ export default function FluxoInsumo() {
       const token = localStorage.getItem("token_admin");
 
       const resposta = await axios.post(
-        "https://backend-insumed-lhac.vercel.app/insumos",
+        `${API_URL}/insumos`,
         {
           nome: nome,
           marca: marca,

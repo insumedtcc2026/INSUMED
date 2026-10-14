@@ -2,7 +2,8 @@ import {
     useEffect,
     useState,
     type FormEvent,
-    type ChangeEvent
+    type ChangeEvent,
+    type DragEvent
 } from 'react';
 
 import { Upload } from 'lucide-react';
@@ -18,6 +19,7 @@ import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
+import { mensagemErroApi } from '../utils/validacoes';
 
 
 
@@ -104,8 +106,14 @@ function EnviarSolicitaçao() {
     const [observacao, setObservacao] =
         useState('');
 
-    const [, setMessage] =
+    // mensagem de erro/andamento mostrada no formulário
+    // (antes era gravada mas nunca aparecia na tela)
+    const [message, setMessage] =
         useState('');
+
+    // arquivo sendo arrastado sobre a área de envio
+    const [arrastando, setArrastando] =
+        useState(false);
 
     const [enviando, setEnviando] =
         useState(false);
@@ -148,6 +156,32 @@ function EnviarSolicitaçao() {
     // SELECIONAR IMAGEM
     // ==============================
 
+    // Mesmas regras para o arquivo escolhido no botão ou arrastado:
+    // imagem ou PDF, até 5 MB (o backend confere de novo).
+    function aceitarArquivo(arquivo: File): boolean {
+
+        const tamanhoMaximo =
+            5 * 1024 * 1024;
+
+        const tipoValido =
+            arquivo.type.startsWith('image/') ||
+            arquivo.type === 'application/pdf';
+
+        if (!tipoValido) {
+            setMessage('Formato não suportado. Envie uma imagem (JPG, PNG) ou um PDF.');
+            return false;
+        }
+
+        if (arquivo.size > tamanhoMaximo) {
+            setMessage('A prescrição deve ter no máximo 5 MB.');
+            return false;
+        }
+
+        setFile(arquivo);
+        setMessage('');
+        return true;
+    }
+
     function selecionarArquivo(
         e: ChangeEvent<HTMLInputElement>
     ) {
@@ -155,26 +189,17 @@ function EnviarSolicitaçao() {
             e.target.files &&
             e.target.files.length > 0
         ) {
-            const arquivo = e.target.files[0];
-
-            const tamanhoMaximo =
-                5 * 1024 * 1024;
-
-            if (arquivo.size > tamanhoMaximo) {
-
-                setMessage(
-                    'A prescrição deve ter no máximo 5 MB.'
-                );
-
+            if (!aceitarArquivo(e.target.files[0])) {
                 e.target.value = '';
-
-                return;
             }
-
-            setFile(arquivo);
-
-            setMessage('');
         }
+    }
+
+    function soltarArquivo(e: DragEvent<HTMLDivElement>) {
+        e.preventDefault();
+        setArrastando(false);
+        const arquivo = e.dataTransfer.files?.[0];
+        if (arquivo) aceitarArquivo(arquivo);
     }
 
 
@@ -292,10 +317,12 @@ function EnviarSolicitaçao() {
 
         } catch (error) {
 
+            // mostra o motivo vindo do backend (ex.: prescrição já enviada,
+            // arquivo acima de 5 MB) em vez de uma mensagem genérica
             Swal.fire({
                 icon: 'error',
                 title: 'Erro ao enviar prescrição!',
-                text: 'Não foi possível enviar a prescrição.',
+                text: mensagemErroApi(error, 'Não foi possível enviar a prescrição.'),
                 confirmButtonColor: '#dc3545',
             });
 
@@ -313,7 +340,7 @@ function EnviarSolicitaçao() {
     // HTML
     // ==============================
 return (
-    <div className="pagina-paciente">
+    <div className="pagina-paciente min-h-screen bg-gray-50">
         <Header onMenuClick={toggleSidebar} />
 
         <Sidebar
@@ -329,38 +356,38 @@ return (
 
             <div className="solicitacao-card">
 
-                {/* CABEÇALHO */}
+                {/* CABEÇALHO (mesmo padrão das outras páginas do paciente) */}
 
-                <div className="solicitacao-header">
+                <header className="solicitacao-header">
 
-                    <h1>Enviar Prescrição</h1>
+                    <h1>Enviar prescrição</h1>
 
                     <p>
-                        Envie uma foto da sua prescrição para que possamos
-                        analisar e cadastrar seus insumos.
+                        Envie uma foto ou PDF da sua prescrição para a unidade
+                        analisar e separar seus insumos.
                     </p>
 
-                </div>
+                </header>
 
 
                 {/* INFORMAÇÃO */}
 
                 <div className="info-prescricao">
 
-                    <div className="info-icone">
-                        <Info size={21} strokeWidth={3} />
+                    <div className="info-icone" aria-hidden="true">
+                        <Info size={18} strokeWidth={2.5} />
                     </div>
 
                     <div className="info-conteudo">
 
-                        <h3>
+                        <h2>
                             Por que enviar sua prescrição?
-                        </h3>
+                        </h2>
 
                         <p>
                             A prescrição é o documento que contém os insumos
                             necessários para o seu tratamento. Com ela,
-                            conseguimos preparar seus materiais e informar
+                            conseguimos preparar seus materiais e avisar
                             quando estarão disponíveis para retirada.
                         </p>
 
@@ -372,22 +399,21 @@ return (
                 <form
                     className="solicitacao-form"
                     onSubmit={handleSubmit}
+                    noValidate
                 >
-
-                    {/* CARDS */}
 
                     <div className="formulario-grid">
 
                         {/* ================================
-                            UPLOAD
+                            ARQUIVO
                         ================================= */}
 
-                        <div className="campo-card prescricao-card">
+                        <section className="envio-card envio-card-arquivo" aria-labelledby="titulo-arquivo">
 
-                            <div className="prescricao-titulo">
+                            <div className="envio-card-titulo">
 
-                                <h2>
-                                    Envie a foto da sua prescrição
+                                <h2 id="titulo-arquivo">
+                                    Foto ou PDF da prescrição
                                 </h2>
 
                                 <p>
@@ -397,12 +423,17 @@ return (
                             </div>
 
 
-                            <div className="arquivo-area">
+                            <div
+                                className={`arquivo-area ${arrastando ? 'arquivo-area--arrastando' : ''} ${file ? 'arquivo-area--com-arquivo' : ''}`}
+                                onDragOver={(e) => { e.preventDefault(); setArrastando(true); }}
+                                onDragLeave={() => setArrastando(false)}
+                                onDrop={soltarArquivo}
+                            >
 
-                                <div className="upload-icon">
+                                <div className="upload-icon" aria-hidden="true">
                                     <Upload
-                                        size={38}
-                                        strokeWidth={2.0}
+                                        size={32}
+                                        strokeWidth={2}
                                     />
                                 </div>
 
@@ -412,22 +443,21 @@ return (
                                     type="file"
                                     accept="image/*,.pdf"
                                     onChange={selecionarArquivo}
-                                    required
                                     className="input-arquivo"
                                 />
 
 
-                                <span className="upload-texto">
+                                <span className="upload-texto" aria-live="polite">
 
                                     {file
                                         ? file.name
-                                        : "Arraste e solte uma imagem aqui"}
+                                        : "Arraste e solte o arquivo aqui"}
 
                                 </span>
 
 
                                 <span className="upload-ou">
-                                    ou
+                                    {file ? 'Quer trocar?' : 'ou'}
                                 </span>
 
 
@@ -435,30 +465,28 @@ return (
                                     htmlFor="prescricao"
                                     className="btn-selecionar"
                                 >
-                                    Selecionar imagem
+                                    {file ? 'Escolher outro arquivo' : 'Selecionar arquivo'}
                                 </label>
 
 
                                 <small className="formatos">
-                                    Formatos aceitos: JPG, PNG ou PDF
-                                    <br />
-                                    Tamanho máximo: 5MB
+                                    Formatos aceitos: JPG, PNG ou PDF · até 5 MB
                                 </small>
 
                             </div>
 
-                        </div>
+                        </section>
 
 
                         {/* ================================
                             INFORMAÇÕES
                         ================================= */}
 
-                        <div className="campo-card informacoes-card">
+                        <section className="envio-card envio-card-info" aria-labelledby="titulo-info">
 
-                            <div className="informacoes-titulo">
+                            <div className="envio-card-titulo">
 
-                                <h2>
+                                <h2 id="titulo-info">
                                     Informações da prescrição
                                 </h2>
 
@@ -467,10 +495,10 @@ return (
 
                             <div className="campos-container">
 
-                                <div className="campo">
+                                <div className="envio-campo">
 
                                     <label htmlFor="posto">
-                                        Unidade de Saúde
+                                        Unidade de saúde
                                     </label>
 
                                     <select
@@ -502,7 +530,7 @@ return (
                                 </div>
 
 
-                                <div className="campo">
+                                <div className="envio-campo">
 
                                     <label htmlFor="observacao">
                                         Observação
@@ -510,22 +538,32 @@ return (
                                     </label>
 
                                     <textarea
-                                    className="observacao-prescricao"
                                         id="observacao"
                                         value={observacao}
+                                        maxLength={1000}
                                         onChange={e =>
                                             setObservacao(e.target.value)
                                         }
-                                        placeholder="Digite alguma informação adicional, caso necessário..."
+                                        placeholder="Alguma informação adicional para a unidade?"
                                     />
 
                                 </div>
 
                             </div>
 
-                        </div>
+                        </section>
 
                     </div>
+
+
+                    {message && (
+                        <p
+                            className={`envio-mensagem ${enviando ? 'envio-mensagem--andamento' : ''}`}
+                            role={enviando ? 'status' : 'alert'}
+                        >
+                            {message}
+                        </p>
+                    )}
 
 
                     {/* PARTE INFERIOR */}
@@ -534,7 +572,7 @@ return (
 
                         <div className="dados-protegidos">
 
-                            <div className="protegidos-icone">
+                            <div className="protegidos-icone" aria-hidden="true">
                                 <span>✓</span>
                             </div>
 
@@ -546,7 +584,7 @@ return (
 
                                 <p>
                                     Suas informações são confidenciais e
-                                    utilizadas apenas para o gerenciamento
+                                    usadas apenas para o gerenciamento
                                     dos seus insumos.
                                 </p>
 
@@ -564,12 +602,13 @@ return (
                             <SendHorizontal
                                 size={19}
                                 strokeWidth={2.5}
+                                aria-hidden="true"
                             />
 
                             <span>
                                 {enviando
                                     ? "Enviando..."
-                                    : "Enviar"}
+                                    : "Enviar prescrição"}
                             </span>
 
                         </button>

@@ -1,7 +1,7 @@
 
 import '../../css/sobre/BannerAbout.css';
 
-import BannerImage from '../../assets/sobre/about-banner.png';
+import BannerImage from '../../assets/sobre/about-banner.webp';
 
 export default function BannerAbout() {
   return (

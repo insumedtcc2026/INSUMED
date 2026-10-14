@@ -1,0 +1,201 @@
+/* ---------- Pular para o conteúdo (só aparece com o teclado) ---------- */
+.pular-conteudo {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 5000;
+  padding: 12px 18px;
+  border-radius: var(--raio-md, 14px);
+  background: var(--cor-primaria, #0042ec);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease;
+}
+
+.pular-conteudo:focus {
+  transform: translateY(0);
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ---------- Botão e painel de acessibilidade ---------- */
+.acessibilidade {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  z-index: 1800; /* abaixo do menu lateral (2000) e dos diálogos */
+  transform: translateY(-50%);
+}
+
+.acessibilidade-botao {
+  width: 44px;
+  height: 48px;
+  border: none;
+  border-radius: 0 var(--raio-md, 14px) var(--raio-md, 14px) 0;
+  background: var(--cor-primaria, #0042ec);
+  color: #fff;
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-size: 17px;
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(0, 66, 236, 0.3);
+  cursor: pointer;
+}
+
+.acessibilidade-botao:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 2px;
+}
+
+.acessibilidade-painel {
+  position: absolute;
+  left: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  padding: 16px;
+  border: 1px solid var(--cor-borda, #dfe3ea);
+  border-radius: var(--raio-md, 14px);
+  background: var(--cor-superficie, #fff);
+  box-shadow: var(--sombra-card-hover, 0 12px 30px rgba(16, 24, 64, 0.14));
+  color: var(--cor-texto, #1f2430);
+  font-size: 15px;
+}
+
+.acessibilidade-titulo {
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.acessibilidade-rotulo {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--cor-texto-suave, #5b6475);
+}
+
+.acessibilidade-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.acessibilidade-linha button {
+  min-width: 52px;
+  min-height: 44px;
+  border: 1px solid var(--cor-primaria, #0042ec);
+  border-radius: var(--raio-pill, 999px);
+  background: #fff;
+  color: var(--cor-primaria, #0042ec);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.acessibilidade-linha button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.acessibilidade-opcao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.acessibilidade-opcao input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--cor-primaria, #0042ec);
+}
+
+.acessibilidade-restaurar {
+  margin-top: 8px;
+  min-height: 40px;
+  border: none;
+  background: none;
+  color: var(--cor-primaria, #0042ec);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Foco visível em tudo que é clicável (teclado) ---------- */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--cor-primaria, #0042ec);
+  outline-offset: 2px;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* ---------- Alto contraste ---------- */
+/* filtro no elemento raiz (não atrapalha menus e diálogos fixos) */
+html.alto-contraste {
+  filter: contrast(1.35);
+}
+
+html.alto-contraste a:not([class*="btn"]):not([class*="botao"]):not(.nav-inferior-item):not(.pular-conteudo) {
+  text-decoration: underline;
+}
+
+/* textos claros ficam escuros */
+html.alto-contraste .text-gray-400,
+html.alto-contraste .text-gray-500,
+html.alto-contraste .text-gray-600 {
+  color: #1f2937 !important;
+}
+
+html.alto-contraste input,
+html.alto-contraste select,
+html.alto-contraste textarea {
+  border-color: #111827 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pular-conteudo {
+    transition: none;
+  }
+}
+
+/* ---------- Celular: botões flutuantes nos cantos de baixo ---------- */
+/* No meio da tela eles cobriam campos e botões. Ficam acima da barra
+   inferior do paciente (≈ 84px) e da área segura do aparelho. */
+@media (max-width: 768px) {
+  .acessibilidade {
+    top: auto;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    transform: none;
+  }
+
+  .acessibilidade-botao {
+    width: 40px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .acessibilidade-painel {
+    top: auto;
+    bottom: 0;
+    transform: none;
+    left: 48px;
+  }
+
+  /* VLibras: o botão fica dentro de um shadow DOM, fixo em "50vh - 20px".
+     Só o contêiner aceita CSS de fora: ele vira o bloco de referência do
+     botão (translateZ) e é posicionado para o botão cair na mesma altura do
+     "Aa" (100px acima da base). Altura 0: não bloqueia cliques na página. */
+  #vlibras-access-wrapper {
+    position: fixed;
+    top: calc(50vh - 120px - env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    height: 0;
+    transform: translateZ(0);
+    z-index: 1800;
+  }
+}

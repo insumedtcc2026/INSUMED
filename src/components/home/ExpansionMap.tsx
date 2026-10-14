@@ -1,6 +1,6 @@
 import React from "react";
 import "../../css/home/ExpansionMap.css";
-import mapaRJ from "../../assets/home/mapa.png";
+import mapaRJ from "../../assets/home/mapa.webp";
 
 const ExpansionMap: React.FC = () => {
   return (

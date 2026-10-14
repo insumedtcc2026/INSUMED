@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import '../../css/home/Header.css';
 import logo from '../../assets/home/Logo.png';
+import { propsLinkExterno, redesSociais } from '../universais/contatos';
  
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -47,11 +48,21 @@ const Header: React.FC = () => {
  
         <nav className="header-nav">
           <Link to="/sobre" className="nav-link">Sobre</Link>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="nav-link">
+          <a
+            href={redesSociais.instagram}
+            {...propsLinkExterno}
+            className="nav-link"
+            aria-label="Instagram do Insumed (abre em nova aba)"
+          >
             Instagram
           </a>
-          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="nav-link">
-            Youtube
+          <a
+            href={redesSociais.youtube}
+            {...propsLinkExterno}
+            className="nav-link"
+            aria-label="YouTube do Insumed (abre em nova aba)"
+          >
+            YouTube
           </a>
         </nav>
  

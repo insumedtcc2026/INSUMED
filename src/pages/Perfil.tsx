@@ -1,4 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { validarCEP, validarCPF, validarEmail, validarNome, validarTelefone } from "../utils/validacoes";
 import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
@@ -7,59 +9,13 @@ import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import '../css/home/perfil.css';
 import { useDadosUser } from '../hook/Dadosuser.tsx';
 import { useValidarToken } from '../hook/Validartoken.tsx';
-import { usePrescricao } from '../hook/Pacienteprescriao.tsx';
-import { useDetalhesPrescricao } from '../hook/Detalhesprescricao.tsx';
 import Swal from 'sweetalert2';
 import lapis from '../assets/home-log/lapis.png'
 import axios from 'axios';
+import { API_URL } from "../config";
 
 
 
-
-function extensaoPorMimetype(mimetype: string | null | undefined): string {
-  const mapa: Record<string, string> = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'image/jpg': 'jpg',
-    'image/webp': 'webp',
-    'application/pdf': 'pdf',
-  };
-
-  if (!mimetype) return 'arquivo';
-
-  return mapa[mimetype] || 'arquivo';
-}
-
-function gerarNomeArquivo(
-  sol_data_solicitacao: string,
-  sol_id: number,
-  mimetype: string | null | undefined
-): string {
-  const data = new Date(sol_data_solicitacao);
-
-  const dia = String(data.getDate()).padStart(2, '0');
-  const mes = String(data.getMonth() + 1).padStart(2, '0');
-  const ano = data.getFullYear();
-
-  const extensao = extensaoPorMimetype(mimetype);
-
-  return `Prescrição_${dia}-${mes}-${ano}_#${sol_id}.${extensao}`;
-}
-
-// Converte a string base64 num Blob e devolve uma URL temporária (blob:...).
-// Muito mais rápido e leve que usar "data:" URI direto num <a> ou <iframe>,
-// porque o navegador nunca precisa tratar o arquivo inteiro como texto.
-function base64ParaBlobUrl(base64: string, mimetype: string): string {
-  const binario = atob(base64);
-  const bytes = new Uint8Array(binario.length);
-
-  for (let i = 0; i < binario.length; i++) {
-    bytes[i] = binario.charCodeAt(i);
-  }
-
-  const blob = new Blob([bytes], { type: mimetype });
-  return URL.createObjectURL(blob);
-}
 
 export default function Perfil() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -70,41 +26,6 @@ export default function Perfil() {
 
   const { verificando } = useValidarToken("PACIENTE");
   const user = useDadosUser();
-  const { prescricoes, carregando, erro } = usePrescricao();
-
-  const {
-    detalhes,
-    carregandoDetalhes,
-    erroDetalhes,
-    abrirDetalhes,
-    fecharDetalhes
-  } = useDetalhesPrescricao();
-
-  // Gera a Blob URL só quando "detalhes" muda, em vez de recriar
-  // o Blob toda vez que o componente re-renderiza.
-  const pdfBlobUrl = useMemo(() => {
-    if (
-      detalhes?.sol_prescricao_base64 &&
-      detalhes.sol_prescricao_mimetype === 'application/pdf'
-    ) {
-      return base64ParaBlobUrl(
-        detalhes.sol_prescricao_base64,
-        detalhes.sol_prescricao_mimetype
-      );
-    }
-    return null;
-  }, [detalhes]);
-
-  // Blob URLs ficam guardadas na memória do navegador até serem liberadas
-  // manualmente. Sem isso, cada PDF aberto ficaria ocupando memória
-  // pra sempre, mesmo depois do modal fechado.
-  useEffect(() => {
-    return () => {
-      if (pdfBlobUrl) {
-        URL.revokeObjectURL(pdfBlobUrl);
-      }
-    };
-  }, [pdfBlobUrl]);
 
   const atualizarPaciente = async (
   campo: string,
@@ -124,7 +45,7 @@ export default function Perfil() {
     }
 
     const resposta = await axios.put(
-      "https://backend-insumed-lhac.vercel.app/pacientes/perfil",
+      `${API_URL}/pacientes/perfil`,
       {
         campo,
         valor
@@ -204,43 +125,18 @@ const editarInformacao = async (
         return "Este campo não pode ficar vazio!";
       }
 
-      switch (campo) {
-        case "nome":
-          if (/\d/.test(texto)) {
-            return "O nome não pode conter números!";
-          }
-          if (texto.length < 3) {
-            return "Digite um nome com pelo menos 3 caracteres.";
-          }
-          break;
-
-        case "cep": {
-          const cep = texto.replace(/\D/g, "");
-          if (cep.length !== 8) {
-            return "O CEP deve conter exatamente 8 números.";
-          }
-          break;
-        }
-
-        case "email":
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto)) {
-            return "Digite um endereço de e-mail válido.";
-          }
-          break;
-
-        case "endereco":
-          if (texto.length < 3) {
-            return "Digite um endereço válido.";
-          }
-          break;
-
-        case "telefone": {
-          const telefone = texto.replace(/\D/g, "");
-          if (telefone.length !== 10 && telefone.length !== 11) {
-            return "Digite um telefone com DDD e 10 ou 11 números.";
-          }
-          break;
-        }
+      // Mesmas regras do cadastro (o backend também valida).
+      const validadores: Record<string, (v: string) => string | null> = {
+        nome: validarNome,
+        cpf: validarCPF,
+        cep: validarCEP,
+        email: validarEmail,
+        telefone: validarTelefone,
+        endereco: (v) => (v.length < 5 ? "Informe o endereço completo." : null),
+      };
+      const erroCampo = validadores[campo]?.(texto);
+      if (erroCampo) {
+        return erroCampo;
       }
 
       return null;
@@ -255,16 +151,6 @@ const editarInformacao = async (
   }
 };
 
-useEffect(() => {
-  if (erro) {
-    Swal.fire({
-      icon: "error",
-      title: "Erro",
-      text: erro,
-    });
-  }
-}, [erro]);
-
 if (verificando) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -275,13 +161,6 @@ if (verificando) {
   );
 }
 
-if (carregando) {
-  return (
-    <p className="text-xl text-gray-600">
-      Carregando seus dados...
-    </p>
-  );
-}
 
 
   return (
@@ -302,7 +181,7 @@ if (carregando) {
         <label>
           <p>Nome Completo</p>
           <div className="input-com-editar">
-          <input type="text" value={user.nome} />
+          <input type="text" value={user.nome} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -320,7 +199,7 @@ if (carregando) {
         <label>
   <p>CPF</p>
   <div className="input-com-editar">
-    <input type="text" value={user.cpf} />
+    <input type="text" value={user.cpf} readOnly />
   </div>
 </label>
 
@@ -332,7 +211,7 @@ if (carregando) {
         <label>
           <p>CEP</p>
           <div className="input-com-editar">
-          <input type="text" value={user.cep} />
+          <input type="text" value={user.cep} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -356,8 +235,7 @@ if (carregando) {
       user.data_nascimento 
         ? new Date(user.data_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) 
         : ''
-    } 
-  />
+    } readOnly />
   
 
   </div>
@@ -366,7 +244,7 @@ if (carregando) {
         <label>
           <p>Endereço de Email</p>
           <div className="input-com-editar">
-          <input type="text" value={user.email} />
+          <input type="text" value={user.email} readOnly />
 
            <button
       type="button"
@@ -385,7 +263,7 @@ if (carregando) {
         <label>
           <p>Endereço</p>
           <div className="input-com-editar">
-          <input type="text" value={user.endereco} />
+          <input type="text" value={user.endereco} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -403,7 +281,7 @@ if (carregando) {
         <label>
           <p>Telefone</p>
           <div className="input-com-editar">
-          <input type="text" value={user.telefone} />
+          <input type="text" value={user.telefone} readOnly />
 
            <button
       type="button"
@@ -422,131 +300,25 @@ if (carregando) {
         <label>
           <p>Raça/Cor</p>
           <div className="input-com-editar">
-          <input type="text" value={user.raca} />
+          <input type="text" value={user.raca} readOnly />
           
           </div>
         </label>
       </div>
 
-      <div className="prescrição-container">
-        <main className="mx-auto max-w-7xl px-6 py-8">
-          <h1 className="titulo-secao">Prescrições</h1>
-        </main>
-
-        {carregando ? (
-          <p className="text-xl text-gray-600">Carregando prescrições...</p>
-        ) : erro ? (
-          <p className="text-xl text-gray-3200">Erro ao carregar prescrições.</p>
-        ) : (
-          <div className="prescricao-list">
-            {prescricoes.length === 0 ? (
-              <p className="text-xl text-gray-600">'{user.nome}' não tem prescrições.</p>
-            ) : (
-              prescricoes.map((prescricao) => {
-                const statusClass = prescricao.sol_status.toLowerCase().replace(" ", "-");
-
-                return (
-                  <div className="prescricao-card" key={prescricao.sol_id}>
-                    <p className="prescricao-data">
-                      <strong>Data:</strong>{' '}
-                      {new Date(prescricao.sol_data_solicitacao).toLocaleDateString('pt-BR')}
-                    </p>
-
-                    <div className="prescricao-arquivo">
-                      {prescricao.tem_prescricao
-                        ? gerarNomeArquivo(
-                            prescricao.sol_data_solicitacao,
-                            prescricao.sol_id,
-                            prescricao.sol_prescricao_tipo
-                          )
-                        : 'Nenhum arquivo anexado'}
-                    </div>
-
-                    <div className="prescricao-acoes">
-                      <span className={`status-badge status-${statusClass}`}>
-                        {prescricao.sol_status}
-                      </span>
-
-                      <button
-                        className="btn-ver-mais"
-                        onClick={() => abrirDetalhes(prescricao.sol_id)}
-                      >
-                        Ver mais <span>&#8963;</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        )}
+      {/* As prescrições agora têm página própria, com o rastreio de cada etapa */}
+      <div className="mx-auto max-w-7xl px-6 pb-10">
+        <Link
+          to="/prescricoes"
+          className="flex items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 transition hover:shadow-md"
+        >
+          <span>
+            <span className="block text-lg font-semibold text-gray-900">Minhas prescrições</span>
+            <span className="block text-sm text-gray-500">Veja o andamento de cada prescrição, do envio à retirada.</span>
+          </span>
+          <span className="text-xl font-bold text-blue-700" aria-hidden="true">→</span>
+        </Link>
       </div>
-
-      {/* MODAL DE DETALHES DA PRESCRIÇÃO */}
-      {detalhes && (
-        <div className="modal-overlay" onClick={fecharDetalhes}>
-          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-fechar" onClick={fecharDetalhes}>×</button>
-
-            <h2>Solicitação #{detalhes.sol_id}</h2>
-            <p><strong>Status:</strong> {detalhes.sol_status}</p>
-            <p>
-              <strong>Data:</strong>{' '}
-              {new Date(detalhes.sol_data_solicitacao).toLocaleDateString('pt-BR')}
-            </p>
-            <p><strong>Observação:</strong> {detalhes.sol_observacao || 'Nenhuma observação.'}</p>
-
-            {!detalhes.sol_prescricao_base64 ? (
-              <p>Nenhum arquivo anexado.</p>
-            ) : detalhes.sol_prescricao_mimetype === 'application/pdf' ? (
-              // PDF: usamos a Blob URL (rápida, não trava o navegador),
-              // em vez do "data:" URI anterior.
-              pdfBlobUrl && (
-                <>
-                  <iframe
-                    src={pdfBlobUrl}
-                    className="modal-pdf"
-                    title="Prescrição em PDF"
-                  />
-                  <a
-                    href={pdfBlobUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="modal-abrir-pdf"
-                  >
-                    Abrir PDF em nova aba
-                  </a>
-                </>
-              )
-            ) : (
-              <img
-                src={`data:${detalhes.sol_prescricao_mimetype || 'image/png'};base64,${detalhes.sol_prescricao_base64}`}
-                alt="Prescrição enviada"
-                className="modal-imagem"
-              />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Estado de carregamento do modal (enquanto a imagem em base64 ainda não chegou) */}
-      {carregandoDetalhes && !detalhes && (
-        <div className="modal-overlay">
-          <div className="modal-conteudo">
-            <p>Carregando detalhes...</p>
-          </div>
-        </div>
-      )}
-
-      {/* Erro ao carregar o detalhe */}
-      {erroDetalhes && (
-        <div className="modal-overlay" onClick={fecharDetalhes}>
-          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-fechar" onClick={fecharDetalhes}>×</button>
-            <p>{erroDetalhes}</p>
-          </div>
-        </div>
-      )}
 
       <Footer />
 

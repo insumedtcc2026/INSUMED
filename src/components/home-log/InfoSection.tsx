@@ -1,9 +1,9 @@
 import '../../css/home-log/InfoSection.css';
 
-import coletasImg from '../../assets/home-log/coletas.png';
-import calendarioImg from '../../assets/home-log/calendario.png';
-import notificacaoImg from '../../assets/home-log/notificacao.png';
-import agendamentoAdmImg from '../../assets/home-log/Agendamento.png';
+import coletasImg from '../../assets/home-log/coletas.webp';
+import calendarioImg from '../../assets/home-log/calendario.webp';
+import notificacaoImg from '../../assets/home-log/notificacao.webp';
+import agendamentoAdmImg from '../../assets/home-log/Agendamento.webp';
 import pacientesAdmImg from '../../assets/home-log/Pacientes.png';
 import solicitacoesAdmImg from '../../assets/home-log/Solicitações.png';
 
@@ -62,24 +62,14 @@ const cardsByUser: Record<InfoSectionProps['userType'], InfoCard[]> = {
     },
   ],
 
+  // Só o que o autorizador realmente acessa (as rotas antigas /pedidos,
+  // /estoque e /entregas não existiam).
   autorizador: [
     {
-      id: 'pedidos',
-      title: 'Pedidos',
-      imageUrl: calendarioImg,
-      href: '/pedidos',
-    },
-    {
-      id: 'estoque',
-      title: 'Estoque',
-      imageUrl: calendarioImg,
-      href: '/estoque',
-    },
-    {
-      id: 'entregas',
-      title: 'Entregas',
-      imageUrl: notificacaoImg,
-      href: '/entregas',
+      id: 'prescricoes-analise',
+      title: 'Prescrições para análise',
+      imageUrl: solicitacoesAdmImg,
+      href: '/verprescricoesaprovadas',
     },
   ],
 };
@@ -100,7 +90,7 @@ export default function InfoSection({
           >
             <img
               src={card.imageUrl}
-              alt={card.title}
+              alt=""
               className="info-card-image"
             />
             <span className="info-card-titulo">{card.title}</span>

@@ -4,11 +4,16 @@ import '../../css/universais/Sidebar.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
+import { sairDoPerfil } from './sessao';
 
 import {
   CalendarPlus,
+  ClipboardCheck,
+  History,
+  UserCog,
   Files,
   LogOut,
+  Package,
   RotateCcwIcon,
   X,
 } from 'lucide-react';
@@ -41,26 +46,31 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/Agendamentosadm',
     },
-     {
-      icon: BsCalendarCheckFill,
-      label: 'Insumos',
-      path: '/insumos',
+    {
+      // abre o formulário direto na página de agendamentos
+      icon: CalendarPlus,
+      label: 'Novo Agendamento',
+      path: '/Agendamentosadm?novo=1',
     },
     {
-      icon: RotateCcwIcon,
-      label: 'Historico da prescrição',
-      path: '/Historicodaprescricao',
+      icon: ClipboardCheck,
+      label: 'Coletas de hoje',
+      path: '/coletas-hoje',
     },
-
     {
       icon: Files,
       label: 'Solicitações',
       path: '/VerSolicitaçoes',
     },
     {
-      icon: CalendarPlus,
-      label: 'Novo Agendamento',
-      path: '/NovoAgendamento',
+      icon: RotateCcwIcon,
+      label: 'Histórico da prescrição',
+      path: '/Historicodaprescricao',
+    },
+    {
+      icon: Package,
+      label: 'Insumos',
+      path: '/insumos',
     },
     {
       icon: IoPersonSharp,
@@ -71,12 +81,21 @@ export default function Sidebar({
 
 
     {
+      icon: History,
+      label: 'Atividades da unidade',
+      path: '/atividades',
+    },
+    {
+      icon: UserCog,
+      label: 'Meu perfil',
+      path: '/perfil-admin',
+    },
+    {
       icon: LogOut,
       label: 'Sair',
       path: '/login',
        action: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sairDoPerfil('ADMIN');
       }
     },
   ];
@@ -107,6 +126,7 @@ export default function Sidebar({
           <button
             onClick={onClose}
             className="sidebar-close-button"
+            aria-label="Fechar menu"
           >
             <X className="sidebar-close-icon" />
           </button>

@@ -1,14 +1,15 @@
 
 import axios from "axios";
+import { API_URL } from "../config";
 
 const api = axios.create({
-  baseURL: "https://backend-insumed-lhac.vercel.app",
+  baseURL: API_URL,
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token_paciente");
 
-  console.log("Token do paciente encontrado:", Boolean(token));
+  
 
   if (token && token !== "null" && token !== "undefined" && token.trim() !== "") {
     config.headers.Authorization = `Bearer ${token}`;

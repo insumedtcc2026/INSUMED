@@ -1,12 +1,13 @@
 import Banner from '../components/home-log/Banner.tsx';
 import Footer from '../components/universais/Footer.tsx';
-import bannerInsumed from '../assets/home-log/banner-insumed.png';
+import bannerInsumed from '../assets/home-log/banner-insumed.webp';
 import InfoSection from '../components/home-log/InfoSection.tsx';
 import '../css/home/Homepaciente.css';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
 import Sidebaradm from '../components/universais/Siderbaradm.tsx';
 import HeaderAdm from '../components/universais/HeaderAdm.tsx';
+import FilaTrabalhoAdmin from '../components/universais/FilaTrabalhoAdmin.tsx';
 
 /**
  * Home do administrador — equivalente a pages/Home.tsx (paciente), só que
@@ -43,6 +44,9 @@ export default function HomeAdmin() {
       <main className="conteudo-home">
         <Banner imageUrl={bannerInsumed} alt="Banner Insumed" />
       </main>
+
+      {/* fila de trabalho: o que fazer agora, com atalho para cada lista */}
+      <FilaTrabalhoAdmin />
 
       <InfoSection userType="administrador" />
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from '../components/universais/Header';
-import iconpng from '../assets/home-log/ubs.png'
+import iconpng from '../assets/home-log/ubs.webp'
 import '../css/home/PontosColeta.css'
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
@@ -11,6 +11,7 @@ import L from "leaflet"
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from "../config";
 
 //"Primeiro o sistema obtém a localização do usuário através do navegador ou através do CEP. Depois ele pega a latitude e longitude dos postos cadastrados. Em vez de calcular somente uma distância em linha reta, eu utilizo um serviço de roteamento para calcular a distância de carro pelas ruas. Depois adiciono essa distância aos dados de cada posto e utilizo o método sort() para ordenar os postos da menor distância para a maior."
 // Corrigindo o ícone padrão do Leaflet
@@ -88,7 +89,7 @@ export default function PontosColeta() {
       if (!token) navigate("/login");
 
       try {
-        const response = await axios.get("https://backend-insumed-lhac.vercel.app/validar", {
+        const response = await axios.get(`${API_URL}/validar`, {
           headers: {
             Authorization: `Bearer ${token}`
           },
@@ -191,7 +192,7 @@ const [focoPosto, setFocoPosto] = useState(false);
 useEffect(() => {
 //buscar os postos primeiros e guarda, depois que calcula
   axios
-    .get("https://backend-insumed-lhac.vercel.app/postos")
+    .get(`${API_URL}/postos`)
     .then((res) => {
 
       setPostos(res.data);

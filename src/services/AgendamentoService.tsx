@@ -6,8 +6,8 @@ import type {
   ResultadoPaginado,
   FiltrosAgendamento,
 } from "../types/agendamento";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -66,12 +66,15 @@ export async function listarAgendamentos(
 export async function listarAgendamentosDoPaciente(
   _pac_cpf: string,
   pagina = 1,
-  itensPorPagina = 4
+  itensPorPagina = 4,
+  // "proximos" = só agendados (do mais próximo); "anteriores" = coletados/cancelados
+  situacao?: "proximos" | "anteriores"
 ): Promise<ResultadoPaginado<Agendamento>> {
   const response = await api.get("/meus-agendamentos", {
     params: {
       page: pagina,
       porPagina: itensPorPagina,
+      situacao,
     },
     headers: authHeader("PACIENTE"),
   });
@@ -107,10 +110,12 @@ export async function concluirAgendamento(sol_id: number): Promise<void> {
 // CANCELAR AGENDAMENTO
 // ---------------------------------------------------------
 
-export async function cancelarAgendamento(sol_id: number): Promise<void> {
+// O motivo é obrigatório (validado também no backend) e fica salvo no
+// agendamento para consulta posterior pelo admin e pelo paciente.
+export async function cancelarAgendamento(sol_id: number, motivo: string): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/cancelar`,
-    {},
+    { motivo },
     { headers: authHeader("ADMIN") }
   );
 }

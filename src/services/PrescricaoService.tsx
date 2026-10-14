@@ -1,6 +1,7 @@
 import axios from "axios";
+import type { EventoHistorico } from "./HistoricoService";
+import { API_URL } from "../config";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 export interface PrescricaoPendente {
     sol_id: number;
@@ -10,7 +11,9 @@ export interface PrescricaoPendente {
     pac_nome: string;
     pac_cpf: string;
     sol_prescricao: string;
-    pac_avatar: string
+    pac_avatar: string;
+    // true quando a prescrição autorizada já tem agendamento ativo
+    agendamento_ativo?: boolean;
 }
 
 // Usada na LISTAGEM — bate com o que "prescicaodopaciente" retorna
@@ -101,6 +104,9 @@ export interface HistoricoPrescricao {
 
     sol_motivo_reenvio?: string;
 
+    sol_motivo_nao_autorizado?: string | null;
+
+
     sol_observacao?: string;
 
     sol_prescricao_tipo?: string;
@@ -136,7 +142,7 @@ export async function buscarPrescricoesAprovadas() {
 
     try {
         const response = await axios.get(
-            `https://backend-insumed-lhac.vercel.app/prescricao/aprovadas?t=${Date.now()}`,
+            `${API_URL}/prescricao/aprovadas?t=${Date.now()}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -206,3 +212,43 @@ export async function enviarPrescricao (
 
   return response.data;
 }
+// ---------------------------------------------------------
+// RASTREIO DAS PRESCRIÇÕES (paciente): cada prescrição com o
+// agendamento mais recente feito a partir dela e a linha do tempo
+// ---------------------------------------------------------
+
+export interface AgendamentoDaPrescricao {
+    sol_id: number;
+    sol_status: "agendado" | "concluido" | "cancelado";
+    sol_protocolo: string | null;
+    sol_data_de_coleta: string | null;
+    sol_motivo_cancelamento: string | null;
+    sol_recado: string | null;
+    pos_nome: string | null;
+    pos_endereco: string | null;
+}
+
+export interface MinhaPrescricao {
+    sol_id: number;
+    sol_status: string;
+    sol_data_solicitacao: string;
+    sol_data_vencimento: string | null;
+    sol_observacao: string | null;
+    sol_prescricao_tipo: string | null;
+    sol_insumo_quant: number | null;
+    sol_motivo_nao_autorizado: string | null;
+    sol_motivo_reenvio: string | null;
+    pos_nome: string | null;
+    ins_nome: string | null;
+    tem_prescricao: boolean;
+    agendamento: AgendamentoDaPrescricao | null;
+    eventos: EventoHistorico[];
+}
+
+export const buscarMinhasPrescricoes = async (): Promise<MinhaPrescricao[]> => {
+    const token = localStorage.getItem("token_paciente");
+    const response = await axios.get<MinhaPrescricao[]>(`${API_URL}/minhas-prescricoes`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+};

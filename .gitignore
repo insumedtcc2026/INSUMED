@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# variáveis locais (ex.: VITE_API_URL de teste)
+.env.local
+.env.*.local

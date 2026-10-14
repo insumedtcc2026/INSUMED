@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { useValidarToken } from "../hook/Validartoken.tsx";
 
-import Sidebaradm from "../components/universais/Siderbaradm.tsx";
+import SidebarAut from "../components/universais/SidebarAut.tsx";
 import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
@@ -12,9 +12,12 @@ import Footer from "../components/universais/Footer.tsx";
 import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import ModalHistorico from "../components/universais/ModalHistorico";
+import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
+import { exibirCPF } from "../utils/validacoes";
+import { API_URL } from "../config";
 
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
 
 
 interface SolicitacaoAprovada {
@@ -76,6 +79,7 @@ export default function AutorizarPrescricaoAutorizador() {
   const [carregando, setCarregando] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [processando, setProcessando] = useState(false);
+  const [verHistorico, setVerHistorico] = useState(false);
 
 
 const somenteVisualizacao =
@@ -190,18 +194,13 @@ const alterarStatus = async (
             inputPlaceholder: "Escreva o motivo aqui...",
             inputAttributes: {
                 "aria-label": "Motivo da não autorização",
-                maxlength: "1000"
+                maxlength: String(MOTIVO_MAX)
             },
             showCancelButton: true,
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             confirmButtonColor: "#d33",
-            inputValidator: (valor) => {
-                if (!valor || !valor.trim()) {
-                    return "Você precisa informar o motivo.";
-                }
-                return null;
-            }
+            inputValidator: (valor) => validarMotivo(valor)
         });
 
         if (!resultado.isConfirmed) return;
@@ -278,7 +277,7 @@ const alterarStatus = async (
 
       <Header onMenuClick={toggleSidebar} />
 
-      <Sidebaradm
+      <SidebarAut
         isOpen={sidebarOpen}
         onClose={toggleSidebar}
       />
@@ -347,7 +346,7 @@ const alterarStatus = async (
                     <label>CPF:</label>
                     <input
                       type="text"
-                      value={solicitacao?.pac_cpf || ""}
+                      value={solicitacao?.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : ""}
                       readOnly
                     />
                   </div>
@@ -459,6 +458,14 @@ const alterarStatus = async (
     </div>
 )}
 
+<button
+    type="button"
+    onClick={() => setVerHistorico(true)}
+    className="mb-3 min-h-11 text-sm font-semibold text-blue-700 hover:underline"
+>
+    Ver histórico (quem fez o quê)
+</button>
+
 {!somenteVisualizacao && (
     <div className="prescricao-buttons">
         <button
@@ -491,6 +498,15 @@ const alterarStatus = async (
         )}
 
       </main>
+
+      {verHistorico && id && (
+        <ModalHistorico
+          sol_id={Number(id)}
+          perfil="AUTORIZADOR"
+          titulo={`Histórico da prescrição nº ${id}`}
+          onClose={() => setVerHistorico(false)}
+        />
+      )}
 
       <Footer />
 

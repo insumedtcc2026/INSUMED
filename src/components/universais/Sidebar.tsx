@@ -3,8 +3,9 @@ import '../../css/universais/Sidebar.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import logo from '../../assets/home/Logo.png';
+import { sairDoPerfil } from './sessao';
 
-import { LogOut, Upload, X } from 'lucide-react';
+import { FileText, LogOut, Upload, X } from 'lucide-react';
 
 import { MdAddLocation } from 'react-icons/md';
 import { IoPersonSharp } from 'react-icons/io5';
@@ -35,11 +36,14 @@ export default function Sidebar({
       label: 'Agendamentos',
       path: '/agendamentos',
     },
-   
-
+    {
+      icon: FileText,
+      label: 'Minhas prescrições',
+      path: '/prescricoes',
+    },
     {
       icon: Upload,
-      label: 'Enviar Prescriçao',
+      label: 'Enviar prescrição',
       path: '/EnviarSolicitacao',
     },
     {
@@ -57,8 +61,7 @@ export default function Sidebar({
       label: 'Sair',
       path: '/login',
        action: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sairDoPerfil('PACIENTE');
       }
     },
   ];
@@ -89,6 +92,7 @@ export default function Sidebar({
           <button
             onClick={onClose}
             className="sidebar-close-button"
+            aria-label="Fechar menu"
           >
             <X className="sidebar-close-icon" />
           </button>

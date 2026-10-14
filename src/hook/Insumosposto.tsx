@@ -1,4 +1,5 @@
 import { useState,useEffect } from "react";
+import { API_URL } from "../config";
 
 export interface Insumos {
     ins_id: number;
@@ -14,7 +15,7 @@ export function useDadosInsumos() {
     async function carregarInsumos(){
         try{
             const token = localStorage.getItem("token_admin");
-            const resposta = await fetch("https://backend-insumed-lhac.vercel.app/insumos/listar", {
+            const resposta = await fetch(`${API_URL}/insumos/listar`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -36,7 +37,7 @@ export function useDadosInsumos() {
     async function movimentarInsumo(id: number, tipo: "entrada" | "saida", quantidade: number) {
   const token = localStorage.getItem("token_admin");
 
-  const resposta = await fetch(`https://backend-insumed-lhac.vercel.app/insumos/${id}`, {
+  const resposta = await fetch(`${API_URL}/insumos/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

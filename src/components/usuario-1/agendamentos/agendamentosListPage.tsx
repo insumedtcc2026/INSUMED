@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, type ReactNode } from "react";
 import AgendamentoCard from "./AgendamentoCard";
-import { concluirAgendamento, cancelarAgendamento } from "../../../services/AgendamentoService";
+import { concluirAgendamento } from "../../../services/AgendamentoService";
+import { cancelarComMotivo } from "./cancelarComMotivo";
 import type { Agendamento } from "../../../types/agendamento";
  
 interface AgendamentosListPageProps {
@@ -54,7 +55,7 @@ export default function AgendamentosListPage({
   }
  
   async function handleCancelar(sol_id: number) {
-    await cancelarAgendamento(sol_id);
+    await cancelarComMotivo(sol_id, `#${sol_id}`);
     carregar();
   }
  

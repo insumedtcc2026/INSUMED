@@ -147,3 +147,62 @@
     font-size: 16px;
   }
 }
+/* ---------- Ajustes de acessibilidade e mobile ---------- */
+
+/* Rótulo do perfil logo abaixo do logo (menu do autorizador) */
+.sidebar-perfil {
+  margin: -24px 0 20px;
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave, #64748b);
+}
+
+/* "Sair" separado das opções de navegação */
+.sidebar-item-sair {
+  margin-top: 12px;
+  border-top: 1px solid rgba(0, 66, 236, 0.12);
+  border-radius: 0 0 var(--raio-md, 14px) var(--raio-md, 14px);
+}
+
+.sidebar-item:focus-visible,
+.sidebar-close-button:focus-visible {
+  outline: 3px solid var(--cor-primaria, #0042ec);
+  outline-offset: 2px;
+}
+
+/* altura real da tela no celular (barra do navegador) e áreas seguras */
+.sidebar {
+  height: 100dvh;
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: min(85vw, 300px);
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .sidebar-header {
+    margin-bottom: 28px;
+  }
+
+  .sidebar-perfil {
+    margin-top: -12px;
+  }
+
+  .sidebar-item {
+    padding: 14px 16px;
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}

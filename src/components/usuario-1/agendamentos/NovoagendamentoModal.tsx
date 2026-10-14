@@ -4,8 +4,18 @@ import Swal from "sweetalert2";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
 import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
+import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
-const API_URL = "https://backend-insumed-lhac.vercel.app";
+import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
+import { API_URL } from "../../../config";
+
+
+// "2026-10-15" -> "qua, 15/10"
+function formatarDiaCurto(data: string) {
+  const [a, m, d] = data.split("-").map(Number);
+  const semana = new Date(a, m - 1, d).toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+  return `${semana}, ${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}`;
+}
 
 interface NovoAgendamentoModalProps {
   onClose: () => void;
@@ -13,6 +23,9 @@ interface NovoAgendamentoModalProps {
   cpfInicial?: string;
     insumoInicial?: string;
   quantidadeInicial?: number;
+  // prescrição autorizada que originou este agendamento ("Agendar" na lista
+  // de solicitações). O backend impede um segundo agendamento ativo para ela.
+  solOrigemId?: number;
 }
 
 /**
@@ -24,7 +37,7 @@ interface NovoAgendamentoModalProps {
  * reaproveita um insumo já existente com esse nome ou cria um novo.
  */
 export default function NovoAgendamentoModal({ onClose, onSuccess,   cpfInicial = "",  insumoInicial = "",
-  quantidadeInicial = 0, }: NovoAgendamentoModalProps) {
+  quantidadeInicial = 0, solOrigemId }: NovoAgendamentoModalProps) {
   // --- paciente ---
   const [buscaPaciente, setBuscaPaciente] = useState("");
   const [resultadosPaciente, setResultadosPaciente] = useState<Paciente[]>([]);
@@ -62,6 +75,23 @@ useEffect(() => {
   // --- posto de coleta ---
   const [postos, setPostos] = useState<Posto[]>([]);
   const [postoSelecionado, setPostoSelecionado] = useState<Posto | null>(null);
+
+  // --- datas sugeridas para o posto escolhido ---
+  const [sugestoes, setSugestoes] = useState<DatasSugeridas | null>(null);
+
+  useEffect(() => {
+    setSugestoes(null);
+    if (!postoSelecionado) return;
+    let ativo = true;
+    buscarDatasSugeridas(postoSelecionado.pos_id)
+      .then((d) => ativo && setSugestoes(d))
+      .catch(() => {
+        /* sem sugestões; o admin escolhe a data no calendário normalmente */
+      });
+    return () => {
+      ativo = false;
+    };
+  }, [postoSelecionado]);
 
   // --- envio ---
   const [enviando, setEnviando] = useState(false);
@@ -110,7 +140,7 @@ useEffect(() => {
 }, [insumoInicial, quantidadeInicial]);
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
-    setBuscaPaciente(`${p.pac_nome} — ${p.pac_cpf}`);
+    setBuscaPaciente(`${p.pac_nome} — ${exibirCPF(p.pac_cpf)}`);
     setResultadosPaciente([]);
   }
 
@@ -122,8 +152,8 @@ useEffect(() => {
       return;
     }
     const qtd = Number(quantidade);
-    if (!qtd || qtd <= 0) {
-      setErro("Informe uma quantidade válida.");
+    if (!Number.isInteger(qtd) || qtd <= 0) {
+      setErro("Informe uma quantidade inteira maior que zero.");
       return;
     }
     setItens((prev) => [...prev, { ins_nome: nome, quantidade: qtd }]);
@@ -140,7 +170,9 @@ useEffect(() => {
     if (!paciente) return setErro("Selecione um paciente.");
     if (itens.length === 0) return setErro("Adicione ao menos um produto.");
     if (!dataColeta) return setErro("Informe a data da coleta.");
+    if (dataColeta < hojeISO()) return setErro("A data da coleta não pode estar no passado.");
     if (!postoSelecionado) return setErro("Selecione o posto de coleta.");
+    if (enviando) return;
 
     setEnviando(true);
     try {
@@ -149,6 +181,7 @@ useEffect(() => {
         sol_data_de_coleta: dataColeta,
         posto: postoSelecionado,
         itens,
+        ...(solOrigemId ? { sol_origem_id: solOrigemId } : {}),
       });
 
       Swal.fire({
@@ -159,13 +192,14 @@ useEffect(() => {
       });
 
       onSuccess?.();
-    } catch {
-      setErro("Não foi possível salvar o agendamento. Tente novamente.");
+    } catch (e) {
+      const mensagem = mensagemErroApi(e, "Não foi possível salvar o agendamento. Tente novamente.");
+      setErro(mensagem);
 
       Swal.fire({
         icon: "error",
         title: "Erro ao criar agendamento!",
-        text: "Não foi possível salvar o agendamento.",
+        text: mensagem,
         confirmButtonColor: "#dc3545",
       });
     } finally {
@@ -174,13 +208,18 @@ useEffect(() => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+    <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/70 sm:items-center sm:px-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-novo-agendamento"
+        className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-2xl bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:rounded-2xl sm:p-8"
+      >
         <div className="mb-6 flex items-center gap-2">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-sm text-white">
             +
           </span>
-          <h2 className="text-lg font-semibold text-gray-800">Novo Agendamento</h2>
+          <h2 id="titulo-novo-agendamento" className="text-lg font-semibold text-gray-800">Novo Agendamento</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -195,7 +234,7 @@ useEffect(() => {
                 setPaciente(null);
               }}
               placeholder="Busque por CPF"
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
             />
             {resultadosPaciente.length > 0 && (
               <ul className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
@@ -205,7 +244,7 @@ useEffect(() => {
                     onClick={() => selecionarPaciente(p)}
                     className="cursor-pointer px-3 py-2 text-sm hover:bg-indigo-50"
                   >
-                    {p.pac_nome} — {p.pac_cpf}
+                    {p.pac_nome} — {exibirCPF(p.pac_cpf)}
                   </li>
                 ))}
               </ul>
@@ -218,8 +257,10 @@ useEffect(() => {
             <input
               type="date"
               value={dataColeta}
+              min={hojeISO()}
+              aria-label="Data da coleta"
               onChange={(e) => setDataColeta(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
             />
           </div>
 
@@ -232,7 +273,7 @@ useEffect(() => {
                 const posto = postos.find((p) => p.pos_id === Number(e.target.value)) ?? null;
                 setPostoSelecionado(posto);
               }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
             >
               <option value="" disabled>
                 Selecione o posto
@@ -245,6 +286,37 @@ useEffect(() => {
             </select>
           </div>
 
+          {/* Datas sugeridas: dias úteis com menos coletas no posto escolhido */}
+          {postoSelecionado && sugestoes && sugestoes.sugeridas.length > 0 && (
+            <div className="sm:col-span-2">
+              <p className="mb-2 text-sm font-medium text-gray-600">
+                Datas com menos coletas em {postoSelecionado.pos_nome}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {sugestoes.sugeridas.map((data) => {
+                  const qtd = sugestoes.datas.find((d) => d.data === data)?.agendados ?? 0;
+                  const ativa = dataColeta === data;
+                  return (
+                    <button
+                      key={data}
+                      type="button"
+                      onClick={() => setDataColeta(data)}
+                      aria-pressed={ativa}
+                      className={`min-h-11 rounded-full border px-4 text-sm transition ${
+                        ativa
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
+                      }`}
+                    >
+                      {formatarDiaCurto(data)} ·{" "}
+                      {qtd === 0 ? "livre" : `${qtd} ${qtd === 1 ? "coleta" : "coletas"}`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Produto (digitado, não buscado) */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-600">Insumo *</label>
@@ -254,7 +326,7 @@ useEffect(() => {
               readOnly
               onChange={(e) => setNomeProduto(e.target.value)}
               placeholder="Digite o nome do produto"
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
             />
           </div>
 
@@ -268,7 +340,7 @@ useEffect(() => {
                 value={quantidade}
                 onChange={(e) => setQuantidade(e.target.value)}
                 placeholder="Insira a quantidade"
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
               />
               <button
                 type="button"
@@ -304,13 +376,13 @@ useEffect(() => {
           </ul>
         )}
 
-        {erro && <p className="mt-4 text-sm text-rose-500">{erro}</p>}
+        {erro && <p className="mt-4 text-sm text-rose-500" role="alert">{erro}</p>}
 
-        <div className="mt-8 flex justify-end gap-3">
+        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-gray-200 px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="min-h-11 rounded-full border border-gray-200 px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
           >
             ✕ Cancelar
           </button>
@@ -318,7 +390,7 @@ useEffect(() => {
             type="button"
             onClick={handleSalvar}
             disabled={enviando}
-            className="rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="min-h-11 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             {enviando ? "Salvando…" : " Agendar"}
           </button>

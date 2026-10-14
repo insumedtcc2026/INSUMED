@@ -2,7 +2,7 @@ import '../../css/universais/AppPaciente.css';
 
 import { Link, useLocation } from 'react-router-dom';
 
-import { Upload } from 'lucide-react';
+import { FileText, Upload } from 'lucide-react';
 import { MdAddLocation } from 'react-icons/md';
 import { BsCalendarCheckFill } from 'react-icons/bs';
 import { GoHomeFill } from 'react-icons/go';
@@ -15,6 +15,7 @@ import { GoHomeFill } from 'react-icons/go';
 const itens = [
   { icon: GoHomeFill, label: 'Início', path: '/home' },
   { icon: BsCalendarCheckFill, label: 'Agenda', path: '/agendamentos' },
+  { icon: FileText, label: 'Prescrições', path: '/prescricoes' },
   { icon: Upload, label: 'Enviar', path: '/EnviarSolicitacao' },
   { icon: MdAddLocation, label: 'Coletas', path: '/pontos-coleta' },
 ];

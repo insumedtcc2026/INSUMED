@@ -1,13 +1,15 @@
 import "../../css/home/Loginteste.css";
 import axios from "axios";
-import { useState} from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import { MensagemErro } from "../universais/ForcaSenha";
+import { mensagemErroApi, validarEmail } from "../../utils/validacoes";
 import olhoAberto from '../../assets/home-log/olho aberto.png'
 import olhoFechado from '../../assets/home-log/olho fechado.png'
 
-import images from "../../assets/home-log/teste login.png"; 
+import images from "../../assets/home-log/teste login.webp"; 
 import BotaoVoltar from "../universais/BotaoVoltar";
+import { API_URL } from "../../config";
 
 
 
@@ -16,26 +18,53 @@ const Loginteste: React.FC = () => {
    const[olhoPassword, setOlhoPassword] =useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [tentouEnviar, setTentouEnviar] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [aviso, setAviso] = useState("");
+  // Momento (ms) até quando o login está bloqueado pelo limite de tentativas do servidor.
+  const [bloqueadoAte, setBloqueadoAte] = useState(0);
+  const [agora, setAgora] = useState(() => Date.now());
   const navigate = useNavigate();
+
+  const segundosBloqueio = Math.max(0, Math.ceil((bloqueadoAte - agora) / 1000));
+
+  useEffect(() => {
+    if (!bloqueadoAte) return;
+    const timer = setInterval(() => {
+      const t = Date.now();
+      setAgora(t);
+      if (t >= bloqueadoAte) {
+        setBloqueadoAte(0);
+        setAviso("");
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [bloqueadoAte]);
+
+  const erroEmail = tentouEnviar ? validarEmail(email) : null;
+  const erroSenha = tentouEnviar && !password ? "Informe a senha." : null;
 
   const handleLogin = async (
     e: React.FormEvent<HTMLFormElement>
 ) => {
 
     e.preventDefault();
+    setTentouEnviar(true);
+    setAviso("");
 
+    if (validarEmail(email) || !password || segundosBloqueio > 0) return;
+
+    setEnviando(true);
     try {
 
         
 const response = await axios.post(
-            "https://backend-insumed-lhac.vercel.app/login",
+            `${API_URL}/login`,
             {
-                email,
+                email: email.trim().toLowerCase(),
                 senha: password
             }
         );
-
-        console.log("RESPOSTA DO LOGIN:", response.data);
 
         const token = response.data.token;
         const usuario = response.data.usuario;
@@ -78,21 +107,30 @@ const response = await axios.post(
                 `Tipo de usuário desconhecido: ${tipo || "não informado"}`
             );
         }
+    } catch (error) {
 
-        console.log("TIPO DO USUÁRIO:", tipo);
-    } catch (error: any) {
+        console.error("Erro no login:", error);
 
-        console.error(
-            "ERRO NO LOGIN:",
-            error.response?.data || error
-        );
+        const resposta = axios.isAxiosError(error) ? error.response : undefined;
 
-        Swal.fire({
-            icon: "error",
-            title: "Ops...",
-            text: "Email ou senha inválidos!",
-            confirmButtonColor: "#d33"
-        });
+        if (resposta?.status === 429) {
+            const segundos = Number(resposta.data?.tentar_novamente_em) ||
+                Number(resposta.headers?.["retry-after"]) || 60;
+            setAgora(Date.now());
+            setBloqueadoAte(Date.now() + segundos * 1000);
+            setAviso(mensagemErroApi(error, "Muitas tentativas de login. Aguarde alguns minutos."));
+        } else if (resposta?.status === 401) {
+            const restantes = resposta.data?.tentativas_restantes;
+            setAviso(
+                typeof restantes === "number" && restantes <= 3
+                    ? `E-mail ou senha incorretos. Você tem mais ${restantes} tentativa(s) antes de o acesso ser bloqueado temporariamente.`
+                    : "E-mail ou senha incorretos."
+            );
+        } else {
+            setAviso(mensagemErroApi(error, "Não foi possível entrar. Tente novamente."));
+        }
+    } finally {
+        setEnviando(false);
     }
 };
 const handleSignUp = () => { navigate("/cadastro"); };
@@ -112,16 +150,26 @@ const handleSignUp = () => { navigate("/cadastro"); };
           
           <div className="login-left">Bem-vindo</div>
           
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} noValidate>
+            {aviso && (
+              <p className="aviso-formulario" role="alert">
+                {aviso}
+                {segundosBloqueio > 0 && ` (${segundosBloqueio}s)`}
+              </p>
+            )}
             <div className="login-inputs">
               <label>Email</label>
               <input 
                 type="email" 
                 placeholder="Digite seu email" 
                 value={email}
-                required
+                autoComplete="email"
+                maxLength={254}
+                className={erroEmail ? "input-erro" : ""}
+                aria-invalid={Boolean(erroEmail)}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              <MensagemErro erro={erroEmail} />
             </div>
             
             <div className="login-inputs">
@@ -131,7 +179,10 @@ const handleSignUp = () => { navigate("/cadastro"); };
                 type={olhoPassword? 'text': 'password'}
                 placeholder="Digite sua senha"
                 value={password}
-                required
+                autoComplete="current-password"
+                maxLength={128}
+                className={erroSenha ? "input-erro" : ""}
+                aria-invalid={Boolean(erroSenha)}
                 onChange={(e) => setPassword(e.target.value)}
               />
                <img  src={olhoPassword ? olhoAberto : olhoFechado}
@@ -140,9 +191,12 @@ const handleSignUp = () => { navigate("/cadastro"); };
         onClick={() => setOlhoPassword(!olhoPassword)}
         />
         </div>
+              <MensagemErro erro={erroSenha} />
             </div>
             
-            <button type="submit" className="btn-entrar" >Entrar</button>
+            <button type="submit" className="btn-entrar" disabled={enviando || segundosBloqueio > 0}>
+              {enviando ? "Entrando..." : segundosBloqueio > 0 ? `Aguarde ${segundosBloqueio}s` : "Entrar"}
+            </button>
             
             <p className="register-text">
               Ainda não tem conta? <span onClick={handleSignUp}>Cadastre-se</span>

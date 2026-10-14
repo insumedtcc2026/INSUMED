@@ -2,7 +2,7 @@
 
 import '../../css/sobre/AboutHistory.css';
 
-import TeamImage from '../../assets/sobre/about-team.png';
+import TeamImage from '../../assets/sobre/about-team.webp';
 
 export default function AboutHistory() {
   return (

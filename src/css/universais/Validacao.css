@@ -1,0 +1,87 @@
+/* ============================
+   MENSAGENS DE VALIDAÇÃO DOS FORMULÁRIOS
+============================ */
+.campo-erro-msg {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--cor-erro);
+}
+
+.input-erro {
+  border: 2px solid var(--cor-erro) !important;
+}
+
+.input-correto {
+  border: 2px solid var(--cor-sucesso) !important;
+}
+
+.aviso-formulario {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--cor-erro-escura);
+  background: #fdecec;
+  border: 1px solid #f5b5b5;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================
+   FORÇA DA SENHA
+============================ */
+.forca-senha {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.forca-senha-barra {
+  height: 6px;
+  border-radius: 4px;
+  background: var(--cor-borda);
+  overflow: hidden;
+}
+
+.forca-senha-preenchido {
+  display: block;
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+.forca-senha-preenchido.forca-fraca { background: var(--cor-erro); }
+.forca-senha-preenchido.forca-media { background: var(--cor-alerta); }
+.forca-senha-preenchido.forca-forte { background: var(--cor-sucesso); }
+
+.forca-senha-rotulo {
+  display: block;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.forca-senha-rotulo.forca-fraca { color: var(--cor-erro); }
+.forca-senha-rotulo.forca-media { color: #b07d00; }
+.forca-senha-rotulo.forca-forte { color: var(--cor-sucesso-escura); }
+
+.forca-senha-requisitos {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  color: var(--cor-texto-suave);
+}
+
+.forca-senha-requisitos li.ok {
+  color: var(--cor-sucesso-escura);
+}
+
+/* Marca campos que o usuário pode deixar em branco */
+.rotulo-opcional {
+  font-weight: 400;
+  font-size: 0.85em;
+  color: #64748b;
+}

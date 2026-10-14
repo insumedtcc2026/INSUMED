@@ -9,6 +9,9 @@ import { useDadosInsumos } from "../hook/Insumosposto";
 
 import "../css/home/AutorizarPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import ModalHistorico from "../components/universais/ModalHistorico";
+import { transferirComMotivo } from "../components/universais/acoesAdmin";
+import { API_URL } from "../config";
 
 
  
@@ -50,6 +53,15 @@ const [quantidade, setQuantidade] = useState("");
 const listaInsumos = insumos ?? [];
 
   const navigate = useNavigate();
+  const [verHistorico, setVerHistorico] = useState(false);
+
+  // Transferir para outra unidade (com motivo); depois volta para a lista,
+  // pois a prescrição pode sair do alcance deste posto.
+  async function transferir() {
+    if (!id || !solicitacao) return;
+    const rotulo = `Prescrição nº ${id}, hoje em ${solicitacao.pos_nome || "unidade não informada"}.`;
+    if (await transferirComMotivo(Number(id), rotulo, solicitacao.pos_id)) navigate("/VerSolicitaçoes");
+  }
   const [dataVencimento, setDataVencimento] = useState("");
    
     
@@ -84,7 +96,7 @@ const [motivo, setMotivo] = useState("");
 
         const dadosResponse = await axios.get(
           //`http://localhost:3344/solicitacao/${id}`,
-          `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
+          `${API_URL}/solicitacao/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -121,7 +133,7 @@ setDataVencimento(
         
 
         const imagemResponse = await axios.get(
-          `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/prescricao`,
+          `${API_URL}/solicitacao/${id}/prescricao`,
           //`http://localhost:3344/solicitacao/${id}/prescricao`,
           {
             headers: {
@@ -172,7 +184,7 @@ setDataVencimento(
     const token = localStorage.getItem("token_admin");
 
     await axios.patch(
-     `https://backend-insumed-lhac.vercel.app/solicitacao/${id}/reenvio`,
+     `${API_URL}/solicitacao/${id}/reenvio`,
       //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
         motivo: motivo
@@ -237,7 +249,7 @@ const enviarSolicitacao = async () => {
     }
 
     await axios.patch(
-      `https://backend-insumed-lhac.vercel.app/solicitacao/${id}`,
+      `${API_URL}/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
          sol_status: "Revisado",
@@ -572,6 +584,17 @@ navigate('/VerSolicitaçoes')
 
 
 
+<div className="mb-3 flex flex-wrap gap-x-6 text-sm font-semibold">
+    <button type="button" onClick={() => setVerHistorico(true)} className="min-h-11 text-blue-700 hover:underline">
+        Ver histórico (quem fez o quê)
+    </button>
+    {["Pendente", "Revisado", "Autorizado"].includes(solicitacao?.sol_status ?? "") && (
+        <button type="button" onClick={transferir} className="min-h-11 text-violet-700 hover:underline">
+            Transferir de unidade
+        </button>
+    )}
+</div>
+
 {!somenteVisualizacao && (
     <div className="prescricao-buttons">
         <div className="reenvio-area">
@@ -664,6 +687,9 @@ navigate('/VerSolicitaçoes')
 
 
 
+      {verHistorico && id && (
+        <ModalHistorico sol_id={Number(id)} perfil="ADMIN" titulo={`Histórico da prescrição nº ${id}`} onClose={() => setVerHistorico(false)} />
+      )}
       </main>
   
     </div>
