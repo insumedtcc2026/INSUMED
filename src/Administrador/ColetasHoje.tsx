@@ -226,6 +226,7 @@ export default function ColetasHoje() {
               showActions
               onConcluir={concluir}
               onCancelar={cancelar}
+              onAtualizar={carregar}
             />
           ))}
         </div>

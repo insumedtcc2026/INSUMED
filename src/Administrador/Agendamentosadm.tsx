@@ -294,6 +294,7 @@ useEffect(() => {
                 showActions
                 onConcluir={handleConcluir}
                 onCancelar={handleCancelar}
+                onAtualizar={carregar}
               />
             ))}
           </div>

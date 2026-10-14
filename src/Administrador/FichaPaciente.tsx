@@ -5,10 +5,15 @@ import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import SeloStatus from "../components/universais/SeloStatus";
+import ModalHistorico from "../components/universais/ModalHistorico";
+import { transferirComMotivo } from "../components/universais/acoesAdmin";
 import { useValidarToken } from "../hook/Validartoken";
 import { buscarFichaPaciente, type FichaPaciente as Ficha } from "../services/PainelService";
 import { exibirCPF, exibirTelefone, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
+
+// Prescrições em andamento e agendamentos ainda não realizados podem mudar de unidade
+const TRANSFERIVEIS = ["Pendente", "Revisado", "Autorizado", "agendado"];
 
 const SEXOS: Record<string, string> = {
   M: "Masculino",
@@ -37,6 +42,7 @@ export default function FichaPaciente() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ficha, setFicha] = useState<Ficha | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [historicoDe, setHistoricoDe] = useState<{ id: number; titulo: string } | null>(null);
 
   const carregar = useCallback(async () => {
     setErro(null);
@@ -63,6 +69,10 @@ export default function FichaPaciente() {
   }
 
   const p = ficha?.paciente;
+
+  async function transferir(sol_id: number, rotulo: string) {
+    if (await transferirComMotivo(sol_id, rotulo)) carregar();
+  }
 
   // Abre a prescrição na tela certa para o status dela
   function abrirPrescricao(sol_id: number, status: string) {
@@ -156,13 +166,19 @@ export default function FichaPaciente() {
                           Motivo: {s.sol_motivo_nao_autorizado || s.sol_motivo_reenvio}
                         </p>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => abrirPrescricao(s.sol_id, s.sol_status)}
-                        className="mt-3 min-h-10 text-sm font-semibold text-blue-700 hover:underline"
-                      >
-                        {s.sol_status === "Autorizado" ? "Agendar coleta →" : "Abrir prescrição →"}
-                      </button>
+                      <div className="mt-3 flex flex-wrap gap-x-5 text-sm font-semibold">
+                        <button type="button" onClick={() => abrirPrescricao(s.sol_id, s.sol_status)} className="min-h-10 text-blue-700 hover:underline">
+                          {s.sol_status === "Autorizado" ? "Agendar coleta →" : "Abrir prescrição →"}
+                        </button>
+                        <button type="button" onClick={() => setHistoricoDe({ id: s.sol_id, titulo: `Histórico da prescrição nº ${s.sol_id}` })} className="min-h-10 text-blue-700 hover:underline">
+                          Histórico
+                        </button>
+                        {TRANSFERIVEIS.includes(s.sol_status) && (
+                          <button type="button" onClick={() => transferir(s.sol_id, `Prescrição nº ${s.sol_id} de ${p.pac_nome}, hoje em ${s.pos_nome ?? "unidade não informada"}.`)} className="min-h-10 text-violet-700 hover:underline">
+                            Transferir de unidade
+                          </button>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -201,6 +217,16 @@ export default function FichaPaciente() {
                           Motivo do cancelamento: {a.sol_motivo_cancelamento || "não registrado"}
                         </p>
                       )}
+                      <div className="mt-3 flex flex-wrap gap-x-5 text-sm font-semibold">
+                        <button type="button" onClick={() => setHistoricoDe({ id: a.sol_id, titulo: `Histórico de ${a.sol_protocolo ?? "agendamento"}` })} className="min-h-10 text-blue-700 hover:underline">
+                          Histórico
+                        </button>
+                        {a.sol_status === "agendado" && (
+                          <button type="button" onClick={() => transferir(a.sol_id, `Agendamento ${a.sol_protocolo ?? a.sol_id} de ${p.pac_nome}, hoje em ${a.pos_nome ?? "unidade não informada"}.`)} className="min-h-10 text-violet-700 hover:underline">
+                            Transferir de unidade
+                          </button>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -209,6 +235,10 @@ export default function FichaPaciente() {
           </>
         )}
       </main>
+
+      {historicoDe && (
+        <ModalHistorico sol_id={historicoDe.id} perfil="ADMIN" titulo={historicoDe.titulo} onClose={() => setHistoricoDe(null)} />
+      )}
 
       <Footer />
     </div>

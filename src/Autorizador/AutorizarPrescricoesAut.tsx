@@ -12,6 +12,7 @@ import Footer from "../components/universais/Footer.tsx";
 import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import ModalHistorico from "../components/universais/ModalHistorico";
 import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
 import { exibirCPF } from "../utils/validacoes";
 
@@ -78,6 +79,7 @@ export default function AutorizarPrescricaoAutorizador() {
   const [carregando, setCarregando] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [processando, setProcessando] = useState(false);
+  const [verHistorico, setVerHistorico] = useState(false);
 
 
 const somenteVisualizacao =
@@ -456,6 +458,14 @@ const alterarStatus = async (
     </div>
 )}
 
+<button
+    type="button"
+    onClick={() => setVerHistorico(true)}
+    className="mb-3 min-h-11 text-sm font-semibold text-blue-700 hover:underline"
+>
+    Ver histórico (quem fez o quê)
+</button>
+
 {!somenteVisualizacao && (
     <div className="prescricao-buttons">
         <button
@@ -488,6 +498,15 @@ const alterarStatus = async (
         )}
 
       </main>
+
+      {verHistorico && id && (
+        <ModalHistorico
+          sol_id={Number(id)}
+          perfil="AUTORIZADOR"
+          titulo={`Histórico da prescrição nº ${id}`}
+          onClose={() => setVerHistorico(false)}
+        />
+      )}
 
       <Footer />
 

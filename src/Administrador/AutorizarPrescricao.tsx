@@ -9,6 +9,8 @@ import { useDadosInsumos } from "../hook/Insumosposto";
 
 import "../css/home/AutorizarPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import ModalHistorico from "../components/universais/ModalHistorico";
+import { transferirComMotivo } from "../components/universais/acoesAdmin";
 
 
  
@@ -50,6 +52,15 @@ const [quantidade, setQuantidade] = useState("");
 const listaInsumos = insumos ?? [];
 
   const navigate = useNavigate();
+  const [verHistorico, setVerHistorico] = useState(false);
+
+  // Transferir para outra unidade (com motivo); depois volta para a lista,
+  // pois a prescrição pode sair do alcance deste posto.
+  async function transferir() {
+    if (!id || !solicitacao) return;
+    const rotulo = `Prescrição nº ${id}, hoje em ${solicitacao.pos_nome || "unidade não informada"}.`;
+    if (await transferirComMotivo(Number(id), rotulo, solicitacao.pos_id)) navigate("/VerSolicitaçoes");
+  }
   const [dataVencimento, setDataVencimento] = useState("");
    
     
@@ -572,6 +583,17 @@ navigate('/VerSolicitaçoes')
 
 
 
+<div className="mb-3 flex flex-wrap gap-x-6 text-sm font-semibold">
+    <button type="button" onClick={() => setVerHistorico(true)} className="min-h-11 text-blue-700 hover:underline">
+        Ver histórico (quem fez o quê)
+    </button>
+    {["Pendente", "Revisado", "Autorizado"].includes(solicitacao?.sol_status ?? "") && (
+        <button type="button" onClick={transferir} className="min-h-11 text-violet-700 hover:underline">
+            Transferir de unidade
+        </button>
+    )}
+</div>
+
 {!somenteVisualizacao && (
     <div className="prescricao-buttons">
         <div className="reenvio-area">
@@ -664,6 +686,9 @@ navigate('/VerSolicitaçoes')
 
 
 
+      {verHistorico && id && (
+        <ModalHistorico sol_id={Number(id)} perfil="ADMIN" titulo={`Histórico da prescrição nº ${id}`} onClose={() => setVerHistorico(false)} />
+      )}
       </main>
   
     </div>

@@ -10,6 +10,9 @@ export interface Paciente {
 export interface Posto {
   pos_id: number;
   pos_nome: string;
+  pos_endereco?: string | null;
+  // só dígitos com DDI+DDD (ex.: 5524999999999); vazio = posto sem WhatsApp
+  pos_whatsapp?: string | null;
 }
 
 export interface InsumoCatalogo {
@@ -47,6 +50,8 @@ export interface Agendamento {
   sol_data_cancelamento?: string | null;
   // prescrição autorizada que originou o agendamento (null nos antigos)
   sol_origem_id?: number | null;
+  // recado do admin para o paciente (ex.: "traga documento com foto")
+  sol_recado?: string | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];

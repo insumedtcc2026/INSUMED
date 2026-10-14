@@ -1,6 +1,8 @@
 import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 import MotivoCancelamento from "./MotivoCancelamento";
+import ModalHistorico from "../../universais/ModalHistorico";
+import { editarRecado, transferirComMotivo } from "../../universais/acoesAdmin";
 import type { Agendamento } from "../../../types/agendamento";
 import { exibirCPF, exibirTelefone } from "../../../utils/validacoes";
 
@@ -9,6 +11,8 @@ interface AgendamentoCardProps {
   showActions?: boolean;
   onConcluir?: (sol_id: number) => Promise<void> | void;
   onCancelar?: (sol_id: number) => Promise<void> | void;
+  // recarregar a lista depois de recado/transferência
+  onAtualizar?: () => void;
 }
 
 type AcaoEmAndamento = "concluir" | "cancelar" | null;
@@ -24,6 +28,7 @@ export default function AgendamentoCard({
   showActions = true,
   onConcluir,
   onCancelar,
+  onAtualizar,
 }: AgendamentoCardProps) {
   const {
     sol_id,
@@ -34,8 +39,11 @@ export default function AgendamentoCard({
     status,
     sol_motivo_cancelamento,
     sol_data_cancelamento,
+    sol_recado,
+    posto,
   } = agendamento;
   const [loadingAcao, setLoadingAcao] = useState<AcaoEmAndamento>(null);
+  const [verHistorico, setVerHistorico] = useState(false);
 
   // Regra: mesmo se a página passar showActions=true, um agendamento que já
   // não está mais 'agendado' (ex: concluído) nunca mostra os botões de ação.
@@ -55,6 +63,15 @@ export default function AgendamentoCard({
     } finally {
       setLoadingAcao(null);
     }
+  }
+
+  async function handleRecado() {
+    if (await editarRecado(sol_id, protocolo, sol_recado)) onAtualizar?.();
+  }
+
+  async function handleTransferir() {
+    const rotulo = `Agendamento ${protocolo} de ${paciente.pac_nome}, hoje em ${posto?.pos_nome ?? "unidade não informada"}.`;
+    if (await transferirComMotivo(sol_id, rotulo, posto?.pos_id)) onAtualizar?.();
   }
 
   async function handleCancelar() {
@@ -125,6 +142,38 @@ export default function AgendamentoCard({
 
       {status === "cancelado" && (
         <MotivoCancelamento motivo={sol_motivo_cancelamento} data={sol_data_cancelamento} />
+      )}
+
+      {sol_recado && (
+        <p className="w-full basis-full rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          <span className="font-medium">Recado para o paciente:</span> {sol_recado}
+        </p>
+      )}
+
+      {/* Ações secundárias: histórico sempre; recado e transferência só se ainda agendado */}
+      <div className="flex w-full basis-full flex-wrap gap-x-5 gap-y-1 border-t border-gray-200 pt-2 text-sm">
+        <button type="button" onClick={() => setVerHistorico(true)} className="min-h-10 font-medium text-blue-700 hover:underline">
+          Histórico
+        </button>
+        {exibirBotoes && (
+          <>
+            <button type="button" onClick={handleRecado} className="min-h-10 font-medium text-blue-700 hover:underline">
+              {sol_recado ? "Editar recado" : "Deixar recado"}
+            </button>
+            <button type="button" onClick={handleTransferir} className="min-h-10 font-medium text-violet-700 hover:underline">
+              Transferir de unidade
+            </button>
+          </>
+        )}
+      </div>
+
+      {verHistorico && (
+        <ModalHistorico
+          sol_id={sol_id}
+          perfil="ADMIN"
+          titulo={`Histórico de ${protocolo}`}
+          onClose={() => setVerHistorico(false)}
+        />
       )}
     </article>
   );
