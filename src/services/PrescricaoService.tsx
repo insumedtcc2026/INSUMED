@@ -104,6 +104,9 @@ export interface HistoricoPrescricao {
 
     sol_motivo_reenvio?: string;
 
+    sol_motivo_nao_autorizado?: string | null;
+
+
     sol_observacao?: string;
 
     sol_prescricao_tipo?: string;

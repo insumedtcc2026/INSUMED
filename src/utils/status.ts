@@ -47,3 +47,15 @@ export function formatarData(valor: string | null | undefined): string {
   const data = new Date(valor);
   return Number.isNaN(data.getTime()) ? "—" : data.toLocaleDateString("pt-BR");
 }
+
+// Data (ISO, com ou sem hora) dentro do período "YYYY-MM-DD" informado.
+// Compara pelo dia local, que é o que o usuário vê na tela.
+export function dentroDoPeriodo(valor: string | null | undefined, inicio: string, fim: string): boolean {
+  if (!inicio && !fim) return true;
+  if (!valor) return false;
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(valor) ? new Date(`${valor}T12:00:00`) : new Date(valor);
+  if (Number.isNaN(d.getTime())) return false;
+  const dois = (n: number) => String(n).padStart(2, "0");
+  const dia = `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
+  return (!inicio || dia >= inicio) && (!fim || dia <= fim);
+}

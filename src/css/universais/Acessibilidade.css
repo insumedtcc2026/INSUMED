@@ -161,3 +161,41 @@ html.alto-contraste textarea {
     transition: none;
   }
 }
+
+/* ---------- Celular: botões flutuantes nos cantos de baixo ---------- */
+/* No meio da tela eles cobriam campos e botões. Ficam acima da barra
+   inferior do paciente (≈ 84px) e da área segura do aparelho. */
+@media (max-width: 768px) {
+  .acessibilidade {
+    top: auto;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    transform: none;
+  }
+
+  .acessibilidade-botao {
+    width: 40px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .acessibilidade-painel {
+    top: auto;
+    bottom: 0;
+    transform: none;
+    left: 48px;
+  }
+
+  /* VLibras: o botão fica dentro de um shadow DOM, fixo em "50vh - 20px".
+     Só o contêiner aceita CSS de fora: ele vira o bloco de referência do
+     botão (translateZ) e é posicionado para o botão cair na mesma altura do
+     "Aa" (100px acima da base). Altura 0: não bloqueia cliques na página. */
+  #vlibras-access-wrapper {
+    position: fixed;
+    top: calc(50vh - 120px - env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    height: 0;
+    transform: translateZ(0);
+    z-index: 1800;
+  }
+}
