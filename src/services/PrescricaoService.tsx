@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { EventoHistorico } from "./HistoricoService";
 import { API_URL } from "../config";
 
 
@@ -208,3 +209,43 @@ export async function enviarPrescricao (
 
   return response.data;
 }
+// ---------------------------------------------------------
+// RASTREIO DAS PRESCRIÇÕES (paciente): cada prescrição com o
+// agendamento mais recente feito a partir dela e a linha do tempo
+// ---------------------------------------------------------
+
+export interface AgendamentoDaPrescricao {
+    sol_id: number;
+    sol_status: "agendado" | "concluido" | "cancelado";
+    sol_protocolo: string | null;
+    sol_data_de_coleta: string | null;
+    sol_motivo_cancelamento: string | null;
+    sol_recado: string | null;
+    pos_nome: string | null;
+    pos_endereco: string | null;
+}
+
+export interface MinhaPrescricao {
+    sol_id: number;
+    sol_status: string;
+    sol_data_solicitacao: string;
+    sol_data_vencimento: string | null;
+    sol_observacao: string | null;
+    sol_prescricao_tipo: string | null;
+    sol_insumo_quant: number | null;
+    sol_motivo_nao_autorizado: string | null;
+    sol_motivo_reenvio: string | null;
+    pos_nome: string | null;
+    ins_nome: string | null;
+    tem_prescricao: boolean;
+    agendamento: AgendamentoDaPrescricao | null;
+    eventos: EventoHistorico[];
+}
+
+export const buscarMinhasPrescricoes = async (): Promise<MinhaPrescricao[]> => {
+    const token = localStorage.getItem("token_paciente");
+    const response = await axios.get<MinhaPrescricao[]>(`${API_URL}/minhas-prescricoes`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+};

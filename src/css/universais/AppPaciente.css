@@ -329,7 +329,8 @@
     padding: 0 8px;
 
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* 5 itens: Início, Agenda, Prescrições, Enviar, Coletas */
+    grid-template-columns: repeat(5, 1fr);
     align-items: center;
 
     background: var(--cor-superficie);
@@ -339,8 +340,9 @@
   }
 
   .nav-inferior-item {
+    min-width: 0;
     height: 56px;
-    margin: 0 4px;
+    margin: 0 2px;
 
     display: flex;
     flex-direction: column;
@@ -361,8 +363,13 @@
 
   .nav-inferior-texto {
     font-family: var(--fonte-botao);
-    font-size: 11px;
+    /* 5 itens: a fonte acompanha a largura da tela para "Prescrições" caber */
+    font-size: clamp(9px, 2.5vw, 11px);
     font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .nav-inferior-item:hover {

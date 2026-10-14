@@ -69,6 +69,7 @@ export interface ResultadoPaginado<T> {
   itens: T[];
   paginaAtual: number;
   totalPaginas: number;
+  total?: number;
 }
 
 

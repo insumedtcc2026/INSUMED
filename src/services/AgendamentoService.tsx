@@ -66,12 +66,15 @@ export async function listarAgendamentos(
 export async function listarAgendamentosDoPaciente(
   _pac_cpf: string,
   pagina = 1,
-  itensPorPagina = 4
+  itensPorPagina = 4,
+  // "proximos" = só agendados (do mais próximo); "anteriores" = coletados/cancelados
+  situacao?: "proximos" | "anteriores"
 ): Promise<ResultadoPaginado<Agendamento>> {
   const response = await api.get("/meus-agendamentos", {
     params: {
       page: pagina,
       porPagina: itensPorPagina,
+      situacao,
     },
     headers: authHeader("PACIENTE"),
   });

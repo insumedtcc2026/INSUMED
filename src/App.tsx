@@ -26,6 +26,7 @@ import TermosDeUso from './pages/TermosDeUso';
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import SegurancaDados from './pages/SegurancaDados';
 import ColetasHoje from './Administrador/ColetasHoje';
+import Prescricoes from './pages/Prescricoes';
 import FichaPaciente from './Administrador/FichaPaciente';
 import PerfilEquipe from './components/universais/PerfilEquipe';
 import VerPrescricaoNaoAutorizada from
@@ -162,6 +163,9 @@ function App() {
         path="/cadastro"
         element={<Cadastro />}
       />
+
+      {/* Paciente: prescrições com rastreio */}
+      <Route path="/prescricoes" element={<Prescricoes />} />
 
       {/* Admin: balcão, ficha do paciente e perfil */}
       <Route path="/coletas-hoje" element={<ColetasHoje />} />

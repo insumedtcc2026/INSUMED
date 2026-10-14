@@ -17,6 +17,7 @@ interface FooterLink {
 const linksPaciente: FooterLink[] = [
   { label: 'Início', href: '/home' },
   { label: 'Agendamentos', href: '/agendamentos' },
+  { label: 'Minhas prescrições', href: '/prescricoes' },
   { label: 'Pontos de Coleta', href: '/pontos-coleta' },
   { label: 'Enviar Prescrições', href: '/EnviarSolicitacao' },
   { label: 'Perfil', href: '/perfil' },
