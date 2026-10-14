@@ -9,6 +9,7 @@ import { sairDoPerfil } from './sessao';
 import {
   CalendarPlus,
   ClipboardCheck,
+  History,
   UserCog,
   Files,
   LogOut,
@@ -79,6 +80,11 @@ export default function Sidebar({
 
 
 
+    {
+      icon: History,
+      label: 'Atividades da unidade',
+      path: '/atividades',
+    },
     {
       icon: UserCog,
       label: 'Meu perfil',

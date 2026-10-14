@@ -33,6 +33,7 @@ const linksAdministrador: FooterLink[] = [
   { label: 'Histórico de Prescrições', href: '/Historicodaprescricao' },
   { label: 'Insumos', href: '/insumos' },
   { label: 'Pacientes', href: '/Pacientesadm' },
+  { label: 'Atividades da unidade', href: '/atividades' },
 ];
 
 const linksAutorizador: FooterLink[] = [
@@ -50,6 +51,7 @@ const rotasAdministrador = [
   '/administrador/',
   '/coletas-hoje',
   '/perfil-admin',
+  '/atividades',
 ];
 
 const rotasAutorizador = ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'];

@@ -26,15 +26,20 @@ import TermosDeUso from './pages/TermosDeUso';
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import SegurancaDados from './pages/SegurancaDados';
 import ColetasHoje from './Administrador/ColetasHoje';
+import AtividadesUnidade from './Administrador/AtividadesUnidade';
 import Prescricoes from './pages/Prescricoes';
 import FichaPaciente from './Administrador/FichaPaciente';
 import PerfilEquipe from './components/universais/PerfilEquipe';
 import VerPrescricaoNaoAutorizada from
     "./Administrador/VerPrescricaoNaoAutorizada";
 import './index.css';
+import Acessibilidade from './components/universais/Acessibilidade';
 
 function App() {
   return (
+    <>
+    {/* pular para o conteúdo, tamanho do texto e alto contraste (todas as páginas) */}
+    <Acessibilidade />
     <Routes>
       <Route path="/" element={<HomeHome />} />
       <Route path="/home" element={<Home />} />
@@ -169,6 +174,7 @@ function App() {
 
       {/* Admin: balcão, ficha do paciente e perfil */}
       <Route path="/coletas-hoje" element={<ColetasHoje />} />
+      <Route path="/atividades" element={<AtividadesUnidade />} />
       <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
@@ -178,6 +184,7 @@ function App() {
       <Route path="/privacidade" element={<PoliticaPrivacidade />} />
       <Route path="/seguranca" element={<SegurancaDados />} />
     </Routes>
+    </>
   );
 }
 

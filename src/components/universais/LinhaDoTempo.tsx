@@ -1,24 +1,8 @@
 import type { EventoHistorico } from "../../services/HistoricoService";
+import { ACOES_HISTORICO, PAPEL_USUARIO, formatarDataHora } from "../../utils/acoesHistorico";
 
-// Texto e cor de cada ação registrada no histórico (backend: utils/historico.js)
-const ACOES: Record<string, { titulo: string; cor: string }> = {
-  enviada: { titulo: "Prescrição enviada", cor: "bg-blue-500" },
-  revisada: { titulo: "Revisada pela unidade e enviada para autorização", cor: "bg-blue-500" },
-  reenvio_solicitado: { titulo: "Unidade pediu o reenvio da prescrição", cor: "bg-amber-500" },
-  autorizada: { titulo: "Prescrição autorizada", cor: "bg-green-600" },
-  nao_autorizada: { titulo: "Prescrição não autorizada", cor: "bg-red-600" },
-  agendada: { titulo: "Coleta agendada", cor: "bg-blue-600" },
-  concluida: { titulo: "Insumos entregues (coleta concluída)", cor: "bg-green-600" },
-  cancelada: { titulo: "Agendamento cancelado", cor: "bg-red-600" },
-  transferida: { titulo: "Transferida para outra unidade", cor: "bg-violet-600" },
-  recado: { titulo: "Recado da unidade", cor: "bg-slate-500" },
-};
-
-const PAPEL: Record<string, string> = {
-  ADMIN: "administrador(a) da unidade",
-  AUTORIZADOR: "autorizador(a)",
-  PACIENTE: "paciente",
-};
+const ACOES = ACOES_HISTORICO;
+const PAPEL = PAPEL_USUARIO;
 
 function quem(e: EventoHistorico) {
   if (!e.usuario_tipo) return null;
@@ -27,11 +11,7 @@ function quem(e: EventoHistorico) {
   return e.usuario_tipo === "AUTORIZADOR" ? "pelo autorizador" : e.usuario_tipo === "ADMIN" ? "pela unidade" : null;
 }
 
-function quando(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
-}
+const quando = formatarDataHora;
 
 /** Linha do tempo de uma solicitação/agendamento: o que aconteceu, quando e por quem. */
 export default function LinhaDoTempo({ eventos }: { eventos: EventoHistorico[] }) {

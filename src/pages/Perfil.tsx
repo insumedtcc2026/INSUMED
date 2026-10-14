@@ -181,7 +181,7 @@ if (verificando) {
         <label>
           <p>Nome Completo</p>
           <div className="input-com-editar">
-          <input type="text" value={user.nome} />
+          <input type="text" value={user.nome} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -199,7 +199,7 @@ if (verificando) {
         <label>
   <p>CPF</p>
   <div className="input-com-editar">
-    <input type="text" value={user.cpf} />
+    <input type="text" value={user.cpf} readOnly />
   </div>
 </label>
 
@@ -211,7 +211,7 @@ if (verificando) {
         <label>
           <p>CEP</p>
           <div className="input-com-editar">
-          <input type="text" value={user.cep} />
+          <input type="text" value={user.cep} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -235,8 +235,7 @@ if (verificando) {
       user.data_nascimento 
         ? new Date(user.data_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) 
         : ''
-    } 
-  />
+    } readOnly />
   
 
   </div>
@@ -245,7 +244,7 @@ if (verificando) {
         <label>
           <p>Endereço de Email</p>
           <div className="input-com-editar">
-          <input type="text" value={user.email} />
+          <input type="text" value={user.email} readOnly />
 
            <button
       type="button"
@@ -264,7 +263,7 @@ if (verificando) {
         <label>
           <p>Endereço</p>
           <div className="input-com-editar">
-          <input type="text" value={user.endereco} />
+          <input type="text" value={user.endereco} readOnly />
            <button
       type="button"
       className="btn-editar"
@@ -282,7 +281,7 @@ if (verificando) {
         <label>
           <p>Telefone</p>
           <div className="input-com-editar">
-          <input type="text" value={user.telefone} />
+          <input type="text" value={user.telefone} readOnly />
 
            <button
       type="button"
@@ -301,7 +300,7 @@ if (verificando) {
         <label>
           <p>Raça/Cor</p>
           <div className="input-com-editar">
-          <input type="text" value={user.raca} />
+          <input type="text" value={user.raca} readOnly />
           
           </div>
         </label>
