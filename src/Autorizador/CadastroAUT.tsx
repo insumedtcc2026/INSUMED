@@ -2,8 +2,8 @@ import axios from 'axios'
 import images from "../assets/home-log/teste cadastro.webp"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import olhoAberto from '../assets/home-log/olho aberto.png';
-import olhoFechado from '../assets/home-log/olho fechado.png';
+import olhoAberto from '../assets/home-log/olho aberto.webp';
+import olhoFechado from '../assets/home-log/olho fechado.webp';
 import { useState } from "react";
 import "../css/home/Cadastro.css"
 import BotaoVoltar from "../components/universais/BotaoVoltar";

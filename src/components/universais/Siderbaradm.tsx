@@ -3,7 +3,7 @@ import '../../css/universais/Sidebar.css';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import logo from '../../assets/home/Logo.png';
+import logo from '../../assets/home/Logo.webp';
 import { sairDoPerfil } from './sessao';
 
 import {

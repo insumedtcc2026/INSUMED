@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import '../../css/sobre/TeamCarousel.css';
 
-import Lucas from '../../assets/sobre/Lucas.png';
-import Kayki from '../../assets/sobre/Kayki.png';
-import Isabelly from '../../assets/sobre/Isabelly.png';
-import AnaClara from '../../assets/sobre/Ana-Clara.png';
-import AnaLivia from '../../assets/sobre/Ana-Lívia.png';
-import Sara from '../../assets/sobre/Sara.png';
+import Lucas from '../../assets/sobre/Lucas.webp';
+import Kayki from '../../assets/sobre/Kayki.webp';
+import Isabelly from '../../assets/sobre/Isabelly.webp';
+import AnaClara from '../../assets/sobre/Ana-Clara.webp';
+import AnaLivia from '../../assets/sobre/Ana-Lívia.webp';
+import Sara from '../../assets/sobre/Sara.webp';
 
 interface TeamMember {
   id: number;

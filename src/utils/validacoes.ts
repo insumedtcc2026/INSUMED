@@ -107,6 +107,24 @@ export function validarObrigatorio(valor: string, rotulo: string) {
 
 // ---------- Senha ----------
 
+// ---------- Matrícula do administrador (mesma regra do backend) ----------
+// Não há um formato oficial único entre as unidades: aceita letras, números
+// e os separadores . - / ("12345", "A-1234", "2024.0001", "SMS/123").
+// É gravada em maiúsculas e sem espaços; a duplicidade ignora separadores.
+export const MATRICULA_MAX = 20;
+
+export const normalizarMatricula = (matricula: string) => matricula.replace(/\s+/g, "").toUpperCase();
+
+export function validarMatricula(matricula: string) {
+  const valor = normalizarMatricula(matricula);
+  if (!valor) return "Informe a matrícula.";
+  if (!/^[A-Z0-9./-]+$/.test(valor)) return "Use apenas letras, números e os separadores . - /";
+  if (!/\d/.test(valor)) return "A matrícula deve conter ao menos um número.";
+  if (valor.replace(/[^A-Z0-9]/g, "").length < 3) return "A matrícula deve ter ao menos 3 letras ou números.";
+  if (valor.length > MATRICULA_MAX) return `A matrícula deve ter no máximo ${MATRICULA_MAX} caracteres.`;
+  return null;
+}
+
 export const SENHA_MIN = 8;
 export const SENHA_MAX = 64;
 

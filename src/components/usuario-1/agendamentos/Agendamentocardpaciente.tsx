@@ -3,6 +3,7 @@ import StatusBadge from "./StatusBadge";
 import MotivoCancelamento from "./MotivoCancelamento";
 import ComprovanteAgendamento from "./ComprovanteAgendamento";
 import ModalHistorico from "../../universais/ModalHistorico";
+import ContatoUnidade from "../../universais/ContatoUnidade";
 import type { Agendamento } from "../../../types/agendamento";
 import { useDadosUser } from "../../../hook/Dadosuser";
 
@@ -38,13 +39,10 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
   const resumoInsumos = insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ");
   const dataFormatada = formatarDataBR(sol_data_de_coleta);
 
-  // Mensagem pronta para o WhatsApp do posto (só se o posto tiver número)
-  const whatsapp = posto?.pos_whatsapp?.replace(/\D/g, "");
-  const linkWhatsapp = whatsapp
-    ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(
-        `Olá! Sou ${usuario.nome}. Tenho a coleta ${sol_protocolo ?? ""} agendada para ${dataFormatada} na ${posto.pos_nome}. `,
-      )}`
-    : null;
+  // Mensagem pronta para o WhatsApp do posto (o botão só aparece se o posto tiver número)
+  const mensagemUnidade = status === "cancelado"
+    ? `Olá! Sou ${usuario.nome}. Meu agendamento ${sol_protocolo ?? ""} de ${dataFormatada} na ${posto.pos_nome} foi cancelado e gostaria de saber mais.`
+    : `Olá! Sou ${usuario.nome}. Tenho a coleta ${sol_protocolo ?? ""} agendada para ${dataFormatada} na ${posto.pos_nome}. `;
 
   return (
     <div className="agendamento-card-paciente rounded-3xl bg-white px-5 py-5 shadow-sm sm:px-6">
@@ -81,16 +79,8 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
             Ver comprovante
           </button>
         )}
-        {status === "agendado" && linkWhatsapp && (
-          <a
-            href={linkWhatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Falar com a ${posto.pos_nome} pelo WhatsApp (abre em nova aba)`}
-            className="flex min-h-12 items-center justify-center rounded-full border border-green-600 px-5 font-semibold text-green-700 hover:bg-green-50"
-          >
-            Falar com a unidade
-          </a>
+        {(status === "agendado" || status === "cancelado") && (posto?.pos_whatsapp || status === "cancelado") && (
+          <ContatoUnidade pos_nome={posto?.pos_nome} pos_whatsapp={posto?.pos_whatsapp} mensagem={mensagemUnidade} />
         )}
         <button
           type="button"

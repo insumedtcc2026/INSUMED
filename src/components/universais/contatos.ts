@@ -38,3 +38,14 @@ export const propsLinkExterno = {
   target: '_blank',
   rel: 'noopener noreferrer',
 } as const;
+
+/**
+ * Link do WhatsApp da UNIDADE (posto) com uma mensagem pronta. Usa só o
+ * número cadastrado no posto da solicitação; sem número, devolve null
+ * (a tela não inventa outro contato).
+ */
+export function linkWhatsappUnidade(numero: string | null | undefined, mensagem: string): string | null {
+  const digitos = String(numero ?? '').replace(/\D/g, '');
+  if (digitos.length < 12) return null; // 55 + DDD + número
+  return `https://wa.me/${digitos}?text=${encodeURIComponent(mensagem)}`;
+}

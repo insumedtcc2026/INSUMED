@@ -5,12 +5,11 @@ import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
 import BotaoVoltar from '../components/universais/BotaoVoltar';
-import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import '../css/home/perfil.css';
 import { useDadosUser } from '../hook/Dadosuser.tsx';
 import { useValidarToken } from '../hook/Validartoken.tsx';
 import Swal from 'sweetalert2';
-import lapis from '../assets/home-log/lapis.png'
+import lapis from '../assets/home-log/lapis.webp'
 import axios from 'axios';
 import { API_URL } from "../config";
 
@@ -322,7 +321,6 @@ if (verificando) {
 
       <Footer />
 
-      <NavInferiorPaciente />
     </div>
   );
 }

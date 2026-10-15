@@ -4,7 +4,6 @@ import Header from '../components/universais/Header';
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
 import BotaoVoltar from '../components/universais/BotaoVoltar';
-import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import BannerAbout from "../components/sobre/BannerAbout";
 import TeamCarousel from '../components/sobre/TeamCarousel';
@@ -53,7 +52,6 @@ export default function Sobre() {
 
       <Footer />
 
-      <NavInferiorPaciente />
     </div>
   );
 }

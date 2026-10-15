@@ -8,9 +8,10 @@ import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCar
 import NovoAgendamentoModal from "../components/usuario-1/agendamentos/NovoagendamentoModal";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
 import {
-  listarAgendamentos,
+  listarAgendamentosPaginado,
   concluirAgendamento,
 } from "../services/AgendamentoService";
+import Pagination from "../components/usuario-1/agendamentos/pagination";
 import type { Agendamento, StatusAgendamento } from "../types/agendamento";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { useValidarToken } from "../hook/Validartoken";
@@ -19,6 +20,8 @@ import axios from "axios";
 import { API_URL } from "../config";
 
 type FiltroStatus = "todos" | StatusAgendamento;
+
+const POR_PAGINA = 20;
 
 /**
  * Página única de "Agendamentos" do ADM — substitui as antigas "Coletas
@@ -39,6 +42,10 @@ export default function Agendamentosadm() {
   const [modalAberto, setModalAberto] = useState(searchParams.get("novo") === "1");
 
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+  // paginação feita no banco (a agenda do posto só cresce)
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [total, setTotal] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -61,19 +68,21 @@ const [quantidadeInicial, setQuantidadeInicial] = useState(0);
     setCarregando(true);
     setErro(null);
     try {
-      const dados = await listarAgendamentos({
+      const dados = await listarAgendamentosPaginado({
         status: statusFiltro,
         busca,
         dataInicio,
         dataFim,
-      });
-      setAgendamentos(dados);
+      }, pagina, POR_PAGINA);
+      setAgendamentos(dados.itens);
+      setTotal(dados.total);
+      setTotalPaginas(dados.totalPaginas);
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar os agendamentos."));
     } finally {
       setCarregando(false);
     }
-  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido]);
+  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido, pagina]);
 
 useEffect(() => {
   async function carregarDadosSolicitacao() {
@@ -213,7 +222,7 @@ useEffect(() => {
           <input
             type="search"
             value={busca}
-            onChange={(e) => setBusca(e.target.value)}
+            onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
             placeholder="Buscar por nome, CPF ou protocolo"
             aria-label="Buscar por nome, CPF ou protocolo"
             className="min-h-9 w-full text-base focus:outline-none focus:ring-0 sm:text-sm"
@@ -224,7 +233,7 @@ useEffect(() => {
         <div className="mb-2 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
           <select
             value={statusFiltro}
-            onChange={(e) => setStatusFiltro(e.target.value as FiltroStatus)}
+            onChange={(e) => { setStatusFiltro(e.target.value as FiltroStatus); setPagina(1); }}
             aria-label="Filtrar por status"
             className="min-h-11 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:text-sm"
           >
@@ -238,7 +247,7 @@ useEffect(() => {
             <input
               type="date"
               value={dataInicio}
-              onChange={(e) => setDataInicio(e.target.value)}
+              onChange={(e) => { setDataInicio(e.target.value); setPagina(1); }}
               aria-label="Data inicial"
               className="min-h-11 w-full min-w-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:w-auto sm:text-sm"
             />
@@ -247,7 +256,7 @@ useEffect(() => {
               type="date"
               value={dataFim}
               min={dataInicio || undefined}
-              onChange={(e) => setDataFim(e.target.value)}
+              onChange={(e) => { setDataFim(e.target.value); setPagina(1); }}
               aria-label="Data final"
               className="min-h-11 w-full min-w-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:w-auto sm:text-sm"
             />
@@ -257,6 +266,12 @@ useEffect(() => {
         {intervaloInvalido && (
           <p className="mb-4 text-sm text-rose-600" role="alert">
             A data inicial não pode ser maior que a data final.
+          </p>
+        )}
+
+        {!carregando && !erro && !intervaloInvalido && total > 0 && (
+          <p className="mb-3 text-sm text-gray-500" role="status">
+            {total === 1 ? "1 agendamento" : `${total} agendamentos`}
           </p>
         )}
 
@@ -298,6 +313,7 @@ useEffect(() => {
                 onAtualizar={carregar}
               />
             ))}
+            <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
           </div>
         )}
       </main>

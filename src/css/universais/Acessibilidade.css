@@ -164,12 +164,15 @@ html.alto-contraste textarea {
 
 /* ---------- Celular: botões flutuantes nos cantos de baixo ---------- */
 /* No meio da tela eles cobriam campos e botões. Ficam acima da barra
-   inferior do paciente (≈ 84px) e da área segura do aparelho. */
+   inferior (≈ 80px) e da área segura do aparelho. */
 @media (max-width: 768px) {
   .acessibilidade {
     top: auto;
     bottom: calc(100px + env(safe-area-inset-bottom));
     transform: none;
+    /* acima da barra inferior (900) e abaixo dos diálogos (1000): com um
+       comprovante ou formulário aberto, não cobrem os botões dele */
+    z-index: 950;
   }
 
   .acessibilidade-botao {
@@ -196,6 +199,6 @@ html.alto-contraste textarea {
     right: 0;
     height: 0;
     transform: translateZ(0);
-    z-index: 1800;
+    z-index: 950;
   }
 }

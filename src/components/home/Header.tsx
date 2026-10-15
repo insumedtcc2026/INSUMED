@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import '../../css/home/Header.css';
-import logo from '../../assets/home/Logo.png';
+import logo from '../../assets/home/Logo.webp';
 import { propsLinkExterno, redesSociais } from '../universais/contatos';
  
 const Header: React.FC = () => {

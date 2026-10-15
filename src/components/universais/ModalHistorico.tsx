@@ -10,7 +10,7 @@ interface Props {
   onClose: () => void;
 }
 
-/** Diálogo com o histórico (quem fez o quê) de uma solicitação/agendamento. */
+/** Diálogo com o histórico (eventos, datas e motivos) de uma solicitação/agendamento. */
 export default function ModalHistorico({ sol_id, perfil, titulo = "Histórico", onClose }: Props) {
   const [eventos, setEventos] = useState<EventoHistorico[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export default function ModalHistorico({ sol_id, perfil, titulo = "Histórico", 
 
         {erro && <p className="text-rose-600" role="alert">{erro}</p>}
         {!erro && !eventos && <p className="text-gray-500" role="status">Carregando…</p>}
-        {eventos && <LinhaDoTempo eventos={eventos} />}
+        {eventos && <LinhaDoTempo eventos={eventos} agruparPorDia />}
       </div>
     </div>
   );

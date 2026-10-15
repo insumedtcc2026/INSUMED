@@ -6,7 +6,7 @@ import {
   FaYoutube,
 } from 'react-icons/fa';
 
-import logo from '../../assets/logo-footer.png';
+import logo from '../../assets/logo-footer.webp';
 import { linksAtendimento, propsLinkExterno, redesSociais } from './contatos';
 
 interface FooterLink {

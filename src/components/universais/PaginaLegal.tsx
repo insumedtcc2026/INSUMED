@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 
-import logo from '../../assets/home/Logo.png';
+import logo from '../../assets/home/Logo.webp';
 import BotaoVoltar from './BotaoVoltar';
 import Footer from './Footer';
 import { DATA_ATUALIZACAO } from './dadosLegais';

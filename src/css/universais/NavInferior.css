@@ -1,0 +1,204 @@
+/* =====================================================
+   NAVEGAÇÃO INFERIOR (celular, até 768px) — 3 perfis
+   No computador continuam o menu lateral e o rodapé.
+===================================================== */
+
+.nav-inferior,
+.nav-mais-fundo {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --altura-nav-inferior: 68px;
+  }
+
+  .nav-inferior {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    /* abaixo dos diálogos (comprovante, histórico: 1000) e do SweetAlert,
+       para nunca cobrir o que está aberto por cima da página */
+    z-index: 900;
+
+    height: var(--altura-nav-inferior);
+    padding: 0 6px;
+
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: center;
+
+    background: var(--cor-superficie, #fff);
+    border: 1px solid var(--cor-borda, #e5e7eb);
+    border-radius: var(--raio-lg, 20px);
+    box-shadow: 0 10px 30px rgba(16, 24, 64, 0.18);
+  }
+
+  .nav-inferior-item {
+    min-width: 0;
+    height: 54px;
+    margin: 0 2px;
+    padding: 0 2px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+
+    background: none;
+    border: 0;
+    border-radius: var(--raio-md, 14px);
+    color: var(--cor-primaria, #0042ec);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .nav-inferior-icone {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .nav-inferior-texto {
+    font-family: var(--fonte-botao, "Montserrat", sans-serif);
+    font-size: clamp(9px, 2.6vw, 11px);
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    line-height: 1.1;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-inferior-item:hover {
+    background: var(--cor-primaria-clara, #e8efff);
+  }
+
+  .nav-inferior-item-ativo,
+  .nav-inferior-item-ativo:hover {
+    background: var(--gradiente-primario, #0042ec);
+    color: #fff;
+    box-shadow: var(--sombra-botao, none);
+  }
+
+  /* ---------- "Mais" (folha que sobe do rodapé) ---------- */
+  .nav-mais-fundo {
+    display: flex;
+    align-items: flex-end;
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-mais {
+    width: 100%;
+    max-height: 85dvh;
+    overflow-y: auto;
+    padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
+    background: var(--cor-superficie, #fff);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 30px rgba(16, 24, 64, 0.2);
+  }
+
+  .nav-mais-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .nav-mais-topo h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .nav-mais-fechar {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: #6b7280;
+  }
+
+  .nav-mais-fechar:hover {
+    background: #f3f4f6;
+  }
+
+  .nav-mais-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-mais-item {
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border-radius: 12px;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: left;
+  }
+
+  .nav-mais-item:hover,
+  .nav-mais-item[aria-current="page"] {
+    background: var(--cor-primaria-clara, #e8efff);
+    color: var(--cor-primaria, #0042ec);
+  }
+
+  .nav-mais-icone {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--cor-primaria, #0042ec);
+  }
+
+  .nav-mais-secao {
+    margin: 14px 12px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  .nav-mais-sair {
+    margin-top: 10px;
+    border-top: 1px solid #f3f4f6;
+    border-radius: 0 0 12px 12px;
+    color: #b91c1c;
+  }
+
+  .nav-mais-sair .nav-mais-icone {
+    color: #b91c1c;
+  }
+
+  /* ---------- páginas com a barra ---------- */
+
+  /* o menu lateral e o rodapé institucional saem do celular:
+     as opções deles estão na barra e em "Mais" */
+  body.com-nav-inferior .menu-button,
+  body.com-nav-inferior .footer {
+    display: none;
+  }
+
+  /* espaço no fim da página: o último botão, formulário ou comprovante
+     nunca fica escondido atrás da barra */
+  body.com-nav-inferior #root > div:not(.acessibilidade) {
+    padding-bottom: calc(var(--altura-nav-inferior) + 28px + env(safe-area-inset-bottom));
+  }
+}

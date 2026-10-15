@@ -32,13 +32,29 @@ export async function buscarHistorico(sol_id: number, perfil: PerfilLogado): Pro
   return data;
 }
 
-export async function transferirUnidade(sol_id: number, pos_id: number, motivo: string) {
-  const { data } = await axios.patch(
-    `${API_URL}/solicitacao/${sol_id}/transferir`,
-    { pos_id, motivo },
-    { headers: cabecalho("ADMIN") },
-  );
-  return data as { message: string; pos_id: number; pos_nome: string };
+// Versões anteriores da prescrição (guardadas quando o paciente reenvia
+// uma correção dentro da mesma solicitação)
+export interface VersaoPrescricao {
+  ver_numero: number;
+  ver_prescricao_tipo: string | null;
+  ver_observacao: string | null;
+  ver_motivo_reenvio: string | null;
+  ver_motivo_reenvio_texto: string | null;
+  ver_enviada_em: string | null;
+  ver_substituida_em: string;
+}
+
+export async function buscarVersoes(sol_id: number, perfil: PerfilLogado): Promise<VersaoPrescricao[]> {
+  const { data } = await axios.get(`${API_URL}/solicitacao/${sol_id}/versoes`, { headers: cabecalho(perfil) });
+  return data;
+}
+
+export async function buscarArquivoVersao(sol_id: number, versao: number, perfil: PerfilLogado): Promise<Blob> {
+  const { data } = await axios.get(`${API_URL}/solicitacao/${sol_id}/versoes/${versao}/arquivo`, {
+    headers: cabecalho(perfil),
+    responseType: "blob",
+  });
+  return data;
 }
 
 export async function salvarRecado(sol_id: number, recado: string) {

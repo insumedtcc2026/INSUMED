@@ -15,7 +15,7 @@ const FILTROS_VAZIOS: FiltrosAtividades = { data_inicio: "", data_fim: "", acao:
 /**
  * Atividades da unidade (admin): tudo o que foi feito nas prescrições e
  * agendamentos do posto — quem revisou, autorizou, agendou, entregou,
- * cancelou, transferiu ou deixou recado — com filtros por data, tipo,
+ * cancelou ou deixou recado — com filtros por data, tipo,
  * pessoa e paciente/protocolo.
  */
 export default function AtividadesUnidade() {
@@ -78,7 +78,7 @@ export default function AtividadesUnidade() {
         <header className="mb-5">
           <h1 className="text-2xl font-semibold text-gray-800">Atividades da unidade</h1>
           <p className="text-sm text-gray-500">
-            Quem fez o quê nas prescrições e agendamentos, do mais recente para o mais antigo.
+            Tudo o que foi registrado nas prescrições e agendamentos da unidade, do mais recente para o mais antigo.
           </p>
         </header>
 

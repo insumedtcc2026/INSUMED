@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import "../../css/home/CareSection.css";
  
-import calendarIcon from "../../assets/home/calendar.png";
-import seloIcon from "../../assets/home/selo.png";
-import comunicacaoIcon from "../../assets/home/comunicacao.png";
+import calendarIcon from "../../assets/home/calendar.webp";
+import seloIcon from "../../assets/home/selo.webp";
+import comunicacaoIcon from "../../assets/home/comunicacao.webp";
  
 interface CardProps {
   icon: string;

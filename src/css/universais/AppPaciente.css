@@ -6,16 +6,10 @@
    Referência: protótipo do Figma da home do paciente.
 ===================================================== */
 
-/* Barra inferior: escondida fora do celular */
-.nav-inferior-paciente {
-  display: none;
-}
-
 @media (max-width: 768px) {
   /* ---------- PÁGINA ---------- */
   .pagina-paciente {
     --logged-header-height: 92px;
-    --altura-nav-inferior: 72px;
 
     min-height: 100vh;
     background: var(--cor-fundo);
@@ -283,107 +277,6 @@
 
   .pagina-paciente .posto-card {
     border-radius: var(--raio-lg);
-  }
-
-  /* ---------- FOOTER COMPACTO ---------- */
-  .pagina-paciente .footer {
-    padding: 32px 20px 0;
-    padding-bottom: calc(var(--altura-nav-inferior) + 28px + env(safe-area-inset-bottom));
-    border-radius: var(--raio-xl) var(--raio-xl) 0 0;
-    margin-top: 24px;
-  }
-
-  .pagina-paciente .footer-container {
-    gap: 24px;
-  }
-
-  .pagina-paciente .footer-logo {
-    width: 180px;
-  }
-
-  .pagina-paciente .footer-links {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px 16px;
-  }
-
-  .pagina-paciente .footer-column a,
-  .pagina-paciente .footer-social a {
-    font-size: 14px;
-  }
-
-  .pagina-paciente .footer-base {
-    margin-top: 24px;
-    font-size: 12px;
-  }
-
-  /* ---------- BARRA DE NAVEGAÇÃO INFERIOR ---------- */
-  .pagina-paciente .nav-inferior-paciente {
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    z-index: 1500; /* acima do conteúdo, abaixo do sidebar (2000) */
-
-    height: var(--altura-nav-inferior);
-    padding: 0 8px;
-
-    display: grid;
-    /* 5 itens: Início, Agenda, Prescrições, Enviar, Coletas */
-    grid-template-columns: repeat(5, 1fr);
-    align-items: center;
-
-    background: var(--cor-superficie);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-lg);
-    box-shadow: 0 10px 30px rgba(16, 24, 64, 0.18);
-  }
-
-  .nav-inferior-item {
-    min-width: 0;
-    height: 56px;
-    margin: 0 2px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-
-    border-radius: var(--raio-md);
-    color: var(--cor-primaria);
-    text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
-
-  .nav-inferior-icone {
-    width: 24px;
-    height: 24px;
-  }
-
-  .nav-inferior-texto {
-    font-family: var(--fonte-botao);
-    /* 5 itens: a fonte acompanha a largura da tela para "Prescrições" caber */
-    font-size: clamp(9px, 2.5vw, 11px);
-    font-weight: 600;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .nav-inferior-item:hover {
-    background: var(--cor-primaria-clara);
-  }
-
-  .nav-inferior-item-ativo {
-    background: var(--gradiente-primario);
-    color: #fff;
-    box-shadow: var(--sombra-botao);
-  }
-
-  .nav-inferior-item-ativo:hover {
-    background: var(--gradiente-primario);
   }
 }
 

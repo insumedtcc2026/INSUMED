@@ -14,6 +14,16 @@ export interface PrescricaoPendente {
     pac_avatar: string;
     // true quando a prescrição autorizada já tem agendamento ativo
     agendamento_ativo?: boolean;
+    // > 0 = o paciente já reenviou uma versão corrigida
+    versoes_anteriores?: number;
+}
+
+// Resposta paginada pelo backend (mesmo formato de "Meus agendamentos")
+export interface Pagina<T> {
+    itens: T[];
+    total: number;
+    paginaAtual: number;
+    totalPaginas: number;
 }
 
 // Usada na LISTAGEM — bate com o que "prescicaodopaciente" retorna
@@ -116,50 +126,43 @@ export interface HistoricoPrescricao {
 }
 
 
-export const buscarHistoricoPrescricoes =
-    async (): Promise<HistoricoPrescricao[]> => {
-       const token = localStorage.getItem("token_admin");
-        const response =
-            await axios.get<HistoricoPrescricao[]>(
-                `${API_URL}/prescricoes/historico`,
+export interface FiltrosListaPrescricoes {
+    busca?: string;
+    status?: string;
+    data_inicio?: string;
+    data_fim?: string;
+    page?: number;
+    porPagina?: number;
+}
 
-                {
+// Só envia os filtros preenchidos
+const semVazios = (filtros: FiltrosListaPrescricoes) =>
+    Object.fromEntries(Object.entries(filtros).filter(([, v]) => v !== undefined && v !== ""));
 
-                 headers:{
-                    Authorization: `Bearer ${token}`
-                 }
-                }
-            );
-             
+// Histórico da prescrição (admin): busca, filtros e paginação feitos no banco
+export const buscarHistoricoPrescricoes = async (
+    filtros: FiltrosListaPrescricoes = {},
+): Promise<Pagina<HistoricoPrescricao>> => {
+    const token = localStorage.getItem("token_admin");
+    const response = await axios.get<Pagina<HistoricoPrescricao>>(`${API_URL}/prescricoes/historico`, {
+        params: { page: 1, ...semVazios(filtros) },
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+};
 
-        return response.data;
-    };
 
 
-
-export async function buscarPrescricoesAprovadas() {
+// Prescrições para análise (autorizador): busca, filtros e paginação no banco
+export async function buscarPrescricoesAprovadas(
+    filtros: FiltrosListaPrescricoes = {},
+): Promise<Pagina<PrescricaoAprovada>> {
     const token = localStorage.getItem("token_autorizador");
-
-    try {
-        const response = await axios.get(
-            `${API_URL}/prescricao/aprovadas?t=${Date.now()}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
-
-        console.log("STATUS DA API:", response.status);
-        console.log("RESPOSTA DA API:", response.data);
-        console.log("QUANTIDADE:", response.data.length);
-
-        return response.data;
-
-    } catch (error) {
-        console.error("ERRO AO BUSCAR PRESCRIÇÕES:", error);
-        throw error;
-    }
+    const response = await axios.get<Pagina<PrescricaoAprovada>>(`${API_URL}/prescricao/aprovadas`, {
+        params: { page: 1, ...semVazios(filtros) },
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
 }
 export interface PrescricaoAprovada {
     sol_id: number;
@@ -182,6 +185,8 @@ export interface PrescricaoAprovada {
   ins_nome: string | null;
   sol_insumo_quant: number | null;
     pos_nome?: string | null;
+    // > 0 = o paciente reenviou uma versão corrigida antes da revisão
+    versoes_anteriores?: number;
 }
 
 
@@ -223,9 +228,20 @@ export interface AgendamentoDaPrescricao {
     sol_protocolo: string | null;
     sol_data_de_coleta: string | null;
     sol_motivo_cancelamento: string | null;
+    sol_data_cancelamento?: string | null;
     sol_recado: string | null;
     pos_nome: string | null;
     pos_endereco: string | null;
+    pos_whatsapp?: string | null;
+}
+
+// Agendamento cancelado antes do atual (continua no histórico)
+export interface AgendamentoCancelado {
+    sol_id: number;
+    sol_protocolo: string | null;
+    sol_data_de_coleta: string | null;
+    sol_motivo_cancelamento: string | null;
+    sol_data_cancelamento: string | null;
 }
 
 export interface MinhaPrescricao {
@@ -238,17 +254,47 @@ export interface MinhaPrescricao {
     sol_insumo_quant: number | null;
     sol_motivo_nao_autorizado: string | null;
     sol_motivo_reenvio: string | null;
+    pos_id?: number | null;
     pos_nome: string | null;
+    pos_whatsapp?: string | null;
     ins_nome: string | null;
     tem_prescricao: boolean;
+    versoes_anteriores?: number;
     agendamento: AgendamentoDaPrescricao | null;
+    agendamentos_cancelados?: AgendamentoCancelado[];
     eventos: EventoHistorico[];
 }
 
-export const buscarMinhasPrescricoes = async (): Promise<MinhaPrescricao[]> => {
+export interface PaginaMinhasPrescricoes extends Pagina<MinhaPrescricao> {
+    contagem: { andamento: number; encerradas: number };
+}
+
+// Uma página de uma aba ("andamento" ou "encerradas"), paginada no banco
+export const buscarMinhasPrescricoes = async (
+    situacao: "andamento" | "encerradas",
+    page = 1,
+    porPagina = 10,
+): Promise<PaginaMinhasPrescricoes> => {
     const token = localStorage.getItem("token_paciente");
-    const response = await axios.get<MinhaPrescricao[]>(`${API_URL}/minhas-prescricoes`, {
+    const response = await axios.get<PaginaMinhasPrescricoes>(`${API_URL}/minhas-prescricoes`, {
+        params: { situacao, page, porPagina },
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
 };
+
+// Reenvio feito pelo paciente DENTRO da mesma solicitação (após pedido da unidade)
+export async function corrigirPrescricao(
+    sol_id: number,
+    sol_prescricao: string,
+    sol_prescricao_tipo: string,
+    sol_observacao: string,
+): Promise<{ message: string; sol_id: number; versao: number }> {
+    const token = localStorage.getItem("token_paciente");
+    const response = await axios.patch(
+        `${API_URL}/solicitacao/${sol_id}/corrigir`,
+        { sol_prescricao, sol_prescricao_tipo, sol_observacao },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return response.data;
+}

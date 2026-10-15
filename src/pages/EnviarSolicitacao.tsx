@@ -15,11 +15,11 @@ import api from '../services/SoliciatcaoService';
 import Header from '../components/universais/Header';
 import Footer from '../components/universais/Footer.tsx';
 import BotaoVoltar from '../components/universais/BotaoVoltar';
-import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 
 import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
 import { mensagemErroApi } from '../utils/validacoes';
+import { arquivoParaBase64, erroArquivoPrescricao } from '../components/usuario-1/prescricao/arquivoPrescricao';
 
 
 
@@ -31,53 +31,6 @@ import { mensagemErroApi } from '../utils/validacoes';
 interface Posto {
     pos_id: number;
     pos_nome: string;
-}
-
-
-// ==============================
-// CONVERTER IMAGEM PARA BASE64
-// ==============================
-// Converte um arquivo selecionado pelo usuário para Base64.
-function fileToBase64(file: File): Promise<string> {
-  // Cria uma Promise para controlar a leitura assíncrona do arquivo.
-    return new Promise((resolve, reject) => {
-// FileReader permite ler o conteúdo de arquivos no navegador.
-        const reader = new FileReader();
-// Executado quando a leitura do arquivo é finalizada.
-        reader.onloadend = () => {
-         // Obtém o resultado da leitura.
-            const result = reader.result;
-          // Verifica se o resultado é uma string.
-            if (typeof result !== 'string') {
-
-                reject(
-                    new Error(
-                        'Falha ao converter arquivo.'
-                    )
-                );
-
-                return;
-            }
-            // Remove o prefixo "data:image/...;base64,"
-            // e retorna somente o conteúdo em Base64.
-           
-            resolve(
-                result.split(',')[1]
-            );
-        };
-         // Trata possíveis erros durante a leitura do arquivo.
-        reader.onerror = () => {
-
-            reject(
-                new Error(
-                    'Falha ao ler arquivo.'
-                )
-            );
-
-        };
-// Lê o arquivo e o transforma em uma Data URL.
-        reader.readAsDataURL(file);
-    });
 }
 
 
@@ -160,20 +113,9 @@ function EnviarSolicitaçao() {
     // imagem ou PDF, até 5 MB (o backend confere de novo).
     function aceitarArquivo(arquivo: File): boolean {
 
-        const tamanhoMaximo =
-            5 * 1024 * 1024;
-
-        const tipoValido =
-            arquivo.type.startsWith('image/') ||
-            arquivo.type === 'application/pdf';
-
-        if (!tipoValido) {
-            setMessage('Formato não suportado. Envie uma imagem (JPG, PNG) ou um PDF.');
-            return false;
-        }
-
-        if (arquivo.size > tamanhoMaximo) {
-            setMessage('A prescrição deve ter no máximo 5 MB.');
+        const erro = erroArquivoPrescricao(arquivo);
+        if (erro) {
+            setMessage(erro);
             return false;
         }
 
@@ -252,7 +194,7 @@ function EnviarSolicitaçao() {
             // Converte imagem
 
             const base64String =
-                await fileToBase64(file);
+                await arquivoParaBase64(file);
 
 
             // Envia para o backend
@@ -623,7 +565,6 @@ return (
 
         <Footer />
 
-        <NavInferiorPaciente />
     </div>
 );
 }
