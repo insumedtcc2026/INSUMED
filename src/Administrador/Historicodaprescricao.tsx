@@ -11,8 +11,11 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 import PaginaLista, { FiltroPeriodo, SelectFiltro } from "../components/universais/PaginaLista";
 import CartaoPrescricao from "../components/universais/CartaoPrescricao";
 import { useValidarToken } from "../hook/Validartoken";
-import { mensagemErroApi, somenteDigitos } from "../utils/validacoes";
-import { dentroDoPeriodo, formatarData } from "../utils/status";
+import Pagination from "../components/usuario-1/agendamentos/pagination";
+import { mensagemErroApi } from "../utils/validacoes";
+import { formatarData } from "../utils/status";
+
+const POR_PAGINA = 20;
 
 const OPCOES_STATUS: [string, string][] = [
   ["TODOS", "Todos os status"],
@@ -38,25 +41,50 @@ export default function Historico() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [prescricoes, setPrescricoes] = useState<HistoricoPrescricao[]>([]);
+  const [total, setTotal] = useState(0);
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
   const [busca, setBusca] = useState("");
+  const [buscaAplicada, setBuscaAplicada] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("TODOS");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
+  // a busca vai para o servidor só depois que a pessoa para de digitar
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setBuscaAplicada(busca.trim());
+      setPagina(1);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [busca]);
+
+  // Busca, filtros e paginação são feitos no banco: a página não carrega
+  // o histórico inteiro da unidade de uma vez.
   const carregar = useCallback(async () => {
     setCarregando(true);
     setErro(null);
     try {
-      setPrescricoes(await buscarHistoricoPrescricoes());
+      const resposta = await buscarHistoricoPrescricoes({
+        busca: buscaAplicada,
+        status: statusFiltro,
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        page: pagina,
+        porPagina: POR_PAGINA,
+      });
+      setPrescricoes(resposta.itens);
+      setTotal(resposta.total);
+      setTotalPaginas(resposta.totalPaginas);
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar o histórico."));
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [buscaAplicada, statusFiltro, dataInicio, dataFim, pagina]);
 
   useEffect(() => {
     if (verificando) return;
@@ -64,23 +92,13 @@ export default function Historico() {
     return () => clearTimeout(t);
   }, [verificando, carregar]);
 
-  const termo = busca.toLowerCase().trim();
-  const digitos = somenteDigitos(busca);
-  const filtradas = prescricoes
-    .filter((p) => {
-      const correspondeBusca =
-        !termo ||
-        p.pac_nome.toLowerCase().includes(termo) ||
-        (digitos.length > 0 && somenteDigitos(p.pac_cpf).includes(digitos)) ||
-        String(p.sol_id) === termo;
-      // "Revisado" inclui o status antigo "Aprovado" (mesma etapa)
-      const correspondeStatus =
-        statusFiltro === "TODOS" ||
-        p.sol_status === statusFiltro ||
-        (statusFiltro === "Revisado" && p.sol_status === "Aprovado");
-      return correspondeBusca && correspondeStatus && dentroDoPeriodo(p.sol_data_solicitacao, dataInicio, dataFim);
-    })
-    .sort((a, b) => String(b.sol_data_solicitacao).localeCompare(String(a.sol_data_solicitacao)));
+  // filtro novo volta para a primeira página
+  const mudarFiltro = (aplicar: () => void) => {
+    aplicar();
+    setPagina(1);
+  };
+
+  const filtradas = prescricoes;
 
   function abrir(p: HistoricoPrescricao) {
     if (p.sol_status === "Nao Autorizado") navigate(`/administrador/prescricao/nao-autorizada/${p.sol_id}`);
@@ -112,8 +130,13 @@ export default function Historico() {
         placeholderBusca="Buscar por nome, CPF ou código"
         filtros={
           <>
-            <SelectFiltro valor={statusFiltro} onMudar={setStatusFiltro} rotulo="Filtrar por status" opcoes={OPCOES_STATUS} />
-            <FiltroPeriodo inicio={dataInicio} fim={dataFim} onInicio={setDataInicio} onFim={setDataFim} />
+            <SelectFiltro valor={statusFiltro} onMudar={(v) => mudarFiltro(() => setStatusFiltro(v))} rotulo="Filtrar por status" opcoes={OPCOES_STATUS} />
+            <FiltroPeriodo
+              inicio={dataInicio}
+              fim={dataFim}
+              onInicio={(v) => mudarFiltro(() => setDataInicio(v))}
+              onFim={(v) => mudarFiltro(() => setDataFim(v))}
+            />
           </>
         }
         carregando={carregando}
@@ -121,7 +144,7 @@ export default function Historico() {
         onTentarNovamente={carregar}
         vazio={filtradas.length === 0}
         mensagemVazio="Nenhuma prescrição encontrada com esses filtros."
-        contagem={filtradas.length === 1 ? "1 prescrição" : `${filtradas.length} prescrições`}
+        contagem={total === 1 ? "1 prescrição" : `${total} prescrições`}
       >
         {filtradas.map((p) => (
           <CartaoPrescricao
@@ -150,6 +173,7 @@ export default function Historico() {
             }
           />
         ))}
+        <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
       </PaginaLista>
 
       <Footer />

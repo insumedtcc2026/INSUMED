@@ -18,6 +18,7 @@ import { dentroDoPeriodo, formatarData } from "../utils/status";
 const OPCOES_STATUS: [string, string][] = [
   ["Todos", "Todos os status"],
   ["Pendente", "Pendente"],
+  ["Corrigida", "Pendente, corrigida pelo paciente"],
   ["Revisado", "Revisado"],
   ["Autorizado", "Autorizado"],
   ["ParaAgendar", "Autorizado, falta agendar"],
@@ -75,7 +76,9 @@ export default function Pendencias() {
       statusFiltro === "Todos" ||
       (statusFiltro === "ParaAgendar"
         ? p.sol_status === "Autorizado" && !p.agendamento_ativo
-        : p.sol_status === statusFiltro);
+        : statusFiltro === "Corrigida"
+          ? p.sol_status === "Pendente" && (p.versoes_anteriores ?? 0) > 0
+          : p.sol_status === statusFiltro);
     return correspondeBusca && correspondeStatus && dentroDoPeriodo(p.sol_data_solicitacao, dataInicio, dataFim);
   });
 
@@ -134,7 +137,10 @@ export default function Pendencias() {
             pac_nome={p.pac_nome}
             pac_cpf={p.pac_cpf}
             codigo={p.sol_id}
-            linhasInfo={[`Enviada em ${formatarData(p.sol_data_solicitacao)}`]}
+            linhasInfo={[
+              `Enviada em ${formatarData(p.sol_data_solicitacao)}`,
+              (p.versoes_anteriores ?? 0) > 0 && `Reenviada pelo paciente (versão ${(p.versoes_anteriores ?? 0) + 1})`,
+            ]}
             status={p.sol_status}
             rotuloStatus={p.sol_status === "Autorizado" && p.agendamento_ativo ? "Agendado" : undefined}
             acaoTexto={p.sol_status !== "Autorizado" ? "Ver mais" : p.agendamento_ativo ? "Ver agendamento" : "Agendar"}

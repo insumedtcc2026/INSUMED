@@ -204,3 +204,28 @@ textarea {
     width: 100%;
   }
 }
+
+/* =====================================================
+   RODAPÉ NO FIM DA PÁGINA (sem faixa vazia embaixo)
+   A página vira uma coluna com altura mínima da janela e o rodapé é
+   empurrado para o fim: em páginas curtas ele encosta na base da tela;
+   em páginas longas aparece depois do conteúdo, com rolagem normal.
+   :where() deixa a especificidade zerada, então qualquer classe da
+   própria página continua valendo (larguras, menus fixos etc.).
+===================================================== */
+:where(#root > div:has(> footer.footer)) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* em coluna flex, filhos com margin auto encolheriam: largura cheia */
+:where(#root > div:has(> footer.footer) > *) {
+  width: 100%;
+}
+
+:where(#root > div:has(> footer.footer) > footer.footer) {
+  margin-top: auto;
+  margin-bottom: 0;
+}

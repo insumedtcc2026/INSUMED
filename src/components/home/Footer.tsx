@@ -1,5 +1,5 @@
 import "../../css/home/Footer.css";
-import logo from "../../assets/home/logopb.png";
+import logo from "../../assets/home/logopb.webp";
 
 import {
   FaInstagram,

@@ -5,11 +5,14 @@ export const ACOES_HISTORICO: Record<string, { titulo: string; cor: string }> = 
   enviada: { titulo: "Prescrição enviada", cor: "bg-blue-500" },
   revisada: { titulo: "Revisada pela unidade e enviada para autorização", cor: "bg-blue-500" },
   reenvio_solicitado: { titulo: "Unidade pediu o reenvio da prescrição", cor: "bg-amber-500" },
+  reenviada: { titulo: "Paciente reenviou a prescrição corrigida", cor: "bg-blue-500" },
   autorizada: { titulo: "Prescrição autorizada", cor: "bg-green-600" },
   nao_autorizada: { titulo: "Prescrição não autorizada", cor: "bg-red-600" },
   agendada: { titulo: "Coleta agendada", cor: "bg-blue-600" },
+  reagendada: { titulo: "Coleta remarcada (novo agendamento)", cor: "bg-blue-600" },
   concluida: { titulo: "Insumos entregues (coleta concluída)", cor: "bg-green-600" },
   cancelada: { titulo: "Agendamento cancelado", cor: "bg-red-600" },
+  // a transferência foi removida; o rótulo fica para registros antigos
   transferida: { titulo: "Transferida para outra unidade", cor: "bg-violet-600" },
   recado: { titulo: "Recado da unidade", cor: "bg-slate-500" },
 };

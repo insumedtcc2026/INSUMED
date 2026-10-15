@@ -10,7 +10,8 @@ import { useDadosInsumos } from "../hook/Insumosposto";
 import "../css/home/AutorizarPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import ModalHistorico from "../components/universais/ModalHistorico";
-import { transferirComMotivo } from "../components/universais/acoesAdmin";
+import VersoesPrescricao from "../components/universais/VersoesPrescricao";
+import { mensagemErroApi } from "../utils/validacoes";
 import { API_URL } from "../config";
 
 
@@ -54,14 +55,6 @@ const listaInsumos = insumos ?? [];
 
   const navigate = useNavigate();
   const [verHistorico, setVerHistorico] = useState(false);
-
-  // Transferir para outra unidade (com motivo); depois volta para a lista,
-  // pois a prescrição pode sair do alcance deste posto.
-  async function transferir() {
-    if (!id || !solicitacao) return;
-    const rotulo = `Prescrição nº ${id}, hoje em ${solicitacao.pos_nome || "unidade não informada"}.`;
-    if (await transferirComMotivo(Number(id), rotulo, solicitacao.pos_id)) navigate("/VerSolicitaçoes");
-  }
   const [dataVencimento, setDataVencimento] = useState("");
    
     
@@ -175,7 +168,7 @@ setDataVencimento(
   const confirmarReenvio = async () => {
 
   if (!motivo) {
-    alert("Selecione um motivo.");
+    await Swal.fire({ icon: "warning", title: "Motivo do reenvio", text: "Selecione o motivo do pedido de reenvio.", confirmButtonColor: "#3085d6" });
     return;
   }
 
@@ -185,7 +178,6 @@ setDataVencimento(
 
     await axios.patch(
      `${API_URL}/solicitacao/${id}/reenvio`,
-      //`http://localhost:3344/solicitacao/${id}/reenvio`,
       {
         motivo: motivo
       },
@@ -196,30 +188,27 @@ setDataVencimento(
       }
     );
 
-     Swal.fire({
-            icon: 'success',
-            title: 'Reenvio realizado!',
-            text: 'Pedido de reenvio enviado com sucesso!',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ir para prescrições '
-          })
-    navigate('/VerSolicitaçoes');
     setMostrarMotivos(false);
+    // reenvio não é aprovação: a mesma solicitação volta para o paciente corrigir
+    await Swal.fire({
+      icon: 'info',
+      title: 'Reenvio solicitado',
+      text: 'O paciente vai ver o motivo e poderá reenviar a prescrição dentro desta mesma solicitação.',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Voltar para as solicitações'
+    });
+    navigate('/VerSolicitaçoes');
 
-  } catch (error: any) {
+  } catch (error) {
 
-    console.error(
-      "Erro ao pedir reenvio:",error);
+    console.error("Erro ao pedir reenvio:", error);
 
-    alert(
-      error.response?.data?.error ||
-       Swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: 'Ocorreu um erro ao pedir reenvio. Por favor, tente novamente.',
-            confirmButtonColor: '#d33'
-          })
-        )
+    await Swal.fire({
+      icon: 'error',
+      title: 'Não foi possível pedir o reenvio',
+      text: mensagemErroApi(error, 'Ocorreu um erro ao pedir reenvio. Por favor, tente novamente.'),
+      confirmButtonColor: '#d33'
+    });
   }
 };
 
@@ -241,7 +230,7 @@ const enviarSolicitacao = async () => {
       await Swal.fire({
         icon: "warning",
         title: "Data de vencimento",
-        text: "Informe a data de vencimento da prescrição antes de aprovar.",
+        text: "Informe a data de vencimento da prescrição antes de enviar para o autorizador.",
         confirmButtonColor: "#3085d6"
       });
 
@@ -264,34 +253,27 @@ const enviarSolicitacao = async () => {
       }
     );
 
-     Swal.fire({
-            icon: 'success',
-            title: 'Pescriçao Aprovada!',
-            text: 'Prescrição autorizada com sucesso!',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ir para prescrições '
-          })
-navigate('/VerSolicitaçoes')
-  } catch (error: any) {
+    // A revisão NÃO aprova nem autoriza: ela confere os dados e envia a
+    // prescrição para o autorizador decidir. A mensagem só aparece depois
+    // que o backend confirmou a gravação.
+    await Swal.fire({
+      icon: 'success',
+      title: 'Prescrição revisada',
+      text: 'A prescrição foi revisada e enviada para análise do autorizador.',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Voltar para as solicitações'
+    });
+    navigate('/VerSolicitaçoes');
+  } catch (error) {
 
-    console.error(
-      "Erro ao autorizar prescrição:",
-      error
-    );
+    console.error("Erro ao revisar prescrição:", error);
 
-    console.error(
-      "Resposta do servidor:",
-      error.response?.data
-    );
-
-   await Swal.fire({
-    icon: 'error',
-    title: 'Ops...',
-    text: error.response?.data?.error ||
-          error.response?.data?.message ||
-          'Ocorreu um erro ao autorizar a prescrição. Por favor, tente novamente.',
-    confirmButtonColor: '#d33'
-  });
+    await Swal.fire({
+      icon: 'error',
+      title: 'Não foi possível revisar',
+      text: mensagemErroApi(error, 'Ocorreu um erro ao revisar a prescrição. Por favor, tente novamente.'),
+      confirmButtonColor: '#d33'
+    });
   }
 };
 
@@ -584,15 +566,16 @@ navigate('/VerSolicitaçoes')
 
 
 
+{id && (
+    <div className="mb-4">
+        <VersoesPrescricao sol_id={Number(id)} perfil="ADMIN" />
+    </div>
+)}
+
 <div className="mb-3 flex flex-wrap gap-x-6 text-sm font-semibold">
     <button type="button" onClick={() => setVerHistorico(true)} className="min-h-11 text-blue-700 hover:underline">
-        Ver histórico (quem fez o quê)
+        Ver histórico
     </button>
-    {["Pendente", "Revisado", "Autorizado"].includes(solicitacao?.sol_status ?? "") && (
-        <button type="button" onClick={transferir} className="min-h-11 text-violet-700 hover:underline">
-            Transferir de unidade
-        </button>
-    )}
 </div>
 
 {!somenteVisualizacao && (
@@ -670,7 +653,7 @@ navigate('/VerSolicitaçoes')
             type="button"
             onClick={enviarSolicitacao}
         >
-            ENVIAR
+            REVISAR E ENVIAR AO AUTORIZADOR
         </button>
     </div>
 )}

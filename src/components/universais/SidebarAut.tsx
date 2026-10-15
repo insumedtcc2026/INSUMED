@@ -3,7 +3,7 @@ import '../../css/universais/Sidebar.css';
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import logo from '../../assets/home/Logo.png';
+import logo from '../../assets/home/Logo.webp';
 
 import { ClipboardCheck, LogOut, UserCog, X } from 'lucide-react';
 import { GoHomeFill } from 'react-icons/go';

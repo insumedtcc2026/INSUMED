@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useDadosUser } from '../../hook/Dadosuser.tsx';
 
 import NotificationDropdown from './NotificationDropdown.tsx';
+import { nomeCurto } from '../../utils/nome';
 
 interface UserBadgeProps {
   nome: string;
@@ -40,15 +41,13 @@ export default function Header({
   const user = useDadosUser();
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const firstName = user.nome.split(' ')[0];
-  const secondName = user.nome.split(' ')[1] || ''; // Nao ta sendo Usado, mas caso queira usar o segundo nome, ele está aqui.
-
   return (
     <header className="header">
       <div className="header-left">
         <button
           onClick={onMenuClick}
           className="menu-button"
+          aria-label="Abrir menu"
         >
           <HiMiniBars3 className="menu-icon" />
         </button>
@@ -56,7 +55,7 @@ export default function Header({
         <h1 className="header-title">
           {greeting},{' '}
           <span className="header-user-highlight">
-            {firstName} {secondName}!
+            {nomeCurto(user.nome)}!
           </span>
         </h1>
       </div>

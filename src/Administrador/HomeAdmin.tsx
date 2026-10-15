@@ -1,27 +1,21 @@
-import Banner from '../components/home-log/Banner.tsx';
 import Footer from '../components/universais/Footer.tsx';
-import bannerInsumed from '../assets/home-log/banner-insumed.webp';
-import InfoSection from '../components/home-log/InfoSection.tsx';
-import '../css/home/Homepaciente.css';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
+import { useDadosAdmin } from '../hook/DadosuserAdm.tsx';
 import Sidebaradm from '../components/universais/Siderbaradm.tsx';
 import HeaderAdm from '../components/universais/HeaderAdm.tsx';
 import FilaTrabalhoAdmin from '../components/universais/FilaTrabalhoAdmin.tsx';
 
 /**
- * Home do administrador — equivalente a pages/Home.tsx (paciente), só que
- * com o Header/Sidebar de admin e os cards de atalho voltados pra quem
- * administra o sistema (InfoSection já tinha um conjunto de cards pronto
- * pra userType="administrador", só não existia nenhuma página usando).
- *
- * Esta é a página que "Início" no menu do ADM deve abrir — não a lista de
- * agendamentos.
+ * Home do administrador: painel da unidade com o que precisa de ação,
+ * o que está em acompanhamento, as próximas coletas e os atalhos.
+ * (O banner decorativo saiu para as prioridades aparecerem primeiro.)
  */
 export default function HomeAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { verificando } = useValidarToken('ADMIN');
+  const admin = useDadosAdmin();
 
   if (verificando) {
     return (
@@ -36,19 +30,14 @@ export default function HomeAdmin() {
   };
 
   return (
-    <div className="home-admin-page">
+    <div className="home-admin-page min-h-screen bg-slate-50">
       <HeaderAdm onMenuClick={toggleSidebar} />
 
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
 
-      <main className="conteudo-home">
-        <Banner imageUrl={bannerInsumed} alt="Banner Insumed" />
+      <main className="compensa-header pb-10">
+        <FilaTrabalhoAdmin nome={admin.nome} />
       </main>
-
-      {/* fila de trabalho: o que fazer agora, com atalho para cada lista */}
-      <FilaTrabalhoAdmin />
-
-      <InfoSection userType="administrador" />
 
       <Footer />
     </div>

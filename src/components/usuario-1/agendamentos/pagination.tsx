@@ -13,12 +13,12 @@ export default function Pagination({ paginaAtual, totalPaginas, onMudarPagina }:
   const paginas = paginasVisiveis(paginaAtual, totalPaginas);
  
   return (
-    <nav className="mt-8 flex items-center justify-center gap-3 text-blue-600">
+    <nav className="mt-8 flex flex-wrap items-center justify-center gap-1 text-blue-600" aria-label="Paginação">
       <button
         type="button"
         onClick={() => onMudarPagina(paginaAtual - 1)}
         disabled={paginaAtual === 1}
-        className="disabled:opacity-30"
+        className="min-h-11 min-w-11 rounded-full text-xl hover:bg-blue-50 disabled:opacity-30"
         aria-label="Página anterior"
       >
         ‹
@@ -34,7 +34,9 @@ export default function Pagination({ paginaAtual, totalPaginas, onMudarPagina }:
             key={p}
             type="button"
             onClick={() => onMudarPagina(p)}
-            className={p === paginaAtual ? "font-bold underline" : "hover:underline"}
+            aria-current={p === paginaAtual ? "page" : undefined}
+            aria-label={`Página ${p}`}
+            className={`min-h-11 min-w-11 rounded-full ${p === paginaAtual ? "bg-blue-600 font-bold text-white" : "hover:bg-blue-50"}`}
           >
             {p}
           </button>
@@ -45,7 +47,7 @@ export default function Pagination({ paginaAtual, totalPaginas, onMudarPagina }:
         type="button"
         onClick={() => onMudarPagina(paginaAtual + 1)}
         disabled={paginaAtual === totalPaginas}
-        className="disabled:opacity-30"
+        className="min-h-11 min-w-11 rounded-full text-xl hover:bg-blue-50 disabled:opacity-30"
         aria-label="Próxima página"
       >
         ›

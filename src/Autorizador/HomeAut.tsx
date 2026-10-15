@@ -1,21 +1,20 @@
-import Banner from '../components/home-log/Banner.tsx';
 import Footer from '../components/universais/Footer.tsx';
-import bannerInsumed from '../assets/home-log/banner-insumed.webp';
-import InfoSection from '../components/home-log/InfoSection.tsx';
-import '../css/home/Homepaciente.css';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
+import { useDadosAutorizador } from '../hook/DadosuserAut.tsx';
 import SidebarAut from '../components/universais/SidebarAut.tsx';
 import HeaderAut from '../components/universais/HeaderAut.tsx';
+import PainelAutorizador from './PainelAutorizador.tsx';
 
 /**
- * Home do autorizador: header e menu lateral próprios do perfil e o atalho
- * para a fila de prescrições que aguardam análise.
+ * Home do autorizador: a fila de prescrições que esperam a decisão dele,
+ * as que chegaram com nova versão e as próprias decisões recentes.
  */
 export default function HomeAut() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { verificando } = useValidarToken("AUTORIZADOR");
+  const autorizador = useDadosAutorizador();
 
   if (verificando) {
     return (
@@ -30,16 +29,14 @@ export default function HomeAut() {
   };
 
   return (
-    <div className="home-admin-page home-aut-page">
+    <div className="home-admin-page home-aut-page min-h-screen bg-slate-50">
       <HeaderAut onMenuClick={toggleSidebar} />
 
       <SidebarAut isOpen={sidebarOpen} onClose={toggleSidebar} />
 
-      <main className="conteudo-home">
-        <Banner imageUrl={bannerInsumed} alt="Banner Insumed" />
+      <main className="compensa-header pb-10">
+        <PainelAutorizador nome={autorizador.nome} />
       </main>
-
-      <InfoSection userType="autorizador" />
 
       <Footer />
     </div>

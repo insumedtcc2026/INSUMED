@@ -2,8 +2,8 @@ import axios from 'axios'
 import images from "../assets/home-log/teste cadastro.webp"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import olhoAberto from '../assets/home-log/olho aberto.png';
-import olhoFechado from '../assets/home-log/olho fechado.png';
+import olhoAberto from '../assets/home-log/olho aberto.webp';
+import olhoFechado from '../assets/home-log/olho fechado.webp';
 import { useState, useEffect } from "react";
 import "../css/home/Cadastro.css"
 import BotaoVoltar from "../components/universais/BotaoVoltar";
@@ -11,7 +11,7 @@ import ForcaSenha, { MensagemErro } from "../components/universais/ForcaSenha";
 import {
   mascaraCPF, mascaraTelefone, mensagemErroApi, temErros,
   validarConfirmacaoSenha, validarCPF, validarEmail, validarNome,
-  validarObrigatorio, validarSenha, validarTelefone,
+  validarObrigatorio, validarSenha, validarTelefone, validarMatricula, normalizarMatricula, MATRICULA_MAX,
 } from "../utils/validacoes";
 import { API_URL } from "../config";
 
@@ -38,7 +38,7 @@ const senhasIguais = password === confirmacaodesenha;
 const [tentouEnviar, setTentouEnviar] = useState(false);
 const [enviando, setEnviando] = useState(false);
 const erros = {
-    matricula: validarObrigatorio(matricula, "a matrícula"),
+    matricula: validarMatricula(matricula),
     posto_id: validarObrigatorio(posto_id, "a unidade de saúde"),
     nome: validarNome(text1),
     telefone: validarTelefone(tel),
@@ -85,7 +85,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
 
         try {
             const response = await axios.post(`${API_URL}/administrador`, {
-                matricula: matricula,    
+                matricula: normalizarMatricula(matricula),
                 nome: text1.trim().replace(/\s+/g, " "),
                 email: email.trim().toLowerCase(),
                 telefone: tel,
@@ -96,7 +96,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
             });
             
             console.log("Admin criado:", response.data);
-            Swal.fire({
+            await Swal.fire({
                 icon: 'success',
                 title: 'Cadastro realizado!',
                 text: 'Seu cadastro foi efetuado com êxito.',
@@ -107,10 +107,11 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
             navigate('/login');
 
         } catch (error) {
+            // os dados preenchidos continuam no formulário para corrigir
             console.error("Erro:", error);
             Swal.fire({
                 icon: 'error',
-                title: 'Ops...',
+                title: 'Não foi possível cadastrar',
                 text: mensagemErroApi(error, 'Ocorreu um erro ao tentar cadastrar. Por favor, tente novamente.'),
                 confirmButtonColor: '#d33'
             });
@@ -147,8 +148,11 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         <div className="Alinha-campos">
         <div className="campo">
             <label>Sua Matricula</label>
-                <input                                        type="text"                                    placeholder="Digite sua matrícula"                                        required                                        value={matricula}                                    className={classeDe("matricula")}
-            onChange={(e) => setMatricula(e.target.value)}/>
+                <input                                        type="text"                                    placeholder="Ex.: 12345 ou A-1234" required value={matricula} className={classeDe("matricula")}
+            maxLength={MATRICULA_MAX + 5} autoCapitalize="characters" aria-describedby="ajuda-matricula"
+            onChange={(e) => setMatricula(e.target.value)}
+            onBlur={() => setMatricula((m) => normalizarMatricula(m))}/>
+            <p id="ajuda-matricula" className="text-xs text-gray-500">Letras, números e . - / (até {MATRICULA_MAX} caracteres).</p>
             <MensagemErro erro={erroDe("matricula")} />
          </div>
         </div>

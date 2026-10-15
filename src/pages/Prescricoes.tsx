@@ -4,46 +4,71 @@ import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
-import NavInferiorPaciente from "../components/universais/NavInferiorPaciente";
 import SeloStatus from "../components/universais/SeloStatus";
+import LinhaDoTempo from "../components/universais/LinhaDoTempo";
+import ContatoUnidade from "../components/universais/ContatoUnidade";
 import RastreioPrescricao from "../components/usuario-1/prescricao/RastreioPrescricao";
 import ModalPrescricao from "../components/usuario-1/prescricao/ModalPrescricao";
+import ModalReenvio from "../components/usuario-1/prescricao/ModalReenvio";
+import Pagination from "../components/usuario-1/agendamentos/pagination";
 import { useValidarToken } from "../hook/Validartoken";
+import { useDadosUser } from "../hook/Dadosuser";
 import { buscarMinhasPrescricoes, type MinhaPrescricao } from "../services/PrescricaoService";
 import { mensagemErroApi } from "../utils/validacoes";
-import { formatarData } from "../utils/status";
+import { formatarData, textoMotivoReenvio } from "../utils/status";
 
-// Em andamento = ainda falta alguma etapa; encerradas = retiradas ou não autorizadas
-const encerrada = (p: MinhaPrescricao) =>
-  p.sol_status === "Nao Autorizado" || p.agendamento?.sol_status === "concluido";
+type Aba = "andamento" | "encerradas";
+
+const POR_PAGINA = 10;
 
 /**
- * "Minhas prescrições" do paciente: cada prescrição com o rastreio das
- * etapas (enviada → análise → autorização → agendamento → retirada),
- * no estilo de acompanhamento de entregas. Antes ficava dentro do Perfil.
+ * "Minhas prescrições" do paciente: primeiro o estado atual e o que fazer
+ * (rastreio em etapas), depois o histórico completo, que abre quando a
+ * pessoa quer. Cada aba é paginada no servidor, então o histórico pode
+ * crescer sem deixar a página lenta.
  */
 export default function Prescricoes() {
   const { verificando } = useValidarToken("PACIENTE");
+  const usuario = useDadosUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [aba, setAba] = useState<Aba>("andamento");
+  const [pagina, setPagina] = useState(1);
   const [lista, setLista] = useState<MinhaPrescricao[] | null>(null);
+  const [contagem, setContagem] = useState<{ andamento: number; encerradas: number } | null>(null);
+  const [totalPaginas, setTotalPaginas] = useState(1);
   const [erro, setErro] = useState<string | null>(null);
-  const [aba, setAba] = useState<"andamento" | "encerradas">("andamento");
   const [arquivoDe, setArquivoDe] = useState<number | null>(null);
+  const [reenviarDe, setReenviarDe] = useState<MinhaPrescricao | null>(null);
 
   const carregar = useCallback(async () => {
     setErro(null);
     try {
-      setLista(await buscarMinhasPrescricoes());
+      const r = await buscarMinhasPrescricoes(aba, pagina, POR_PAGINA);
+      setLista(r.itens);
+      setContagem(r.contagem);
+      setTotalPaginas(r.totalPaginas);
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar suas prescrições."));
     }
-  }, []);
+  }, [aba, pagina]);
 
   useEffect(() => {
     if (verificando) return;
     const t = setTimeout(carregar, 0);
     return () => clearTimeout(t);
   }, [verificando, carregar]);
+
+  function trocarAba(nova: Aba) {
+    setAba(nova);
+    setPagina(1);
+    setLista(null);
+  }
+
+  function mudarPagina(nova: number) {
+    setPagina(nova);
+    setLista(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   if (verificando) {
     return (
@@ -52,10 +77,6 @@ export default function Prescricoes() {
       </div>
     );
   }
-
-  const emAndamento = (lista ?? []).filter((p) => !encerrada(p));
-  const encerradas = (lista ?? []).filter(encerrada);
-  const visiveis = aba === "andamento" ? emAndamento : encerradas;
 
   return (
     <div className="pagina-paciente min-h-screen bg-gray-50">
@@ -66,7 +87,7 @@ export default function Prescricoes() {
         <BotaoVoltar para="/home" />
       </div>
 
-      <main className="pagina-conteudo mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="pagina-conteudo mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-blue-700">Minhas prescrições</h1>
@@ -79,20 +100,20 @@ export default function Prescricoes() {
 
         <div className="mb-5 grid grid-cols-2 rounded-full bg-white p-1 shadow-sm" role="tablist" aria-label="Filtrar prescrições">
           {([
-            ["andamento", `Em andamento (${emAndamento.length})`],
-            ["encerradas", `Encerradas (${encerradas.length})`],
-          ] as const).map(([valor, texto]) => (
+            ["andamento", "Em andamento", contagem?.andamento],
+            ["encerradas", "Encerradas", contagem?.encerradas],
+          ] as const).map(([valor, texto, n]) => (
             <button
               key={valor}
               type="button"
               role="tab"
               aria-selected={aba === valor}
-              onClick={() => setAba(valor)}
+              onClick={() => trocarAba(valor)}
               className={`min-h-11 rounded-full text-sm font-semibold transition ${
                 aba === valor ? "bg-blue-600 text-white shadow" : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              {texto}
+              {texto}{n !== undefined ? ` (${n})` : ""}
             </button>
           ))}
         </div>
@@ -109,7 +130,7 @@ export default function Prescricoes() {
 
         {!erro && !lista && <p className="py-10 text-center text-gray-400" role="status">Carregando…</p>}
 
-        {lista && visiveis.length === 0 && (
+        {lista && lista.length === 0 && (
           <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
             <p className="text-gray-600">
               {aba === "andamento" ? "Nenhuma prescrição em andamento." : "Nenhuma prescrição encerrada ainda."}
@@ -123,33 +144,84 @@ export default function Prescricoes() {
         )}
 
         <ul className="space-y-4">
-          {visiveis.map((p) => (
-            <li key={p.sol_id} className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-semibold text-gray-900">Prescrição nº {p.sol_id}</p>
-                  <p className="text-sm text-gray-500">Enviada em {formatarData(p.sol_data_solicitacao)}</p>
+          {(lista ?? []).map((p) => {
+            const ag = p.agendamento;
+            const cancelado = p.sol_status === "Autorizado" && ag?.sol_status === "cancelado";
+            const precisaContato = p.sol_status === "Nao Autorizado" || cancelado;
+            const mensagem = p.sol_status === "Nao Autorizado"
+              ? `Olá! Sou ${usuario.nome}. Minha prescrição nº ${p.sol_id} não foi autorizada e gostaria de entender o motivo.`
+              : `Olá! Sou ${usuario.nome}. O agendamento ${ag?.sol_protocolo ?? ""} da minha prescrição nº ${p.sol_id} foi cancelado e gostaria de saber sobre a remarcação.`;
+
+            return (
+              <li key={p.sol_id} className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+                <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="font-semibold text-gray-900">Prescrição nº {p.sol_id}</p>
+                    <p className="text-sm text-gray-500">Enviada em {formatarData(p.sol_data_solicitacao)}</p>
+                  </div>
+                  {/* status ATUAL (os eventos anteriores ficam no histórico) */}
+                  <SeloStatus status={ag && p.sol_status === "Autorizado" ? ag.sol_status : p.sol_status} />
                 </div>
-                <SeloStatus status={p.agendamento && p.sol_status === "Autorizado" ? p.agendamento.sol_status : p.sol_status} />
-              </div>
 
-              <RastreioPrescricao prescricao={p} />
+                <RastreioPrescricao
+                  prescricao={p}
+                  onReenviar={p.sol_status === "Reenvio" ? () => setReenviarDe(p) : undefined}
+                />
 
-              {p.tem_prescricao && (
-                <button type="button" onClick={() => setArquivoDe(p.sol_id)}
-                  className="mt-4 min-h-11 rounded-full border border-gray-300 px-5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  Ver prescrição enviada
-                </button>
-              )}
-            </li>
-          ))}
+                {precisaContato && (
+                  <div className="mt-4 rounded-2xl bg-gray-50 p-4">
+                    <p className="mb-2 text-sm text-gray-700">
+                      Ficou com dúvida? Fale com a unidade responsável{p.pos_nome ? ` (${p.pos_nome})` : ""}.
+                    </p>
+                    <ContatoUnidade
+                      pos_nome={cancelado ? ag?.pos_nome ?? p.pos_nome : p.pos_nome}
+                      pos_whatsapp={cancelado ? ag?.pos_whatsapp ?? p.pos_whatsapp : p.pos_whatsapp}
+                      mensagem={mensagem}
+                    />
+                  </div>
+                )}
+
+                {p.tem_prescricao && (
+                  <button type="button" onClick={() => setArquivoDe(p.sol_id)}
+                    className="mt-4 min-h-11 rounded-full border border-gray-300 px-5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    Ver prescrição enviada
+                  </button>
+                )}
+
+                {p.eventos.length > 0 && (
+                  <details className="group mt-4 rounded-2xl border border-gray-100 bg-gray-50/60 px-4 py-2">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-blue-700">
+                      Histórico completo ({p.eventos.length} {p.eventos.length === 1 ? "evento" : "eventos"})
+                      <span className="transition group-open:rotate-180" aria-hidden="true">▾</span>
+                    </summary>
+                    <div className="pb-3 pt-2">
+                      <LinhaDoTempo eventos={p.eventos} agruparPorDia />
+                    </div>
+                  </details>
+                )}
+              </li>
+            );
+          })}
         </ul>
+
+        <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={mudarPagina} />
       </main>
 
       {arquivoDe && <ModalPrescricao sol_id={arquivoDe} onClose={() => setArquivoDe(null)} />}
 
+      {reenviarDe && (
+        <ModalReenvio
+          sol_id={reenviarDe.sol_id}
+          motivo={textoMotivoReenvio(reenviarDe.sol_motivo_reenvio)}
+          onClose={() => setReenviarDe(null)}
+          onReenviada={() => {
+            setReenviarDe(null);
+            carregar();
+          }}
+        />
+      )}
+
       <Footer />
-      <NavInferiorPaciente />
     </div>
   );
 }

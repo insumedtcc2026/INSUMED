@@ -59,3 +59,14 @@ export function dentroDoPeriodo(valor: string | null | undefined, inicio: string
   const dia = `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
   return (!inicio || dia >= inicio) && (!fim || dia <= fim);
 }
+
+// Motivos do pedido de reenvio (mesmos códigos do backend), em texto
+const MOTIVOS_REENVIO: Record<string, string> = {
+  FOTO_SEM_QUALIDADE: "foto sem qualidade",
+  PRESCRICAO_VENCIDA: "prescrição vencida",
+  INFORMACAO_DIFERENTE: "informação diferente",
+  OUTRO: "outro motivo",
+};
+
+export const textoMotivoReenvio = (motivo: string | null | undefined) =>
+  motivo ? MOTIVOS_REENVIO[motivo] ?? motivo : "não informado";

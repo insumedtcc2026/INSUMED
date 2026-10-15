@@ -4,8 +4,8 @@ import coletasImg from '../../assets/home-log/coletas.webp';
 import calendarioImg from '../../assets/home-log/calendario.webp';
 import notificacaoImg from '../../assets/home-log/notificacao.webp';
 import agendamentoAdmImg from '../../assets/home-log/Agendamento.webp';
-import pacientesAdmImg from '../../assets/home-log/Pacientes.png';
-import solicitacoesAdmImg from '../../assets/home-log/Solicitações.png';
+import pacientesAdmImg from '../../assets/home-log/Pacientes.webp';
+import solicitacoesAdmImg from '../../assets/home-log/Solicitações.webp';
 
 
 interface InfoCard {

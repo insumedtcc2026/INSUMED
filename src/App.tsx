@@ -34,6 +34,7 @@ import VerPrescricaoNaoAutorizada from
     "./Administrador/VerPrescricaoNaoAutorizada";
 import './index.css';
 import Acessibilidade from './components/universais/Acessibilidade';
+import NavInferior from './components/universais/NavInferior';
 
 function App() {
   return (
@@ -184,6 +185,8 @@ function App() {
       <Route path="/privacidade" element={<PoliticaPrivacidade />} />
       <Route path="/seguranca" element={<SegurancaDados />} />
     </Routes>
+    {/* barra de navegação do celular (paciente, admin e autorizador) */}
+    <NavInferior />
     </>
   );
 }

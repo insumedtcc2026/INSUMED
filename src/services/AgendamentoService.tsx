@@ -59,6 +59,34 @@ export async function listarAgendamentos(
   return response.data;
 }
 
+// Mesma lista, paginada no banco (agenda do posto cresce com o tempo)
+export interface PaginaAgendamentos {
+  itens: Agendamento[];
+  total: number;
+  paginaAtual: number;
+  totalPaginas: number;
+}
+
+export async function listarAgendamentosPaginado(
+  filtros: FiltrosAgendamento = {},
+  page = 1,
+  porPagina = 20,
+): Promise<PaginaAgendamentos> {
+  const response = await api.get("/agendamentos", {
+    params: {
+      status: filtros.status,
+      busca: filtros.busca || undefined,
+      data_inicio: filtros.dataInicio || undefined,
+      data_fim: filtros.dataFim || undefined,
+      page,
+      porPagina,
+    },
+    headers: authHeader("ADMIN"),
+  });
+
+  return response.data;
+}
+
 // ---------------------------------------------------------
 // AGENDAMENTOS DO PACIENTE LOGADO (paginado)
 // ---------------------------------------------------------

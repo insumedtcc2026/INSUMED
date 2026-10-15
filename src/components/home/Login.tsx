@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MensagemErro } from "../universais/ForcaSenha";
 import { mensagemErroApi, validarEmail } from "../../utils/validacoes";
-import olhoAberto from '../../assets/home-log/olho aberto.png'
-import olhoFechado from '../../assets/home-log/olho fechado.png'
+import olhoAberto from '../../assets/home-log/olho aberto.webp'
+import olhoFechado from '../../assets/home-log/olho fechado.webp'
 
 import images from "../../assets/home-log/teste login.webp"; 
 import BotaoVoltar from "../universais/BotaoVoltar";

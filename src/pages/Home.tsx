@@ -9,7 +9,6 @@ import {useValidarToken} from '../hook/Validartoken.tsx';
 import Sidebar from '../components/universais/Sidebar.tsx';
 
 import Header from '../components/universais/Header';
-import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import AgendamentoCardPaciente from '../components/usuario-1/agendamentos/Agendamentocardpaciente';
 import { buscarProximoAgendamento } from '../services/AgendamentoService';
 import type { Agendamento } from '../types/agendamento';
@@ -73,7 +72,6 @@ export default function Home() {
 
       <Footer />
 
-      <NavInferiorPaciente />
     </div>
   );
 }

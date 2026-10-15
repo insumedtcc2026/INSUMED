@@ -12,8 +12,9 @@ import Footer from "../components/universais/Footer.tsx";
 import "../css/home/AutorizarPrescicoesAut.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
+import VersoesPrescricao from "../components/universais/VersoesPrescricao";
 import ModalHistorico from "../components/universais/ModalHistorico";
-import { MOTIVO_MAX, validarMotivo } from "../utils/validacoes";
+import { MOTIVO_MAX, mensagemErroApi, validarMotivo } from "../utils/validacoes";
 import { exibirCPF } from "../utils/validacoes";
 import { API_URL } from "../config";
 
@@ -241,14 +242,13 @@ const alterarStatus = async (
 
         navigate("/verprescricoesaprovadas");
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Erro ao atualizar prescrição:", error);
 
         await Swal.fire({
             icon: "error",
-            title: "Ops...",
-            text: error.response?.data?.error ||
-                "Não foi possível atualizar a prescrição.",
+            title: "Não foi possível salvar a decisão",
+            text: mensagemErroApi(error, "Não foi possível atualizar a prescrição."),
             confirmButtonColor: "#d33"
         });
     } finally {
@@ -458,12 +458,18 @@ const alterarStatus = async (
     </div>
 )}
 
+{id && (
+    <div className="mb-4">
+        <VersoesPrescricao sol_id={Number(id)} perfil="AUTORIZADOR" />
+    </div>
+)}
+
 <button
     type="button"
     onClick={() => setVerHistorico(true)}
     className="mb-3 min-h-11 text-sm font-semibold text-blue-700 hover:underline"
 >
-    Ver histórico (quem fez o quê)
+    Ver histórico
 </button>
 
 {!somenteVisualizacao && (

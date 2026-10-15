@@ -4,7 +4,6 @@ import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
-import NavInferiorPaciente from "../components/universais/NavInferiorPaciente";
 import { useValidarToken } from "../hook/Validartoken.tsx";
 import { listarAgendamentosDoPaciente } from "../services/AgendamentoService";
 import AgendamentoCardPaciente from "../components/usuario-1/agendamentos/Agendamentocardpaciente";
@@ -175,7 +174,6 @@ export default function Agendamentos() {
 
       <Footer />
 
-      <NavInferiorPaciente />
     </div>
   );
 }

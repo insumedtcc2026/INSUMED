@@ -50,15 +50,47 @@ export async function atualizarMeuPerfil(
 
 export interface PainelAdmin {
   hoje: string;
+  unidade: string | null;
   pendentes: number;
   autorizadasSemAgendamento: number;
   coletasHoje: number;
   estoqueBaixo: number;
   limiteEstoqueBaixo: number;
+  // pendentes que o paciente já corrigiu (reenvio na mesma solicitação)
+  corrigidasParaRevisar: number;
+  // reenvio pedido, esperando o paciente
+  aguardandoPaciente: number;
+  coletas7dias: number;
+  proximasColetas: { sol_id: number; protocolo: string | null; data: string; pac_nome: string | null }[];
 }
 
 export async function buscarPainelAdmin(): Promise<PainelAdmin> {
   const { data } = await axios.get(`${API_URL}/painel/admin`, { headers: cabecalho("ADMIN") });
+  return data;
+}
+
+// ---------------------------------------------------------
+// HOME DO AUTORIZADOR
+// ---------------------------------------------------------
+
+export interface PainelAutorizador {
+  aguardando: number;
+  comNovaVersao: number;
+  autorizadas30: number;
+  naoAutorizadas30: number;
+  fila: {
+    sol_id: number;
+    sol_data_solicitacao: string;
+    sol_insumo_quant: number | null;
+    pac_nome: string;
+    ins_nome: string | null;
+    versoes_anteriores: number;
+  }[];
+  recentes: { sol_id: number; acao: string; quando: string }[];
+}
+
+export async function buscarPainelAutorizador(): Promise<PainelAutorizador> {
+  const { data } = await axios.get(`${API_URL}/painel/autorizador`, { headers: cabecalho("AUTORIZADOR") });
   return data;
 }
 

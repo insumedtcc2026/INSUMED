@@ -32,3 +32,34 @@ export function base64ParaBlobUrl(base64: string, mimetype: string): string {
   for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
   return URL.createObjectURL(new Blob([bytes], { type: mimetype }));
 }
+
+// ---------------------------------------------------------
+// Envio do arquivo (envio novo e reenvio usam as mesmas regras)
+// ---------------------------------------------------------
+
+export const TAMANHO_MAX_PRESCRICAO = 5 * 1024 * 1024;
+
+/** Imagem ou PDF, até 5 MB (o backend confere de novo). Devolve o erro ou null. */
+export function erroArquivoPrescricao(arquivo: File): string | null {
+  const tipoValido = arquivo.type.startsWith("image/") || arquivo.type === "application/pdf";
+  if (!tipoValido) return "Formato não suportado. Envie uma imagem (JPG, PNG) ou um PDF.";
+  if (arquivo.size > TAMANHO_MAX_PRESCRICAO) return "A prescrição deve ter no máximo 5 MB.";
+  return null;
+}
+
+/** Lê o arquivo e devolve só o conteúdo em Base64 (sem o prefixo "data:...;base64,"). */
+export function arquivoParaBase64(arquivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const leitor = new FileReader();
+    leitor.onloadend = () => {
+      const resultado = leitor.result;
+      if (typeof resultado !== "string") {
+        reject(new Error("Falha ao converter arquivo."));
+        return;
+      }
+      resolve(resultado.split(",")[1]);
+    };
+    leitor.onerror = () => reject(new Error("Falha ao ler arquivo."));
+    leitor.readAsDataURL(arquivo);
+  });
+}

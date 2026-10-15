@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useDadosAutorizador } from '../../hook/DadosuserAut.tsx';
 
 import NotificationDropdown from './NotificationDropdown.tsx';
+import { nomeCurto } from '../../utils/nome';
 
 
 interface AutorizadorBadgeProps {
@@ -55,11 +56,6 @@ export default function Header({
   const [showNotifications, setShowNotifications] =
     useState(false);
 
-  const firstName = autorizador.nome.split(' ')[0];
-
-  const secondName =
-    autorizador.nome.split(' ')[1] || '';
-
   return (
     <header className="header">
 
@@ -68,6 +64,7 @@ export default function Header({
         <button
           onClick={onMenuClick}
           className="menu-button"
+          aria-label="Abrir menu"
         >
           <HiMiniBars3 className="menu-icon" />
         </button>
@@ -76,7 +73,7 @@ export default function Header({
           {greeting},{' '}
 
           <span className="header-user-highlight">
-            {firstName} {secondName}!
+            {nomeCurto(autorizador.nome)}!
           </span>
         </h1>
 

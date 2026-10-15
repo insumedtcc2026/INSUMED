@@ -5,7 +5,6 @@ import '../css/home/PontosColeta.css'
 import Sidebar from '../components/universais/Sidebar';
 import Footer from '../components/universais/Footer';
 import BotaoVoltar from '../components/universais/BotaoVoltar';
-import NavInferiorPaciente from '../components/universais/NavInferiorPaciente';
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet"
 import Swal from 'sweetalert2';
@@ -567,7 +566,6 @@ const formatarCep = (valor: string) => {
 
       <Footer />
 
-      <NavInferiorPaciente />
     </div>
 
   );
