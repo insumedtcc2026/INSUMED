@@ -1,4 +1,5 @@
-export type StatusAgendamento = "agendado" | "concluido" | "cancelado";
+// "nao_compareceu": a data passou há mais de 7 dias sem retirada nem remarcação
+export type StatusAgendamento = "agendado" | "concluido" | "cancelado" | "nao_compareceu";
 
 export interface Paciente {
   pac_id: number;
@@ -52,6 +53,8 @@ export interface Agendamento {
   sol_origem_id?: number | null;
   // recado do admin para o paciente (ex.: "traga documento com foto")
   sol_recado?: string | null;
+  // data anterior quando o admin remarcou o agendamento
+  sol_data_anterior?: string | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];

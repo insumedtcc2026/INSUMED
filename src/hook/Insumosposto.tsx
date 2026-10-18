@@ -1,5 +1,6 @@
 import { useState,useEffect } from "react";
 import { API_URL } from "../config";
+import { pedirAtualizacaoNotificacoes } from "../utils/notificacoes";
 
 export interface Insumos {
     ins_id: number;
@@ -52,6 +53,7 @@ export function useDadosInsumos() {
     throw new Error(data.message);
   }
 
+  pedirAtualizacaoNotificacoes(); // aviso de estoque baixo/esgotado no sino
   await carregarInsumos();
   return data;
 }

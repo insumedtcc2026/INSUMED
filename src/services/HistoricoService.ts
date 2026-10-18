@@ -65,3 +65,23 @@ export async function salvarRecado(sol_id: number, recado: string) {
   );
   return data as { message: string; sol_recado: string | null };
 }
+
+// Nova data no MESMO agendamento (mesmo protocolo); o paciente é avisado
+export async function remarcarAgendamento(sol_id: number, sol_data_de_coleta: string, motivo: string) {
+  const { data } = await axios.patch(
+    `${API_URL}/agendamentos/${sol_id}/remarcar`,
+    { sol_data_de_coleta, motivo },
+    { headers: cabecalho("ADMIN") },
+  );
+  return data as { message: string; sol_data_de_coleta: string; sol_data_anterior: string };
+}
+
+// Prescrição não autorizada volta ao autorizador, com observação da unidade
+export async function refazerPedido(sol_id: number, observacao: string) {
+  const { data } = await axios.patch(
+    `${API_URL}/solicitacao/${sol_id}/refazer`,
+    { observacao },
+    { headers: cabecalho("ADMIN") },
+  );
+  return data as { message: string };
+}

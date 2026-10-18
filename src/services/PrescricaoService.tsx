@@ -224,12 +224,14 @@ export async function enviarPrescricao (
 
 export interface AgendamentoDaPrescricao {
     sol_id: number;
-    sol_status: "agendado" | "concluido" | "cancelado";
+    sol_status: "agendado" | "concluido" | "cancelado" | "nao_compareceu";
     sol_protocolo: string | null;
     sol_data_de_coleta: string | null;
     sol_motivo_cancelamento: string | null;
     sol_data_cancelamento?: string | null;
     sol_recado: string | null;
+    // data anterior quando a unidade remarcou
+    sol_data_anterior?: string | null;
     pos_nome: string | null;
     pos_endereco: string | null;
     pos_whatsapp?: string | null;
@@ -238,6 +240,7 @@ export interface AgendamentoDaPrescricao {
 // Agendamento cancelado antes do atual (continua no histórico)
 export interface AgendamentoCancelado {
     sol_id: number;
+    sol_status?: "cancelado" | "nao_compareceu";
     sol_protocolo: string | null;
     sol_data_de_coleta: string | null;
     sol_motivo_cancelamento: string | null;
@@ -281,6 +284,16 @@ export const buscarMinhasPrescricoes = async (
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
+};
+
+// Uma prescrição só (link de uma notificação); null se não for do paciente
+export const buscarMinhaPrescricao = async (sol_id: number): Promise<MinhaPrescricao | null> => {
+    const token = localStorage.getItem("token_paciente");
+    const response = await axios.get<MinhaPrescricao[]>(`${API_URL}/minhas-prescricoes`, {
+        params: { sol_id },
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data[0] ?? null;
 };
 
 // Reenvio feito pelo paciente DENTRO da mesma solicitação (após pedido da unidade)

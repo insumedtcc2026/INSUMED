@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { refazerComObservacao } from "../components/universais/acoesAdmin";
 
 
 import Header from "../components/universais/HeaderAdm";
@@ -39,6 +40,13 @@ function formatarData(data?: string | null) {
 
 export default function VerPrescricaoNaoAutorizada() {
     const { id } = useParams();
+    const navigate = useNavigate();
+
+    // a prescrição volta para o autorizador com a observação da unidade
+    async function refazer() {
+        if (!id) return;
+        if (await refazerComObservacao(Number(id))) navigate("/versolicitaçoes");
+    }
     
 
     const [solicitacao, setSolicitacao] =
@@ -65,7 +73,9 @@ export default function VerPrescricaoNaoAutorizada() {
         setCarregando(true);
         setErro("");
 
+        // o login grava "token_admin" (as outras chaves são de versões antigas)
         const token =
+            localStorage.getItem("token_admin") ??
             localStorage.getItem("token") ??
             sessionStorage.getItem("token_admin") ??
             sessionStorage.getItem("token");
@@ -311,6 +321,17 @@ const toggleSidebar = () => {
             readOnly
             rows={4}
         />
+    </div>
+)}
+
+{solicitacao?.sol_status === "Nao Autorizado" && (
+    <div className="campo">
+        <p className="text-sm text-gray-600">
+            Se algo mudou (um documento novo, uma correção), refaça o pedido com uma observação: a prescrição volta para o autorizador.
+        </p>
+        <button type="button" onClick={refazer} className="botao-novo-agendamento mt-2">
+            Refazer pedido
+        </button>
     </div>
 
 )}

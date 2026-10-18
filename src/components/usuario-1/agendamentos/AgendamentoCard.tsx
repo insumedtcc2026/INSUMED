@@ -2,7 +2,7 @@ import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 import MotivoCancelamento from "./MotivoCancelamento";
 import ModalHistorico from "../../universais/ModalHistorico";
-import { editarRecado } from "../../universais/acoesAdmin";
+import { editarRecado, remarcarComData } from "../../universais/acoesAdmin";
 import type { Agendamento } from "../../../types/agendamento";
 import { exibirCPF, exibirTelefone } from "../../../utils/validacoes";
 
@@ -40,6 +40,7 @@ export default function AgendamentoCard({
     sol_motivo_cancelamento,
     sol_data_cancelamento,
     sol_recado,
+    sol_data_anterior,
   } = agendamento;
   const [loadingAcao, setLoadingAcao] = useState<AcaoEmAndamento>(null);
   const [verHistorico, setVerHistorico] = useState(false);
@@ -66,6 +67,10 @@ export default function AgendamentoCard({
 
   async function handleRecado() {
     if (await editarRecado(sol_id, protocolo, sol_recado)) onAtualizar?.();
+  }
+
+  async function handleRemarcar() {
+    if (await remarcarComData(sol_id, protocolo, sol_data_de_coleta)) onAtualizar?.();
   }
 
   async function handleCancelar() {
@@ -96,6 +101,7 @@ export default function AgendamentoCard({
           <p className="text-sm text-gray-500">Tel: {exibirTelefone(paciente.pac_telefone)}</p>
           <p className="text-sm text-gray-500">
             Protocolo: {sol_protocolo ?? "—"} · Data: {dataFormatada}
+            {sol_data_anterior && status === "agendado" ? ` (remarcada; era ${formatarDataBR(sol_data_anterior)})` : ""}
           </p>
         </div>
       </div>
@@ -138,6 +144,12 @@ export default function AgendamentoCard({
         <MotivoCancelamento motivo={sol_motivo_cancelamento} data={sol_data_cancelamento} />
       )}
 
+      {status === "nao_compareceu" && (
+        <p className="w-full basis-full rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          A data passou há mais de 7 dias sem retirada nem remarcação. Para atender o paciente, crie um novo agendamento.
+        </p>
+      )}
+
       {sol_recado && (
         <p className="w-full basis-full rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
           <span className="font-medium">Recado para o paciente:</span> {sol_recado}
@@ -152,6 +164,11 @@ export default function AgendamentoCard({
         {exibirBotoes && (
           <button type="button" onClick={handleRecado} className="min-h-10 font-medium text-blue-700 hover:underline">
             {sol_recado ? "Editar recado" : "Deixar recado"}
+          </button>
+        )}
+        {exibirBotoes && (
+          <button type="button" onClick={handleRemarcar} className="min-h-10 font-medium text-blue-700 hover:underline">
+            Remarcar
           </button>
         )}
       </div>

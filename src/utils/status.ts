@@ -20,6 +20,7 @@ const STATUS: Record<string, InfoStatus> = {
   agendado: { rotulo: "Agendado", tom: "andamento" },
   concluido: { rotulo: "Coletado", tom: "sucesso" },
   cancelado: { rotulo: "Cancelado", tom: "erro" },
+  nao_compareceu: { rotulo: "Não retirado", tom: "atencao" },
 };
 
 export function infoStatus(status: string | null | undefined): InfoStatus {

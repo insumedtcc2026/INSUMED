@@ -7,6 +7,11 @@ import { BrowserRouter } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import App from './App';
 import './index.css';
+import axios from 'axios';
+import { observarAcoes } from './utils/notificacoes';
+
+// ações que mudam dados atualizam o sino na hora
+observarAcoes(axios);
 
 ReactDOM.createRoot(
   document.getElementById('root')!

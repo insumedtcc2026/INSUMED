@@ -31,6 +31,7 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
     sol_motivo_cancelamento,
     sol_data_cancelamento,
     sol_recado,
+    sol_data_anterior,
   } = agendamento;
   const usuario = useDadosUser();
   const [verComprovante, setVerComprovante] = useState(false);
@@ -42,6 +43,8 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
   // Mensagem pronta para o WhatsApp do posto (o botão só aparece se o posto tiver número)
   const mensagemUnidade = status === "cancelado"
     ? `Olá! Sou ${usuario.nome}. Meu agendamento ${sol_protocolo ?? ""} de ${dataFormatada} na ${posto.pos_nome} foi cancelado e gostaria de saber mais.`
+    : status === "nao_compareceu"
+    ? `Olá! Sou ${usuario.nome}. Não consegui retirar a coleta ${sol_protocolo ?? ""} de ${dataFormatada} na ${posto.pos_nome} e gostaria de combinar uma nova data.`
     : `Olá! Sou ${usuario.nome}. Tenho a coleta ${sol_protocolo ?? ""} agendada para ${dataFormatada} na ${posto.pos_nome}. `;
 
   return (
@@ -61,6 +64,18 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
       </p>
       <StatusBadge status={status} variant="paciente" />
 
+      {sol_data_anterior && status === "agendado" && (
+        <p className="mt-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          <span className="font-medium">Coleta remarcada:</span> a data anterior era {formatarDataBR(sol_data_anterior)}.
+        </p>
+      )}
+
+      {status === "nao_compareceu" && (
+        <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          A retirada não foi feita na data marcada. Fale com a unidade para combinar uma nova data.
+        </p>
+      )}
+
       {sol_recado && status === "agendado" && (
         <p className="mt-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
           <span className="font-medium">Recado da unidade:</span> {sol_recado}
@@ -79,7 +94,7 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
             Ver comprovante
           </button>
         )}
-        {(status === "agendado" || status === "cancelado") && (posto?.pos_whatsapp || status === "cancelado") && (
+        {(status === "agendado" || status === "cancelado" || status === "nao_compareceu") && (posto?.pos_whatsapp || status !== "agendado") && (
           <ContatoUnidade pos_nome={posto?.pos_nome} pos_whatsapp={posto?.pos_whatsapp} mensagem={mensagemUnidade} />
         )}
         <button
