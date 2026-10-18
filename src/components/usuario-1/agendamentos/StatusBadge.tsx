@@ -4,6 +4,7 @@ const STYLES: Record<StatusAgendamento, string> = {
   agendado: "bg-[#001ED3] text-white",
   concluido: "bg-[#32D74B] text-white",
   cancelado: "bg-[#D30000] text-white",
+  nao_compareceu: "bg-amber-500 text-white",
 };
  
 type Variant = "adm" | "paciente";
@@ -16,11 +17,13 @@ const LABELS: Record<Variant, Record<StatusAgendamento, string>> = {
     agendado: "Agendado",
     concluido: "Concluído",
     cancelado: "Cancelado",
+    nao_compareceu: "Não compareceu",
   },
   paciente: {
     agendado: "Agendado",
     concluido: "Coletado",
     cancelado: "Cancelado",
+    nao_compareceu: "Não retirado",
   },
 };
  
@@ -34,9 +37,9 @@ export default function StatusBadge({ status, variant = "adm" }: StatusBadgeProp
   const labels = LABELS[variant];
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${STYLES[status]}`}
+      className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${STYLES[status] ?? "bg-gray-500 text-white"}`}
     >
-      {labels[status]}
+      {labels[status] ?? status}
     </span>
   );
 }

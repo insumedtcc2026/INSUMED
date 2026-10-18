@@ -241,6 +241,7 @@ useEffect(() => {
             <option value="agendado">Agendado</option>
             <option value="concluido">Concluído</option>
             <option value="cancelado">Cancelado</option>
+            <option value="nao_compareceu">Não compareceu</option>
           </select>
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex">

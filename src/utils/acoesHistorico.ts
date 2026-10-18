@@ -15,6 +15,9 @@ export const ACOES_HISTORICO: Record<string, { titulo: string; cor: string }> = 
   // a transferência foi removida; o rótulo fica para registros antigos
   transferida: { titulo: "Transferida para outra unidade", cor: "bg-violet-600" },
   recado: { titulo: "Recado da unidade", cor: "bg-slate-500" },
+  remarcada: { titulo: "Coleta remarcada (nova data)", cor: "bg-blue-600" },
+  pedido_refeito: { titulo: "Unidade refez o pedido e enviou para nova autorização", cor: "bg-blue-500" },
+  nao_compareceu: { titulo: "Coleta não realizada (não compareceu)", cor: "bg-amber-500" },
 };
 
 export const PAPEL_USUARIO: Record<string, string> = {

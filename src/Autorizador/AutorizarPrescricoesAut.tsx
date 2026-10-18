@@ -35,6 +35,8 @@ interface SolicitacaoAprovada {
   sol_observacao?: string | null;
   sol_prescricao_tipo?: string | null;
   sol_motivo_nao_autorizado?: string | null;
+  // observação da unidade quando ela refez um pedido não autorizado
+  sol_observacao_equipe?: string | null;
   sol_insumo_quant: number;
 
   pac_nome: string;
@@ -446,6 +448,13 @@ const alterarStatus = async (
               </section>
 
             </div>
+{solicitacao?.sol_observacao_equipe && (
+    <div className="campo">
+        <label>Observação da unidade (pedido refeito)</label>
+        <textarea value={solicitacao.sol_observacao_equipe} readOnly />
+    </div>
+)}
+
 {solicitacao?.sol_status === "Nao Autorizado" && (
     <div className="campo">
         <label>Motivo da não autorização</label>

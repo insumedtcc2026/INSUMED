@@ -1,11 +1,9 @@
 import '../../css/universais/Header.css';
-import { FaBell } from 'react-icons/fa';
 import { HiMiniBars3 } from 'react-icons/hi2';
 import { IoPersonSharp } from 'react-icons/io5';
-import { useState } from 'react';
 import { useDadosUser } from '../../hook/Dadosuser.tsx';
 
-import NotificationDropdown from './NotificationDropdown.tsx';
+import SinoNotificacoes from './SinoNotificacoes.tsx';
 import { nomeCurto } from '../../utils/nome';
 
 interface UserBadgeProps {
@@ -39,7 +37,6 @@ export default function Header({
 }: HeaderProps) {
 
   const user = useDadosUser();
-  const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <header className="header">
@@ -66,17 +63,7 @@ export default function Header({
           cpf={user.cpf}
         />
 
-        <div
-          className="notification-wrapper"
-          onMouseEnter={() => setShowNotifications(true)}
-          onMouseLeave={() => setShowNotifications(false)}
-        >
-          <button className="notification-button">
-            <FaBell className="notification-icon" />
-          </button>
-
-          {showNotifications && <NotificationDropdown />}
-        </div>
+        <SinoNotificacoes perfil="PACIENTE" />
       </div>
     </header>
   );

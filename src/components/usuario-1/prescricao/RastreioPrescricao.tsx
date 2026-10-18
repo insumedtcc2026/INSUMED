@@ -35,7 +35,8 @@ function montarEtapas(p: MinhaPrescricao, onReenviar?: () => void): { etapas: Et
   const autorizada = s === "Autorizado";
   const agendada = autorizada && ag && (ag.sol_status === "agendado" || ag.sol_status === "concluido");
   const retirada = autorizada && ag?.sol_status === "concluido";
-  const cancelada = autorizada && ag?.sol_status === "cancelado";
+  const cancelada = autorizada && (ag?.sol_status === "cancelado" || ag?.sol_status === "nao_compareceu");
+  const naoCompareceu = autorizada && ag?.sol_status === "nao_compareceu";
 
   const etapas: Etapa[] = [
     {
@@ -78,22 +79,25 @@ function montarEtapas(p: MinhaPrescricao, onReenviar?: () => void): { etapas: Et
         },
     cancelada
       ? {
-          titulo: "Agendamento cancelado",
-          descricao: `Motivo: ${ag?.sol_motivo_cancelamento || "não informado"}. A unidade vai marcar uma nova data.`,
-          data: quando(ultimo(ev, "cancelada")),
+          titulo: naoCompareceu ? "Coleta não realizada" : "Agendamento cancelado",
+          descricao: naoCompareceu
+            ? `A retirada de ${formatarData(ag?.sol_data_de_coleta)} não foi feita. Fale com a unidade para combinar uma nova data.`
+            : `Motivo: ${ag?.sol_motivo_cancelamento || "não informado"}. A unidade vai marcar uma nova data.`,
+          data: quando(ultimo(ev, naoCompareceu ? "nao_compareceu" : "cancelada")),
           estado: "atencao",
         }
       : {
-          titulo: agendada ? (cancelamentoAnterior ? "Coleta remarcada" : "Coleta agendada") : "Agendamento da coleta",
+          titulo: agendada ? (cancelamentoAnterior || ag?.sol_data_anterior ? "Coleta remarcada" : "Coleta agendada") : "Agendamento da coleta",
           descricao: agendada
             ? `${ag?.sol_protocolo ?? ""} · ${formatarData(ag?.sol_data_de_coleta)}${ag?.pos_nome ? ` · ${ag.pos_nome}` : ""}` +
+              (ag?.sol_data_anterior && !retirada ? ` (a data anterior era ${formatarData(ag.sol_data_anterior)})` : "") +
               (cancelamentoAnterior
-                ? `. O agendamento anterior (${cancelamentoAnterior.sol_protocolo ?? "sem protocolo"}) foi cancelado${cancelamentoAnterior.sol_motivo_cancelamento ? `: ${cancelamentoAnterior.sol_motivo_cancelamento}` : ""}.`
+                ? `. O agendamento anterior (${cancelamentoAnterior.sol_protocolo ?? "sem protocolo"}) ${cancelamentoAnterior.sol_status === "nao_compareceu" ? "não foi retirado" : "foi cancelado"}${cancelamentoAnterior.sol_motivo_cancelamento ? `: ${cancelamentoAnterior.sol_motivo_cancelamento}` : ""}.`
                 : "")
             : autorizada ? "A unidade vai marcar a data da sua coleta." : undefined,
-          data: quando(ultimo(ev, "reagendada", "agendada")),
+          data: quando(ultimo(ev, "remarcada", "reagendada", "agendada")),
           estado: agendada ? "feito" : autorizada ? "atual" : s === "Nao Autorizado" ? "pendente" : "pendente",
-          acao: agendada && !retirada ? { texto: "Ver agendamento e comprovante", para: "/agendamentos" } : undefined,
+          acao: agendada && !retirada ? { texto: "Ver agendamento e comprovante", para: `/agendamentos?sol_id=${ag?.sol_id}` } : undefined,
         },
     {
       titulo: retirada ? "Insumos retirados" : "Retirada dos insumos",
@@ -115,8 +119,8 @@ function montarEtapas(p: MinhaPrescricao, onReenviar?: () => void): { etapas: Et
   if (s === "Revisado" || s === "Aprovado") resumo = "Aguardando autorização.";
   if (s === "Nao Autorizado") { resumo = "Sua prescrição não foi autorizada."; tom = "erro"; }
   if (autorizada && !ag) resumo = "Autorizada! A unidade vai agendar sua coleta.";
-  if (cancelada) { resumo = "O agendamento foi cancelado. A unidade vai remarcar."; tom = "atencao"; }
-  if (agendada && !retirada) resumo = `Coleta ${cancelamentoAnterior ? "remarcada" : "marcada"} para ${formatarData(ag?.sol_data_de_coleta)}${ag?.pos_nome ? ` na ${ag.pos_nome}` : ""}.`;
+  if (cancelada) { resumo = naoCompareceu ? "A coleta não foi retirada na data. Fale com a unidade." : "O agendamento foi cancelado. A unidade vai remarcar."; tom = "atencao"; }
+  if (agendada && !retirada) resumo = `Coleta ${cancelamentoAnterior || ag?.sol_data_anterior ? "remarcada" : "marcada"} para ${formatarData(ag?.sol_data_de_coleta)}${ag?.pos_nome ? ` na ${ag.pos_nome}` : ""}.`;
   if (retirada) { resumo = "Insumos retirados. Tudo certo!"; tom = "feito"; }
 
   return { etapas, resumo, tom };

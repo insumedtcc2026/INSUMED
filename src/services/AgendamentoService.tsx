@@ -1,4 +1,5 @@
 import axios from "axios";
+import { observarAcoes } from "../utils/notificacoes";
 
 import type {
   Agendamento,
@@ -12,6 +13,9 @@ import { API_URL } from "../config";
 const api = axios.create({
   baseURL: API_URL,
 });
+
+// ações que mudam dados atualizam o sino na hora
+observarAcoes(api);
 
 
 type TipoUsuario = "ADMIN" | "PACIENTE" | "AUTORIZADOR";
@@ -96,13 +100,16 @@ export async function listarAgendamentosDoPaciente(
   pagina = 1,
   itensPorPagina = 4,
   // "proximos" = só agendados (do mais próximo); "anteriores" = coletados/cancelados
-  situacao?: "proximos" | "anteriores"
+  situacao?: "proximos" | "anteriores",
+  // um agendamento só (link de uma notificação)
+  sol_id?: number
 ): Promise<ResultadoPaginado<Agendamento>> {
   const response = await api.get("/meus-agendamentos", {
     params: {
       page: pagina,
       porPagina: itensPorPagina,
-      situacao,
+      situacao: sol_id ? undefined : situacao,
+      sol_id,
     },
     headers: authHeader("PACIENTE"),
   });

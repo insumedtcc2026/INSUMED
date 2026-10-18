@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
@@ -13,7 +13,7 @@ import ModalReenvio from "../components/usuario-1/prescricao/ModalReenvio";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import { useValidarToken } from "../hook/Validartoken";
 import { useDadosUser } from "../hook/Dadosuser";
-import { buscarMinhasPrescricoes, type MinhaPrescricao } from "../services/PrescricaoService";
+import { buscarMinhaPrescricao, buscarMinhasPrescricoes, type MinhaPrescricao } from "../services/PrescricaoService";
 import { mensagemErroApi } from "../utils/validacoes";
 import { formatarData, textoMotivoReenvio } from "../utils/status";
 
@@ -40,9 +40,26 @@ export default function Prescricoes() {
   const [arquivoDe, setArquivoDe] = useState<number | null>(null);
   const [reenviarDe, setReenviarDe] = useState<MinhaPrescricao | null>(null);
 
+  // ?sol_id= (vindo de uma notificação): mostra só aquela prescrição;
+  // &acao=reenviar abre direto o envio da correção
+  const [params, setParams] = useSearchParams();
+  const foco = Number(params.get("sol_id")) || null;
+  const abrirReenvio = params.get("acao") === "reenviar";
+  const reenvioAberto = useRef(false);
+
   const carregar = useCallback(async () => {
     setErro(null);
     try {
+      if (foco) {
+        const item = await buscarMinhaPrescricao(foco);
+        setLista(item ? [item] : []);
+        setTotalPaginas(1);
+        if (item && abrirReenvio && item.sol_status === "Reenvio" && !reenvioAberto.current) {
+          reenvioAberto.current = true;
+          setReenviarDe(item);
+        }
+        return;
+      }
       const r = await buscarMinhasPrescricoes(aba, pagina, POR_PAGINA);
       setLista(r.itens);
       setContagem(r.contagem);
@@ -50,7 +67,12 @@ export default function Prescricoes() {
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar suas prescrições."));
     }
-  }, [aba, pagina]);
+  }, [aba, pagina, foco, abrirReenvio]);
+
+  function verTodas() {
+    setParams({});
+    setLista(null);
+  }
 
   useEffect(() => {
     if (verificando) return;
@@ -98,6 +120,16 @@ export default function Prescricoes() {
           </Link>
         </div>
 
+        {foco && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            <span>Mostrando a prescrição nº {foco}.</span>
+            <button type="button" onClick={verTodas} className="min-h-10 font-semibold text-blue-700 hover:underline">
+              Ver todas as prescrições
+            </button>
+          </div>
+        )}
+
+        {!foco && (
         <div className="mb-5 grid grid-cols-2 rounded-full bg-white p-1 shadow-sm" role="tablist" aria-label="Filtrar prescrições">
           {([
             ["andamento", "Em andamento", contagem?.andamento],
@@ -117,6 +149,7 @@ export default function Prescricoes() {
             </button>
           ))}
         </div>
+        )}
 
         {erro && (
           <div className="rounded-2xl bg-white p-6 text-center shadow-sm" role="alert">
@@ -133,7 +166,7 @@ export default function Prescricoes() {
         {lista && lista.length === 0 && (
           <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
             <p className="text-gray-600">
-              {aba === "andamento" ? "Nenhuma prescrição em andamento." : "Nenhuma prescrição encerrada ainda."}
+              {foco ? "Prescrição não encontrada." : aba === "andamento" ? "Nenhuma prescrição em andamento." : "Nenhuma prescrição encerrada ainda."}
             </p>
             {aba === "andamento" && (
               <Link to="/EnviarSolicitacao" className="mt-3 inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">
@@ -146,7 +179,7 @@ export default function Prescricoes() {
         <ul className="space-y-4">
           {(lista ?? []).map((p) => {
             const ag = p.agendamento;
-            const cancelado = p.sol_status === "Autorizado" && ag?.sol_status === "cancelado";
+            const cancelado = p.sol_status === "Autorizado" && (ag?.sol_status === "cancelado" || ag?.sol_status === "nao_compareceu");
             const precisaContato = p.sol_status === "Nao Autorizado" || cancelado;
             const mensagem = p.sol_status === "Nao Autorizado"
               ? `Olá! Sou ${usuario.nome}. Minha prescrição nº ${p.sol_id} não foi autorizada e gostaria de entender o motivo.`

@@ -1,13 +1,11 @@
 import '../../css/universais/Header.css';
 
-import { FaBell } from 'react-icons/fa';
 import { HiMiniBars3 } from 'react-icons/hi2';
 import { IoPersonSharp } from 'react-icons/io5';
-import { useState } from 'react';
 
 import { useDadosAdmin } from '../../hook/DadosuserAdm.tsx';
 
-import NotificationDropdown from './NotificationDropdown.tsx';
+import SinoNotificacoes from './SinoNotificacoes.tsx';
 import { nomeCurto } from '../../utils/nome';
 
 
@@ -53,9 +51,6 @@ export default function Header({
 
     const admin = useDadosAdmin();
 
-    const [showNotifications, setShowNotifications] =
-        useState(false);
-
     return (
         <header className="header">
 
@@ -87,25 +82,7 @@ export default function Header({
                     cpf={admin.cpf}
                 />
 
-                <div
-                    className="notification-wrapper"
-                    onMouseEnter={() =>
-                        setShowNotifications(true)
-                    }
-                    onMouseLeave={() =>
-                        setShowNotifications(false)
-                    }
-                >
-
-                    <button className="notification-button">
-                        <FaBell className="notification-icon" />
-                    </button>
-
-                    {showNotifications && (
-                        <NotificationDropdown />
-                    )}
-
-                </div>
+                <SinoNotificacoes perfil="ADMIN" />
 
             </div>
 

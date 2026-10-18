@@ -1,50 +1,300 @@
-  .notification-wrapper {
+/* Sino de notificações (paciente, admin e autorizador) */
+
+.notification-wrapper {
   position: relative;
+}
+
+.notification-button {
+  position: relative;
+}
+
+/* contador de não lidas */
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: var(--raio-pill, 999px);
+  border: 2px solid var(--cor-superficie, #fff);
+  background: var(--cor-erro, #d30000);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
 }
 
 .notification-dropdown {
   position: absolute;
+  top: calc(100% + 14px);
+  right: -8px;
 
-  top: 55px;
-  right: 0;
-
-  width: 400px;
+  display: flex;
+  flex-direction: column;
+  width: 420px;
   max-width: calc(100vw - 32px);
-  min-height: 220px;
+  max-height: min(72vh, 620px);
 
   background: var(--cor-superficie, #fff);
-
-  border-radius: var(--raio-lg, 22px);
-
-  box-shadow: var(--sombra-card-hover, 0 4px 20px rgba(0, 0, 0, 0.15));
-
-  overflow: hidden;
+  border-radius: var(--raio-md, 14px);
+  box-shadow: var(--sombra-card-hover, 0 12px 30px rgba(16, 24, 64, 0.14));
 
   z-index: 999;
+  text-align: left;
+}
+
+/* setinha apontando para o sino */
+.notification-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 22px;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 11px solid var(--cor-primaria, #0042ec);
 }
 
 .notification-header {
-  padding: 16px;
-
-  border-bottom: 1px solid var(--cor-borda, var(--cor-borda));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: var(--raio-md, 14px) var(--raio-md, 14px) 0 0;
+  background: var(--cor-primaria, #0042ec);
 }
 
 .notification-header h3 {
   margin: 0;
+  font-family: var(--fonte-titulo, "Inter", sans-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
 
-  font-size: 18px;
-  color: var(--cor-primaria, #0042ec);
+.notif-marcar-todas {
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--raio-pill, 999px);
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notif-marcar-todas:hover,
+.notif-marcar-todas:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.notif-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notif-lista li + li {
+  border-top: 1px solid var(--cor-borda, #dfe3ea);
+}
+
+.notif-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 32px 16px 20px;
+  border: none;
+  background: var(--cor-superficie, #fff);
+  color: var(--cor-texto-suave, #5b6475);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.notif-item:hover,
+.notif-item:focus-visible {
+  background: var(--cor-superficie-suave, #f2f4f8);
+}
+
+.notif-item--nao-lida {
+  background: var(--cor-primaria-clara, #e8f0ff);
+  color: var(--cor-texto, #1f2430);
+}
+
+.notif-item--nao-lida:hover,
+.notif-item--nao-lida:focus-visible {
+  background: #dce7ff;
+}
+
+.notif-icone {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  color: #fff;
+}
+
+.notif-icone svg {
+  width: 26px;
+  height: 26px;
+}
+
+.notif-icone--agenda,
+.notif-icone--info {
+  background: var(--cor-primaria, #0042ec);
+}
+
+.notif-icone--erro {
+  background: var(--cor-erro, #d30000);
+}
+
+.notif-icone--alerta {
+  background: var(--cor-alerta, #fbb404);
+}
+
+.notif-icone--sucesso {
+  background: var(--cor-sucesso, #22c55e);
+}
+
+.notif-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.notif-mensagem {
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.notif-mensagem strong {
+  color: var(--cor-texto, #1f2430);
+  font-weight: 700;
+}
+
+.notif-data {
+  font-size: 12px;
+  color: var(--cor-texto-claro, #8a93a3);
+}
+
+/* marcador de não lida */
+.notif-ponto {
+  position: absolute;
+  top: 22px;
+  right: 14px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cor-primaria, #0042ec);
+}
+
+.notif-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .notification-empty {
   display: flex;
-
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
   justify-content: center;
-
-  height: 160px;
-
-  color: var(--cor-texto-suave, var(--cor-texto-suave));
-
+  min-height: 160px;
+  padding: 16px;
+  color: var(--cor-texto-suave, #5b6475);
   font-size: 15px;
+  text-align: center;
+}
+
+.notification-empty p {
+  margin: 0;
+}
+
+.notif-tentar {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--cor-borda, #dfe3ea);
+  border-radius: var(--raio-pill, 999px);
+  background: var(--cor-superficie, #fff);
+  color: var(--cor-texto, #1f2430);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.notification-footer {
+  border-top: 1px solid var(--cor-borda, #dfe3ea);
+}
+
+.notif-ver-todas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  color: var(--cor-primaria, #0042ec);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.notif-ver-todas:hover,
+.notif-ver-todas:focus-visible {
+  text-decoration: underline;
+}
+
+/* Celular: painel com a largura da tela, abaixo do cabeçalho */
+@media (max-width: 640px) {
+  .notification-dropdown {
+    position: fixed;
+    top: 76px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 76px - 96px);
+  }
+
+  .notification-dropdown::before {
+    display: none;
+  }
+
+  .notification-header h3 {
+    font-size: 19px;
+  }
+
+  .notif-item {
+    gap: 12px;
+    padding: 14px 28px 14px 14px;
+  }
+
+  .notif-icone {
+    width: 38px;
+    height: 38px;
+  }
+
+  .notif-icone svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .notif-mensagem {
+    font-size: 14px;
+  }
 }

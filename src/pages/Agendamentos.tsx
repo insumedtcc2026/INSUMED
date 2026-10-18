@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
@@ -22,7 +22,8 @@ function faltam(data: string | null) {
   const alvo = Date.parse(data.slice(0, 10) + "T12:00:00");
   const hoje = Date.parse(hojeISO() + "T12:00:00");
   const dias = Math.round((alvo - hoje) / 86400000);
-  if (dias <= 0) return "é hoje";
+  if (dias < 0) return "data já passou";
+  if (dias === 0) return "é hoje";
   if (dias === 1) return "é amanhã";
   return `em ${dias} dias`;
 }
@@ -45,11 +46,15 @@ export default function Agendamentos() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
+  // ?sol_id= (vindo de uma notificação): mostra só aquele agendamento
+  const [params, setParams] = useSearchParams();
+  const foco = Number(params.get("sol_id")) || undefined;
+
   const carregar = useCallback(async (pagina: number, qual: Aba) => {
     setCarregando(true);
     setErro(null);
     try {
-      const resultado = await listarAgendamentosDoPaciente("", pagina, ITENS_POR_PAGINA, qual);
+      const resultado = await listarAgendamentosDoPaciente("", pagina, ITENS_POR_PAGINA, qual, foco);
       setItens(resultado.itens);
       setPaginaAtual(resultado.paginaAtual);
       setTotalPaginas(resultado.totalPaginas);
@@ -58,7 +63,7 @@ export default function Agendamentos() {
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [foco]);
 
   useEffect(() => {
     if (verificando) return;
@@ -75,7 +80,7 @@ export default function Agendamentos() {
   }
 
   // Em "Próximos", a primeira coleta (mais próxima) ganha destaque
-  const destaque = aba === "proximos" && paginaAtual === 1 ? itens[0] : undefined;
+  const destaque = !foco && aba === "proximos" && paginaAtual === 1 ? itens[0] : undefined;
   const demais = destaque ? itens.slice(1) : itens;
 
   return (
@@ -90,6 +95,16 @@ export default function Agendamentos() {
       <main className="pagina-conteudo mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="mb-5 text-2xl font-bold text-blue-700">Meus agendamentos</h1>
 
+        {foco && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            <span>Mostrando o agendamento da notificação.</span>
+            <button type="button" onClick={() => setParams({})} className="min-h-10 font-semibold text-blue-700 hover:underline">
+              Ver todos os agendamentos
+            </button>
+          </div>
+        )}
+
+        {!foco && (
         <div className="mb-5 grid grid-cols-2 rounded-full bg-white p-1 shadow-sm" role="tablist" aria-label="Filtrar agendamentos">
           {([
             ["proximos", "Próximos"],
@@ -109,6 +124,7 @@ export default function Agendamentos() {
             </button>
           ))}
         </div>
+        )}
 
         {carregando && <p className="py-10 text-center text-gray-400" role="status">Carregando…</p>}
 
@@ -128,7 +144,7 @@ export default function Agendamentos() {
         {!carregando && !erro && itens.length === 0 && (
           <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
             <p className="text-gray-600">
-              {aba === "proximos" ? "Você não tem coletas marcadas." : "Nenhum agendamento anterior."}
+              {foco ? "Agendamento não encontrado." : aba === "proximos" ? "Você não tem coletas marcadas." : "Nenhum agendamento anterior."}
             </p>
             {aba === "proximos" && (
               <Link to="/prescricoes" className="mt-3 inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">
