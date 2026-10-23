@@ -55,6 +55,8 @@ export interface Agendamento {
   sol_recado?: string | null;
   // data anterior quando o admin remarcou o agendamento
   sol_data_anterior?: string | null;
+  // código secreto do QR Code do comprovante (só vem para o próprio paciente)
+  sol_codigo_qr?: string | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];
@@ -84,4 +86,25 @@ export interface FiltrosAgendamento {
   busca?: string; // nome, CPF ou protocolo
   dataInicio?: string;
   dataFim?: string;
+}
+// Tela de atendimento aberta pelo leitor de QR Code: só o necessário para
+// conferir e concluir/cancelar no balcão (sem telefone, endereço ou prescrição).
+export interface AtendimentoAgendamento {
+  sol_id: number;
+  sol_protocolo: string | null;
+  sol_data_de_coleta: string | null;
+  status: StatusAgendamento;
+  sol_motivo_cancelamento: string | null;
+  paciente: { pac_nome: string; pac_cpf_parcial: string | null };
+  posto: { pos_nome: string | null };
+  prescricao_vencida: boolean;
+  // "hoje" no fuso de Brasília, segundo o servidor
+  hoje: string;
+  insumos: { ins_id: number; ins_nome: string; quantidade: number; estoque: number }[];
+}
+
+export interface ResultadoLeituraQR {
+  sol_id: number;
+  sol_protocolo: string;
+  status: StatusAgendamento;
 }

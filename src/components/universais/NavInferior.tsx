@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Activity, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, LogOut,
-  MoreHorizontal, Package, ShieldCheck, Upload, UserCog, Users, X,
+  MoreHorizontal, Package, QrCode, ShieldCheck, Upload, UserCog, Users, X,
 } from 'lucide-react';
 import { MdAddLocation } from 'react-icons/md';
 import { IoPersonSharp } from 'react-icons/io5';
@@ -57,6 +57,7 @@ const MENUS: Record<Perfil, Menu> = {
       },
     ],
     mais: [
+      { label: 'Ler QR Code', path: '/leitor-qrcode', icon: QrCode },
       { label: 'Novo agendamento', path: '/Agendamentosadm?novo=1', icon: CalendarPlus },
       { label: 'Histórico da prescrição', path: '/Historicodaprescricao', icon: History },
       { label: 'Pacientes', path: '/Pacientesadm', icon: Users },
@@ -85,7 +86,7 @@ const ROTAS: Record<Perfil, string[]> = {
   PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil'],
   ADMIN: [
     '/homeadmin', '/agendamentosadm', '/coletas-hoje', '/versolicitaçoes', '/historicodaprescricao',
-    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/',
+    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode',
   ],
   AUTORIZADOR: ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'],
 };
@@ -97,9 +98,8 @@ function perfilDaRota(pathname: string): Perfil | null {
   } catch {
     /* mantém como veio */
   }
-  // "/Insumos" (maiúsculo) é a página do paciente; "/insumos" é o estoque do admin
-  if (caminho === '/Insumos') return 'PACIENTE';
-  if (caminho === '/insumos') return 'ADMIN';
+  // "/insumos" é o estoque do admin (as rotas não diferenciam maiúsculas)
+  if (caminho.toLowerCase() === '/insumos') return 'ADMIN';
   const minusculo = caminho.toLowerCase();
   const casa = (rotas: string[]) =>
     rotas.some((r) => (r.endsWith('/') ? minusculo.startsWith(r) : minusculo === r || minusculo.startsWith(`${r}/`)));

@@ -6,6 +6,7 @@ import Header from "../components/universais/HeaderAdm";
 import Sidebar from "../components/universais/Siderbaradm";
 import { useNavigate } from "react-router-dom";
 import { useDadosInsumos } from "../hook/Insumosposto";
+import { useValidarToken } from "../hook/Validartoken";
 
 import "../css/home/AutorizarPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
@@ -34,6 +35,7 @@ sol_motivo_nao_autorizado?: string | null;
 
 function EnviarPrescricao() {
 
+  const { verificando } = useValidarToken("ADMIN");
   const { id } = useParams();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -277,6 +279,15 @@ const enviarSolicitacao = async () => {
   }
 };
 
+
+  // só o perfil de administrador abre esta tela
+  if (verificando) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <p className="text-lg text-gray-600">Carregando seus dados...</p>
+      </div>
+    );
+  }
 
   return (
 
@@ -680,4 +691,4 @@ const enviarSolicitacao = async () => {
 }
 
 
-export default EnviarPrescricao;
+export default EnviarPrescricao;

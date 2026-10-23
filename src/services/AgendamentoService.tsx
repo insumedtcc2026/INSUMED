@@ -3,6 +3,8 @@ import { observarAcoes } from "../utils/notificacoes";
 
 import type {
   Agendamento,
+  AtendimentoAgendamento,
+  ResultadoLeituraQR,
   NovoAgendamentoPayload,
   ResultadoPaginado,
   FiltrosAgendamento,
@@ -166,5 +168,27 @@ export async function criarAgendamento(
     headers: authHeader("ADMIN"),
   });
 
+  return response.data;
+}
+
+// ---------------------------------------------------------
+// LEITOR DE QR CODE (ADM)
+// ---------------------------------------------------------
+
+// Texto lido do QR do comprovante (câmera, leitor USB ou digitado). Quem
+// valida o formato, o código e o posto é o backend.
+export async function buscarPorQRCode(codigo: string): Promise<ResultadoLeituraQR> {
+  const response = await api.get("/agendamentos/qrcode", {
+    params: { codigo: codigo.trim() },
+    headers: authHeader("ADMIN"),
+  });
+  return response.data;
+}
+
+// Dados mínimos da tela de atendimento aberta pelo leitor
+export async function buscarAtendimento(sol_id: number): Promise<AtendimentoAgendamento> {
+  const response = await api.get(`/agendamentos/${sol_id}/atendimento`, {
+    headers: authHeader("ADMIN"),
+  });
   return response.data;
 }

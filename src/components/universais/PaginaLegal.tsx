@@ -6,7 +6,9 @@ import { ShieldCheck } from 'lucide-react';
 
 import logo from '../../assets/home/Logo.webp';
 import BotaoVoltar from './BotaoVoltar';
-import Footer from './Footer';
+// rodapé da home pública: estas páginas são abertas sem login, então nada
+// de links para áreas restritas (o rodapé das páginas logadas tem)
+import Footer from '../home/Footer';
 import { DATA_ATUALIZACAO } from './dadosLegais';
 
 export interface SecaoLegal {

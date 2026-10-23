@@ -2,7 +2,27 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import '../../css/home/Header.css';
 import logo from '../../assets/home/Logo.webp';
-import { propsLinkExterno, redesSociais } from '../universais/contatos';
+
+// Seções da própria home (ids em pages/HomeHome.tsx). Antes eram "Sobre"
+// (página que exige login) e links externos do Instagram e do YouTube,
+// que continuam no rodapé.
+const secoes = [
+  { id: 'sobre', label: 'Sobre' },
+  { id: 'aplicativo', label: 'Aplicativo' },
+  { id: 'onde-estamos', label: 'Onde estamos' },
+];
+
+// Rolagem suave até a seção; quem pediu "reduzir movimento" no sistema
+// vai direto. O foco vai junto, para teclado e leitor de tela.
+function irParaSecao(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
+  const alvo = document.getElementById(id);
+  if (!alvo) return;
+  e.preventDefault();
+  const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  alvo.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'start' });
+  alvo.focus({ preventScroll: true });
+  window.history.replaceState(null, '', `#${id}`);
+}
  
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -47,23 +67,11 @@ const Header: React.FC = () => {
         </a>
  
         <nav className="header-nav">
-          <Link to="/sobre" className="nav-link">Sobre</Link>
-          <a
-            href={redesSociais.instagram}
-            {...propsLinkExterno}
-            className="nav-link"
-            aria-label="Instagram do Insumed (abre em nova aba)"
-          >
-            Instagram
-          </a>
-          <a
-            href={redesSociais.youtube}
-            {...propsLinkExterno}
-            className="nav-link"
-            aria-label="YouTube do Insumed (abre em nova aba)"
-          >
-            YouTube
-          </a>
+          {secoes.map(({ id, label }) => (
+            <a key={id} href={`#${id}`} className="nav-link" onClick={(e) => irParaSecao(e, id)}>
+              {label}
+            </a>
+          ))}
         </nav>
  
         <Link to="/login" className="header-cta">
@@ -74,4 +82,4 @@ const Header: React.FC = () => {
   );
 };
  
-export default Header;
+export default Header;

@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import HomeHome from './pages/HomeHome';
 import Home from './pages/Home';
 import Agendamentos from './pages/Agendamentos';
-import Insumos from './pages/Insumos';
 import PontosColeta from './pages/PontosColeta';
 import Perfil from './pages/Perfil';
 import Sobre from './pages/Sobre'; 
@@ -27,6 +26,8 @@ import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import SegurancaDados from './pages/SegurancaDados';
 import ColetasHoje from './Administrador/ColetasHoje';
 import AtividadesUnidade from './Administrador/AtividadesUnidade';
+import LeitorQRCode from './Administrador/LeitorQRCode';
+import AtendimentoAgendamento from './Administrador/AtendimentoAgendamento';
 import Prescricoes from './pages/Prescricoes';
 import FichaPaciente from './Administrador/FichaPaciente';
 import PerfilEquipe from './components/universais/PerfilEquipe';
@@ -147,11 +148,6 @@ function App() {
 />
 
       <Route
-        path="/Insumos"
-        element={<Insumos />}
-      />
-
-      <Route
         path="/pontos-coleta"
         element={<PontosColeta />}
       />
@@ -177,6 +173,9 @@ function App() {
       {/* Admin: balcão, ficha do paciente e perfil */}
       <Route path="/coletas-hoje" element={<ColetasHoje />} />
       <Route path="/atividades" element={<AtividadesUnidade />} />
+      {/* Admin: leitor do QR Code do comprovante e o agendamento lido */}
+      <Route path="/leitor-qrcode" element={<LeitorQRCode />} />
+      <Route path="/leitor-qrcode/agendamento/:id" element={<AtendimentoAgendamento />} />
       <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
@@ -197,4 +196,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;
