@@ -17,6 +17,7 @@
     "lucide-react": "^1.14.0",
     "node": "^26.8.2",
     "nodemon": "^3.1.14",
+    "qr-scanner": "1.4.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

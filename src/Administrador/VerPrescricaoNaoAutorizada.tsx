@@ -12,6 +12,7 @@ import BotaoVoltar from "../components/universais/BotaoVoltar";
 import "../css/home/AutorizarPrescicoesAut.css";
 import { exibirCPF } from "../utils/validacoes";
 import { API_URL } from "../config";
+import { useValidarToken } from "../hook/Validartoken";
 
 
 interface Solicitacao {
@@ -39,6 +40,7 @@ function formatarData(data?: string | null) {
 }
 
 export default function VerPrescricaoNaoAutorizada() {
+    const { verificando } = useValidarToken("ADMIN");
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -162,6 +164,15 @@ export default function VerPrescricaoNaoAutorizada() {
 const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
 };
+    // só o perfil de administrador abre esta tela
+    if (verificando) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-50">
+                <p className="text-lg text-gray-600">Carregando seus dados...</p>
+            </div>
+        );
+    }
+
     return (
         
         <div className="enviar-prescricao-page">

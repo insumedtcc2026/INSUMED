@@ -14,3 +14,19 @@ html {
 main {
   overflow-x: hidden;
 }
+
+/* seções que recebem os links do header: o header flutuante não cobre o
+   começo da seção, e o foco (só para leitor de tela) não mostra contorno */
+.homehome-ancora {
+  scroll-margin-top: 110px;
+}
+
+.homehome-ancora:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.homehome-page) {
+    scroll-behavior: smooth;
+  }
+}

@@ -13,13 +13,14 @@ export default function App() {
       <section className="homehome-section">
         <Banner />
       </section>
-      <section className="homehome-section">
+      {/* destinos dos links do header (rolagem suave); tabIndex para receber o foco */}
+      <section id="sobre" tabIndex={-1} aria-label="Sobre o INSUMED" className="homehome-section homehome-ancora">
         <CareSection />
       </section>
-      <section className="homehome-section">
+      <section id="aplicativo" tabIndex={-1} aria-label="Aplicativo" className="homehome-section homehome-ancora">
         <AppFeatures />
       </section>
-      <section className="homehome-section">
+      <section id="onde-estamos" tabIndex={-1} aria-label="Onde estamos" className="homehome-section homehome-ancora">
         <ExpansionMap />
       </section>
       <section className="homehome-section">
@@ -27,4 +28,4 @@ export default function App() {
       </section>
     </main>
   );
-}
+}

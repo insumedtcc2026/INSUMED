@@ -14,6 +14,7 @@ import {
   Files,
   LogOut,
   Package,
+  QrCode,
   RotateCcwIcon,
   X,
 } from 'lucide-react';
@@ -56,6 +57,11 @@ export default function Sidebar({
       icon: ClipboardCheck,
       label: 'Coletas de hoje',
       path: '/coletas-hoje',
+    },
+    {
+      icon: QrCode,
+      label: 'Ler QR Code',
+      path: '/leitor-qrcode',
     },
     {
       icon: Files,
@@ -163,4 +169,4 @@ export default function Sidebar({
       </aside>
     </>
   );
-}
+}

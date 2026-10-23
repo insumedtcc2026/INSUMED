@@ -20,12 +20,15 @@ function cpfParcial(cpf: string) {
 
 /**
  * Comprovante do agendamento, para mostrar no balcão ou salvar.
- * O QR Code guarda só o protocolo: o leitor da unidade "digita" o
- * protocolo na tela "Coletas de hoje".
+ * O QR Code guarda "INSUMED:<protocolo>:<código>": o protocolo é
+ * sequencial, o código é aleatório e é ele que o leitor do admin
+ * (/leitor-qrcode) confere no backend. Sem o código (backend antigo),
+ * o QR volta a ter só o protocolo, que o leitor também aceita.
  */
 export default function ComprovanteAgendamento({ agendamento, nomePaciente, cpfPaciente, onClose }: Props) {
-  const { sol_protocolo, sol_id, sol_data_de_coleta, posto, insumos, sol_recado } = agendamento;
+  const { sol_protocolo, sol_id, sol_data_de_coleta, posto, insumos, sol_recado, sol_codigo_qr } = agendamento;
   const protocolo = sol_protocolo ?? `AG${String(sol_id).padStart(6, "0")}`;
+  const conteudoQR = sol_codigo_qr ? `INSUMED:${protocolo}:${sol_codigo_qr}` : protocolo;
   const fechar = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function ComprovanteAgendamento({ agendamento, nomePaciente, cpfP
 
         <div className="flex justify-center px-6 pt-5">
           <div className="rounded-2xl border border-gray-200 bg-white p-3">
-            <QRCodeSVG value={protocolo} size={168} level="M" title={`QR Code do protocolo ${protocolo}`} />
+            <QRCodeSVG value={conteudoQR} size={168} level="M" title={`QR Code do protocolo ${protocolo}`} />
           </div>
         </div>
 

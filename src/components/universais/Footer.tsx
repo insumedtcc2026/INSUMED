@@ -29,6 +29,7 @@ const linksAdministrador: FooterLink[] = [
   { label: 'Início', href: '/HomeAdmin' },
   { label: 'Agendamentos', href: '/Agendamentosadm' },
   { label: 'Coletas de hoje', href: '/coletas-hoje' },
+  { label: 'Ler QR Code', href: '/leitor-qrcode' },
   { label: 'Solicitações', href: '/VerSolicitaçoes' },
   { label: 'Histórico de Prescrições', href: '/Historicodaprescricao' },
   { label: 'Insumos', href: '/insumos' },
@@ -50,6 +51,7 @@ const rotasAdministrador = [
   '/historicodaprescricao',
   '/administrador/',
   '/coletas-hoje',
+  '/leitor-qrcode',
   '/perfil-admin',
   '/atividades',
 ];

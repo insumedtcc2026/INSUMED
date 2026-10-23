@@ -27,7 +27,6 @@
     margin-top: 15px;
     padding: 6px 18px;
     border-radius: 20px;
-    color: white;
     font-size: 12px;
     font-weight: 600;
     text-align: center;
@@ -35,11 +34,13 @@
 }
 
 .disponivel {
-    background-color: var(--cor-sucesso);
+    background-color: #dcfce7;
+    color: #166534;
 }
 
 .indisponivel {
-    background-color: var(--cor-erro);
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 .insumo-imagem {
     width: 110px;
@@ -52,4 +53,4 @@ height: 173px;
 left: 444px;
 top: 210px;
 
-}
+}

@@ -1,21 +1,22 @@
 import type { ReactNode } from "react";
 import { exibirCPF } from "../../utils/validacoes";
+import { CLASSE_SELO, CLASSES_TOM, infoStatus } from "../../utils/status";
 
-// Status da prescrição em pílula cheia, no mesmo formato do StatusBadge dos agendamentos
-const ESTILO_STATUS: Record<string, { rotulo: string; cor: string }> = {
-  Pendente: { rotulo: "Pendente", cor: "bg-[#FBB404] text-gray-900" },
-  Reenvio: { rotulo: "Reenvio", cor: "bg-orange-500 text-white" },
-  Revisado: { rotulo: "Revisado", cor: "bg-[#001ED3] text-white" },
-  Aprovado: { rotulo: "Revisado", cor: "bg-[#001ED3] text-white" },
-  Autorizado: { rotulo: "Autorizado", cor: "bg-[#32D74B] text-white" },
-  "Nao Autorizado": { rotulo: "Não autorizado", cor: "bg-[#D30000] text-white" },
+// Status da prescrição na pílula padrão do site (fundo claro, texto colorido);
+// rótulos da visão da equipe; as cores vêm do tom padrão (utils/status.ts)
+const ROTULO_STATUS: Record<string, string> = {
+  Pendente: "Pendente",
+  Reenvio: "Reenvio",
+  Revisado: "Revisado",
+  Aprovado: "Revisado",
+  Autorizado: "Autorizado",
+  "Nao Autorizado": "Não autorizado",
 };
 
 export function SeloPrescricao({ status, rotulo }: { status: string; rotulo?: string }) {
-  const estilo = ESTILO_STATUS[status] ?? { rotulo: status, cor: "bg-gray-400 text-white" };
   return (
-    <span className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium ${estilo.cor}`}>
-      {rotulo ?? estilo.rotulo}
+    <span className={`${CLASSE_SELO} ${CLASSES_TOM[infoStatus(status).tom]}`}>
+      {rotulo ?? ROTULO_STATUS[status] ?? status}
     </span>
   );
 }

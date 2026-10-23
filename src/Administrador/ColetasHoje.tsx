@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { QrCode } from "lucide-react";
 import Swal from "sweetalert2";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
@@ -17,6 +19,11 @@ const esc = (t: unknown) =>
 
 const normalizar = (t: string) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+
+// QR novo do comprovante ("INSUMED:AG000042:<código>"): aqui só o protocolo
+// interessa (o leitor completo, que confere o código, fica em /leitor-qrcode).
+// Leitor USB em teclado ABNT2 pode trocar ":" por "Ç" ou ";".
+const protocoloDoQR = (t: string) => /^\s*insumed[:;ç](ag\d+)[:;ç]/i.exec(t)?.[1] ?? t;
 
 /**
  * Atendimento no balcão: coletas marcadas para hoje.
@@ -61,7 +68,7 @@ export default function ColetasHoje() {
   }, [verificando, carregar]);
 
   const filtrados = useMemo(() => {
-    const termo = normalizar(busca);
+    const termo = normalizar(protocoloDoQR(busca));
     if (!termo) return agendados;
     const digitos = somenteDigitos(busca);
     return agendados.filter((a) => {
@@ -159,11 +166,16 @@ export default function ColetasHoje() {
       </div>
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <header className="mb-5">
-          <h1 className="text-2xl font-semibold text-gray-800">Coletas de hoje</h1>
-          <p className="text-sm text-gray-500">
-            Digite ou leia o protocolo do comprovante, ou busque pelo CPF ou nome.
-          </p>
+        <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-800">Coletas de hoje</h1>
+            <p className="text-sm text-gray-500">
+              Digite ou leia o protocolo do comprovante, ou busque pelo CPF ou nome.
+            </p>
+          </div>
+          <Link to="/leitor-qrcode" className="botao-novo-agendamento">
+            <QrCode size={18} aria-hidden="true" /> Ler QR Code com a câmera
+          </Link>
         </header>
 
         <div className="mb-5 grid grid-cols-2 gap-3 sm:max-w-md">

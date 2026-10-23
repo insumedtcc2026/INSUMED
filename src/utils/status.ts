@@ -27,6 +27,11 @@ export function infoStatus(status: string | null | undefined): InfoStatus {
   return STATUS[status ?? ""] ?? { rotulo: status || "—", tom: "neutro" };
 }
 
+// Formato único das pílulas de status do site: fundo claro e texto na
+// cor do tom (mesmo visual de "Minhas prescrições" do paciente).
+export const CLASSE_SELO =
+  "inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap";
+
 export const CLASSES_TOM: Record<TomStatus, string> = {
   neutro: "bg-gray-100 text-gray-700",
   andamento: "bg-blue-100 text-blue-800",

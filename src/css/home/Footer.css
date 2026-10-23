@@ -69,14 +69,19 @@
 .footer-home .footer-links{
     flex:1;
     display:flex;
+    /* o rodapé das páginas logadas define .footer-links com quebra de
+       linha; aqui as três colunas ficam lado a lado no computador */
+    flex-wrap: nowrap;
     justify-content:flex-end;
-    gap:110px;
+    gap: clamp(40px, 5vw, 110px);
     margin-top:12px;
 }
 
 .footer-home .footer-links div{
     display:flex;
     flex-direction:column;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .footer-home .footer-links-titulo{
@@ -136,6 +141,7 @@
 
     .footer-home .footer-links{
         flex-basis: 100%;
+        flex-wrap: wrap;
         justify-content: flex-start;
         gap: 56px;
         margin-top: 8px;

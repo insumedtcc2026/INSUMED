@@ -1,11 +1,5 @@
 import type { StatusAgendamento } from "../../../types/agendamento";
- 
-const STYLES: Record<StatusAgendamento, string> = {
-  agendado: "bg-[#001ED3] text-white",
-  concluido: "bg-[#32D74B] text-white",
-  cancelado: "bg-[#D30000] text-white",
-  nao_compareceu: "bg-amber-500 text-white",
-};
+import { CLASSE_SELO, CLASSES_TOM, infoStatus } from "../../../utils/status";
  
 type Variant = "adm" | "paciente";
  
@@ -37,10 +31,10 @@ export default function StatusBadge({ status, variant = "adm" }: StatusBadgeProp
   const labels = LABELS[variant];
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${STYLES[status] ?? "bg-gray-500 text-white"}`}
+      className={`${CLASSE_SELO} ${CLASSES_TOM[infoStatus(status).tom]}`}
     >
       {labels[status] ?? status}
     </span>
   );
 }
- 
+ 
