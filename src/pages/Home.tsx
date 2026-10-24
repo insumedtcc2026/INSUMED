@@ -64,7 +64,10 @@ export default function Home() {
           <h2 className="mb-3 text-lg font-semibold text-gray-800">
             Seu próximo agendamento
           </h2>
-          <AgendamentoCardPaciente agendamento={proximoAgendamento} />
+          <AgendamentoCardPaciente
+            agendamento={proximoAgendamento}
+            onAtualizar={() => buscarProximoAgendamento().then(setProximoAgendamento).catch(() => setProximoAgendamento(null))}
+          />
         </section>
       )}
 

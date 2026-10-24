@@ -202,3 +202,26 @@ html.alto-contraste textarea {
     z-index: 950;
   }
 }
+
+/* ---------- Ouvir a tela ---------- */
+.acessibilidade-ouvir {
+  width: 100%;
+  min-height: 44px;
+  border: 2px solid var(--cor-primaria, #0042ec);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cor-primaria, #0042ec);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.acessibilidade-ouvir--ativo {
+  background: var(--cor-primaria, #0042ec);
+  color: #fff;
+}
+
+.acessibilidade-dica {
+  margin: 6px 0 4px;
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave, #5b6475);
+}

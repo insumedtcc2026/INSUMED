@@ -11,6 +11,7 @@ import Pagination from "../components/usuario-1/agendamentos/pagination";
 import type { Agendamento } from "../types/agendamento";
 import { hojeISO, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
+import { textoTurno } from "../utils/agenda";
 
 const ITENS_POR_PAGINA = 4;
 
@@ -159,11 +160,12 @@ export default function Agendamentos() {
             <div className="mb-2 flex items-baseline justify-between gap-2">
               <h2 id="proxima-coleta" className="text-lg font-semibold text-gray-800">Próxima coleta</h2>
               <span className="text-sm font-semibold text-blue-700">
-                {formatarData(destaque.sol_data_de_coleta)} · {faltam(destaque.sol_data_de_coleta)}
+                {formatarData(destaque.sol_data_de_coleta)}
+                {destaque.sol_turno ? `, ${textoTurno(destaque.sol_turno)}` : ""} · {faltam(destaque.sol_data_de_coleta)}
               </span>
             </div>
             <div className="rounded-[1.75rem] p-[2px]" style={{ background: "var(--gradiente-primario)" }}>
-              <AgendamentoCardPaciente agendamento={destaque} />
+              <AgendamentoCardPaciente agendamento={destaque} onAtualizar={() => carregar(paginaAtual, aba)} />
             </div>
           </section>
         )}
@@ -173,7 +175,7 @@ export default function Agendamentos() {
             {destaque && <h2 className="mb-3 text-lg font-semibold text-gray-800">Depois</h2>}
             <div className="flex flex-col gap-4">
               {demais.map((agendamento) => (
-                <AgendamentoCardPaciente key={agendamento.sol_id} agendamento={agendamento} />
+                <AgendamentoCardPaciente key={agendamento.sol_id} agendamento={agendamento} onAtualizar={() => carregar(paginaAtual, aba)} />
               ))}
             </div>
           </>

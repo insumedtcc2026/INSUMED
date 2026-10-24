@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { QrCode } from "lucide-react";
+import { ListChecks, QrCode } from "lucide-react";
 import Swal from "sweetalert2";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
@@ -8,14 +8,11 @@ import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCard";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
+import { confirmarEntrega } from "../components/universais/acoesAdmin";
 import { concluirAgendamento, listarAgendamentos } from "../services/AgendamentoService";
 import type { Agendamento } from "../types/agendamento";
 import { useValidarToken } from "../hook/Validartoken";
 import { exibirCPF, hojeISO, mensagemErroApi, somenteDigitos } from "../utils/validacoes";
-
-// textos vindos do banco entram no HTML do alerta: escapar sempre
-const esc = (t: unknown) =>
-  String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 
 const normalizar = (t: string) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -90,23 +87,16 @@ export default function ColetasHoje() {
     const ag = agendados.find((a) => a.sol_id === sol_id);
     const itens = ag?.insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ") || "—";
 
-    const ok = await Swal.fire({
-      icon: "question",
-      title: "Entregar e concluir?",
-      html: `<p><strong>${esc(ag?.sol_protocolo ?? sol_id)}</strong> · ${esc(ag?.paciente.pac_nome)}</p>
-             <p style="margin-top:6px">CPF ${esc(exibirCPF(ag?.paciente.pac_cpf))}</p>
-             <p style="margin-top:6px">${esc(itens)}</p>`,
-      showCancelButton: true,
-      confirmButtonText: "Concluir coleta",
-      cancelButtonText: "Voltar",
-      confirmButtonColor: "#16a34a",
-      reverseButtons: true,
-      focusConfirm: true,
+    const ok = await confirmarEntrega({
+      pac_id: ag?.paciente.pac_id,
+      protocolo: String(ag?.sol_protocolo ?? sol_id),
+      paciente: ag?.paciente.pac_nome ?? "",
+      linhas: [`CPF ${exibirCPF(ag?.paciente.pac_cpf)}`, itens],
     });
-    if (!ok.isConfirmed) return voltarAoCampo();
+    if (!ok) return voltarAoCampo();
 
     try {
-      await concluirAgendamento(sol_id);
+      await concluirAgendamento(sol_id, ok.retirado_por);
       await Swal.fire({
         icon: "success",
         title: "Coleta concluída",
@@ -173,9 +163,17 @@ export default function ColetasHoje() {
               Digite ou leia o protocolo do comprovante, ou busque pelo CPF ou nome.
             </p>
           </div>
-          <Link to="/leitor-qrcode" className="botao-novo-agendamento">
-            <QrCode size={18} aria-hidden="true" /> Ler QR Code com a câmera
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link
+              to="/lista-separacao"
+              className="flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-blue-700 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              <ListChecks size={18} aria-hidden="true" /> Lista de separação
+            </Link>
+            <Link to="/leitor-qrcode" className="botao-novo-agendamento">
+              <QrCode size={18} aria-hidden="true" /> Ler QR Code com a câmera
+            </Link>
+          </div>
         </header>
 
         <div className="mb-5 grid grid-cols-2 gap-3 sm:max-w-md">
@@ -188,6 +186,30 @@ export default function ColetasHoje() {
             <p className="text-sm text-gray-500">já concluídas</p>
           </div>
         </div>
+
+        {/* turnos e respostas de presença do dia */}
+        {!carregando && agendados.length > 0 && (
+          <p className="-mt-2 mb-5 flex flex-wrap gap-2 text-sm" role="status">
+            {(["manha", "tarde"] as const).map((t) => {
+              const n = agendados.filter((a) => (a.sol_turno ?? "manha") === t).length;
+              return n ? (
+                <span key={t} className="rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-900">
+                  {n} de {t === "manha" ? "manhã" : "tarde"}
+                </span>
+              ) : null;
+            })}
+            {agendados.some((a) => a.sol_presenca === "vou") && (
+              <span className="rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-800">
+                {agendados.filter((a) => a.sol_presenca === "vou").length} confirmaram
+              </span>
+            )}
+            {agendados.some((a) => a.sol_presenca === "nao_vou") && (
+              <span className="rounded-full bg-rose-50 px-3 py-1 font-medium text-rose-800">
+                {agendados.filter((a) => a.sol_presenca === "nao_vou").length} avisaram que não vão
+              </span>
+            )}
+          </p>
+        )}
 
         <label htmlFor="busca-balcao" className="sr-only">
           Protocolo, CPF ou nome

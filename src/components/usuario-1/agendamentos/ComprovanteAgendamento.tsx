@@ -1,9 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CalendarPlus } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import type { Agendamento } from "../../../types/agendamento";
 import { somenteDigitos } from "../../../utils/validacoes";
 import { formatarData } from "../../../utils/status";
 import "../../../css/universais/Comprovante.css";
+import { buscarHorarios } from "../../../services/AgendaService";
+import { baixarICS, HORA_PADRAO, linkGoogleAgenda, textoTurno, type EventoColeta, type Turno } from "../../../utils/agenda";
 
 interface Props {
   agendamento: Agendamento;
@@ -26,8 +29,41 @@ function cpfParcial(cpf: string) {
  * o QR volta a ter só o protocolo, que o leitor também aceita.
  */
 export default function ComprovanteAgendamento({ agendamento, nomePaciente, cpfPaciente, onClose }: Props) {
-  const { sol_protocolo, sol_id, sol_data_de_coleta, posto, insumos, sol_recado, sol_codigo_qr } = agendamento;
+  const { sol_protocolo, sol_id, sol_data_de_coleta, sol_turno, posto, insumos, sol_recado, sol_codigo_qr } = agendamento;
   const protocolo = sol_protocolo ?? `AG${String(sol_id).padStart(6, "0")}`;
+  const dia = sol_data_de_coleta?.slice(0, 10) ?? "";
+  const turno: Turno = sol_turno ?? "manha";
+  // horário do turno na unidade (o padrão vale até a unidade cadastrar o seu)
+  const [horario, setHorario] = useState<[string, string]>(HORA_PADRAO[turno]);
+  useEffect(() => {
+    if (!posto?.pos_id || !dia) return;
+    let ativo = true;
+    const semana = new Date(`${dia}T12:00:00`).getDay();
+    buscarHorarios(posto.pos_id)
+      .then((h) => {
+        const t = h.horarios.find((x) => x.dia_semana === semana && x.turno === turno);
+        if (ativo && t) setHorario([t.abre, t.fecha]);
+      })
+      .catch(() => {
+        /* fica o horário padrão do turno */
+      });
+    return () => {
+      ativo = false;
+    };
+  }, [posto?.pos_id, dia, turno]);
+
+  const evento: EventoColeta | null = dia
+    ? {
+        titulo: `Retirada de insumos · ${posto?.pos_nome ?? "Insumed"}`,
+        data: dia,
+        inicio: horario[0],
+        fim: horario[1],
+        local: [posto?.pos_nome, posto?.pos_endereco].filter(Boolean).join(", "),
+        descricao: `Protocolo ${protocolo}. Leve o comprovante (QR Code) e um documento com foto.\nInsumos: ${insumos
+          .map((i) => `${i.quantidade}x ${i.ins_nome}`)
+          .join(", ")}`,
+      }
+    : null;
   const conteudoQR = sol_codigo_qr ? `INSUMED:${protocolo}:${sol_codigo_qr}` : protocolo;
   const fechar = useRef<HTMLButtonElement>(null);
 
@@ -76,6 +112,14 @@ export default function ComprovanteAgendamento({ agendamento, nomePaciente, cpfP
             <dt className="text-xs font-semibold uppercase text-gray-500">Data da coleta</dt>
             <dd className="font-medium text-gray-900">{formatarData(sol_data_de_coleta)}</dd>
           </div>
+          {sol_turno && (
+            <div className="col-span-2">
+              <dt className="text-xs font-semibold uppercase text-gray-500">Turno</dt>
+              <dd className="font-medium text-gray-900">
+                {textoTurno(sol_turno).charAt(0).toUpperCase() + textoTurno(sol_turno).slice(1)} · das {horario[0]} às {horario[1]}
+              </dd>
+            </div>
+          )}
           <div className="col-span-2">
             <dt className="text-xs font-semibold uppercase text-gray-500">Local</dt>
             <dd className="text-gray-900">
@@ -100,6 +144,31 @@ export default function ComprovanteAgendamento({ agendamento, nomePaciente, cpfP
             </div>
           )}
         </dl>
+
+        {evento && (
+          <div className="comprovante-acoes border-t border-gray-100 px-6 py-4">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-800">
+              <CalendarPlus aria-hidden="true" className="h-4 w-4" /> Adicionar ao calendário
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <a
+                href={linkGoogleAgenda(evento)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-11 flex-1 items-center justify-center rounded-full border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Google Agenda
+              </a>
+              <button
+                type="button"
+                onClick={() => baixarICS(evento, `${protocolo}-${sol_id}`, `coleta-${protocolo}.ics`)}
+                className="min-h-11 flex-1 rounded-full border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Celular / Outlook (.ics)
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="comprovante-acoes flex flex-col gap-2 border-t border-gray-100 px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:flex-row sm:justify-end">
           {mapa && (

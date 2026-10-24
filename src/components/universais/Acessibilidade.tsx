@@ -33,6 +33,56 @@ function aplicar({ escala, contraste }: Preferencias) {
 // aplica já no carregamento, antes do primeiro desenho do React
 aplicar(lerPreferencias());
 
+// ---------- Ouvir a tela (leitura em voz alta do navegador) ----------
+const temVoz = typeof window !== "undefined" && "speechSynthesis" in window;
+
+// Texto a ler: o trecho selecionado ou o conteúdo principal da página
+// (sem menus, rodapé e este painel)
+const FORA_DA_LEITURA = "nav, footer, header, script, style, [aria-hidden='true'], .acessibilidade, .leaflet-container, .sr-only, .pular-conteudo";
+
+function textoVisivel(alvo: HTMLElement): string {
+  const partes: string[] = [];
+  const andar = document.createTreeWalker(alvo, NodeFilter.SHOW_TEXT);
+  for (let no = andar.nextNode(); no; no = andar.nextNode()) {
+    const pai = no.parentElement;
+    const t = no.textContent?.replace(/\s+/g, " ").trim();
+    if (!t || !pai || pai.closest(FORA_DA_LEITURA) || pai.getClientRects().length === 0) continue;
+    partes.push(t);
+  }
+  // cada bloco de texto vira uma frase (pausa entre título, rótulo e valor)
+  return partes.map((t) => (/[.!?:;,]$/.test(t) ? t : `${t}.`)).join(" ");
+}
+
+function textoParaLer(): string {
+  const selecionado = window.getSelection?.()?.toString().trim();
+  if (selecionado) return selecionado;
+  // algumas páginas têm só o título dentro de <main>: aí lê a página toda
+  const principal = document.querySelector<HTMLElement>("main");
+  const doMain = principal ? textoVisivel(principal) : "";
+  return doMain.length >= 200 ? doMain : textoVisivel(document.body);
+}
+
+// O Chrome interrompe falas longas: lê em pedaços de até ~220 caracteres
+function emPedacos(texto: string): string[] {
+  const frases = texto.match(/[^.!?;:]+[.!?;:]*\s*/g) ?? [texto];
+  const pedacos: string[] = [];
+  let atual = "";
+  for (const f of frases) {
+    if ((atual + f).length > 220 && atual) {
+      pedacos.push(atual.trim());
+      atual = "";
+    }
+    atual += f;
+  }
+  if (atual.trim()) pedacos.push(atual.trim());
+  return pedacos;
+}
+
+function vozPortugues() {
+  const vozes = window.speechSynthesis.getVoices();
+  return vozes.find((v) => v.lang === "pt-BR") ?? vozes.find((v) => v.lang.toLowerCase().startsWith("pt")) ?? null;
+}
+
 /**
  * Recursos de acessibilidade presentes em todas as páginas:
  * - link "Pular para o conteúdo" (aparece ao navegar com Tab);
@@ -83,6 +133,37 @@ export default function Acessibilidade() {
     alvo.setAttribute("tabindex", "-1");
     alvo.focus();
     alvo.scrollIntoView({ block: "start" });
+  }
+
+  // leitura em voz alta: para ao trocar de página
+  const [lendo, setLendo] = useState(false);
+  useEffect(() => () => {
+    if (temVoz) window.speechSynthesis.cancel();
+  }, [pathname]);
+
+  function ouvir() {
+    if (!temVoz) return;
+    const fala = window.speechSynthesis;
+    if (lendo) {
+      fala.cancel();
+      setLendo(false);
+      return;
+    }
+    const texto = textoParaLer();
+    if (!texto) return;
+    fala.cancel();
+    const voz = vozPortugues();
+    const pedacos = emPedacos(texto);
+    pedacos.forEach((trecho, i) => {
+      const u = new SpeechSynthesisUtterance(trecho);
+      u.lang = "pt-BR";
+      if (voz) u.voice = voz;
+      u.rate = 1;
+      if (i === pedacos.length - 1) u.onend = () => setLendo(false);
+      u.onerror = () => setLendo(false);
+      fala.speak(u);
+    });
+    setLendo(true);
   }
 
   const indice = ESCALAS.indexOf(prefs.escala as (typeof ESCALAS)[number]);
@@ -138,6 +219,22 @@ export default function Acessibilidade() {
               />
               Alto contraste
             </label>
+
+            {temVoz && (
+              <>
+                <p className="acessibilidade-rotulo">Ouvir a tela</p>
+                <button
+                  type="button"
+                  className={`acessibilidade-ouvir${lendo ? " acessibilidade-ouvir--ativo" : ""}`}
+                  aria-pressed={lendo}
+                  onClick={ouvir}
+                >
+                  {lendo ? "Parar leitura" : "Ouvir esta página"}
+                </button>
+                <p className="acessibilidade-dica">Selecione um trecho antes para ouvir só ele.</p>
+                <span className="sr-only" aria-live="polite">{lendo ? "Lendo a página em voz alta" : ""}</span>
+              </>
+            )}
 
             <button
               type="button"

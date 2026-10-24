@@ -8,11 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { useDadosInsumos } from "../hook/Insumosposto";
 import { useValidarToken } from "../hook/Validartoken";
 
-import "../css/home/AutorizarPrescricao.css";
+import "../css/universais/RevisaoPrescricao.css";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import ModalHistorico from "../components/universais/ModalHistorico";
 import VersoesPrescricao from "../components/universais/VersoesPrescricao";
-import { mensagemErroApi } from "../utils/validacoes";
+import VisualizadorPrescricao, { SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import { exibirCPF, mensagemErroApi } from "../utils/validacoes";
+import { FREQUENCIAS, retiradasAteVencer, type ItemPrescricao } from "../utils/itensPrescricao";
+import { Plus, X } from "lucide-react";
 import { API_URL } from "../config";
 
 
@@ -26,12 +29,28 @@ interface Solicitacao {
   sol_observacao: string | null;
 sol_motivo_nao_autorizado?: string | null;
   sol_data_vencimento:string|null;
+  sol_prescricao_tipo?: string | null;
 
   pac_nome: string;
   pac_cpf: string;
 
   pos_nome: string;
 }
+
+// linha do formulário de insumos (valores dos campos, ainda como texto)
+interface LinhaItem {
+  ins_id: string;
+  quantidade: string;
+}
+
+const MAX_ITENS = 10;
+
+const MOTIVOS_REENVIO = [
+  { valor: "FOTO_SEM_QUALIDADE", texto: "Foto sem qualidade" },
+  { valor: "PRESCRICAO_VENCIDA", texto: "Prescrição vencida" },
+  { valor: "INFORMACAO_DIFERENTE", texto: "Informação diferente" },
+  { valor: "OUTRO", texto: "Outro motivo" },
+];
 
 function EnviarPrescricao() {
 
@@ -50,10 +69,10 @@ function EnviarPrescricao() {
  
 } = useDadosInsumos();
 
-const [insumoMovId, setInsumoMovId] = useState("");
-
-const [quantidade, setQuantidade] = useState("");
-const listaInsumos = insumos ?? [];
+// insumos da prescrição (pode ter vários) e retirada recorrente
+const [itens, setItens] = useState<LinhaItem[]>([{ ins_id: "", quantidade: "" }]);
+const [usoContinuo, setUsoContinuo] = useState(false);
+const [frequencia, setFrequencia] = useState("30");
 
   const navigate = useNavigate();
   const [verHistorico, setVerHistorico] = useState(false);
@@ -99,24 +118,21 @@ const [motivo, setMotivo] = useState("");
           }
         );
 
-        console.log(
-          "Dados da solicitação:",
-          dadosResponse.data
-        );
-
        setSolicitacao(dadosResponse.data);
 
-       setInsumoMovId(
-  dadosResponse.data.ins_id
-    ? String(dadosResponse.data.ins_id)
-    : ""
-);
-
-setQuantidade(
-  dadosResponse.data.sol_insumo_quant != null
-    ? String(dadosResponse.data.sol_insumo_quant)
-    : ""
-);
+       const recebidos: ItemPrescricao[] = dadosResponse.data.itens ?? [];
+       setItens(
+         recebidos.length
+           ? recebidos.map((i) => ({ ins_id: String(i.ins_id), quantidade: String(i.quantidade) }))
+           : [{
+               ins_id: dadosResponse.data.ins_id ? String(dadosResponse.data.ins_id) : "",
+               quantidade: dadosResponse.data.sol_insumo_quant ? String(dadosResponse.data.sol_insumo_quant) : "",
+             }]
+       );
+       if (dadosResponse.data.sol_periodicidade_dias) {
+         setUsoContinuo(true);
+         setFrequencia(String(dadosResponse.data.sol_periodicidade_dias));
+       }
 
 setDataVencimento(
   dadosResponse.data.sol_data_vencimento
@@ -239,14 +255,26 @@ const enviarSolicitacao = async () => {
       return;
     }
 
+    const preenchidos = itens.filter((i) => i.ins_id || i.quantidade);
+    const incompleto = preenchidos.find((i) => !i.ins_id || !(Number(i.quantidade) > 0) || !Number.isInteger(Number(i.quantidade)));
+    if (!preenchidos.length || incompleto) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Insumos da prescrição",
+        text: "Escolha cada insumo e informe a quantidade por retirada (número inteiro maior que zero).",
+        confirmButtonColor: "#3085d6"
+      });
+      return;
+    }
+
     await axios.patch(
       `${API_URL}/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
          sol_status: "Revisado",
     sol_data_vencimento: dataVencimento,
-    ins_id: Number(insumoMovId),
-    sol_insumo_quant: Number(quantidade)
+    itens: preenchidos.map((i) => ({ ins_id: Number(i.ins_id), quantidade: Number(i.quantidade) })),
+    sol_periodicidade_dias: usoContinuo ? Number(frequencia) : null
       },
       {
         headers: {
@@ -289,406 +317,297 @@ const enviarSolicitacao = async () => {
     );
   }
 
+  // só insumos do estoque da unidade da prescrição (é de lá que sai a retirada)
+  const opcoesInsumo = (insumos ?? []).filter(
+    (i) => i.pos_id == null || solicitacao?.pos_id == null || Number(i.pos_id) === Number(solicitacao.pos_id)
+  );
+  const retiradas = retiradasAteVencer(dataVencimento, Number(frequencia));
+  const alterarItem = (indice: number, mudanca: Partial<LinhaItem>) =>
+    setItens((lista) => lista.map((item, i) => (i === indice ? { ...item, ...mudanca } : item)));
+
+  const vazio = (valor?: string | number | null) => (valor === null || valor === undefined || valor === "" ? "rvp-vazio" : undefined);
+
   return (
+    <div className="rvp-pagina">
+      <Header onMenuClick={toggleSidebar} />
+      <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
 
-    <div className="enviar-prescricao-page">
-
-      <Header
-        
-         onMenuClick={toggleSidebar}
-        
-      />
-
-      <Sidebar
-        isOpen={sidebarOpen}
-                onClose={toggleSidebar}
-      />
-
-
-      <main className="enviar-prescricao-content">
-
+      <main className="rvp-main">
         <div className="barra-voltar barra-voltar--interna">
           <BotaoVoltar para="/versolicitaçoes" />
         </div>
 
-        <h1>Prescrição:</h1>
-
-
-        <div className="prescricao-container">
-
-
-          
-              {/*IMAGEM DA PRESCRIÇÃO*/}
-        
-
-          <section className="prescricao-preview">
-
-            <div className="prescricao-imagem">
-
-              {carregando ? (
-
-                <p>
-                  Carregando prescrição...
-                </p>
-
-              ) : imagem ? (
-
-                <img
-                  src={imagem}
-                  alt="Prescrição enviada pelo paciente"
-                />
-
-              ) : (
-
-                <p>
-                  Prescrição não encontrada.
-                </p>
-
-              )}
-
-            </div>
-
-          </section>
-
-
-        
-          {/*    INFORMAÇÕES DA PRESCRIÇÃO */}
-          
-
-          <section className="informacoes-prescricao">
-
-            <h2>
-              Informações da prescrição
-            </h2>
-
-
-            {/* NOME */}
-
-            <div className="campo">
-
-              <label>
-                Nome paciente
-              </label>
-
-              <input
-                type="text"
-                value={
-                  solicitacao?.pac_nome || ""
-                }
-                readOnly
-              />
-
-            </div>
-
-
-            {/* CPF + COD */}
-
-            <div className="linha-campos">
-
-              <div className="campo">
-
-                <label>
-                  CPF:
-                </label>
-
-                <input
-                  type="text"
-                  value={
-                    solicitacao?.pac_cpf || ""
-                  }
-                  readOnly
-                />
-
-              </div>
-
-
-              <div className="campo">
-
-                <label>
-                  COD:
-                </label>
-
-                <input
-                  type="text"
-                  value={
-                    solicitacao?.sol_id || ""
-                  }
-                  readOnly
-                />
-
-              </div>
-
-            </div>
-
-
-            {/* DATAS */}
-
-            <div className="linha-campos">
-
-              <div className="campo">
-
-                <label>
-                  DATA DE ENVIO:
-                </label>
-
-                <input
-                  type="text"
-                  value={
-                    solicitacao
-                      ? new Date(
-                          solicitacao.sol_data_solicitacao
-                        ).toLocaleDateString("pt-BR")
-                      : ""
-                  }
-                  readOnly
-                />
-
-              </div>
-
-
-              <div className="campo vencimento">
-
-                <label>
-                  DATA DE VENCIMENTO:
-                </label>
-
-                <input
-                  type="date"
-                  
-                  value={dataVencimento}
-  onChange={(e) => setDataVencimento(e.target.value)}
-    disabled={somenteVisualizacao}
-/>
-              </div>
-
-            </div>
-
-
-            {/* UNIDADE DE SAÚDE */}
-
-            <div className="campo">
-
-              <label>
-                Unidade de Saúde
-              </label>
-
-              <input
-                type="text"
-                value={
-                  solicitacao?.pos_nome || ""
-                }
-                readOnly
-              />
-
-            </div>
-{/* INSUMO + QUANTIDADE */}
-
-<div className="linha-insumo">
-
-  <div className="ins-campo insumo-select">
-    <label className="ins-label">
-      Insumo
-    </label>
-
-    <select
-      className="ins-input ins-select"
-      value={insumoMovId}
-      onChange={(e) => setInsumoMovId(e.target.value)}
-        disabled={somenteVisualizacao}
-    >
-      <option value="">
-        Selecione o insumo
-      </option>
-
-      {listaInsumos.map((insumo) => (
-        <option
-          key={insumo.ins_id}
-          value={insumo.ins_id}
-        >
-          {insumo.ins_nome}
-          {insumo.ins_marca
-            ? ` - ${insumo.ins_marca}`
-            : ""}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="ins-campo quantidade-campo">
-    <label className="ins-label">
-      Quantidade
-    </label>
-
-    <input
-      type="number"
-      min="1"
-      className="ins-input"
-      value={quantidade}
-      onChange={(e) => setQuantidade(e.target.value)}
-      placeholder="Qtd."
-
-        disabled={somenteVisualizacao}
-    />
-  </div>
-
-</div>
-            {/* OBSERVAÇÃO */}
-
-            <div className="campo">
-
-              <label className="observacao-label">
-                Observações (opcional)
-              </label>
-
-              <textarea
-                value={
-                  solicitacao?.sol_observacao || ""
-                }
-                readOnly
-                placeholder="Digite alguma informação, caso necessário"
-              />
-
-            </div>
-
-          </section>
-
-        </div>
-
-        
-{solicitacao?.sol_status === "Nao Autorizado" && (
-    <div className="campo motivo-nao-autorizacao">
-        <label>Motivo da não autorização</label>
-
-        <textarea
-            value={
-                solicitacao.sol_motivo_nao_autorizado?.trim() ||
-                "Motivo não informado."
-            }
-            readOnly
-        />
-    </div>
-)}
-
-
-
-        {/* 
-            MOTIVOS
-     */}
-
-
-
-{id && (
-    <div className="mb-4">
-        <VersoesPrescricao sol_id={Number(id)} perfil="ADMIN" />
-    </div>
-)}
-
-<div className="mb-3 flex flex-wrap gap-x-6 text-sm font-semibold">
-    <button type="button" onClick={() => setVerHistorico(true)} className="min-h-11 text-blue-700 hover:underline">
-        Ver histórico
-    </button>
-</div>
-
-{!somenteVisualizacao && (
-    <div className="prescricao-buttons">
-        <div className="reenvio-area">
-            <button
-                className="btn-reenvio"
-                type="button"
-                onClick={() => setMostrarMotivos(!mostrarMotivos)}
-            >
-                PEDIR REENVIO DA PRESCRIÇÃO
-            </button>
-
-            {mostrarMotivos && (
-                <section className="motivos">
-                    <h2>Motivo:</h2>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="motivo"
-                            value="FOTO_SEM_QUALIDADE"
-                            checked={motivo === "FOTO_SEM_QUALIDADE"}
-                            onChange={(e) => setMotivo(e.target.value)}
-                        />
-                        FOTO SEM QUALIDADE
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="motivo"
-                            value="PRESCRICAO_VENCIDA"
-                            checked={motivo === "PRESCRICAO_VENCIDA"}
-                            onChange={(e) => setMotivo(e.target.value)}
-                        />
-                        PRESCRIÇÃO VENCIDA
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="motivo"
-                            value="INFORMACAO_DIFERENTE"
-                            checked={motivo === "INFORMACAO_DIFERENTE"}
-                            onChange={(e) => setMotivo(e.target.value)}
-                        />
-                        INFORMAÇÃO DIFERENTE
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="motivo"
-                            value="OUTRO"
-                            checked={motivo === "OUTRO"}
-                            onChange={(e) => setMotivo(e.target.value)}
-                        />
-                        OUTRO
-                    </label>
-
-                    <button
-                        type="button"
-                        className="btn-enviar"
-                        onClick={confirmarReenvio}
-                    >
-                        CONFIRMAR REENVIO
-                    </button>
-                </section>
+        <header className="rvp-cabecalho">
+          <div>
+            <p className="rvp-sobretitulo">Revisão da prescrição</p>
+            <h1 className="rvp-titulo">Prescrição nº {id}</h1>
+            {solicitacao?.pac_nome && (
+              <p className="rvp-subtitulo">
+                Paciente: <strong>{solicitacao.pac_nome}</strong>
+              </p>
             )}
+          </div>
+          <SeloStatus status={solicitacao?.sol_status} />
+        </header>
+
+        <div className="rvp-grade">
+          <VisualizadorPrescricao
+            url={imagem}
+            pdf={solicitacao?.sol_prescricao_tipo === "application/pdf"}
+            carregando={carregando}
+          />
+
+          <section className="rvp-card rvp-info" aria-labelledby="rvp-info-titulo">
+            <header className="rvp-card-topo">
+              <h2 id="rvp-info-titulo" className="rvp-card-titulo">Informações da prescrição</h2>
+            </header>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Paciente</h3>
+              <dl className="rvp-dados">
+                <div className="rvp-dado rvp-dado--inteiro">
+                  <dt>Nome</dt>
+                  <dd className={vazio(solicitacao?.pac_nome)}>{solicitacao?.pac_nome || "Não informado"}</dd>
+                </div>
+                <div className="rvp-dado">
+                  <dt>CPF</dt>
+                  <dd className={vazio(solicitacao?.pac_cpf)}>
+                    {solicitacao?.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : "Não informado"}
+                  </dd>
+                </div>
+                <div className="rvp-dado">
+                  <dt>Código do pedido</dt>
+                  <dd>{solicitacao?.sol_id ?? id}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Pedido</h3>
+              <dl className="rvp-dados">
+                <div className="rvp-dado">
+                  <dt>Enviada em</dt>
+                  <dd>
+                    {solicitacao
+                      ? new Date(solicitacao.sol_data_solicitacao).toLocaleDateString("pt-BR")
+                      : "-"}
+                  </dd>
+                </div>
+                <div className="rvp-dado">
+                  <dt>Unidade de saúde</dt>
+                  <dd className={vazio(solicitacao?.pos_nome)}>{solicitacao?.pos_nome || "Não informada"}</dd>
+                </div>
+                <div className="rvp-dado rvp-dado--inteiro">
+                  <dt>Observações do paciente</dt>
+                  <dd className={vazio(solicitacao?.sol_observacao)}>
+                    {solicitacao?.sol_observacao ? (
+                      <p className="rvp-texto-livre">{solicitacao.sol_observacao}</p>
+                    ) : (
+                      "Nenhuma observação."
+                    )}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Conferência da unidade</h3>
+              <div className="rvp-campos">
+                <div className="rvp-campo rvp-campo--inteiro">
+                  <label className="rvp-rotulo" htmlFor="rvp-vencimento">
+                    Vencimento da prescrição {!somenteVisualizacao && <span className="rvp-obrigatorio">*</span>}
+                  </label>
+                  <input
+                    id="rvp-vencimento"
+                    type="date"
+                    className="rvp-input"
+                    value={dataVencimento}
+                    onChange={(e) => setDataVencimento(e.target.value)}
+                    disabled={somenteVisualizacao}
+                  />
+                  {!somenteVisualizacao && (
+                    <p className="rvp-dica">Confira a data escrita na receita.</p>
+                  )}
+                </div>
+
+              </div>
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Insumos da prescrição</h3>
+              <p className="rvp-dica rvp-dica--topo">Quantidade de cada insumo por retirada.</p>
+              <ul className="rvp-itens">
+                {itens.map((item, indice) => (
+                  <li key={indice} className="rvp-item-linha">
+                    <div className="rvp-campo">
+                      <label className="rvp-rotulo" htmlFor={`rvp-insumo-${indice}`}>Insumo {itens.length > 1 ? indice + 1 : ""}</label>
+                      <select
+                        id={`rvp-insumo-${indice}`}
+                        className="rvp-input"
+                        value={item.ins_id}
+                        onChange={(e) => alterarItem(indice, { ins_id: e.target.value })}
+                        disabled={somenteVisualizacao}
+                      >
+                        <option value="">Selecione o insumo</option>
+                        {opcoesInsumo.map((insumo) => (
+                          <option key={insumo.ins_id} value={insumo.ins_id}>
+                            {insumo.ins_nome}
+                            {insumo.ins_marca ? ` - ${insumo.ins_marca}` : ""}
+                            {insumo.ins_disponivel != null ? ` (disponível ${insumo.ins_disponivel})` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="rvp-campo">
+                      <label className="rvp-rotulo" htmlFor={`rvp-quantidade-${indice}`}>Quantidade</label>
+                      <input
+                        id={`rvp-quantidade-${indice}`}
+                        type="number"
+                        min="1"
+                        className="rvp-input"
+                        value={item.quantidade}
+                        onChange={(e) => alterarItem(indice, { quantidade: e.target.value })}
+                        placeholder="Qtd."
+                        disabled={somenteVisualizacao}
+                      />
+                    </div>
+
+                    {!somenteVisualizacao && itens.length > 1 && (
+                      <button
+                        type="button"
+                        className="rvp-botao-icone"
+                        onClick={() => setItens((lista) => lista.filter((_, i) => i !== indice))}
+                        aria-label={`Remover insumo ${indice + 1}`}
+                        title="Remover"
+                      >
+                        <X aria-hidden="true" />
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {!somenteVisualizacao && itens.length < MAX_ITENS && (
+                <button
+                  type="button"
+                  className="rvp-link-botao rvp-adicionar"
+                  onClick={() => setItens((lista) => [...lista, { ins_id: "", quantidade: "" }])}
+                >
+                  <Plus aria-hidden="true" /> Adicionar insumo
+                </button>
+              )}
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Retirada</h3>
+              <label className="rvp-check">
+                <input
+                  type="checkbox"
+                  checked={usoContinuo}
+                  onChange={(e) => setUsoContinuo(e.target.checked)}
+                  disabled={somenteVisualizacao}
+                />
+                <span>
+                  Uso contínuo
+                  <small>O paciente retira de novo a cada período, até a prescrição vencer, sem enviar outra.</small>
+                </span>
+              </label>
+
+              {usoContinuo && (
+                <div className="rvp-campo rvp-frequencia">
+                  <label className="rvp-rotulo" htmlFor="rvp-frequencia">Frequência</label>
+                  <select
+                    id="rvp-frequencia"
+                    className="rvp-input"
+                    value={frequencia}
+                    onChange={(e) => setFrequencia(e.target.value)}
+                    disabled={somenteVisualizacao}
+                  >
+                    {FREQUENCIAS.map((dias) => (
+                      <option key={dias} value={dias}>A cada {dias} dias</option>
+                    ))}
+                  </select>
+                  {dataVencimento && (
+                    <p className="rvp-dica">
+                      {retiradas > 0
+                        ? `Cabem ${retiradas} ${retiradas === 1 ? "retirada" : "retiradas"} até o vencimento. A 1ª a unidade agenda; as seguintes são agendadas sozinhas 7 dias antes.`
+                        : "A prescrição já está vencida."}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
         </div>
 
-        <button
-            className="btn-enviar"
-            type="button"
-            onClick={enviarSolicitacao}
-        >
-            REVISAR E ENVIAR AO AUTORIZADOR
-        </button>
-    </div>
-)}
+        {solicitacao?.sol_status === "Nao Autorizado" && (
+          <div className="rvp-aviso rvp-aviso--erro" role="note">
+            <p className="rvp-aviso-titulo">Motivo da não autorização</p>
+            <p>{solicitacao.sol_motivo_nao_autorizado?.trim() || "Motivo não informado."}</p>
+          </div>
+        )}
 
+        <div className="rvp-extras">
+          {id && <VersoesPrescricao sol_id={Number(id)} perfil="ADMIN" />}
+          <button type="button" onClick={() => setVerHistorico(true)} className="rvp-link-botao">
+            Ver histórico
+          </button>
+        </div>
 
-     
-    
+        {!somenteVisualizacao && (
+          <div className="rvp-acoes">
+            {mostrarMotivos && (
+              <fieldset className="rvp-motivos">
+                <legend>Por que a prescrição precisa ser reenviada?</legend>
+                <div className="rvp-opcoes">
+                  {MOTIVOS_REENVIO.map((m) => (
+                    <label key={m.valor} className="rvp-opcao">
+                      <input
+                        type="radio"
+                        name="motivo"
+                        value={m.valor}
+                        checked={motivo === m.valor}
+                        onChange={(e) => setMotivo(e.target.value)}
+                      />
+                      {m.texto}
+                    </label>
+                  ))}
+                </div>
+                <div className="rvp-motivos-rodape">
+                  <button type="button" className="rvp-botao rvp-botao--primario" onClick={confirmarReenvio}>
+                    Confirmar pedido de reenvio
+                  </button>
+                </div>
+              </fieldset>
+            )}
 
-  
+            <div className="rvp-acoes-linha">
+              <p className="rvp-acoes-texto">Revise os dados e envie para o autorizador decidir.</p>
+              <div className="rvp-acoes-botoes">
+                <button
+                  className="rvp-botao rvp-botao--perigo"
+                  type="button"
+                  aria-expanded={mostrarMotivos}
+                  onClick={() => setMostrarMotivos(!mostrarMotivos)}
+                >
+                  Pedir reenvio
+                </button>
+                <button className="rvp-botao rvp-botao--primario" type="button" onClick={enviarSolicitacao}>
+                  Revisar e enviar ao autorizador
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
- 
-
-  
-
-
-
-      {verHistorico && id && (
-        <ModalHistorico sol_id={Number(id)} perfil="ADMIN" titulo={`Histórico da prescrição nº ${id}`} onClose={() => setVerHistorico(false)} />
-      )}
+        {verHistorico && id && (
+          <ModalHistorico sol_id={Number(id)} perfil="ADMIN" titulo={`Histórico da prescrição nº ${id}`} onClose={() => setVerHistorico(false)} />
+        )}
       </main>
-  
     </div>
-        );
+  );
 }
 
 
-export default EnviarPrescricao;
+export default EnviarPrescricao;

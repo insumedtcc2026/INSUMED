@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MensagemErro } from "../universais/ForcaSenha";
-import { mensagemErroApi, validarEmail } from "../../utils/validacoes";
+import { mascaraCPF, mensagemErroApi, somenteDigitos, validarCPF, validarEmail } from "../../utils/validacoes";
 import olhoAberto from '../../assets/home-log/olho aberto.webp'
 import olhoFechado from '../../assets/home-log/olho fechado.webp'
 
@@ -11,12 +11,36 @@ import images from "../../assets/home-log/teste login.webp";
 import BotaoVoltar from "../universais/BotaoVoltar";
 import { API_URL } from "../../config";
 
+type PerfilLogin = "ADMIN" | "AUTORIZADOR" | "PACIENTE";
 
+const NOME_PERFIL: Record<PerfilLogin, string> = {
+  PACIENTE: "Paciente",
+  ADMIN: "Administrador da unidade",
+  AUTORIZADOR: "Autorizador",
+};
+
+// O mesmo campo aceita e-mail ou CPF: com "@" é e-mail; só números (com ou
+// sem pontuação) é CPF.
+const ehEmail = (valor: string) => valor.includes("@");
+
+function validarLogin(valor: string) {
+  if (!valor.trim()) return "Informe o e-mail ou o CPF.";
+  if (ehEmail(valor)) return validarEmail(valor);
+  if (/^[\d.\-\s]+$/.test(valor)) return validarCPF(valor);
+  return "Informe um e-mail ou um CPF válido.";
+}
+
+
+
+// relógio fora do componente (usado só nos handlers)
+const agoraMs = () => Date.now();
 
 const Loginteste: React.FC = () => {
 
    const[olhoPassword, setOlhoPassword] =useState(false);
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
+  // mesma pessoa com dois perfis (ex.: paciente e funcionária): escolhe por qual entrar
+  const [perfisParaEscolher, setPerfisParaEscolher] = useState<{ tipo: PerfilLogin; nome: string }[]>([]);
   const [password, setPassword] = useState("");
   const [tentouEnviar, setTentouEnviar] = useState(false);
   const [enviando, setEnviando] = useState(false);
@@ -41,30 +65,37 @@ const Loginteste: React.FC = () => {
     return () => clearInterval(timer);
   }, [bloqueadoAte]);
 
-  const erroEmail = tentouEnviar ? validarEmail(email) : null;
+  const erroLogin = tentouEnviar ? validarLogin(login) : null;
   const erroSenha = tentouEnviar && !password ? "Informe a senha." : null;
 
-  const handleLogin = async (
-    e: React.FormEvent<HTMLFormElement>
-) => {
-
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setPerfisParaEscolher([]);
+    entrar();
+  };
+
+  const entrar = async (perfil?: PerfilLogin) => {
     setTentouEnviar(true);
     setAviso("");
 
-    if (validarEmail(email) || !password || segundosBloqueio > 0) return;
+    if (validarLogin(login) || !password || segundosBloqueio > 0) return;
 
     setEnviando(true);
     try {
 
-        
-const response = await axios.post(
+        const response = await axios.post(
             `${API_URL}/login`,
             {
-                email: email.trim().toLowerCase(),
-                senha: password
+                login: ehEmail(login) ? login.trim().toLowerCase() : somenteDigitos(login),
+                senha: password,
+                ...(perfil ? { perfil } : {}),
             }
         );
+
+        if (response.data?.escolher_perfil) {
+            setPerfisParaEscolher(response.data.perfis ?? []);
+            return;
+        }
 
         const token = response.data.token;
         const usuario = response.data.usuario;
@@ -84,7 +115,8 @@ const response = await axios.post(
                 "usuario_admin",
                 JSON.stringify(usuario)
             );
-            navigate("/homeadmin");
+            // cadastro feito pelo admin universal: troca a senha provisória antes
+            navigate(response.data.trocar_senha ? "/trocar-senha?perfil=ADMIN" : "/homeadmin");
 
         } else if (tipo === "AUTORIZADOR") {
             localStorage.setItem("token_autorizador", token);
@@ -92,7 +124,7 @@ const response = await axios.post(
                 "usuario_autorizador",
                 JSON.stringify(usuario)
             );
-            navigate("/verprescricoesaprovadas");
+            navigate(response.data.trocar_senha ? "/trocar-senha?perfil=AUTORIZADOR" : "/verprescricoesaprovadas");
 
         } else if (tipo === "PACIENTE") {
             localStorage.setItem("token_paciente", token);
@@ -109,24 +141,26 @@ const response = await axios.post(
         }
     } catch (error) {
 
-        console.error("Erro no login:", error);
-
         const resposta = axios.isAxiosError(error) ? error.response : undefined;
+        console.error("Erro no login:", resposta?.status ?? (error instanceof Error ? error.message : error));
+        const credencial = ehEmail(login) ? "E-mail" : "CPF";
 
         if (resposta?.status === 429) {
             const segundos = Number(resposta.data?.tentar_novamente_em) ||
                 Number(resposta.headers?.["retry-after"]) || 60;
-            setAgora(Date.now());
-            setBloqueadoAte(Date.now() + segundos * 1000);
+            const inicio = agoraMs();
+            setAgora(inicio);
+            setBloqueadoAte(inicio + segundos * 1000);
             setAviso(mensagemErroApi(error, "Muitas tentativas de login. Aguarde alguns minutos."));
         } else if (resposta?.status === 401) {
             const restantes = resposta.data?.tentativas_restantes;
             setAviso(
                 typeof restantes === "number" && restantes <= 3
-                    ? `E-mail ou senha incorretos. Você tem mais ${restantes} tentativa(s) antes de o acesso ser bloqueado temporariamente.`
-                    : "E-mail ou senha incorretos."
+                    ? `${credencial} ou senha incorretos. Você tem mais ${restantes} tentativa(s) antes de o acesso ser bloqueado temporariamente.`
+                    : `${credencial} ou senha incorretos.`
             );
         } else {
+            // 403: conta desativada pela administração
             setAviso(mensagemErroApi(error, "Não foi possível entrar. Tente novamente."));
         }
     } finally {
@@ -158,18 +192,25 @@ const handleSignUp = () => { navigate("/cadastro"); };
               </p>
             )}
             <div className="login-inputs">
-              <label>Email</label>
+              <label htmlFor="login-usuario">E-mail ou CPF</label>
               <input 
-                type="email" 
-                placeholder="Digite seu email" 
-                value={email}
-                autoComplete="email"
+                id="login-usuario"
+                type="text" 
+                inputMode={ehEmail(login) || /[a-z]/i.test(login) ? "email" : "text"}
+                placeholder="seu@email.com ou 000.000.000-00" 
+                value={login}
+                autoComplete="username"
                 maxLength={254}
-                className={erroEmail ? "input-erro" : ""}
-                aria-invalid={Boolean(erroEmail)}
-                onChange={(e) => setEmail(e.target.value)}
+                className={erroLogin ? "input-erro" : ""}
+                aria-invalid={Boolean(erroLogin)}
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  // só números: aplica a máscara do CPF
+                  setLogin(/^[\d.\-\s]+$/.test(valor) ? mascaraCPF(valor) : valor);
+                  setPerfisParaEscolher([]);
+                }}
               />
-              <MensagemErro erro={erroEmail} />
+              <MensagemErro erro={erroLogin} />
             </div>
             
             <div className="login-inputs">
@@ -194,6 +235,23 @@ const handleSignUp = () => { navigate("/cadastro"); };
               <MensagemErro erro={erroSenha} />
             </div>
             
+            {perfisParaEscolher.length > 0 && (
+              <div className="login-escolher-perfil" role="group" aria-label="Escolha o perfil">
+                <p>Encontramos mais de um perfil com estes dados. Como você quer entrar?</p>
+                {perfisParaEscolher.map((p) => (
+                  <button
+                    key={p.tipo}
+                    type="button"
+                    className="btn-perfil"
+                    disabled={enviando}
+                    onClick={() => entrar(p.tipo)}
+                  >
+                    {NOME_PERFIL[p.tipo] ?? p.tipo}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <button type="submit" className="btn-entrar" disabled={enviando || segundosBloqueio > 0}>
               {enviando ? "Entrando..." : segundosBloqueio > 0 ? `Aguarde ${segundosBloqueio}s` : "Entrar"}
             </button>

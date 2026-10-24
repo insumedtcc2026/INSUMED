@@ -7,6 +7,10 @@ export interface Insumos {
   ins_nome: string;
   ins_marca?: string;
   ins_quantidade: number;
+  // reservado = já prometido em coletas agendadas; disponível = o que sobra
+  ins_reservado?: number;
+  ins_disponivel?: number;
+  pos_id?: number | null;
   posto_nome: string | null;
 }
 
@@ -26,8 +30,6 @@ export function useDadosInsumos() {
             }
             const data = await resposta.json();
            setInsumos(data);
-            
-            console.log(data);
             
         }catch(error){
             console.error("Erro ao carregar insumos:", error);

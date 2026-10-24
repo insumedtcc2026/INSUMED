@@ -7,15 +7,19 @@ import logo from '../../assets/home/Logo.webp';
 import { sairDoPerfil } from './sessao';
 
 import {
+  CalendarClock,
   CalendarPlus,
   ClipboardCheck,
   History,
   UserCog,
+  UsersRound,
   Files,
   LogOut,
   Package,
+  ListChecks,
   QrCode,
   RotateCcwIcon,
+  TrendingUp,
   X,
 } from 'lucide-react';
 
@@ -35,6 +39,14 @@ export default function Sidebar({
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const universal = (() => {
+    try {
+      return Boolean(JSON.parse(localStorage.getItem('usuario_admin') ?? '{}').tp_universal);
+    } catch {
+      return false;
+    }
+  })();
 
   const menuItems = [
     {
@@ -59,6 +71,11 @@ export default function Sidebar({
       path: '/coletas-hoje',
     },
     {
+      icon: ListChecks,
+      label: 'Lista de separação',
+      path: '/lista-separacao',
+    },
+    {
       icon: QrCode,
       label: 'Ler QR Code',
       path: '/leitor-qrcode',
@@ -79,6 +96,16 @@ export default function Sidebar({
       path: '/insumos',
     },
     {
+      icon: TrendingUp,
+      label: 'Previsão de demanda',
+      path: '/previsao-demanda',
+    },
+    {
+      icon: CalendarClock,
+      label: 'Horários da unidade',
+      path: '/horarios-unidade',
+    },
+    {
       icon: IoPersonSharp,
       label: 'Pacientes',
       path: '/Pacientesadm',
@@ -91,6 +118,10 @@ export default function Sidebar({
       label: 'Atividades da unidade',
       path: '/atividades',
     },
+    // só o admin universal gerencia a equipe da rede
+    ...(universal
+      ? [{ icon: UsersRound, label: 'Equipe', path: '/equipe' }]
+      : []),
     {
       icon: UserCog,
       label: 'Meu perfil',

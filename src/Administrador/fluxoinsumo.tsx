@@ -132,7 +132,12 @@ export default function FluxoInsumo() {
     try {
       const data = await movimentarInsumo(Number(insumoMovId), tipoMov, Number(quantMov));
       fecharModal();
-      Swal.fire({ icon: "success", title: "Movimentação registrada!", text: data.message });
+      // saída que deixou o estoque abaixo do que já está reservado em coletas agendadas
+      Swal.fire({
+        icon: data.aviso ? "warning" : "success",
+        title: "Movimentação registrada!",
+        text: data.aviso ? `${data.message} ${data.aviso}` : data.message,
+      });
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -290,7 +295,9 @@ const estoqueInsuficiente = insumoSelecionado !== undefined && estoqueDepois < 0
                     <th>Marca</th>
                     <th>Nome do Insumo</th>
                     <th>Posto de Saúde</th>
-                    <th>Quantidade</th>
+                    <th>Em estoque</th>
+                    <th>Reservado</th>
+                    <th>Disponível</th>
                     <th>ID</th>
                   </tr>
                 </thead>
@@ -310,7 +317,13 @@ const estoqueInsuficiente = insumoSelecionado !== undefined && estoqueDepois < 0
                       </td>
                       <td data-label="Nome do insumo">{insumo.ins_nome}</td>
                       <td data-label="Posto de saúde">{insumo.posto_nome || "Sem posto"}</td>
-                      <td data-label="Quantidade">{insumo.ins_quantidade}</td>
+                      <td data-label="Em estoque">{insumo.ins_quantidade}</td>
+                      <td data-label="Reservado">{insumo.ins_reservado ?? 0}</td>
+                      <td data-label="Disponível">
+                        <strong className={(insumo.ins_disponivel ?? insumo.ins_quantidade) <= 0 ? "ins-disp-zerado" : undefined}>
+                          {insumo.ins_disponivel ?? insumo.ins_quantidade}
+                        </strong>
+                      </td>
                       <td data-label="ID">{insumo.ins_id}</td>
                     </tr>
                   ))}

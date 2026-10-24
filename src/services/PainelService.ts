@@ -1,3 +1,5 @@
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
+import type { Prioridade } from "./AgendaService";
 import axios from "axios";
 import { API_URL } from "../config";
 
@@ -85,6 +87,7 @@ export interface PainelAutorizador {
     pac_nome: string;
     ins_nome: string | null;
     versoes_anteriores: number;
+    prioridade?: Prioridade;
   }[];
   recentes: { sol_id: number; acao: string; quando: string }[];
 }
@@ -98,9 +101,23 @@ export async function buscarPainelAutorizador(): Promise<PainelAutorizador> {
 // DATAS SUGERIDAS PARA AGENDAR
 // ---------------------------------------------------------
 
+export interface OpcaoTurno {
+  data: string;
+  turno: "manha" | "tarde";
+  abre: string;
+  fecha: string;
+  vagas: number | null;
+  ocupadas: number;
+  livres: number | null; // null = sem limite
+}
+
 export interface DatasSugeridas {
   datas: { data: string; agendados: number }[];
   sugeridas: string[];
+  // dias e turnos com vaga (horário da unidade, sem os dias fechados)
+  opcoes?: OpcaoTurno[];
+  // os 3 turnos mais vazios
+  sugeridas_turnos?: OpcaoTurno[];
 }
 
 export async function buscarDatasSugeridas(pos_id: number): Promise<DatasSugeridas> {
@@ -115,7 +132,7 @@ export async function buscarDatasSugeridas(pos_id: number): Promise<DatasSugerid
 // FICHA DO PACIENTE (visão do admin)
 // ---------------------------------------------------------
 
-export interface ItemHistoricoPaciente {
+export interface ItemHistoricoPaciente extends ComItensPrescricao {
   sol_id: number;
   sol_status: string;
   sol_protocolo: string | null;
@@ -145,6 +162,11 @@ export interface FichaPaciente {
     pac_endereco: string | null;
     pac_sexo: string | null;
     pac_raca: string | null;
+    // atendimento prioritário declarado pelo paciente (etapa 3)
+    pac_pcd?: boolean;
+    pac_gestante?: boolean;
+    pac_prioridade_conferida?: boolean | null;
+    prioridade?: Prioridade;
   };
   prescricoes: ItemHistoricoPaciente[];
   agendamentos: ItemHistoricoPaciente[];

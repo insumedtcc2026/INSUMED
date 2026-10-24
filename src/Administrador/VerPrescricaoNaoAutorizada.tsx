@@ -9,13 +9,15 @@ import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 
-import "../css/home/AutorizarPrescicoesAut.css";
+import "../css/universais/RevisaoPrescricao.css";
+import VisualizadorPrescricao, { ListaItensPrescricao, SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import { exibirCPF } from "../utils/validacoes";
 import { API_URL } from "../config";
 import { useValidarToken } from "../hook/Validartoken";
 
 
-interface Solicitacao {
+interface Solicitacao extends ComItensPrescricao {
     sol_id: number;
     pac_id: number;
     pos_id: number;
@@ -140,7 +142,7 @@ export default function VerPrescricaoNaoAutorizada() {
 
             if (!cancelado) {
                 setErro(
-                    "Não foi possível carregar os dados da prescrição. Verifique o erro no console."
+                    "Não foi possível carregar os dados da prescrição. Tente novamente."
                 );
             }
         } finally {
@@ -174,8 +176,7 @@ const toggleSidebar = () => {
     }
 
     return (
-        
-        <div className="enviar-prescricao-page">
+        <div className="rvp-pagina">
             <Header onMenuClick={toggleSidebar} />
 
             <Sidebaradm
@@ -183,177 +184,124 @@ const toggleSidebar = () => {
                 onClose={toggleSidebar}
             />
 
-            <main className="enviar-prescricao-content">
+            <main className="rvp-main">
                 <div className="barra-voltar barra-voltar--interna">
                     <BotaoVoltar para="/versolicitaçoes" />
                 </div>
 
-                <h1>Detalhes da prescrição</h1>
+                <header className="rvp-cabecalho">
+                    <div>
+                        <p className="rvp-sobretitulo">Detalhes da prescrição</p>
+                        <h1 className="rvp-titulo">Prescrição nº {id}</h1>
+                        {solicitacao?.pac_nome && (
+                            <p className="rvp-subtitulo">
+                                Paciente: <strong>{solicitacao.pac_nome}</strong>
+                            </p>
+                        )}
+                    </div>
+                    <SeloStatus status={solicitacao?.sol_status} />
+                </header>
 
-                {carregando && <p>Carregando prescrição...</p>}
+                {carregando && <p className="rvp-estado">Carregando prescrição...</p>}
 
                 {!carregando && erro && (
-                    <p role="alert">{erro}</p>
+                    <p className="rvp-estado rvp-estado--erro" role="alert">{erro}</p>
                 )}
 
                 {!carregando && solicitacao && (
                     <>
-                        <div className="prescricao-container">
-                            <section className="prescricao-preview">
-                                <h2>Imagem da prescrição</h2>
+                        <div className="rvp-grade">
+                            <VisualizadorPrescricao
+                                url={imagem}
+                                pdf={solicitacao.sol_prescricao_tipo === "application/pdf"}
+                            />
 
-                                <div className="prescricao-imagem">
-                                    {imagem ? (
-                                        <img
-                                            src={imagem}
-                                            alt="Prescrição médica do paciente"
-                                        />
-                                    ) : (
-                                        <p>Imagem indisponível.</p>
-                                    )}
-                                </div>
-                            </section>
+                            <section className="rvp-card rvp-info" aria-labelledby="rvp-info-titulo">
+                                <header className="rvp-card-topo">
+                                    <h2 id="rvp-info-titulo" className="rvp-card-titulo">Informações da prescrição</h2>
+                                </header>
 
-                            <section className="informacoes-prescricao">
-                                <h2>Informações da prescrição</h2>
-
-                                <div className="campo">
-                                    <label>Nome do paciente</label>
-                                    <input
-                                        value={solicitacao.pac_nome || ""}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="linha-campos">
-                                    <div className="campo">
-                                        <label>CPF</label>
-                                        <input
-                                            value={solicitacao.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : ""}
-                                            readOnly
-                                        />
-                                    </div>
-
-                                    <div className="campo">
-                                        <label>Código</label>
-                                        <input
-                                            value={solicitacao.sol_id}
-                                            readOnly
-                                        />
-                                    </div>
+                                <div className="rvp-grupo">
+                                    <h3 className="rvp-grupo-titulo">Paciente</h3>
+                                    <dl className="rvp-dados">
+                                        <div className="rvp-dado rvp-dado--inteiro">
+                                            <dt>Nome</dt>
+                                            <dd>{solicitacao.pac_nome || "-"}</dd>
+                                        </div>
+                                        <div className="rvp-dado">
+                                            <dt>CPF</dt>
+                                            <dd>{solicitacao.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : "-"}</dd>
+                                        </div>
+                                        <div className="rvp-dado">
+                                            <dt>Código do pedido</dt>
+                                            <dd>{solicitacao.sol_id}</dd>
+                                        </div>
+                                    </dl>
                                 </div>
 
-                                <div className="linha-campos">
-                                    <div className="campo">
-                                        <label>Data de envio</label>
-                                        <input
-                                            value={formatarData(
-                                                solicitacao.sol_data_solicitacao
-                                            )}
-                                            readOnly
-                                        />
-                                    </div>
-
-                                    <div className="campo">
-                                        <label>Data de vencimento</label>
-                                        <input
-                                            value={formatarData(
-                                                solicitacao.sol_data_vencimento
-                                            )}
-                                            readOnly
-                                        />
-                                    </div>
+                                <div className="rvp-grupo">
+                                    <h3 className="rvp-grupo-titulo">Prescrição</h3>
+                                    <dl className="rvp-dados">
+                                        <div className="rvp-dado">
+                                            <dt>Enviada em</dt>
+                                            <dd>{formatarData(solicitacao.sol_data_solicitacao)}</dd>
+                                        </div>
+                                        <div className="rvp-dado">
+                                            <dt>Vencimento</dt>
+                                            <dd className={solicitacao.sol_data_vencimento ? undefined : "rvp-vazio"}>
+                                                {formatarData(solicitacao.sol_data_vencimento)}
+                                            </dd>
+                                        </div>
+                                        <div className="rvp-dado rvp-dado--inteiro">
+                                            <dt>Unidade de saúde</dt>
+                                            <dd className={solicitacao.pos_nome ? undefined : "rvp-vazio"}>
+                                                {solicitacao.pos_nome || "Não informada"}
+                                            </dd>
+                                        </div>
+                                        <div className="rvp-dado rvp-dado--inteiro">
+                                            <dt>Insumos (por retirada)</dt>
+                                            <dd>
+                                                <ListaItensPrescricao {...solicitacao} />
+                                            </dd>
+                                        </div>
+                                        <div className="rvp-dado rvp-dado--inteiro">
+                                            <dt>Observações do paciente</dt>
+                                            <dd className={solicitacao.sol_observacao ? undefined : "rvp-vazio"}>
+                                                {solicitacao.sol_observacao ? (
+                                                    <p className="rvp-texto-livre">{solicitacao.sol_observacao}</p>
+                                                ) : (
+                                                    "Nenhuma observação."
+                                                )}
+                                            </dd>
+                                        </div>
+                                    </dl>
                                 </div>
-
-                                <div className="campo">
-                                    <label>Unidade de saúde</label>
-                                    <input
-                                        value={solicitacao.pos_nome || ""}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="linha-insumo">
-                                    <div className="ins-campo">
-                                        <label className="ins-label">
-                                            Insumo
-                                        </label>
-                                        <input
-                                            className="ins-input"
-                                            value={solicitacao.ins_nome || ""}
-                                            readOnly
-                                        />
-                                    </div>
-
-                                    <div className="ins-campo">
-                                        <label className="ins-label">
-                                            Quantidade
-                                        </label>
-                                        <input
-                                            className="ins-input"
-                                            value={
-                                                solicitacao.sol_insumo_quant ?? 0
-                                            }
-                                            readOnly
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="campo">
-                                    <label>Observações</label>
-                                    <textarea
-                                        value={
-                                            solicitacao.sol_observacao ||
-                                            "Nenhuma observação informada."
-                                        }
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="campo">
-                                    <label>Status</label>
-                                    <input
-                                        value={
-                                            solicitacao.sol_status ===
-                                            "Nao Autorizado"
-                                                ? "Não Autorizado"
-                                                : solicitacao.sol_status
-                                        }
-                                        readOnly
-                                    />
-                                </div>
-
-                               {solicitacao?.sol_status === "Nao Autorizado" && (
-    <div className="campo motivo-nao-autorizado">
-        <label>Motivo da não autorização</label>
-        <textarea
-            value={solicitacao.sol_motivo_nao_autorizado ?? ""}
-            placeholder="O motivo não foi retornado pela API."
-            readOnly
-            rows={4}
-        />
-    </div>
-)}
-
-{solicitacao?.sol_status === "Nao Autorizado" && (
-    <div className="campo">
-        <p className="text-sm text-gray-600">
-            Se algo mudou (um documento novo, uma correção), refaça o pedido com uma observação: a prescrição volta para o autorizador.
-        </p>
-        <button type="button" onClick={refazer} className="botao-novo-agendamento mt-2">
-            Refazer pedido
-        </button>
-    </div>
-
-)}
                             </section>
                         </div>
+
+                        {solicitacao.sol_status === "Nao Autorizado" && (
+                            <div className="rvp-aviso rvp-aviso--erro" role="note">
+                                <p className="rvp-aviso-titulo">Motivo da não autorização</p>
+                                <p>{solicitacao.sol_motivo_nao_autorizado || "O motivo não foi registrado."}</p>
+                            </div>
+                        )}
+
+                        {solicitacao.sol_status === "Nao Autorizado" && (
+                            <div className="rvp-aviso" role="note">
+                                <p className="rvp-aviso-titulo">Algo mudou?</p>
+                                <p>
+                                    Se há um documento novo ou uma correção, refaça o pedido com uma observação: a prescrição volta para o autorizador.
+                                </p>
+                                <button type="button" onClick={refazer} className="rvp-botao rvp-botao--primario">
+                                    Refazer pedido
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </main>
 
             <Footer />
         </div>
-        
     );
 }

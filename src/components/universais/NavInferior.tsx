@@ -3,8 +3,8 @@ import '../../css/universais/NavInferior.css';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Activity, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, LogOut,
-  MoreHorizontal, Package, QrCode, ShieldCheck, Upload, UserCog, Users, X,
+  Activity, CalendarClock, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, ListChecks, LogOut,
+  MoreHorizontal, Package, QrCode, ShieldCheck, TrendingUp, Upload, UserCog, Users, X,
 } from 'lucide-react';
 import { MdAddLocation } from 'react-icons/md';
 import { IoPersonSharp } from 'react-icons/io5';
@@ -40,6 +40,7 @@ const MENUS: Record<Perfil, Menu> = {
       { label: 'Enviar', path: '/EnviarSolicitacao', icon: Upload },
     ],
     mais: [
+      { label: 'Meus insumos', path: '/meus-insumos', icon: Package },
       { label: 'Pontos de coleta', path: '/pontos-coleta', icon: MdAddLocation },
       { label: 'Meu perfil', path: '/perfil', icon: IoPersonSharp },
     ],
@@ -58,10 +59,13 @@ const MENUS: Record<Perfil, Menu> = {
     ],
     mais: [
       { label: 'Ler QR Code', path: '/leitor-qrcode', icon: QrCode },
+      { label: 'Lista de separação', path: '/lista-separacao', icon: ListChecks },
       { label: 'Novo agendamento', path: '/Agendamentosadm?novo=1', icon: CalendarPlus },
       { label: 'Histórico da prescrição', path: '/Historicodaprescricao', icon: History },
       { label: 'Pacientes', path: '/Pacientesadm', icon: Users },
       { label: 'Insumos', path: '/insumos', icon: Package },
+      { label: 'Previsão de demanda', path: '/previsao-demanda', icon: TrendingUp },
+      { label: 'Horários da unidade', path: '/horarios-unidade', icon: CalendarClock },
       { label: 'Atividades da unidade', path: '/atividades', icon: Activity },
       { label: 'Meu perfil', path: '/perfil-admin', icon: UserCog },
     ],
@@ -83,10 +87,11 @@ const MENUS: Record<Perfil, Menu> = {
 
 // Qual perfil a página pertence (as rotas do sistema não têm prefixo comum).
 const ROTAS: Record<Perfil, string[]> = {
-  PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil'],
+  PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil', '/meus-insumos'],
   ADMIN: [
     '/homeadmin', '/agendamentosadm', '/coletas-hoje', '/versolicitaçoes', '/historicodaprescricao',
-    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode',
+    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode', '/horarios-unidade',
+    '/lista-separacao', '/previsao-demanda',
   ],
   AUTORIZADOR: ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'],
 };

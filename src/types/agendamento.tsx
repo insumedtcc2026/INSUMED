@@ -33,6 +33,8 @@ export interface InsumoAgendado {
 // existe um ins_id — o backend decide, ao salvar, se reaproveita um insumo
 // já existente com esse nome ou cria um novo.
 export interface ItemNovoAgendamento {
+  // insumo escolhido no estoque da unidade (o nome fica para exibir)
+  ins_id?: number;
   ins_nome: string;
   quantidade: number;
 }
@@ -51,23 +53,46 @@ export interface Agendamento {
   sol_data_cancelamento?: string | null;
   // prescrição autorizada que originou o agendamento (null nos antigos)
   sol_origem_id?: number | null;
+  // uso contínuo: 1 = primeira retirada da prescrição, 2 = segunda...
+  sol_ciclo?: number;
   // recado do admin para o paciente (ex.: "traga documento com foto")
   sol_recado?: string | null;
   // data anterior quando o admin remarcou o agendamento
   sol_data_anterior?: string | null;
   // código secreto do QR Code do comprovante (só vem para o próprio paciente)
   sol_codigo_qr?: string | null;
+  // turno da coleta (vazio nos agendamentos antigos)
+  sol_turno?: "manha" | "tarde" | null;
+  // pedido de outra data feito pelo paciente
+  pedido_outra_data?: PedidoOutraData | null;
+  // resposta do paciente à pergunta "você vai?" (vazio = sem resposta)
+  sol_presenca?: "vou" | "nao_vou" | null;
+  // pessoa autorizada que retirou no lugar do paciente (vazio = o próprio)
+  sol_retirado_por_nome?: string | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];
 }
 
+export interface PedidoOutraData {
+  situacao: "pedido" | "aceito" | "recusado";
+  data: string | null;
+  turno: "manha" | "tarde" | null;
+  motivo: string | null;
+  // motivo da recusa
+  resposta: string | null;
+}
+
 export interface NovoAgendamentoPayload {
   paciente: Paciente;
   sol_data_de_coleta: string;
+  // vazio = o primeiro turno do dia com vaga
+  sol_turno?: "manha" | "tarde";
   posto?: Posto;
   itens: ItemNovoAgendamento[];
   sol_origem_id?: number;
+  // agendar mesmo com estoque disponível menor que o pedido
+  confirmar_sem_estoque?: boolean;
 }
 
 export interface ResultadoPaginado<T> {
@@ -86,6 +111,8 @@ export interface FiltrosAgendamento {
   busca?: string; // nome, CPF ou protocolo
   dataInicio?: string;
   dataFim?: string;
+  // aba "Pedidos de outra data": só os que esperam resposta da unidade
+  pedido?: "pendente";
 }
 // Tela de atendimento aberta pelo leitor de QR Code: só o necessário para
 // conferir e concluir/cancelar no balcão (sem telefone, endereço ou prescrição).
@@ -101,6 +128,16 @@ export interface AtendimentoAgendamento {
   // "hoje" no fuso de Brasília, segundo o servidor
   hoje: string;
   insumos: { ins_id: number; ins_nome: string; quantidade: number; estoque: number }[];
+  // quem pode retirar no lugar do paciente (CPF parcial, para conferir o documento)
+  autorizados?: AutorizadoBalcao[];
+  sol_retirado_por_nome?: string | null;
+}
+
+export interface AutorizadoBalcao {
+  pau_id: number;
+  pau_nome: string;
+  pau_cpf_parcial: string | null;
+  pau_parentesco: string | null;
 }
 
 export interface ResultadoLeituraQR {

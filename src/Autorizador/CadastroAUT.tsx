@@ -14,11 +14,15 @@ import {
   validarSenha, validarTelefone,
 } from "../utils/validacoes";
 import { API_URL } from "../config";
+import { useConvite } from "../hook/useConvite";
+import AvisoConvite from "../components/universais/AvisoConvite";
 
 
 function CadastroAUT(){
 
 const navigate = useNavigate();
+// cadastro só pelo link do convite gerado pelo administrador universal
+const convite = useConvite("AUTORIZADOR");
     
 const handleCadastro = async () => {
  setTentouEnviar(true);
@@ -33,15 +37,15 @@ const handleCadastro = async () => {
   }
   setEnviando(true);
   try {
-    const response = await axios.post(`${API_URL}/autorizador`, {  
+    await axios.post(`${API_URL}/autorizador`, {  
   nome: text1.trim().replace(/\s+/g, " "),
   email: email.trim().toLowerCase(),
   telefone: tel,
   cpf: cpf,
   senha: password,
   confirmacao_senha: confirmacaodesenha,
+  convite: convite.codigo,
 });
-    console.log(response.data);
    Swal.fire({
         icon: 'success',
         title: 'Cadastro realizado!',
@@ -114,6 +118,9 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
 
       
   
+    {!convite.info ? (
+      <AvisoConvite carregando={convite.carregando} erro={convite.erro} />
+    ) : (
      <form className="formulario" noValidate onSubmit={(e) => { e.preventDefault(); handleCadastro(); }}>
         
         
@@ -238,6 +245,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
 </div>
 
     </form>
+    )}
 
       
  </div>

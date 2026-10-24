@@ -67,10 +67,11 @@ export async function salvarRecado(sol_id: number, recado: string) {
 }
 
 // Nova data no MESMO agendamento (mesmo protocolo); o paciente é avisado
-export async function remarcarAgendamento(sol_id: number, sol_data_de_coleta: string, motivo: string) {
+// turno vazio = o primeiro turno do dia com vaga
+export async function remarcarAgendamento(sol_id: number, sol_data_de_coleta: string, motivo: string, sol_turno = "") {
   const { data } = await axios.patch(
     `${API_URL}/agendamentos/${sol_id}/remarcar`,
-    { sol_data_de_coleta, motivo },
+    { sol_data_de_coleta, motivo, ...(sol_turno ? { sol_turno } : {}) },
     { headers: cabecalho("ADMIN") },
   );
   return data as { message: string; sol_data_de_coleta: string; sol_data_anterior: string };

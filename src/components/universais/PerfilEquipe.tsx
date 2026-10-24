@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import HeaderAdm from "./HeaderAdm";
 import HeaderAut from "./HeaderAut";
@@ -130,9 +131,17 @@ export default function PerfilEquipe({ tipo }: { tipo: Tipo }) {
               <Linha rotulo="CPF" valor={exibirCPF(perfil.cpf)} />
               {tipo === "ADMIN" && <Linha rotulo="Matrícula" valor={perfil.matricula} />}
             </dl>
-            <button type="button" onClick={editar} className="botao-novo-agendamento mt-6">
-              Editar dados
-            </button>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button type="button" onClick={editar} className="botao-novo-agendamento">
+                Editar dados
+              </button>
+              <Link
+                to={`/trocar-senha?perfil=${tipo}`}
+                className="inline-flex min-h-11 items-center rounded-full border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Trocar senha
+              </Link>
+            </div>
           </section>
         )}
 

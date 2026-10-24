@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import olhoAberto from '../assets/home-log/olho aberto.webp';
 import olhoFechado from '../assets/home-log/olho fechado.webp';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../css/home/Cadastro.css"
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import ForcaSenha, { MensagemErro } from "../components/universais/ForcaSenha";
@@ -14,11 +14,8 @@ import {
   validarObrigatorio, validarSenha, validarTelefone, validarMatricula, normalizarMatricula, MATRICULA_MAX,
 } from "../utils/validacoes";
 import { API_URL } from "../config";
-
-interface Posto {
-    pos_id: number;   
-    pos_nome: string;  
-}
+import { useConvite } from "../hook/useConvite";
+import AvisoConvite from "../components/universais/AvisoConvite";
 
 function CadastroADM(){
 
@@ -28,12 +25,13 @@ const [matricula, setMatricula] = useState("");
 const [cpf, setCpf] = useState("");
 const [text1, setText1] = useState(""); 
 const [tel, setTel] = useState("");
-const [posto_id, setpos] = useState("");
+// a unidade vem do convite (escolhida por quem convidou)
+const convite = useConvite("ADMIN");
+const posto_id = convite.info?.posto ? String(convite.info.posto.pos_id) : "";
 const [password, setPassword] = useState(""); 
 const [confirmacaodesenha, setConfirmacao] = useState("");
 const[olhoPassword, setOlhoPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-const [postos, setPostos] = useState<Posto[]>([]);
 const senhasIguais = password === confirmacaodesenha;
 const [tentouEnviar, setTentouEnviar] = useState(false);
 const [enviando, setEnviando] = useState(false);
@@ -50,25 +48,6 @@ const erros = {
 const erroDe = (campo: keyof typeof erros) => (tentouEnviar ? erros[campo] : null);
 const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : "");
 
-    useEffect(() => {
-        async function carregarPostos() {
-            try {
-                const response = await axios.get(`${API_URL}/postos`);
-                setPostos(response.data);
-                console.log("Postos carregados:", response.data);
-            } catch (error) {
-                console.error('Erro ao buscar postos:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro',
-                    text: 'Não foi possível carregar a lista de postos.',
-                    confirmButtonColor: '#d33'
-                });
-            }
-        }
-        carregarPostos();
-    }, []);
-
     const handleCadastro = async () => {
         setTentouEnviar(true);
   if (temErros(erros)) {
@@ -84,18 +63,18 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         setEnviando(true);
 
         try {
-            const response = await axios.post(`${API_URL}/administrador`, {
+            await axios.post(`${API_URL}/administrador`, {
                 matricula: normalizarMatricula(matricula),
                 nome: text1.trim().replace(/\s+/g, " "),
                 email: email.trim().toLowerCase(),
                 telefone: tel,
                 cpf: cpf,
                 posto_id: parseInt(posto_id),
+                convite: convite.codigo,
                 senha: password,
   confirmacao_senha: confirmacaodesenha,
             });
             
-            console.log("Admin criado:", response.data);
             await Swal.fire({
                 icon: 'success',
                 title: 'Cadastro realizado!',
@@ -126,7 +105,6 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         setText1("");
         setTel("");
         setPassword("");
-        setpos("");
         setConfirmacao("");
   setTentouEnviar(false);
     };
@@ -139,10 +117,13 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         </div>
 
         <div className="login-form-panel">
-          <BotaoVoltar para="/homeadmin" className="botao-voltar--flutuante" />
+          <BotaoVoltar para="/login" className="botao-voltar--flutuante" />
         <div className="form-wrapper">
         <div className="Text-Cadastro">Cadastre-se Administrador</div>
 
+    {!convite.info ? (
+      <AvisoConvite carregando={convite.carregando} erro={convite.erro} />
+    ) : (
     <form className="formulario" noValidate onSubmit={(e) => {e.preventDefault(); 
     handleCadastro();}}>
         <div className="Alinha-campos">
@@ -168,23 +149,8 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
                 <div className="Alinha-campos">
                 <div className="campo">
                     <label htmlFor="postos">Unidade de Saúde</label>
-           
-                <select
-                    id="postos"                 
-                    value={posto_id} 
-                    onChange={(e) => setpos(e.target.value)} 
-                    required >
-                    <option value="">
-                        Selecione uma unidade
-                    </option>
-                    {postos.map((posto) => (
-                    <option
-                        key={posto.pos_id} 
-                        value={posto.pos_id} > 
-                        {posto.pos_nome}
-                    </option>
-                        ))}
-                    </select>
+                    {/* definida no convite; não pode ser trocada aqui */}
+                    <input id="postos" type="text" value={convite.info?.posto?.pos_nome ?? ""} readOnly aria-readonly="true" />
                     <MensagemErro erro={erroDe("posto_id")} />
                 </div>
             </div>
@@ -279,6 +245,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
          </div>
 
          </form>
+    )}
        </div>
         </div>
          </div>

@@ -1,9 +1,13 @@
+import type { Prioridade } from "./AgendaService";
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import axios from "axios";
 import type { EventoHistorico } from "./HistoricoService";
 import { API_URL } from "../config";
 
 
 export interface PrescricaoPendente {
+    // prioridade legal na fila (a lista já vem ordenada)
+    prioridade?: Prioridade;
     sol_id: number;
     pac_id: number;
     sol_status: string;
@@ -88,7 +92,7 @@ export const buscarDetalhesPrescricao = async (
     return response.data;
 };
 
-export interface HistoricoPrescricao {
+export interface HistoricoPrescricao extends ComItensPrescricao {
 
     sol_id: number;
 
@@ -164,7 +168,8 @@ export async function buscarPrescricoesAprovadas(
     });
     return response.data;
 }
-export interface PrescricaoAprovada {
+export interface PrescricaoAprovada extends ComItensPrescricao {
+    prioridade?: Prioridade;
     sol_id: number;
     pac_id: number;
     pos_id: number;
@@ -247,7 +252,7 @@ export interface AgendamentoCancelado {
     sol_data_cancelamento: string | null;
 }
 
-export interface MinhaPrescricao {
+export interface MinhaPrescricao extends ComItensPrescricao {
     sol_id: number;
     sol_status: string;
     sol_data_solicitacao: string;
@@ -266,6 +271,9 @@ export interface MinhaPrescricao {
     agendamento: AgendamentoDaPrescricao | null;
     agendamentos_cancelados?: AgendamentoCancelado[];
     eventos: EventoHistorico[];
+    // uso contínuo: retiradas já feitas e data prevista da próxima
+    retiradas_concluidas?: number;
+    proxima_retirada?: string | null;
 }
 
 export interface PaginaMinhasPrescricoes extends Pagina<MinhaPrescricao> {

@@ -14,6 +14,7 @@ import { useValidarToken } from "../hook/Validartoken";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import { mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
+import { resumoInsumos } from "../utils/itensPrescricao";
 
 const POR_PAGINA = 20;
 
@@ -152,9 +153,10 @@ export default function Historico() {
             pac_nome={p.pac_nome}
             pac_cpf={p.pac_cpf}
             codigo={p.sol_id}
-            tituloInfo={p.ins_nome ? "Insumo e datas" : "Datas"}
+            tituloInfo={resumoInsumos(p) ? "Insumos e datas" : "Datas"}
             linhasInfo={[
-              p.ins_nome && `${p.sol_insumo_quant ?? "—"}x ${p.ins_nome}`,
+              resumoInsumos(p),
+              p.sol_periodicidade_dias ? `Uso contínuo: a cada ${p.sol_periodicidade_dias} dias` : null,
               `Enviada em ${formatarData(p.sol_data_solicitacao)}`,
               p.sol_data_vencimento && `Vence em ${formatarData(p.sol_data_vencimento)}`,
             ]}

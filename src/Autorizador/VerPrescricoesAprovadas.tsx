@@ -11,10 +11,12 @@ import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import PaginaLista, { FiltroPeriodo, SelectFiltro } from "../components/universais/PaginaLista";
+import SeloPrioridade from "../components/universais/SeloPrioridade";
 import CartaoPrescricao from "../components/universais/CartaoPrescricao";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import { mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
+import { resumoInsumos } from "../utils/itensPrescricao";
 
 const POR_PAGINA = 20;
 
@@ -149,9 +151,11 @@ export default function Autorizador() {
             pac_nome={p.pac_nome}
             pac_cpf={p.pac_cpf}
             codigo={p.sol_id}
-            tituloInfo="Insumo e datas"
+            selo={<SeloPrioridade prioridade={p.prioridade} />}
+            tituloInfo="Insumos e datas"
             linhasInfo={[
-              p.ins_nome && `${p.sol_insumo_quant ?? "—"}x ${p.ins_nome}`,
+              resumoInsumos(p),
+              p.sol_periodicidade_dias ? `Uso contínuo: a cada ${p.sol_periodicidade_dias} dias` : null,
               `Enviada em ${formatarData(p.sol_data_solicitacao)}`,
               p.pos_nome && `Posto: ${p.pos_nome}`,
               (p.versoes_anteriores ?? 0) > 0 && `Nova versão enviada pelo paciente (versão ${(p.versoes_anteriores ?? 0) + 1})`,

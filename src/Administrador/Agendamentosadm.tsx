@@ -7,12 +7,13 @@ import Footer from "../components/universais/Footer";
 import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCard";
 import NovoAgendamentoModal from "../components/usuario-1/agendamentos/NovoagendamentoModal";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
+import { confirmarEntrega } from "../components/universais/acoesAdmin";
 import {
   listarAgendamentosPaginado,
   concluirAgendamento,
 } from "../services/AgendamentoService";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
-import type { Agendamento, StatusAgendamento } from "../types/agendamento";
+import type { Agendamento, ItemNovoAgendamento, StatusAgendamento } from "../types/agendamento";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { useValidarToken } from "../hook/Validartoken";
 import { mensagemErroApi } from "../utils/validacoes";
@@ -38,6 +39,9 @@ export default function Agendamentosadm() {
   // "Ver agendamento" na lista de solicitações abre já filtrado pelo CPF
   const buscaUrl = searchParams.get("busca");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // aba "Pedidos de outra data" (link do sino: ?aba=pedidos)
+  const [abaPedidos, setAbaPedidos] = useState(searchParams.get("aba") === "pedidos");
+  const [totalPedidos, setTotalPedidos] = useState(0);
   // "Novo Agendamento" no menu lateral chega aqui com ?novo=1
   const [modalAberto, setModalAberto] = useState(searchParams.get("novo") === "1");
 
@@ -55,6 +59,7 @@ export default function Agendamentosadm() {
   const [dataFim, setDataFim] = useState("");
   const [insumoInicial, setInsumoInicial] = useState("");
 const [quantidadeInicial, setQuantidadeInicial] = useState(0);
+  const [itensIniciais, setItensIniciais] = useState<ItemNovoAgendamento[]>([]);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -68,21 +73,34 @@ const [quantidadeInicial, setQuantidadeInicial] = useState(0);
     setCarregando(true);
     setErro(null);
     try {
-      const dados = await listarAgendamentosPaginado({
-        status: statusFiltro,
-        busca,
-        dataInicio,
-        dataFim,
-      }, pagina, POR_PAGINA);
+      const [dados, pedidos] = await Promise.all([
+        listarAgendamentosPaginado({
+          status: abaPedidos ? "todos" : statusFiltro,
+          busca,
+          dataInicio,
+          dataFim,
+          ...(abaPedidos ? { pedido: "pendente" as const } : {}),
+        }, pagina, POR_PAGINA),
+        listarAgendamentosPaginado({ status: "todos", pedido: "pendente" }, 1, 1),
+      ]);
       setAgendamentos(dados.itens);
       setTotal(dados.total);
       setTotalPaginas(dados.totalPaginas);
+      setTotalPedidos(pedidos.total);
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar os agendamentos."));
     } finally {
       setCarregando(false);
     }
-  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido, pagina]);
+  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido, pagina, abaPedidos]);
+
+  // o link do sino pode chegar com a página já aberta
+  const abaUrl = searchParams.get("aba");
+  const [abaUrlVista, setAbaUrlVista] = useState(abaUrl);
+  if (abaUrl !== abaUrlVista) {
+    setAbaUrlVista(abaUrl);
+    if (abaUrl === "pedidos") setAbaPedidos(true);
+  }
 
 useEffect(() => {
   async function carregarDadosSolicitacao() {
@@ -104,6 +122,12 @@ useEffect(() => {
       setInsumoInicial(resposta.data.ins_nome || "");
       setQuantidadeInicial(
         Number(resposta.data.sol_insumo_quant || 0)
+      );
+      // prescrição com vários insumos: todos já entram no agendamento
+      setItensIniciais(
+        (resposta.data.itens ?? []).map((i: { ins_id: number; ins_nome: string; quantidade: number }) => ({
+          ins_id: i.ins_id, ins_nome: i.ins_nome, quantidade: Number(i.quantidade),
+        }))
       );
     } catch (error) {
       console.error(
@@ -142,20 +166,18 @@ useEffect(() => {
   }
 
   async function handleConcluir(sol_id: number) {
-    const confirmacao = await Swal.fire({
-      icon: "question",
-      title: "Concluir coleta?",
-      text: `O protocolo ${protocoloDe(sol_id)} será marcado como concluído e os insumos serão descontados do estoque.`,
-      showCancelButton: true,
-      confirmButtonText: "Concluir",
-      cancelButtonText: "Voltar",
-      confirmButtonColor: "#32D74B",
-      reverseButtons: true,
+    const ag = agendamentos.find((a) => a.sol_id === sol_id);
+    const confirmacao = await confirmarEntrega({
+      pac_id: ag?.paciente.pac_id,
+      protocolo: protocoloDe(sol_id),
+      paciente: ag?.paciente.pac_nome ?? "",
+      linhas: ["Os insumos serão descontados do estoque."],
+      textoConfirmar: "Concluir",
     });
-    if (!confirmacao.isConfirmed) return;
+    if (!confirmacao) return;
 
     try {
-      await concluirAgendamento(sol_id);
+      await concluirAgendamento(sol_id, confirmacao.retirado_por);
       Swal.fire({
         icon: "success",
         title: "Coleta concluída!",
@@ -216,6 +238,35 @@ useEffect(() => {
           </button>
         </header>
 
+        {/* Abas: todos os agendamentos | pedidos de outra data do paciente */}
+        <div className="mb-4 flex gap-2 overflow-x-auto" role="tablist" aria-label="Tipo de lista">
+          {[
+            { id: false, texto: "Agendamentos" },
+            { id: true, texto: "Pedidos de outra data" },
+          ].map((aba) => {
+            const ativa = abaPedidos === aba.id;
+            return (
+              <button
+                key={aba.texto}
+                type="button"
+                role="tab"
+                aria-selected={ativa}
+                onClick={() => { setAbaPedidos(aba.id); setPagina(1); }}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition ${
+                  ativa ? "border-blue-700 bg-blue-700 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {aba.texto}
+                {aba.id && totalPedidos > 0 && (
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${ativa ? "bg-white text-blue-800" : "bg-amber-100 text-amber-900"}`}>
+                    {totalPedidos}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Busca */}
         <div className="mb-4 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
           <span className="text-gray-400" aria-hidden="true">⌕</span>
@@ -231,6 +282,7 @@ useEffect(() => {
 
         {/* Filtros */}
         <div className="mb-2 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
+          {!abaPedidos && (
           <select
             value={statusFiltro}
             onChange={(e) => { setStatusFiltro(e.target.value as FiltroStatus); setPagina(1); }}
@@ -243,6 +295,7 @@ useEffect(() => {
             <option value="cancelado">Cancelado</option>
             <option value="nao_compareceu">Não compareceu</option>
           </select>
+          )}
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex">
             <input
@@ -298,7 +351,9 @@ useEffect(() => {
 
         {!carregando && !erro && !intervaloInvalido && agendamentos.length === 0 && (
           <p className="py-10 text-center text-gray-400">
-            Nenhum agendamento encontrado com esses filtros.
+            {abaPedidos
+              ? "Nenhum pedido de outra data esperando resposta."
+              : "Nenhum agendamento encontrado com esses filtros."}
           </p>
         )}
 
@@ -325,6 +380,7 @@ useEffect(() => {
         cpfInicial={cpfUrl || ""}
          insumoInicial={insumoInicial}
   quantidadeInicial={quantidadeInicial}
+          itensIniciais={itensIniciais}
           solOrigemId={solIdUrl ? Number(solIdUrl) : undefined}
           onClose={() => setModalAberto(false)}
           onSuccess={() => {

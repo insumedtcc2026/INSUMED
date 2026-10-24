@@ -9,10 +9,12 @@ import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 
 // Mesmo CSS da página do administrador, para ficar idêntica
-import "../css/home/AutorizarPrescicoesAut.css";
+import "../css/universais/RevisaoPrescricao.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import VersoesPrescricao from "../components/universais/VersoesPrescricao";
+import VisualizadorPrescricao, { ListaItensPrescricao, SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import ModalHistorico from "../components/universais/ModalHistorico";
 import { MOTIVO_MAX, mensagemErroApi, validarMotivo } from "../utils/validacoes";
 import { exibirCPF } from "../utils/validacoes";
@@ -21,7 +23,7 @@ import { API_URL } from "../config";
 
 
 
-interface SolicitacaoAprovada {
+interface SolicitacaoAprovada extends ComItensPrescricao {
   sol_id: number;
   pac_id: number;
   pos_id: number;
@@ -99,17 +101,14 @@ const somenteVisualizacao =
   // =====================================================
 
   useEffect(() => {
-  console.log("TELA DO AUTORIZADOR CARREGADA");
 
   if (!id) {
-    console.log("ID DA SOLICITAÇÃO NÃO ENCONTRADO");
     return;
   }
 
   let urlCriada: string | null = null;
 
   const carregarDados = async () => {
-    console.log("ENTROU NA FUNÇÃO carregarDados");
 
     try {
       setCarregando(true);
@@ -127,13 +126,6 @@ const somenteVisualizacao =
 
        
 
-    // TESTE: verificar se o motivo está chegando do backend
-    console.log("Dados recebidos:", response.data);
-    console.log("Status:", response.data.sol_status);
-    console.log(
-      "Motivo da não autorização:",
-      response.data.sol_motivo_nao_autorizado
-    );
 
         // IMAGEM DA PRESCRIÇÃO
         const imagemResponse = await axios.get(
@@ -275,7 +267,7 @@ const alterarStatus = async (
   // =====================================================
 
   return (
-    <div className="enviar-prescricao-page">
+    <div className="rvp-pagina">
 
       <Header onMenuClick={toggleSidebar} />
 
@@ -284,230 +276,155 @@ const alterarStatus = async (
         onClose={toggleSidebar}
       />
 
-
-      <main className="enviar-prescricao-content">
+      <main className="rvp-main">
 
         <div className="barra-voltar barra-voltar--interna">
           <BotaoVoltar para="/verprescricoesaprovadas" />
         </div>
 
-        <h1>Prescrição:</h1>
+        <header className="rvp-cabecalho">
+          <div>
+            <p className="rvp-sobretitulo">Autorização da prescrição</p>
+            <h1 className="rvp-titulo">Prescrição nº {id}</h1>
+            {solicitacao?.pac_nome && (
+              <p className="rvp-subtitulo">
+                Paciente: <strong>{solicitacao.pac_nome}</strong>
+              </p>
+            )}
+          </div>
+          <SeloStatus status={solicitacao?.sol_status} />
+        </header>
 
         {!carregando && !solicitacao ? (
 
-          <p>Prescrição não encontrada.</p>
+          <p className="rvp-estado rvp-estado--erro" role="alert">Prescrição não encontrada.</p>
 
         ) : (
           <>
-            <div className="prescricao-container">
+            <div className="rvp-grade">
 
-              {/* IMAGEM DA PRESCRIÇÃO */}
+              <VisualizadorPrescricao
+                url={imagemPrescricao}
+                pdf={solicitacao?.sol_prescricao_tipo === "application/pdf"}
+                carregando={carregando}
+              />
 
-              <section className="prescricao-preview">
-                <div className="prescricao-imagem">
+              <section className="rvp-card rvp-info" aria-labelledby="rvp-info-titulo">
+                <header className="rvp-card-topo">
+                  <h2 id="rvp-info-titulo" className="rvp-card-titulo">Informações da prescrição</h2>
+                </header>
 
-                  {carregando ? (
-                    <p>Carregando prescrição...</p>
-                  ) : imagemPrescricao ? (
-                    <img
-                      src={imagemPrescricao}
-                      alt="Prescrição enviada pelo paciente"
-                    />
-                  ) : (
-                    <p>Prescrição não encontrada.</p>
-                  )}
-
-                </div>
-              </section>
-
-
-              {/* INFORMAÇÕES DA PRESCRIÇÃO */}
-
-              <section className="informacoes-prescricao">
-
-                <h2>Informações da prescrição</h2>
-
-
-                {/* NOME */}
-
-                <div className="campo">
-                  <label>Nome paciente</label>
-                  <input
-                    type="text"
-                    value={solicitacao?.pac_nome || ""}
-                    readOnly
-                  />
+                <div className="rvp-grupo">
+                  <h3 className="rvp-grupo-titulo">Paciente</h3>
+                  <dl className="rvp-dados">
+                    <div className="rvp-dado rvp-dado--inteiro">
+                      <dt>Nome</dt>
+                      <dd>{solicitacao?.pac_nome || "-"}</dd>
+                    </div>
+                    <div className="rvp-dado">
+                      <dt>CPF</dt>
+                      <dd>{solicitacao?.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : "-"}</dd>
+                    </div>
+                    <div className="rvp-dado">
+                      <dt>Código do pedido</dt>
+                      <dd>{solicitacao?.sol_id ?? id}</dd>
+                    </div>
+                  </dl>
                 </div>
 
-
-                {/* CPF + COD */}
-
-                <div className="linha-campos">
-
-                  <div className="campo">
-                    <label>CPF:</label>
-                    <input
-                      type="text"
-                      value={solicitacao?.pac_cpf ? exibirCPF(solicitacao.pac_cpf) : ""}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="campo">
-                    <label>COD:</label>
-                    <input
-                      type="text"
-                      value={solicitacao?.sol_id || ""}
-                      readOnly
-                    />
-                  </div>
-
-                </div>
-
-
-                {/* DATAS */}
-
-                <div className="linha-campos">
-
-                  <div className="campo">
-                    <label>DATA DE ENVIO:</label>
-                    <input
-                      type="text"
-                      value={formatarData(solicitacao?.sol_data_solicitacao)}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="campo">
-                    <label className= "label-vencimento">DATA DE VENCIMENTO:</label>
-                    <input
-                      type="text"
-                      value={formatarData(solicitacao?.sol_data_vencimento, true)}
-                      placeholder="Não informada"
-                      readOnly
-                    />
-                  </div>
-
-                </div>
-
-
-                {/* UNIDADE DE SAÚDE */}
-
-                <div className="campo">
-                  <label>Unidade de Saúde</label>
-                  <input
-                    type="text"
-                    value={solicitacao?.pos_nome || ""}
-                    placeholder="Não informada"
-                    readOnly
-                  />
-                </div>
-
-
-                {/* INSUMO + QUANTIDADE */}
-
-                <div className="linha-insumo">
-
-                  <div className="ins-campo insumo-select">
-                    <label className="ins-label">Insumo</label>
-                   <input
-            type="text"
-            className="ins-input"
-            value={solicitacao?.ins_nome || ""}
-            readOnly
-        />
-
-                  </div>
-
-                  <div className="ins-campo quantidade-campo">
-                    <label className="ins-label">Quantidade</label>
-                    <input
-                      type="text"
-                      className="ins-input"
-                      value={solicitacao?.sol_insumo_quant ?? ""}
-                      readOnly
-                    />
-                  </div>
-
-                </div>
-
-
-                {/* OBSERVAÇÃO */}
-
-                <div className="campo">
-                  <label className="observacao-label">
-                    Observações (opcional)
-                  </label>
-                  <textarea
-                    value={solicitacao?.sol_observacao || ""}
-                    placeholder="Nenhuma observação informada."
-                    readOnly
-                  />
+                <div className="rvp-grupo">
+                  <h3 className="rvp-grupo-titulo">Prescrição</h3>
+                  <dl className="rvp-dados">
+                    <div className="rvp-dado">
+                      <dt>Enviada em</dt>
+                      <dd>{formatarData(solicitacao?.sol_data_solicitacao) || "-"}</dd>
+                    </div>
+                    <div className="rvp-dado">
+                      <dt>Vencimento</dt>
+                      <dd className={solicitacao?.sol_data_vencimento ? undefined : "rvp-vazio"}>
+                        {formatarData(solicitacao?.sol_data_vencimento, true) || "Não informado"}
+                      </dd>
+                    </div>
+                    <div className="rvp-dado rvp-dado--inteiro">
+                      <dt>Unidade de saúde</dt>
+                      <dd className={solicitacao?.pos_nome ? undefined : "rvp-vazio"}>
+                        {solicitacao?.pos_nome || "Não informada"}
+                      </dd>
+                    </div>
+                    <div className="rvp-dado rvp-dado--inteiro">
+                      <dt>Insumos (por retirada)</dt>
+                      <dd>
+                        <ListaItensPrescricao {...(solicitacao ?? {})} />
+                      </dd>
+                    </div>
+                    <div className="rvp-dado rvp-dado--inteiro">
+                      <dt>Observações do paciente</dt>
+                      <dd className={solicitacao?.sol_observacao ? undefined : "rvp-vazio"}>
+                        {solicitacao?.sol_observacao ? (
+                          <p className="rvp-texto-livre">{solicitacao.sol_observacao}</p>
+                        ) : (
+                          "Nenhuma observação."
+                        )}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
 
               </section>
 
             </div>
-{solicitacao?.sol_observacao_equipe && (
-    <div className="campo">
-        <label>Observação da unidade (pedido refeito)</label>
-        <textarea value={solicitacao.sol_observacao_equipe} readOnly />
-    </div>
-)}
 
-{solicitacao?.sol_status === "Nao Autorizado" && (
-    <div className="campo">
-        <label>Motivo da não autorização</label>
+            {solicitacao?.sol_observacao_equipe && (
+              <div className="rvp-aviso" role="note">
+                <p className="rvp-aviso-titulo">Observação da unidade (pedido refeito)</p>
+                <p>{solicitacao.sol_observacao_equipe}</p>
+              </div>
+            )}
 
-        <textarea
-            value={solicitacao.sol_motivo_nao_autorizado ?? ""}
-            placeholder="O motivo não foi registrado."
-            readOnly
-        />
-    </div>
-)}
+            {solicitacao?.sol_status === "Nao Autorizado" && (
+              <div className="rvp-aviso rvp-aviso--erro" role="note">
+                <p className="rvp-aviso-titulo">Motivo da não autorização</p>
+                <p>{solicitacao.sol_motivo_nao_autorizado || "O motivo não foi registrado."}</p>
+              </div>
+            )}
 
-{id && (
-    <div className="mb-4">
-        <VersoesPrescricao sol_id={Number(id)} perfil="AUTORIZADOR" />
-    </div>
-)}
-
-<button
-    type="button"
-    onClick={() => setVerHistorico(true)}
-    className="mb-3 min-h-11 text-sm font-semibold text-blue-700 hover:underline"
->
-    Ver histórico
-</button>
-
-{!somenteVisualizacao && (
-    <div className="prescricao-buttons">
-        <button
-                className="btn-reenvio"
-                type="button"
-                disabled={processando || carregando}
-                style={{ opacity: processando ? 0.6 : 1 }}
-                onClick={() => alterarStatus("Nao Autorizado")}
-              >
-                NÃO AUTORIZAR
-              </button>
-
+            <div className="rvp-extras">
+              {id && <VersoesPrescricao sol_id={Number(id)} perfil="AUTORIZADOR" />}
               <button
-                className="btn-enviar"
                 type="button"
-                disabled={processando || carregando}
-                style={{ opacity: processando ? 0.6 : 1 }}
-                onClick={() => alterarStatus("Autorizado")}
+                onClick={() => setVerHistorico(true)}
+                className="rvp-link-botao"
               >
-                AUTORIZAR
+                Ver histórico
               </button>
-    </div>
-)}
+            </div>
 
+            {!somenteVisualizacao && (
+              <div className="rvp-acoes">
+                <div className="rvp-acoes-linha">
+                  <p className="rvp-acoes-texto">Confira a receita e os dados antes de decidir.</p>
+                  <div className="rvp-acoes-botoes">
+                    <button
+                      className="rvp-botao rvp-botao--perigo"
+                      type="button"
+                      disabled={processando || carregando}
+                      onClick={() => alterarStatus("Nao Autorizado")}
+                    >
+                      Não autorizar
+                    </button>
 
-            {/* BOTÕES */}
-
+                    <button
+                      className="rvp-botao rvp-botao--sucesso"
+                      type="button"
+                      disabled={processando || carregando}
+                      onClick={() => alterarStatus("Autorizado")}
+                    >
+                      {processando ? "Salvando..." : "Autorizar"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </>
         )}

@@ -8,7 +8,7 @@ import BotaoVoltar from '../components/universais/BotaoVoltar';
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet"
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from "../config";
 
@@ -483,7 +483,10 @@ const formatarCep = (valor: string) => {
                 ]}
 
                 icon={iconPosto}
-
+                title={`${posto.pos_nome}: ver detalhes`}
+                alt={posto.pos_nome}
+                // clicar no pino (ou Enter com ele em foco) abre os detalhes do ponto
+                eventHandlers={{ click: () => navigate(`/pontos-coleta/${posto.pos_id}`) }}
               />
 
             ))}
@@ -510,7 +513,11 @@ const formatarCep = (valor: string) => {
 
                 <div className="informacoes">
 
-                  <h3>{posto.pos_nome}</h3>
+                  <h3>
+                    <Link to={`/pontos-coleta/${posto.pos_id}`} className="posto-card-link">
+                      {posto.pos_nome}
+                    </Link>
+                  </h3>
 
                   {posto.distancia !== undefined && (
   <p className="distancia">
@@ -528,6 +535,10 @@ const formatarCep = (valor: string) => {
               </div>
 
               <div className="acoes">
+
+                <button onClick={() => navigate(`/pontos-coleta/${posto.pos_id}`)}>
+                  Horários e detalhes
+                </button>
 
                 <button
                  onClick={() => {

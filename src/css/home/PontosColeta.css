@@ -183,7 +183,23 @@
 }
 
 .acoes button:first-child {
+  /* "Horários e detalhes" ocupa a linha de cima */
+  grid-column: 1 / -1;
+  border-bottom: 1px solid rgba(255, 255, 255, .35);
+}
+
+.acoes button:nth-child(2) {
   border-right: 1px solid rgba(255, 255, 255, .35);
+}
+
+.posto-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.posto-card-link:hover,
+.posto-card-link:focus-visible {
+  text-decoration: underline;
 }
 
 
