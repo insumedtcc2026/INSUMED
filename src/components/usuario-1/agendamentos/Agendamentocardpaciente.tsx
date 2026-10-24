@@ -1,14 +1,21 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 import StatusBadge from "./StatusBadge";
+import ModalOutraData from "./ModalOutraData";
 import MotivoCancelamento from "./MotivoCancelamento";
 import ComprovanteAgendamento from "./ComprovanteAgendamento";
 import ModalHistorico from "../../universais/ModalHistorico";
 import ContatoUnidade from "../../universais/ContatoUnidade";
 import type { Agendamento } from "../../../types/agendamento";
 import { useDadosUser } from "../../../hook/Dadosuser";
+import { cancelarMeuAgendamento, responderPresenca } from "../../../services/AgendaService";
+import { dataComTurno } from "../../../utils/agenda";
+import { hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
 interface AgendamentoCardPacienteProps {
   agendamento: Agendamento;
+  // recarregar a lista depois de pedir outra data ou cancelar
+  onAtualizar?: () => void;
 }
 
 /**
@@ -19,7 +26,7 @@ interface AgendamentoCardPacienteProps {
  * Mostra o recado da unidade, o motivo quando cancelado, o comprovante
  * (com QR Code) e o atalho para falar com a unidade pelo WhatsApp.
  */
-export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCardPacienteProps) {
+export default function AgendamentoCardPaciente({ agendamento, onAtualizar }: AgendamentoCardPacienteProps) {
   const {
     sol_id,
     sol_protocolo,
@@ -33,13 +40,78 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
     sol_data_cancelamento,
     sol_recado,
     sol_data_anterior,
+    sol_turno,
+    pedido_outra_data: pedido,
   } = agendamento;
   const usuario = useDadosUser();
   const [verComprovante, setVerComprovante] = useState(false);
   const [verHistorico, setVerHistorico] = useState(false);
+  const [pedirData, setPedirData] = useState(false);
+  // resposta de presença: atualizada na hora, sem recarregar a lista
+  const [presenca, setPresenca] = useState(agendamento.sol_presenca ?? null);
+  const [salvandoPresenca, setSalvandoPresenca] = useState(false);
 
   const resumoInsumos = insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ");
-  const dataFormatada = formatarDataBR(sol_data_de_coleta);
+  const dataFormatada = sol_data_de_coleta ? dataComTurno(sol_data_de_coleta, sol_turno) : formatarDataBR(sol_data_de_coleta);
+  const protocolo = sol_protocolo ?? `#${sol_id}`;
+  const dia = sol_data_de_coleta?.slice(0, 10) ?? "";
+  const aberto = status === "agendado";
+  // outra data: até a véspera e sem outro pedido esperando resposta
+  const podePedirData = aberto && dia > hojeISO() && pedido?.situacao !== "pedido";
+
+  async function marcarPresenca(resposta: "vou" | "nao_vou") {
+    setSalvandoPresenca(true);
+    try {
+      const r = await responderPresenca(sol_id, resposta);
+      setPresenca(r.sol_presenca);
+      if (resposta === "nao_vou") {
+        const quer = await Swal.fire({
+          icon: "info",
+          title: "Obrigado por avisar",
+          text: "A unidade foi avisada. Quer pedir outra data agora?",
+          showCancelButton: true,
+          confirmButtonText: "Pedir outra data",
+          cancelButtonText: "Agora não",
+          confirmButtonColor: "#1d4ed8",
+          reverseButtons: true,
+        });
+        if (quer.isConfirmed && podePedirData) setPedirData(true);
+      }
+    } catch (e) {
+      Swal.fire({ icon: "error", title: "Não foi possível salvar", text: mensagemErroApi(e, "Tente novamente."), confirmButtonColor: "#d33" });
+    } finally {
+      setSalvandoPresenca(false);
+    }
+  }
+
+  async function cancelar() {
+    const r = await Swal.fire({
+      title: "Cancelar este agendamento?",
+      text: `A coleta ${protocolo} de ${dataFormatada} será cancelada e a vaga fica para outra pessoa. Se quiser só trocar o dia, use "Pedir outra data".`,
+      input: "textarea",
+      inputPlaceholder: "Motivo (opcional)",
+      inputAttributes: { "aria-label": "Motivo do cancelamento", maxlength: "300" },
+      showCancelButton: true,
+      confirmButtonText: "Cancelar agendamento",
+      cancelButtonText: "Voltar",
+      confirmButtonColor: "#d33",
+      reverseButtons: true,
+      showLoaderOnConfirm: true,
+      allowOutsideClick: () => !Swal.isLoading(),
+      preConfirm: async (valor: string) => {
+        try {
+          return await cancelarMeuAgendamento(sol_id, (valor ?? "").trim());
+        } catch (e) {
+          Swal.showValidationMessage(mensagemErroApi(e, "Não foi possível cancelar."));
+          return false;
+        }
+      },
+    });
+    if (r.isConfirmed) {
+      await Swal.fire({ icon: "success", title: "Agendamento cancelado", text: "A unidade foi avisada.", confirmButtonColor: "#1d4ed8" });
+      onAtualizar?.();
+    }
+  }
 
   // Mensagem pronta para o WhatsApp do posto (o botão só aparece se o posto tiver número)
   const mensagemUnidade = status === "cancelado"
@@ -82,6 +154,50 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
         </p>
       )}
 
+      {aberto && pedido?.situacao === "pedido" && (
+        <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="status">
+          <span className="font-medium">Você pediu outra data:</span> {dataComTurno(pedido.data, pedido.turno)}. Aguardando a resposta da unidade; até lá, vale a data atual.
+        </p>
+      )}
+
+      {aberto && pedido?.situacao === "recusado" && (
+        <p className="mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <span className="font-medium">A unidade não pôde atender o pedido para {dataComTurno(pedido.data, pedido.turno)}.</span>
+          {pedido.resposta ? ` ${pedido.resposta}` : ""}
+        </p>
+      )}
+
+      {/* Você vai? Ajuda a unidade a separar os insumos e liberar a vaga */}
+      {aberto && dia >= hojeISO() && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl bg-gray-50 px-4 py-3 text-sm">
+          <span className="mr-1 font-medium text-gray-800">
+            {presenca === "vou" ? "Você confirmou presença." : presenca === "nao_vou" ? "Você avisou que não vai." : "Você vai à coleta?"}
+          </span>
+          <button
+            type="button"
+            disabled={salvandoPresenca}
+            aria-pressed={presenca === "vou"}
+            onClick={() => marcarPresenca("vou")}
+            className={`min-h-10 rounded-full border px-4 font-medium transition disabled:opacity-50 ${
+              presenca === "vou" ? "border-emerald-600 bg-emerald-600 text-white" : "border-emerald-300 bg-white text-emerald-800 hover:bg-emerald-50"
+            }`}
+          >
+            Vou
+          </button>
+          <button
+            type="button"
+            disabled={salvandoPresenca}
+            aria-pressed={presenca === "nao_vou"}
+            onClick={() => marcarPresenca("nao_vou")}
+            className={`min-h-10 rounded-full border px-4 font-medium transition disabled:opacity-50 ${
+              presenca === "nao_vou" ? "border-rose-600 bg-rose-600 text-white" : "border-rose-300 bg-white text-rose-800 hover:bg-rose-50"
+            }`}
+          >
+            Não vou
+          </button>
+        </div>
+      )}
+
       {sol_recado && status === "agendado" && (
         <p className="mt-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
           <span className="font-medium">Recado da unidade:</span> {sol_recado}
@@ -110,7 +226,40 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
         >
           Ver andamento
         </button>
+        {podePedirData && (
+          <button
+            type="button"
+            onClick={() => setPedirData(true)}
+            className="min-h-11 rounded-full px-4 text-sm font-medium text-blue-700 hover:underline"
+          >
+            Pedir outra data
+          </button>
+        )}
+        {aberto && (
+          <button
+            type="button"
+            onClick={cancelar}
+            className="min-h-11 rounded-full px-4 text-sm font-medium text-rose-700 hover:underline"
+          >
+            Cancelar agendamento
+          </button>
+        )}
       </div>
+
+      {pedirData && (
+        <ModalOutraData
+          sol_id={sol_id}
+          protocolo={protocolo}
+          dataAtual={sol_data_de_coleta}
+          turnoAtual={sol_turno}
+          onClose={() => setPedirData(false)}
+          onEnviado={() => {
+            setPedirData(false);
+            Swal.fire({ icon: "success", title: "Pedido enviado", text: "A unidade vai responder pelo sino.", confirmButtonColor: "#1d4ed8" });
+            onAtualizar?.();
+          }}
+        />
+      )}
 
       {verComprovante && (
         <ComprovanteAgendamento

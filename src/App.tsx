@@ -38,6 +38,7 @@ import './index.css';
 import Acessibilidade from './components/universais/Acessibilidade';
 import NavInferior from './components/universais/NavInferior';
 import Equipe from './Administrador/Equipe';
+import HorariosUnidade from './Administrador/HorariosUnidade';
 import TrocarSenha from './pages/TrocarSenha';
 
 function App() {
@@ -181,6 +182,7 @@ function App() {
       <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
       {/* equipe da rede (admin universal) e troca da própria senha */}
       <Route path="/equipe" element={<Equipe />} />
+      <Route path="/horarios-unidade" element={<HorariosUnidade />} />
       <Route path="/trocar-senha" element={<TrocarSenha />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />

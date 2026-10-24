@@ -11,6 +11,7 @@ import Header from "../components/universais/HeaderAut.tsx";
 import Footer from "../components/universais/Footer.tsx";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import PaginaLista, { FiltroPeriodo, SelectFiltro } from "../components/universais/PaginaLista";
+import SeloPrioridade from "../components/universais/SeloPrioridade";
 import CartaoPrescricao from "../components/universais/CartaoPrescricao";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import { mensagemErroApi } from "../utils/validacoes";
@@ -150,6 +151,7 @@ export default function Autorizador() {
             pac_nome={p.pac_nome}
             pac_cpf={p.pac_cpf}
             codigo={p.sol_id}
+            selo={<SeloPrioridade prioridade={p.prioridade} />}
             tituloInfo="Insumos e datas"
             linhasInfo={[
               resumoInsumos(p),

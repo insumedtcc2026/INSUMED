@@ -2,7 +2,8 @@ import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 import MotivoCancelamento from "./MotivoCancelamento";
 import ModalHistorico from "../../universais/ModalHistorico";
-import { editarRecado, remarcarComData } from "../../universais/acoesAdmin";
+import { editarRecado, remarcarComData, responderPedidoData } from "../../universais/acoesAdmin";
+import { dataComTurno } from "../../../utils/agenda";
 import type { Agendamento } from "../../../types/agendamento";
 import { exibirCPF, exibirTelefone } from "../../../utils/validacoes";
 
@@ -42,6 +43,9 @@ export default function AgendamentoCard({
     sol_data_cancelamento,
     sol_recado,
     sol_data_anterior,
+    sol_turno,
+    sol_presenca,
+    pedido_outra_data: pedido,
   } = agendamento;
   const [loadingAcao, setLoadingAcao] = useState<AcaoEmAndamento>(null);
   const [verHistorico, setVerHistorico] = useState(false);
@@ -53,7 +57,8 @@ export default function AgendamentoCard({
   const resumoInsumos = insumos.length
     ? insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ")
     : "Nenhum insumo informado";
-  const dataFormatada = formatarDataBR(sol_data_de_coleta);
+  const dataFormatada = sol_data_de_coleta ? dataComTurno(sol_data_de_coleta, sol_turno) : "Data não informada";
+  const pedidoAberto = status === "agendado" && pedido?.situacao === "pedido" ? pedido : null;
   const protocolo = sol_protocolo ?? String(sol_id);
 
   async function handleConcluir() {
@@ -71,7 +76,11 @@ export default function AgendamentoCard({
   }
 
   async function handleRemarcar() {
-    if (await remarcarComData(sol_id, protocolo, sol_data_de_coleta)) onAtualizar?.();
+    if (await remarcarComData(sol_id, protocolo, sol_data_de_coleta, sol_turno)) onAtualizar?.();
+  }
+
+  async function handlePedido(aceitar: boolean) {
+    if (pedidoAberto && (await responderPedidoData(sol_id, protocolo, pedidoAberto, aceitar))) onAtualizar?.();
   }
 
   async function handleCancelar() {
@@ -117,6 +126,12 @@ export default function AgendamentoCard({
       {/* Status + ações */}
       <div className="flex flex-wrap items-center gap-3">
         <StatusBadge status={status} />
+        {status === "agendado" && sol_presenca === "vou" && (
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">Paciente confirmou</span>
+        )}
+        {status === "agendado" && sol_presenca === "nao_vou" && (
+          <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">Avisou que não vai</span>
+        )}
 
         {exibirBotoes && (
           <>
@@ -150,6 +165,34 @@ export default function AgendamentoCard({
         <p className="w-full basis-full rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           A data passou há mais de 7 dias sem retirada nem remarcação. Para atender o paciente, crie um novo agendamento.
         </p>
+      )}
+
+      {pedidoAberto && (
+        <div className="w-full basis-full rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <p>
+            <span className="font-semibold">Pedido de outra data:</span> o paciente pediu{" "}
+            <strong>{dataComTurno(pedidoAberto.data, pedidoAberto.turno)}</strong>.
+            {pedidoAberto.motivo ? ` Motivo: ${pedidoAberto.motivo}` : ""}
+          </p>
+          {exibirBotoes && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => handlePedido(true)}
+                className="min-h-10 rounded-full bg-emerald-600 px-4 text-sm font-medium text-white hover:bg-emerald-700"
+              >
+                Aceitar e remarcar
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePedido(false)}
+                className="min-h-10 rounded-full border border-amber-300 bg-white px-4 text-sm font-medium text-amber-900 hover:bg-amber-100"
+              >
+                Recusar
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {sol_recado && (

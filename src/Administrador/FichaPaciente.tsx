@@ -11,6 +11,9 @@ import { buscarFichaPaciente, type FichaPaciente as Ficha } from "../services/Pa
 import { exibirCPF, exibirTelefone, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
 import { resumoInsumos } from "../utils/itensPrescricao";
+import SeloPrioridade from "../components/universais/SeloPrioridade";
+import { conferirPrioridade } from "../services/AgendaService";
+import Swal from "sweetalert2";
 
 // Prescrições em andamento e agendamentos ainda não realizados podem mudar de unidade
 
@@ -69,6 +72,20 @@ export default function FichaPaciente() {
 
   const p = ficha?.paciente;
 
+  // a unidade confere o laudo ou o cartão da gestante
+  async function conferir(conferida: boolean) {
+    if (!p) return;
+    try {
+      const r = await conferirPrioridade(p.pac_id, conferida);
+      await carregar();
+      Swal.fire({ icon: "success", title: r.message, confirmButtonColor: "#1d4ed8" });
+    } catch (e) {
+      Swal.fire({ icon: "error", title: "Não foi possível salvar", text: mensagemErroApi(e, "Tente novamente."), confirmButtonColor: "#d33" });
+    }
+  }
+  const declarou = Boolean(p?.pac_pcd || p?.pac_gestante);
+  const oQueDeclarou = [p?.pac_pcd && "pessoa com deficiência", p?.pac_gestante && "gestante"].filter(Boolean).join(" e ");
+
 
   // Abre a prescrição na tela certa para o status dela
   function abrirPrescricao(sol_id: number, status: string) {
@@ -105,7 +122,10 @@ export default function FichaPaciente() {
             <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-medium text-blue-700">Ficha do paciente</p>
-                <h1 className="break-words text-2xl font-semibold text-gray-900 sm:text-3xl">{p.pac_nome}</h1>
+                <h1 className="break-words text-2xl font-semibold text-gray-900 sm:text-3xl">
+                  {p.pac_nome}
+                  {p.prioridade?.motivo ? <span className="ml-3 align-middle"><SeloPrioridade prioridade={p.prioridade} /></span> : null}
+                </h1>
                 <p className="text-sm text-gray-500">CPF {exibirCPF(p.pac_cpf)}</p>
               </div>
               <button
@@ -116,6 +136,44 @@ export default function FichaPaciente() {
                 <span aria-hidden="true">+</span> Novo agendamento
               </button>
             </header>
+
+            {/* Atendimento prioritário declarado pelo paciente */}
+            {declarou && (
+              <section
+                className={`mb-6 rounded-2xl border p-4 text-sm sm:p-5 ${
+                  p.pac_prioridade_conferida === true
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+                    : p.pac_prioridade_conferida === false
+                      ? "border-gray-200 bg-white text-gray-800"
+                      : "border-amber-200 bg-amber-50 text-amber-950"
+                }`}
+                aria-labelledby="prioridade-titulo"
+              >
+                <h2 id="prioridade-titulo" className="font-semibold">Atendimento prioritário</h2>
+                <p className="mt-1">
+                  O paciente declarou ser <strong>{oQueDeclarou}</strong>.{" "}
+                  {p.pac_prioridade_conferida === true
+                    ? "Confirmado pela unidade: as prescrições entram com prioridade na fila."
+                    : p.pac_prioridade_conferida === false
+                      ? "A unidade não confirmou; o paciente segue na ordem de chegada."
+                      : "Confira o laudo ou o cartão da gestante no atendimento."}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {p.pac_prioridade_conferida !== true && (
+                    <button type="button" onClick={() => conferir(true)}
+                      className="min-h-10 rounded-full bg-emerald-600 px-4 font-medium text-white hover:bg-emerald-700">
+                      Confirmar prioridade
+                    </button>
+                  )}
+                  {p.pac_prioridade_conferida !== false && (
+                    <button type="button" onClick={() => conferir(false)}
+                      className="min-h-10 rounded-full border border-gray-300 bg-white px-4 font-medium text-gray-700 hover:bg-gray-50">
+                      Não confirmar
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* Dados */}
             <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-6" aria-labelledby="dados-titulo">

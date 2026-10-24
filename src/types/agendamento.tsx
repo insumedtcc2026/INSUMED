@@ -61,14 +61,31 @@ export interface Agendamento {
   sol_data_anterior?: string | null;
   // código secreto do QR Code do comprovante (só vem para o próprio paciente)
   sol_codigo_qr?: string | null;
+  // turno da coleta (vazio nos agendamentos antigos)
+  sol_turno?: "manha" | "tarde" | null;
+  // pedido de outra data feito pelo paciente
+  pedido_outra_data?: PedidoOutraData | null;
+  // resposta do paciente à pergunta "você vai?" (vazio = sem resposta)
+  sol_presenca?: "vou" | "nao_vou" | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];
 }
 
+export interface PedidoOutraData {
+  situacao: "pedido" | "aceito" | "recusado";
+  data: string | null;
+  turno: "manha" | "tarde" | null;
+  motivo: string | null;
+  // motivo da recusa
+  resposta: string | null;
+}
+
 export interface NovoAgendamentoPayload {
   paciente: Paciente;
   sol_data_de_coleta: string;
+  // vazio = o primeiro turno do dia com vaga
+  sol_turno?: "manha" | "tarde";
   posto?: Posto;
   itens: ItemNovoAgendamento[];
   sol_origem_id?: number;
@@ -92,6 +109,8 @@ export interface FiltrosAgendamento {
   busca?: string; // nome, CPF ou protocolo
   dataInicio?: string;
   dataFim?: string;
+  // aba "Pedidos de outra data": só os que esperam resposta da unidade
+  pedido?: "pendente";
 }
 // Tela de atendimento aberta pelo leitor de QR Code: só o necessário para
 // conferir e concluir/cancelar no balcão (sem telefone, endereço ou prescrição).

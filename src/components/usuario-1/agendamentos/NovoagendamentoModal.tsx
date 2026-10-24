@@ -9,14 +9,7 @@ import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
 import { listarEstoqueDoPosto, type InsumoEstoque } from "../../../services/InsumosServices";
 import { API_URL } from "../../../config";
-
-
-// "2026-10-15" -> "qua, 15/10"
-function formatarDiaCurto(data: string) {
-  const [a, m, d] = data.split("-").map(Number);
-  const semana = new Date(a, m - 1, d).toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
-  return `${semana}, ${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}`;
-}
+import { diaCurto, ROTULO_TURNO, textoVagas, TURNOS, type Turno } from "../../../utils/agenda";
 
 interface NovoAgendamentoModalProps {
   onClose: () => void;
@@ -72,8 +65,9 @@ useEffect(() => {
   // --- lista de itens já adicionados ao agendamento ---
   const [itens, setItens] = useState<ItemNovoAgendamento[]>([]);
 
-  // --- data da coleta ---
+  // --- data e turno da coleta ("" = o primeiro turno do dia com vaga) ---
   const [dataColeta, setDataColeta] = useState("");
+  const [turno, setTurno] = useState<Turno | "">("");
 
   // --- posto de coleta ---
   const [postos, setPostos] = useState<Posto[]>([]);
@@ -221,6 +215,7 @@ useEffect(() => {
       const resultado = await criarAgendamento({
         paciente,
         sol_data_de_coleta: dataColeta,
+        ...(turno ? { sol_turno: turno } : {}),
         posto: postoSelecionado,
         itens,
         ...(solOrigemId ? { sol_origem_id: solOrigemId } : {}),
@@ -270,6 +265,13 @@ useEffect(() => {
       setEnviando(false);
     }
   }
+
+  // turnos com vaga no dia escolhido (das opções que o backend calculou)
+  const opcoes = sugestoes?.opcoes ?? [];
+  const opcoesDoDia = opcoes.filter((o) => o.data === dataColeta);
+  const ultimaOpcao = opcoes.length ? opcoes[opcoes.length - 1].data : "";
+  const semVagaNoDia = Boolean(dataColeta && ultimaOpcao && dataColeta <= ultimaOpcao && opcoesDoDia.length === 0);
+  const sugeridasTurnos = sugestoes?.sugeridas_turnos ?? [];
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/70 sm:items-center sm:px-4">
@@ -326,6 +328,11 @@ useEffect(() => {
               onChange={(e) => setDataColeta(e.target.value)}
               className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
             />
+            {semVagaNoDia && (
+              <p className="mt-1 text-sm text-amber-700" role="status">
+                Sem vaga neste dia (unidade fechada, lotada ou sem atendimento). Escolha outra data.
+              </p>
+            )}
           </div>
 
           {/* Posto de coleta */}
@@ -350,21 +357,46 @@ useEffect(() => {
             </select>
           </div>
 
-          {/* Datas sugeridas: dias úteis com menos coletas no posto escolhido */}
-          {postoSelecionado && sugestoes && sugestoes.sugeridas.length > 0 && (
+          {/* Turno: manhã ou tarde, com as vagas livres no dia escolhido */}
+          <div>
+            <label htmlFor="turno-agendamento" className="mb-1 block text-sm font-medium text-gray-600">Turno</label>
+            <select
+              id="turno-agendamento"
+              value={turno}
+              onChange={(e) => setTurno(e.target.value as Turno | "")}
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
+            >
+              <option value="">Primeiro turno com vaga</option>
+              {TURNOS.map((t) => {
+                const op = opcoesDoDia.find((o) => o.turno === t);
+                const rotulo = ROTULO_TURNO[t][0].toUpperCase() + ROTULO_TURNO[t].slice(1);
+                return (
+                  <option key={t} value={t}>
+                    {rotulo}
+                    {op ? ` (${op.abre} às ${op.fecha}) · ${textoVagas(op.livres)}` : ""}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          {/* Sugestões: os turnos mais vazios do posto escolhido */}
+          {postoSelecionado && sugeridasTurnos.length > 0 && (
             <div className="sm:col-span-2">
               <p className="mb-2 text-sm font-medium text-gray-600">
-                Datas com menos coletas em {postoSelecionado.pos_nome}
+                Turnos com mais vagas em {postoSelecionado.pos_nome}
               </p>
               <div className="flex flex-wrap gap-2">
-                {sugestoes.sugeridas.map((data) => {
-                  const qtd = sugestoes.datas.find((d) => d.data === data)?.agendados ?? 0;
-                  const ativa = dataColeta === data;
+                {sugeridasTurnos.map((op) => {
+                  const ativa = dataColeta === op.data && turno === op.turno;
                   return (
                     <button
-                      key={data}
+                      key={`${op.data}-${op.turno}`}
                       type="button"
-                      onClick={() => setDataColeta(data)}
+                      onClick={() => {
+                        setDataColeta(op.data);
+                        setTurno(op.turno);
+                      }}
                       aria-pressed={ativa}
                       className={`min-h-11 rounded-full border px-4 text-sm transition ${
                         ativa
@@ -372,8 +404,7 @@ useEffect(() => {
                           : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
                       }`}
                     >
-                      {formatarDiaCurto(data)} ·{" "}
-                      {qtd === 0 ? "livre" : `${qtd} ${qtd === 1 ? "coleta" : "coletas"}`}
+                      {diaCurto(op.data)} · {ROTULO_TURNO[op.turno]} · {textoVagas(op.livres)}
                     </button>
                   );
                 })}

@@ -38,6 +38,9 @@ export default function Agendamentosadm() {
   // "Ver agendamento" na lista de solicitações abre já filtrado pelo CPF
   const buscaUrl = searchParams.get("busca");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // aba "Pedidos de outra data" (link do sino: ?aba=pedidos)
+  const [abaPedidos, setAbaPedidos] = useState(searchParams.get("aba") === "pedidos");
+  const [totalPedidos, setTotalPedidos] = useState(0);
   // "Novo Agendamento" no menu lateral chega aqui com ?novo=1
   const [modalAberto, setModalAberto] = useState(searchParams.get("novo") === "1");
 
@@ -69,21 +72,34 @@ const [quantidadeInicial, setQuantidadeInicial] = useState(0);
     setCarregando(true);
     setErro(null);
     try {
-      const dados = await listarAgendamentosPaginado({
-        status: statusFiltro,
-        busca,
-        dataInicio,
-        dataFim,
-      }, pagina, POR_PAGINA);
+      const [dados, pedidos] = await Promise.all([
+        listarAgendamentosPaginado({
+          status: abaPedidos ? "todos" : statusFiltro,
+          busca,
+          dataInicio,
+          dataFim,
+          ...(abaPedidos ? { pedido: "pendente" as const } : {}),
+        }, pagina, POR_PAGINA),
+        listarAgendamentosPaginado({ status: "todos", pedido: "pendente" }, 1, 1),
+      ]);
       setAgendamentos(dados.itens);
       setTotal(dados.total);
       setTotalPaginas(dados.totalPaginas);
+      setTotalPedidos(pedidos.total);
     } catch (e) {
       setErro(mensagemErroApi(e, "Não foi possível carregar os agendamentos."));
     } finally {
       setCarregando(false);
     }
-  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido, pagina]);
+  }, [statusFiltro, busca, dataInicio, dataFim, intervaloInvalido, pagina, abaPedidos]);
+
+  // o link do sino pode chegar com a página já aberta
+  const abaUrl = searchParams.get("aba");
+  const [abaUrlVista, setAbaUrlVista] = useState(abaUrl);
+  if (abaUrl !== abaUrlVista) {
+    setAbaUrlVista(abaUrl);
+    if (abaUrl === "pedidos") setAbaPedidos(true);
+  }
 
 useEffect(() => {
   async function carregarDadosSolicitacao() {
@@ -223,6 +239,35 @@ useEffect(() => {
           </button>
         </header>
 
+        {/* Abas: todos os agendamentos | pedidos de outra data do paciente */}
+        <div className="mb-4 flex gap-2 overflow-x-auto" role="tablist" aria-label="Tipo de lista">
+          {[
+            { id: false, texto: "Agendamentos" },
+            { id: true, texto: "Pedidos de outra data" },
+          ].map((aba) => {
+            const ativa = abaPedidos === aba.id;
+            return (
+              <button
+                key={aba.texto}
+                type="button"
+                role="tab"
+                aria-selected={ativa}
+                onClick={() => { setAbaPedidos(aba.id); setPagina(1); }}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition ${
+                  ativa ? "border-blue-700 bg-blue-700 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {aba.texto}
+                {aba.id && totalPedidos > 0 && (
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${ativa ? "bg-white text-blue-800" : "bg-amber-100 text-amber-900"}`}>
+                    {totalPedidos}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Busca */}
         <div className="mb-4 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
           <span className="text-gray-400" aria-hidden="true">⌕</span>
@@ -238,6 +283,7 @@ useEffect(() => {
 
         {/* Filtros */}
         <div className="mb-2 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
+          {!abaPedidos && (
           <select
             value={statusFiltro}
             onChange={(e) => { setStatusFiltro(e.target.value as FiltroStatus); setPagina(1); }}
@@ -250,6 +296,7 @@ useEffect(() => {
             <option value="cancelado">Cancelado</option>
             <option value="nao_compareceu">Não compareceu</option>
           </select>
+          )}
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex">
             <input
@@ -305,7 +352,9 @@ useEffect(() => {
 
         {!carregando && !erro && !intervaloInvalido && agendamentos.length === 0 && (
           <p className="py-10 text-center text-gray-400">
-            Nenhum agendamento encontrado com esses filtros.
+            {abaPedidos
+              ? "Nenhum pedido de outra data esperando resposta."
+              : "Nenhum agendamento encontrado com esses filtros."}
           </p>
         )}
 

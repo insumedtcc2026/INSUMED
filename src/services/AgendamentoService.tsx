@@ -84,6 +84,7 @@ export async function listarAgendamentosPaginado(
       busca: filtros.busca || undefined,
       data_inicio: filtros.dataInicio || undefined,
       data_fim: filtros.dataFim || undefined,
+      pedido: filtros.pedido,
       page,
       porPagina,
     },

@@ -34,6 +34,8 @@ interface Props {
   onAcao: () => void;
   // conteúdo extra embaixo (ex.: motivo)
   rodape?: ReactNode;
+  // selo ao lado do nome (ex.: prioridade legal)
+  selo?: ReactNode;
 }
 
 /**
@@ -42,7 +44,7 @@ interface Props {
  */
 export default function CartaoPrescricao({
   pac_nome, pac_cpf, codigo, tituloInfo = "Informações", linhasInfo = [],
-  status, rotuloStatus, acaoTexto, onAcao, rodape,
+  status, rotuloStatus, acaoTexto, onAcao, rodape, selo,
 }: Props) {
   return (
     <article className="flex flex-col gap-4 rounded-3xl bg-gray-50 px-4 py-4 shadow-sm sm:px-6 md:flex-row md:flex-wrap md:items-center">
@@ -57,7 +59,10 @@ export default function CartaoPrescricao({
           </svg>
         </span>
         <div className="min-w-0">
-          <p className="break-words font-semibold text-gray-800">{pac_nome}</p>
+          <p className="break-words font-semibold text-gray-800">
+            {pac_nome}
+            {selo ? <span className="ml-2 align-middle">{selo}</span> : null}
+          </p>
           <p className="text-sm text-gray-500">CPF: {exibirCPF(pac_cpf)}</p>
           <p className="text-sm text-gray-500">Código: {codigo}</p>
         </div>

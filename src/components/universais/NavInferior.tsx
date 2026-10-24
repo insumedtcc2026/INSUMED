@@ -3,7 +3,7 @@ import '../../css/universais/NavInferior.css';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Activity, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, LogOut,
+  Activity, CalendarClock, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, LogOut,
   MoreHorizontal, Package, QrCode, ShieldCheck, Upload, UserCog, Users, X,
 } from 'lucide-react';
 import { MdAddLocation } from 'react-icons/md';
@@ -62,6 +62,7 @@ const MENUS: Record<Perfil, Menu> = {
       { label: 'Histórico da prescrição', path: '/Historicodaprescricao', icon: History },
       { label: 'Pacientes', path: '/Pacientesadm', icon: Users },
       { label: 'Insumos', path: '/insumos', icon: Package },
+      { label: 'Horários da unidade', path: '/horarios-unidade', icon: CalendarClock },
       { label: 'Atividades da unidade', path: '/atividades', icon: Activity },
       { label: 'Meu perfil', path: '/perfil-admin', icon: UserCog },
     ],
@@ -86,7 +87,7 @@ const ROTAS: Record<Perfil, string[]> = {
   PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil'],
   ADMIN: [
     '/homeadmin', '/agendamentosadm', '/coletas-hoje', '/versolicitaçoes', '/historicodaprescricao',
-    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode',
+    '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode', '/horarios-unidade',
   ],
   AUTORIZADOR: ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'],
 };

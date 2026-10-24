@@ -7,6 +7,7 @@ import logo from '../../assets/home/Logo.webp';
 import { sairDoPerfil } from './sessao';
 
 import {
+  CalendarClock,
   CalendarPlus,
   ClipboardCheck,
   History,
@@ -86,6 +87,11 @@ export default function Sidebar({
       icon: Package,
       label: 'Insumos',
       path: '/insumos',
+    },
+    {
+      icon: CalendarClock,
+      label: 'Horários da unidade',
+      path: '/horarios-unidade',
     },
     {
       icon: IoPersonSharp,

@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import lapis from '../assets/home-log/lapis.webp'
 import axios from 'axios';
 import { API_URL } from "../config";
+import DeclaracaoPrioridade from '../components/usuario-1/perfil/DeclaracaoPrioridade';
 
 
 
@@ -56,22 +57,11 @@ export default function Perfil() {
       }
     );
 
-    console.log("================================");
-    console.log("RESPOSTA DO BACKEND:");
-    console.log(resposta.data);
-    console.log("================================");
-
-    // Se o backend retornar o usuário atualizado
+    // Se o backend retornar o usuário atualizado (mesma chave que o login usa)
     if (resposta.data.usuario) {
-
       localStorage.setItem(
-        "usuario",
+        "usuario_paciente",
         JSON.stringify(resposta.data.usuario)
-      );
-
-      console.log(
-        "USUÁRIO SALVO NO LOCALSTORAGE:",
-        JSON.parse(localStorage.getItem("usuario_paciente") || "{}")
       );
     }
 
@@ -85,8 +75,6 @@ export default function Perfil() {
     window.location.reload();
 
   } catch (error: any) {
-
-    console.error("ERRO AO ATUALIZAR:", error);
 
     Swal.fire({
       icon: "error",
@@ -304,6 +292,8 @@ if (verificando) {
           </div>
         </label>
       </div>
+
+      <DeclaracaoPrioridade />
 
       {/* As prescrições agora têm página própria, com o rastreio de cada etapa */}
       <div className="mx-auto max-w-7xl px-6 pb-10">

@@ -11,6 +11,7 @@ import Header from "../components/universais/HeaderAdm.tsx";
 import Footer from "../components/universais/Footer.tsx";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import PaginaLista, { FiltroPeriodo, SelectFiltro } from "../components/universais/PaginaLista";
+import SeloPrioridade from "../components/universais/SeloPrioridade";
 import CartaoPrescricao from "../components/universais/CartaoPrescricao";
 import { mensagemErroApi, somenteDigitos } from "../utils/validacoes";
 import { dentroDoPeriodo, formatarData } from "../utils/status";
@@ -137,6 +138,7 @@ export default function Pendencias() {
             pac_nome={p.pac_nome}
             pac_cpf={p.pac_cpf}
             codigo={p.sol_id}
+            selo={<SeloPrioridade prioridade={p.prioridade} mostrarPendente />}
             linhasInfo={[
               `Enviada em ${formatarData(p.sol_data_solicitacao)}`,
               (p.versoes_anteriores ?? 0) > 0 && `Reenviada pelo paciente (versão ${(p.versoes_anteriores ?? 0) + 1})`,

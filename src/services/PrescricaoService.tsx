@@ -1,3 +1,4 @@
+import type { Prioridade } from "./AgendaService";
 import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import axios from "axios";
 import type { EventoHistorico } from "./HistoricoService";
@@ -5,6 +6,8 @@ import { API_URL } from "../config";
 
 
 export interface PrescricaoPendente {
+    // prioridade legal na fila (a lista já vem ordenada)
+    prioridade?: Prioridade;
     sol_id: number;
     pac_id: number;
     sol_status: string;
@@ -166,6 +169,7 @@ export async function buscarPrescricoesAprovadas(
     return response.data;
 }
 export interface PrescricaoAprovada extends ComItensPrescricao {
+    prioridade?: Prioridade;
     sol_id: number;
     pac_id: number;
     pos_id: number;

@@ -189,6 +189,30 @@ export default function ColetasHoje() {
           </div>
         </div>
 
+        {/* turnos e respostas de presença do dia */}
+        {!carregando && agendados.length > 0 && (
+          <p className="-mt-2 mb-5 flex flex-wrap gap-2 text-sm" role="status">
+            {(["manha", "tarde"] as const).map((t) => {
+              const n = agendados.filter((a) => (a.sol_turno ?? "manha") === t).length;
+              return n ? (
+                <span key={t} className="rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-900">
+                  {n} de {t === "manha" ? "manhã" : "tarde"}
+                </span>
+              ) : null;
+            })}
+            {agendados.some((a) => a.sol_presenca === "vou") && (
+              <span className="rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-800">
+                {agendados.filter((a) => a.sol_presenca === "vou").length} confirmaram
+              </span>
+            )}
+            {agendados.some((a) => a.sol_presenca === "nao_vou") && (
+              <span className="rounded-full bg-rose-50 px-3 py-1 font-medium text-rose-800">
+                {agendados.filter((a) => a.sol_presenca === "nao_vou").length} avisaram que não vão
+              </span>
+            )}
+          </p>
+        )}
+
         <label htmlFor="busca-balcao" className="sr-only">
           Protocolo, CPF ou nome
         </label>
