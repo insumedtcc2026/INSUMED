@@ -16,8 +16,10 @@ import {
   Files,
   LogOut,
   Package,
+  ListChecks,
   QrCode,
   RotateCcwIcon,
+  TrendingUp,
   X,
 } from 'lucide-react';
 
@@ -69,6 +71,11 @@ export default function Sidebar({
       path: '/coletas-hoje',
     },
     {
+      icon: ListChecks,
+      label: 'Lista de separação',
+      path: '/lista-separacao',
+    },
+    {
       icon: QrCode,
       label: 'Ler QR Code',
       path: '/leitor-qrcode',
@@ -87,6 +94,11 @@ export default function Sidebar({
       icon: Package,
       label: 'Insumos',
       path: '/insumos',
+    },
+    {
+      icon: TrendingUp,
+      label: 'Previsão de demanda',
+      path: '/previsao-demanda',
     },
     {
       icon: CalendarClock,

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { QrCode } from "lucide-react";
+import { ListChecks, QrCode } from "lucide-react";
 import Swal from "sweetalert2";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
@@ -163,9 +163,17 @@ export default function ColetasHoje() {
               Digite ou leia o protocolo do comprovante, ou busque pelo CPF ou nome.
             </p>
           </div>
-          <Link to="/leitor-qrcode" className="botao-novo-agendamento">
-            <QrCode size={18} aria-hidden="true" /> Ler QR Code com a câmera
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link
+              to="/lista-separacao"
+              className="flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-blue-700 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              <ListChecks size={18} aria-hidden="true" /> Lista de separação
+            </Link>
+            <Link to="/leitor-qrcode" className="botao-novo-agendamento">
+              <QrCode size={18} aria-hidden="true" /> Ler QR Code com a câmera
+            </Link>
+          </div>
         </header>
 
         <div className="mb-5 grid grid-cols-2 gap-3 sm:max-w-md">

@@ -208,3 +208,69 @@ export async function listarMeusInsumos(): Promise<PrescricaoEmUso[]> {
   const { data } = await api.get("/meus-insumos", { headers: cabecalho("PACIENTE") });
   return data;
 }
+
+// ---------------------------------------------------------
+// GESTÃO (etapa 5): lista de separação e previsão de demanda
+// ---------------------------------------------------------
+
+export interface TotalSeparacao {
+  ins_id: number;
+  ins_nome: string;
+  ins_marca: string | null;
+  separar: number;   // a separar (sem quem avisou que não vai)
+  nao_vai: number;   // de quem avisou que não vai
+  entregue: number;  // já retirado no dia
+}
+
+export interface PacienteSeparacao {
+  sol_id: number;
+  protocolo: string | null;
+  turno: Turno;
+  primeiro_nome: string;
+  presenca: "vou" | "nao_vou" | null;
+  situacao: "separar" | "nao_vai" | "entregue";
+  retirado_por_nome: string | null;
+  itens: { ins_id: number; ins_nome: string; ins_marca: string | null; quantidade: number }[];
+}
+
+export interface UnidadeSeparacao {
+  pos_id: number;
+  pos_nome: string;
+  por_insumo: TotalSeparacao[];
+  por_paciente: PacienteSeparacao[];
+}
+
+export async function buscarSeparacao(data: string): Promise<{ data: string; unidades: UnidadeSeparacao[] }> {
+  const { data: r } = await api.get("/agendamentos/separacao", { params: { data }, headers: cabecalho("ADMIN") });
+  return r;
+}
+
+export interface PrevisaoInsumo {
+  ins_id: number;
+  ins_nome: string;
+  ins_marca: string | null;
+  pos_id: number;
+  pos_nome: string | null;
+  estoque: number;
+  agendado: number;   // coletas já agendadas
+  recorrente: number; // próximos ciclos de uso contínuo
+  a_agendar: number;  // autorizadas esperando a 1ª retirada
+  avulso: number;     // média das retiradas avulsas
+  necessidade: number;
+  saldo: number;
+  falta: number;
+  acaba_em: string | null;
+}
+
+export interface Previsao {
+  dias: number;
+  de: string;
+  ate: string;
+  historico_dias: number;
+  insumos: PrevisaoInsumo[];
+}
+
+export async function buscarPrevisao(dias: number): Promise<Previsao> {
+  const { data } = await api.get("/indicadores/previsao", { params: { dias }, headers: cabecalho("ADMIN") });
+  return data;
+}

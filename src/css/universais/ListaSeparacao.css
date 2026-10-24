@@ -1,0 +1,70 @@
+/* Lista de separação: na impressão só a lista aparece (mesma técnica do
+   comprovante), em preto e branco, cada unidade começando numa página. */
+
+.separacao-riscado {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .separacao-impressao,
+  .separacao-impressao * {
+    visibility: visible !important;
+  }
+
+  .separacao-impressao {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    font-size: 12px;
+    color: #000 !important;
+  }
+
+  .separacao-impressao .nao-imprimir {
+    display: none !important;
+  }
+
+  .separacao-impressao .so-impressao {
+    display: inline !important;
+  }
+
+  .separacao-unidade {
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    break-inside: auto;
+  }
+
+  .separacao-unidade + .separacao-unidade {
+    break-before: page;
+  }
+
+  .separacao-impressao table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .separacao-impressao th,
+  .separacao-impressao td {
+    border-bottom: 1px solid #999 !important;
+    background: none !important;
+    color: #000 !important;
+  }
+
+  .separacao-impressao li {
+    break-inside: avoid;
+  }
+
+  .separacao-impressao [class*="bg-"] {
+    background: none !important;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
