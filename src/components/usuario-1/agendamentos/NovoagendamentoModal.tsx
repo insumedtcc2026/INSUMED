@@ -24,6 +24,8 @@ interface NovoAgendamentoModalProps {
   cpfInicial?: string;
     insumoInicial?: string;
   quantidadeInicial?: number;
+  // todos os insumos da prescrição (etapa 2: uma prescrição pode ter vários)
+  itensIniciais?: ItemNovoAgendamento[];
   // prescrição autorizada que originou este agendamento ("Agendar" na lista
   // de solicitações). O backend impede um segundo agendamento ativo para ela.
   solOrigemId?: number;
@@ -39,7 +41,7 @@ interface NovoAgendamentoModalProps {
  * chegar até a data da coleta.
  */
 export default function NovoAgendamentoModal({ onClose, onSuccess,   cpfInicial = "",  insumoInicial = "",
-  quantidadeInicial = 0, solOrigemId }: NovoAgendamentoModalProps) {
+  quantidadeInicial = 0, itensIniciais, solOrigemId }: NovoAgendamentoModalProps) {
   // --- paciente ---
   const [buscaPaciente, setBuscaPaciente] = useState("");
   const [resultadosPaciente, setResultadosPaciente] = useState<Paciente[]>([]);
@@ -156,7 +158,9 @@ useEffect(() => {
 
 
   useEffect(() => {
-  if (insumoInicial && quantidadeInicial > 0) {
+  if (itensIniciais?.length) {
+    setItens(itensIniciais);
+  } else if (insumoInicial && quantidadeInicial > 0) {
     setItens([
       {
         ins_nome: insumoInicial,
@@ -164,7 +168,7 @@ useEffect(() => {
       },
     ]);
   }
-}, [insumoInicial, quantidadeInicial]);
+}, [itensIniciais, insumoInicial, quantidadeInicial]);
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
     setBuscaPaciente(`${p.pac_nome} — ${exibirCPF(p.pac_cpf)}`);

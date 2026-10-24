@@ -279,7 +279,8 @@
   overflow-wrap: anywhere;
 }
 
-.rvp-dado dd.rvp-vazio {
+.rvp-dado dd.rvp-vazio,
+.rvp-vazio {
   color: var(--cor-texto-claro);
   font-weight: 400;
   font-style: italic;
@@ -355,6 +356,146 @@ select.rvp-input {
   color: var(--cor-texto-suave);
   font-size: var(--texto-xs);
   line-height: 1.4;
+}
+
+/* ---------- Vários insumos e uso contínuo ---------- */
+
+.rvp-dica--topo {
+  margin: -6px 0 12px;
+}
+
+.rvp-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rvp-item-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.rvp-botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  background: var(--cor-superficie);
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.rvp-botao-icone svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rvp-botao-icone:hover {
+  border-color: #f3b0b0;
+  background: #fdecec;
+  color: var(--cor-erro-escura);
+}
+
+.rvp-adicionar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.rvp-adicionar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rvp-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.rvp-check input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  flex: none;
+  accent-color: var(--cor-primaria);
+}
+
+.rvp-check span {
+  color: var(--cor-texto);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.rvp-check small {
+  display: block;
+  margin-top: 2px;
+  color: var(--cor-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.rvp-frequencia {
+  margin-top: 14px;
+}
+
+/* Lista de insumos só de leitura (autorizador, não autorizada) */
+.rvp-lista-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rvp-lista-itens li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--raio-sm);
+  background: var(--cor-superficie-suave);
+  font-size: var(--texto-sm);
+}
+
+.rvp-lista-itens strong {
+  min-width: 3ch;
+  color: var(--cor-primaria);
+  font-variant-numeric: tabular-nums;
+}
+
+.rvp-lista-itens small {
+  color: var(--cor-texto-suave);
+}
+
+.rvp-recorrencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: var(--raio-pill);
+  background: var(--cor-primaria-clara);
+  color: var(--cor-primaria-escura);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+.rvp-recorrencia svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---------- Avisos (motivo, observação da unidade) ---------- */
@@ -617,6 +758,11 @@ select.rvp-input {
 
   .rvp-campos {
     grid-template-columns: minmax(0, 1fr) 96px;
+  }
+
+  .rvp-item-linha {
+    grid-template-columns: minmax(0, 1fr) 80px auto;
+    gap: 8px;
   }
 
   .rvp-acoes-botoes {

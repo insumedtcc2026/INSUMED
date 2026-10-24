@@ -12,7 +12,7 @@ import {
   concluirAgendamento,
 } from "../services/AgendamentoService";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
-import type { Agendamento, StatusAgendamento } from "../types/agendamento";
+import type { Agendamento, ItemNovoAgendamento, StatusAgendamento } from "../types/agendamento";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { useValidarToken } from "../hook/Validartoken";
 import { mensagemErroApi } from "../utils/validacoes";
@@ -55,6 +55,7 @@ export default function Agendamentosadm() {
   const [dataFim, setDataFim] = useState("");
   const [insumoInicial, setInsumoInicial] = useState("");
 const [quantidadeInicial, setQuantidadeInicial] = useState(0);
+  const [itensIniciais, setItensIniciais] = useState<ItemNovoAgendamento[]>([]);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -104,6 +105,12 @@ useEffect(() => {
       setInsumoInicial(resposta.data.ins_nome || "");
       setQuantidadeInicial(
         Number(resposta.data.sol_insumo_quant || 0)
+      );
+      // prescrição com vários insumos: todos já entram no agendamento
+      setItensIniciais(
+        (resposta.data.itens ?? []).map((i: { ins_id: number; ins_nome: string; quantidade: number }) => ({
+          ins_id: i.ins_id, ins_nome: i.ins_nome, quantidade: Number(i.quantidade),
+        }))
       );
     } catch (error) {
       console.error(
@@ -325,6 +332,7 @@ useEffect(() => {
         cpfInicial={cpfUrl || ""}
          insumoInicial={insumoInicial}
   quantidadeInicial={quantidadeInicial}
+          itensIniciais={itensIniciais}
           solOrigemId={solIdUrl ? Number(solIdUrl) : undefined}
           onClose={() => setModalAberto(false)}
           onSuccess={() => {

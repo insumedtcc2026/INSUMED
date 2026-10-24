@@ -14,6 +14,8 @@ import ModalHistorico from "../components/universais/ModalHistorico";
 import VersoesPrescricao from "../components/universais/VersoesPrescricao";
 import VisualizadorPrescricao, { SeloStatus } from "../components/universais/VisualizadorPrescricao";
 import { exibirCPF, mensagemErroApi } from "../utils/validacoes";
+import { FREQUENCIAS, retiradasAteVencer, type ItemPrescricao } from "../utils/itensPrescricao";
+import { Plus, X } from "lucide-react";
 import { API_URL } from "../config";
 
 
@@ -34,6 +36,14 @@ sol_motivo_nao_autorizado?: string | null;
 
   pos_nome: string;
 }
+
+// linha do formulário de insumos (valores dos campos, ainda como texto)
+interface LinhaItem {
+  ins_id: string;
+  quantidade: string;
+}
+
+const MAX_ITENS = 10;
 
 const MOTIVOS_REENVIO = [
   { valor: "FOTO_SEM_QUALIDADE", texto: "Foto sem qualidade" },
@@ -59,10 +69,10 @@ function EnviarPrescricao() {
  
 } = useDadosInsumos();
 
-const [insumoMovId, setInsumoMovId] = useState("");
-
-const [quantidade, setQuantidade] = useState("");
-const listaInsumos = insumos ?? [];
+// insumos da prescrição (pode ter vários) e retirada recorrente
+const [itens, setItens] = useState<LinhaItem[]>([{ ins_id: "", quantidade: "" }]);
+const [usoContinuo, setUsoContinuo] = useState(false);
+const [frequencia, setFrequencia] = useState("30");
 
   const navigate = useNavigate();
   const [verHistorico, setVerHistorico] = useState(false);
@@ -110,17 +120,19 @@ const [motivo, setMotivo] = useState("");
 
        setSolicitacao(dadosResponse.data);
 
-       setInsumoMovId(
-  dadosResponse.data.ins_id
-    ? String(dadosResponse.data.ins_id)
-    : ""
-);
-
-setQuantidade(
-  dadosResponse.data.sol_insumo_quant != null
-    ? String(dadosResponse.data.sol_insumo_quant)
-    : ""
-);
+       const recebidos: ItemPrescricao[] = dadosResponse.data.itens ?? [];
+       setItens(
+         recebidos.length
+           ? recebidos.map((i) => ({ ins_id: String(i.ins_id), quantidade: String(i.quantidade) }))
+           : [{
+               ins_id: dadosResponse.data.ins_id ? String(dadosResponse.data.ins_id) : "",
+               quantidade: dadosResponse.data.sol_insumo_quant ? String(dadosResponse.data.sol_insumo_quant) : "",
+             }]
+       );
+       if (dadosResponse.data.sol_periodicidade_dias) {
+         setUsoContinuo(true);
+         setFrequencia(String(dadosResponse.data.sol_periodicidade_dias));
+       }
 
 setDataVencimento(
   dadosResponse.data.sol_data_vencimento
@@ -243,14 +255,26 @@ const enviarSolicitacao = async () => {
       return;
     }
 
+    const preenchidos = itens.filter((i) => i.ins_id || i.quantidade);
+    const incompleto = preenchidos.find((i) => !i.ins_id || !(Number(i.quantidade) > 0) || !Number.isInteger(Number(i.quantidade)));
+    if (!preenchidos.length || incompleto) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Insumos da prescrição",
+        text: "Escolha cada insumo e informe a quantidade por retirada (número inteiro maior que zero).",
+        confirmButtonColor: "#3085d6"
+      });
+      return;
+    }
+
     await axios.patch(
       `${API_URL}/solicitacao/${id}`,
       //`http://localhost:3344/solicitacoes/${id}`,
       {
          sol_status: "Revisado",
     sol_data_vencimento: dataVencimento,
-    ins_id: Number(insumoMovId),
-    sol_insumo_quant: Number(quantidade)
+    itens: preenchidos.map((i) => ({ ins_id: Number(i.ins_id), quantidade: Number(i.quantidade) })),
+    sol_periodicidade_dias: usoContinuo ? Number(frequencia) : null
       },
       {
         headers: {
@@ -292,6 +316,14 @@ const enviarSolicitacao = async () => {
       </div>
     );
   }
+
+  // só insumos do estoque da unidade da prescrição (é de lá que sai a retirada)
+  const opcoesInsumo = (insumos ?? []).filter(
+    (i) => i.pos_id == null || solicitacao?.pos_id == null || Number(i.pos_id) === Number(solicitacao.pos_id)
+  );
+  const retiradas = retiradasAteVencer(dataVencimento, Number(frequencia));
+  const alterarItem = (indice: number, mudanca: Partial<LinhaItem>) =>
+    setItens((lista) => lista.map((item, i) => (i === indice ? { ...item, ...mudanca } : item)));
 
   const vazio = (valor?: string | number | null) => (valor === null || valor === undefined || valor === "" ? "rvp-vazio" : undefined);
 
@@ -398,39 +430,113 @@ const enviarSolicitacao = async () => {
                   )}
                 </div>
 
-                <div className="rvp-campo">
-                  <label className="rvp-rotulo" htmlFor="rvp-insumo">Insumo</label>
+              </div>
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Insumos da prescrição</h3>
+              <p className="rvp-dica rvp-dica--topo">Quantidade de cada insumo por retirada.</p>
+              <ul className="rvp-itens">
+                {itens.map((item, indice) => (
+                  <li key={indice} className="rvp-item-linha">
+                    <div className="rvp-campo">
+                      <label className="rvp-rotulo" htmlFor={`rvp-insumo-${indice}`}>Insumo {itens.length > 1 ? indice + 1 : ""}</label>
+                      <select
+                        id={`rvp-insumo-${indice}`}
+                        className="rvp-input"
+                        value={item.ins_id}
+                        onChange={(e) => alterarItem(indice, { ins_id: e.target.value })}
+                        disabled={somenteVisualizacao}
+                      >
+                        <option value="">Selecione o insumo</option>
+                        {opcoesInsumo.map((insumo) => (
+                          <option key={insumo.ins_id} value={insumo.ins_id}>
+                            {insumo.ins_nome}
+                            {insumo.ins_marca ? ` - ${insumo.ins_marca}` : ""}
+                            {insumo.ins_disponivel != null ? ` (disponível ${insumo.ins_disponivel})` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="rvp-campo">
+                      <label className="rvp-rotulo" htmlFor={`rvp-quantidade-${indice}`}>Quantidade</label>
+                      <input
+                        id={`rvp-quantidade-${indice}`}
+                        type="number"
+                        min="1"
+                        className="rvp-input"
+                        value={item.quantidade}
+                        onChange={(e) => alterarItem(indice, { quantidade: e.target.value })}
+                        placeholder="Qtd."
+                        disabled={somenteVisualizacao}
+                      />
+                    </div>
+
+                    {!somenteVisualizacao && itens.length > 1 && (
+                      <button
+                        type="button"
+                        className="rvp-botao-icone"
+                        onClick={() => setItens((lista) => lista.filter((_, i) => i !== indice))}
+                        aria-label={`Remover insumo ${indice + 1}`}
+                        title="Remover"
+                      >
+                        <X aria-hidden="true" />
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {!somenteVisualizacao && itens.length < MAX_ITENS && (
+                <button
+                  type="button"
+                  className="rvp-link-botao rvp-adicionar"
+                  onClick={() => setItens((lista) => [...lista, { ins_id: "", quantidade: "" }])}
+                >
+                  <Plus aria-hidden="true" /> Adicionar insumo
+                </button>
+              )}
+            </div>
+
+            <div className="rvp-grupo">
+              <h3 className="rvp-grupo-titulo">Retirada</h3>
+              <label className="rvp-check">
+                <input
+                  type="checkbox"
+                  checked={usoContinuo}
+                  onChange={(e) => setUsoContinuo(e.target.checked)}
+                  disabled={somenteVisualizacao}
+                />
+                <span>
+                  Uso contínuo
+                  <small>O paciente retira de novo a cada período, até a prescrição vencer, sem enviar outra.</small>
+                </span>
+              </label>
+
+              {usoContinuo && (
+                <div className="rvp-campo rvp-frequencia">
+                  <label className="rvp-rotulo" htmlFor="rvp-frequencia">Frequência</label>
                   <select
-                    id="rvp-insumo"
+                    id="rvp-frequencia"
                     className="rvp-input"
-                    value={insumoMovId}
-                    onChange={(e) => setInsumoMovId(e.target.value)}
+                    value={frequencia}
+                    onChange={(e) => setFrequencia(e.target.value)}
                     disabled={somenteVisualizacao}
                   >
-                    <option value="">Selecione o insumo</option>
-                    {listaInsumos.map((insumo) => (
-                      <option key={insumo.ins_id} value={insumo.ins_id}>
-                        {insumo.ins_nome}
-                        {insumo.ins_marca ? ` - ${insumo.ins_marca}` : ""}
-                      </option>
+                    {FREQUENCIAS.map((dias) => (
+                      <option key={dias} value={dias}>A cada {dias} dias</option>
                     ))}
                   </select>
+                  {dataVencimento && (
+                    <p className="rvp-dica">
+                      {retiradas > 0
+                        ? `Cabem ${retiradas} ${retiradas === 1 ? "retirada" : "retiradas"} até o vencimento. A 1ª a unidade agenda; as seguintes são agendadas sozinhas 7 dias antes.`
+                        : "A prescrição já está vencida."}
+                    </p>
+                  )}
                 </div>
-
-                <div className="rvp-campo">
-                  <label className="rvp-rotulo" htmlFor="rvp-quantidade">Quantidade</label>
-                  <input
-                    id="rvp-quantidade"
-                    type="number"
-                    min="1"
-                    className="rvp-input"
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(e.target.value)}
-                    placeholder="Qtd."
-                    disabled={somenteVisualizacao}
-                  />
-                </div>
-              </div>
+              )}
             </div>
           </section>
         </div>

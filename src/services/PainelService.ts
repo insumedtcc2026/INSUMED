@@ -1,3 +1,4 @@
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import axios from "axios";
 import { API_URL } from "../config";
 
@@ -115,7 +116,7 @@ export async function buscarDatasSugeridas(pos_id: number): Promise<DatasSugerid
 // FICHA DO PACIENTE (visão do admin)
 // ---------------------------------------------------------
 
-export interface ItemHistoricoPaciente {
+export interface ItemHistoricoPaciente extends ComItensPrescricao {
   sol_id: number;
   sol_status: string;
   sol_protocolo: string | null;

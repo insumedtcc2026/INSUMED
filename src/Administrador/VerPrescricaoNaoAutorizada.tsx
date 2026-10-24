@@ -10,13 +10,14 @@ import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 
 import "../css/universais/RevisaoPrescricao.css";
-import VisualizadorPrescricao, { SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import VisualizadorPrescricao, { ListaItensPrescricao, SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import { exibirCPF } from "../utils/validacoes";
 import { API_URL } from "../config";
 import { useValidarToken } from "../hook/Validartoken";
 
 
-interface Solicitacao {
+interface Solicitacao extends ComItensPrescricao {
     sol_id: number;
     pac_id: number;
     pos_id: number;
@@ -257,15 +258,11 @@ const toggleSidebar = () => {
                                                 {solicitacao.pos_nome || "Não informada"}
                                             </dd>
                                         </div>
-                                        <div className="rvp-dado">
-                                            <dt>Insumo</dt>
-                                            <dd className={solicitacao.ins_nome ? undefined : "rvp-vazio"}>
-                                                {solicitacao.ins_nome || "Não informado"}
+                                        <div className="rvp-dado rvp-dado--inteiro">
+                                            <dt>Insumos (por retirada)</dt>
+                                            <dd>
+                                                <ListaItensPrescricao {...solicitacao} />
                                             </dd>
-                                        </div>
-                                        <div className="rvp-dado">
-                                            <dt>Quantidade</dt>
-                                            <dd>{solicitacao.sol_insumo_quant ?? 0}</dd>
                                         </div>
                                         <div className="rvp-dado rvp-dado--inteiro">
                                             <dt>Observações do paciente</dt>

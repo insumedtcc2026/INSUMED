@@ -34,6 +34,7 @@ export default function AgendamentoCard({
     sol_id,
     sol_protocolo,
     sol_data_de_coleta,
+    sol_ciclo,
     paciente,
     insumos,
     status,
@@ -101,6 +102,7 @@ export default function AgendamentoCard({
           <p className="text-sm text-gray-500">Tel: {exibirTelefone(paciente.pac_telefone)}</p>
           <p className="text-sm text-gray-500">
             Protocolo: {sol_protocolo ?? "—"} · Data: {dataFormatada}
+            {sol_ciclo && sol_ciclo > 1 ? ` · ${sol_ciclo}ª retirada (uso contínuo)` : ""}
             {sol_data_anterior && status === "agendado" ? ` (remarcada; era ${formatarDataBR(sol_data_anterior)})` : ""}
           </p>
         </div>

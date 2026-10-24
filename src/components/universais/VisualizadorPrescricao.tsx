@@ -1,4 +1,5 @@
-import { ExternalLink, FileText } from "lucide-react";
+import { ExternalLink, FileText, Repeat } from "lucide-react";
+import type { ItemPrescricao } from "../../utils/itensPrescricao";
 
 // Peças das telas que abrem uma prescrição para revisão (admin) e para
 // autorização (autorizador). O visual fica em RevisaoPrescricao.css.
@@ -55,5 +56,49 @@ export default function VisualizadorPrescricao({ url, pdf = false, carregando = 
         )}
       </div>
     </section>
+  );
+}
+
+interface ListaItensProps {
+  itens?: ItemPrescricao[];
+  // prescrições antigas: um insumo só
+  ins_nome?: string | null;
+  ins_marca?: string | null;
+  sol_insumo_quant?: number | null;
+  sol_periodicidade_dias?: number | null;
+}
+
+// Insumos da prescrição (quantidade por retirada) e a frequência, se for de uso contínuo
+export function ListaItensPrescricao({ itens, ins_nome, ins_marca, sol_insumo_quant, sol_periodicidade_dias }: ListaItensProps) {
+  const lista: Omit<ItemPrescricao, "ins_id">[] = itens?.length
+    ? itens
+    : ins_nome
+      ? [{ ins_nome, ins_marca, quantidade: Number(sol_insumo_quant ?? 0) }]
+      : [];
+
+  return (
+    <>
+      {lista.length ? (
+        <ul className="rvp-lista-itens">
+          {lista.map((i, indice) => (
+            <li key={indice}>
+              <strong>{i.quantidade}x</strong>
+              <span>
+                {i.ins_nome}
+                {i.ins_marca ? <small> · {i.ins_marca}</small> : null}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <span className="rvp-vazio">Não informado</span>
+      )}
+      {sol_periodicidade_dias ? (
+        <p className="rvp-recorrencia">
+          <Repeat aria-hidden="true" />
+          Uso contínuo: uma retirada a cada {sol_periodicidade_dias} dias
+        </p>
+      ) : null}
+    </>
   );
 }

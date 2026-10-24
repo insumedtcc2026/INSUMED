@@ -6,6 +6,7 @@ import { BoasVindasEquipe, CartoesPainel, type CartaoPainel } from "../component
 import { formatarData } from "../utils/status";
 import { formatarDataHora } from "../utils/acoesHistorico";
 import { nomeCurto } from "../utils/nome";
+import { resumoInsumos } from "../utils/itensPrescricao";
 
 type Numero = keyof Pick<Painel, "aguardando" | "comNovaVersao" | "autorizadas30" | "naoAutorizadas30">;
 
@@ -93,7 +94,7 @@ export default function PainelAutorizador({ nome }: { nome?: string }) {
                     </span>
                     <span className="block text-xs text-gray-500">
                       Enviada em {formatarData(p.sol_data_solicitacao)}
-                      {p.ins_nome ? ` · ${p.sol_insumo_quant ?? "—"}x ${p.ins_nome}` : ""}
+                      {resumoInsumos(p) ? ` · ${resumoInsumos(p)}` : ""}
                     </span>
                     {p.versoes_anteriores > 0 && (
                       <span className="mt-0.5 block text-xs font-medium text-blue-700">Nova versão do paciente</span>

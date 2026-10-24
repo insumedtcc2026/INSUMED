@@ -24,6 +24,7 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
     sol_id,
     sol_protocolo,
     sol_data_de_coleta,
+    sol_ciclo,
     sol_hora_coleta,
     posto,
     insumos,
@@ -51,6 +52,11 @@ export default function AgendamentoCardPaciente({ agendamento }: AgendamentoCard
     <div className="agendamento-card-paciente rounded-3xl bg-white px-5 py-5 shadow-sm sm:px-6">
       <p className="break-words text-gray-700">
         <span className="font-bold">Protocolo:</span> {sol_protocolo ?? "—"}
+        {sol_ciclo && sol_ciclo > 1 ? (
+          <span className="ml-2 inline-block rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-800">
+            {sol_ciclo}ª retirada · uso contínuo
+          </span>
+        ) : null}
       </p>
       <p className="break-words text-gray-700">
         <span className="font-bold">Coleta:</span> {resumoInsumos}

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import type { MinhaPrescricao } from "../../../services/PrescricaoService";
 import type { EventoHistorico } from "../../../services/HistoricoService";
 import { formatarData, textoMotivoReenvio } from "../../../utils/status";
+import { resumoInsumos } from "../../../utils/itensPrescricao";
 
 type Estado = "feito" | "atual" | "pendente" | "atencao" | "erro";
 
@@ -58,7 +59,7 @@ function montarEtapas(p: MinhaPrescricao, onReenviar?: () => void): { etapas: Et
           descricao: [
             versoes > 0 ? `Você reenviou a prescrição corrigida (versão ${versoes + 1}).` : "",
             analisada
-              ? p.ins_nome ? `${p.sol_insumo_quant ?? ""}x ${p.ins_nome}`.trim() : ""
+              ? resumoInsumos(p)
               : "A equipe da unidade está conferindo sua prescrição.",
           ].filter(Boolean).join(" ") || undefined,
           data: quando(ultimo(ev, "revisada")) ?? (analisada ? null : quando(ultimo(ev, "reenviada"))),
@@ -202,6 +203,22 @@ export default function RastreioPrescricao({ prescricao, onReenviar }: { prescri
           </li>
         ))}
       </ol>
+
+      {prescricao.sol_periodicidade_dias ? (
+        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950" role="note">
+          <p className="font-semibold">Uso contínuo: uma retirada a cada {prescricao.sol_periodicidade_dias} dias</p>
+          <p className="mt-1">
+            {prescricao.retiradas_concluidas
+              ? `${prescricao.retiradas_concluidas} ${prescricao.retiradas_concluidas === 1 ? "retirada feita" : "retiradas feitas"}. `
+              : ""}
+            {prescricao.proxima_retirada
+              ? `Próxima retirada prevista para ${formatarData(prescricao.proxima_retirada)}. A unidade agenda e você recebe o aviso.`
+              : prescricao.sol_data_vencimento
+                ? `Vale até ${formatarData(prescricao.sol_data_vencimento)}, sem precisar enviar outra prescrição.`
+                : ""}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

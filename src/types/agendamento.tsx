@@ -53,6 +53,8 @@ export interface Agendamento {
   sol_data_cancelamento?: string | null;
   // prescrição autorizada que originou o agendamento (null nos antigos)
   sol_origem_id?: number | null;
+  // uso contínuo: 1 = primeira retirada da prescrição, 2 = segunda...
+  sol_ciclo?: number;
   // recado do admin para o paciente (ex.: "traga documento com foto")
   sol_recado?: string | null;
   // data anterior quando o admin remarcou o agendamento

@@ -10,6 +10,7 @@ import { useValidarToken } from "../hook/Validartoken";
 import { buscarFichaPaciente, type FichaPaciente as Ficha } from "../services/PainelService";
 import { exibirCPF, exibirTelefone, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
+import { resumoInsumos } from "../utils/itensPrescricao";
 
 // Prescrições em andamento e agendamentos ainda não realizados podem mudar de unidade
 
@@ -147,9 +148,10 @@ export default function FichaPaciente() {
                           <p className="text-sm text-gray-600">
                             Enviada em {formatarData(s.sol_data_solicitacao)} · {s.pos_nome ?? "Posto não informado"}
                           </p>
-                          {s.ins_nome && (
+                          {resumoInsumos(s) && (
                             <p className="text-sm text-gray-600">
-                              {s.sol_insumo_quant ?? "—"}x {s.ins_nome}
+                              {resumoInsumos(s)}
+                              {s.sol_periodicidade_dias ? ` · uso contínuo, a cada ${s.sol_periodicidade_dias} dias` : ""}
                               {s.sol_data_vencimento ? ` · vence em ${formatarData(s.sol_data_vencimento)}` : ""}
                             </p>
                           )}

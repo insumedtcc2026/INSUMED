@@ -13,7 +13,8 @@ import "../css/universais/RevisaoPrescricao.css";
 import Swal from "sweetalert2";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import VersoesPrescricao from "../components/universais/VersoesPrescricao";
-import VisualizadorPrescricao, { SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import VisualizadorPrescricao, { ListaItensPrescricao, SeloStatus } from "../components/universais/VisualizadorPrescricao";
+import type { ComItensPrescricao } from "../utils/itensPrescricao";
 import ModalHistorico from "../components/universais/ModalHistorico";
 import { MOTIVO_MAX, mensagemErroApi, validarMotivo } from "../utils/validacoes";
 import { exibirCPF } from "../utils/validacoes";
@@ -22,7 +23,7 @@ import { API_URL } from "../config";
 
 
 
-interface SolicitacaoAprovada {
+interface SolicitacaoAprovada extends ComItensPrescricao {
   sol_id: number;
   pac_id: number;
   pos_id: number;
@@ -350,17 +351,11 @@ const alterarStatus = async (
                         {solicitacao?.pos_nome || "Não informada"}
                       </dd>
                     </div>
-                    <div className="rvp-dado">
-                      <dt>Insumo</dt>
-                      <dd className={solicitacao?.ins_nome ? undefined : "rvp-vazio"}>
-                        {solicitacao?.ins_nome
-                          ? `${solicitacao.ins_nome}${solicitacao.ins_marca ? ` - ${solicitacao.ins_marca}` : ""}`
-                          : "Não informado"}
+                    <div className="rvp-dado rvp-dado--inteiro">
+                      <dt>Insumos (por retirada)</dt>
+                      <dd>
+                        <ListaItensPrescricao {...(solicitacao ?? {})} />
                       </dd>
-                    </div>
-                    <div className="rvp-dado">
-                      <dt>Quantidade</dt>
-                      <dd>{solicitacao?.sol_insumo_quant ?? "-"}</dd>
                     </div>
                     <div className="rvp-dado rvp-dado--inteiro">
                       <dt>Observações do paciente</dt>
