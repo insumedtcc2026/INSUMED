@@ -8,14 +8,11 @@ import Footer from "../components/universais/Footer";
 import BotaoVoltar from "../components/universais/BotaoVoltar";
 import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCard";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
+import { confirmarEntrega } from "../components/universais/acoesAdmin";
 import { concluirAgendamento, listarAgendamentos } from "../services/AgendamentoService";
 import type { Agendamento } from "../types/agendamento";
 import { useValidarToken } from "../hook/Validartoken";
 import { exibirCPF, hojeISO, mensagemErroApi, somenteDigitos } from "../utils/validacoes";
-
-// textos vindos do banco entram no HTML do alerta: escapar sempre
-const esc = (t: unknown) =>
-  String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 
 const normalizar = (t: string) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -90,23 +87,16 @@ export default function ColetasHoje() {
     const ag = agendados.find((a) => a.sol_id === sol_id);
     const itens = ag?.insumos.map((i) => `${i.quantidade}x ${i.ins_nome}`).join(", ") || "—";
 
-    const ok = await Swal.fire({
-      icon: "question",
-      title: "Entregar e concluir?",
-      html: `<p><strong>${esc(ag?.sol_protocolo ?? sol_id)}</strong> · ${esc(ag?.paciente.pac_nome)}</p>
-             <p style="margin-top:6px">CPF ${esc(exibirCPF(ag?.paciente.pac_cpf))}</p>
-             <p style="margin-top:6px">${esc(itens)}</p>`,
-      showCancelButton: true,
-      confirmButtonText: "Concluir coleta",
-      cancelButtonText: "Voltar",
-      confirmButtonColor: "#16a34a",
-      reverseButtons: true,
-      focusConfirm: true,
+    const ok = await confirmarEntrega({
+      pac_id: ag?.paciente.pac_id,
+      protocolo: String(ag?.sol_protocolo ?? sol_id),
+      paciente: ag?.paciente.pac_nome ?? "",
+      linhas: [`CPF ${exibirCPF(ag?.paciente.pac_cpf)}`, itens],
     });
-    if (!ok.isConfirmed) return voltarAoCampo();
+    if (!ok) return voltarAoCampo();
 
     try {
-      await concluirAgendamento(sol_id);
+      await concluirAgendamento(sol_id, ok.retirado_por);
       await Swal.fire({
         icon: "success",
         title: "Coleta concluída",

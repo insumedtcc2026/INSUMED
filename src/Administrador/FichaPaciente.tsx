@@ -12,6 +12,7 @@ import { exibirCPF, exibirTelefone, mensagemErroApi } from "../utils/validacoes"
 import { formatarData } from "../utils/status";
 import { resumoInsumos } from "../utils/itensPrescricao";
 import SeloPrioridade from "../components/universais/SeloPrioridade";
+import PessoasAutorizadas from "../components/universais/PessoasAutorizadas";
 import { conferirPrioridade } from "../services/AgendaService";
 import Swal from "sweetalert2";
 
@@ -188,6 +189,8 @@ export default function FichaPaciente() {
                 <Campo rotulo="Raça/Cor" valor={p.pac_raca} />
               </dl>
             </section>
+
+            <PessoasAutorizadas pac_id={p.pac_id} />
 
             {/* Prescrições */}
             <section className="mt-6" aria-labelledby="prescricoes-titulo">

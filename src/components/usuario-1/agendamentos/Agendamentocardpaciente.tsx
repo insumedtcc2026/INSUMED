@@ -42,6 +42,7 @@ export default function AgendamentoCardPaciente({ agendamento, onAtualizar }: Ag
     sol_data_anterior,
     sol_turno,
     pedido_outra_data: pedido,
+    sol_retirado_por_nome,
   } = agendamento;
   const usuario = useDadosUser();
   const [verComprovante, setVerComprovante] = useState(false);
@@ -141,6 +142,9 @@ export default function AgendamentoCardPaciente({ agendamento, onAtualizar }: Ag
         <span className="font-bold">Local:</span> {posto.pos_nome}
       </p>
       <StatusBadge status={status} variant="paciente" />
+      {status === "concluido" && sol_retirado_por_nome && (
+        <p className="mt-2 text-sm text-gray-600">Retirado por {sol_retirado_por_nome}</p>
+      )}
 
       {sol_data_anterior && status === "agendado" && (
         <p className="mt-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">

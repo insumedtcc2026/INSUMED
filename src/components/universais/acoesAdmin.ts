@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import { refazerPedido, remarcarAgendamento, salvarRecado } from "../../services/HistoricoService";
 import { hojeISO, mensagemErroApi, MOTIVO_MAX } from "../../utils/validacoes";
 import { dataComTurno } from "../../utils/agenda";
-import { responderPedidoOutraData } from "../../services/AgendaService";
+import { listarAutorizados, responderPedidoOutraData } from "../../services/AgendaService";
 
 export const RECADO_MAX = 300;
 
@@ -182,4 +182,56 @@ export async function responderPedidoData(
         },
       });
   return resultado.isConfirmed;
+}
+
+const escHtml = (t: unknown) =>
+  String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
+
+/**
+ * Confirmação da entrega no balcão. Se o paciente tem pessoas autorizadas
+ * na ficha, pergunta quem está retirando. Devolve null se o admin voltou;
+ * senão { retirado_por } (null = o próprio paciente).
+ */
+export async function confirmarEntrega(opcoes: {
+  pac_id?: number;
+  protocolo: string;
+  paciente: string;
+  linhas: string[]; // texto simples, escapado aqui
+  textoConfirmar?: string;
+}): Promise<{ retirado_por: number | null } | null> {
+  const autorizados = opcoes.pac_id
+    ? await listarAutorizados(opcoes.pac_id).then((r) => r.autorizados).catch(() => [])
+    : [];
+  const html = `<p><strong>${escHtml(opcoes.protocolo)}</strong> · ${escHtml(opcoes.paciente)}</p>` +
+    opcoes.linhas.map((l) => `<p style="margin-top:6px">${escHtml(l)}</p>`).join("") +
+    (autorizados.length ? `<p style="margin-top:12px;font-weight:600">Quem está retirando?</p>` : "");
+
+  const resultado = await Swal.fire({
+    icon: "question",
+    title: "Entregar e concluir?",
+    html,
+    ...(autorizados.length
+      ? {
+          input: "select" as const,
+          inputOptions: Object.fromEntries([
+            ["", "O próprio paciente"],
+            ...autorizados.map((a) => [
+              String(a.pau_id),
+              `${a.pau_nome}${a.pau_parentesco ? ` (${a.pau_parentesco})` : ""} · CPF ${a.pau_cpf}`,
+            ]),
+          ]),
+          inputValue: "",
+          inputAttributes: { "aria-label": "Quem está retirando" },
+        }
+      : {}),
+    showCancelButton: true,
+    confirmButtonText: opcoes.textoConfirmar ?? "Concluir coleta",
+    cancelButtonText: "Voltar",
+    confirmButtonColor: "#16a34a",
+    reverseButtons: true,
+    focusConfirm: true,
+  });
+  if (!resultado.isConfirmed) return null;
+  const id = Number(resultado.value);
+  return { retirado_por: autorizados.length && id ? id : null };
 }

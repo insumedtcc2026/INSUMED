@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/home/Logo.webp';
 import { sairDoPerfil } from './sessao';
 
-import { FileText, LogOut, Upload, X } from 'lucide-react';
+import { FileText, LogOut, Package, Upload, X } from 'lucide-react';
 
 import { MdAddLocation } from 'react-icons/md';
 import { IoPersonSharp } from 'react-icons/io5';
@@ -40,6 +40,11 @@ export default function Sidebar({
       icon: FileText,
       label: 'Minhas prescrições',
       path: '/prescricoes',
+    },
+    {
+      icon: Package,
+      label: 'Meus insumos',
+      path: '/meus-insumos',
     },
     {
       icon: Upload,

@@ -136,10 +136,11 @@ export async function buscarProximoAgendamento(): Promise<Agendamento | null> {
 // CONCLUIR AGENDAMENTO
 // ---------------------------------------------------------
 
-export async function concluirAgendamento(sol_id: number): Promise<void> {
+// retirado_por: pessoa autorizada que está retirando (vazio = o próprio paciente)
+export async function concluirAgendamento(sol_id: number, retirado_por?: number | null): Promise<void> {
   await api.patch(
     `/agendamentos/${sol_id}/concluir`,
-    {},
+    retirado_por ? { retirado_por } : {},
     { headers: authHeader("ADMIN") }
   );
 }

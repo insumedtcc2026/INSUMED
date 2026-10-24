@@ -46,6 +46,7 @@ export default function AgendamentoCard({
     sol_turno,
     sol_presenca,
     pedido_outra_data: pedido,
+    sol_retirado_por_nome,
   } = agendamento;
   const [loadingAcao, setLoadingAcao] = useState<AcaoEmAndamento>(null);
   const [verHistorico, setVerHistorico] = useState(false);
@@ -114,6 +115,9 @@ export default function AgendamentoCard({
             {sol_ciclo && sol_ciclo > 1 ? ` · ${sol_ciclo}ª retirada (uso contínuo)` : ""}
             {sol_data_anterior && status === "agendado" ? ` (remarcada; era ${formatarDataBR(sol_data_anterior)})` : ""}
           </p>
+          {status === "concluido" && sol_retirado_por_nome && (
+            <p className="text-sm text-gray-500">Retirado por {sol_retirado_por_nome}</p>
+          )}
         </div>
       </div>
 

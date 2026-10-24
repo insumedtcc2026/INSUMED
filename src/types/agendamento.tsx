@@ -67,6 +67,8 @@ export interface Agendamento {
   pedido_outra_data?: PedidoOutraData | null;
   // resposta do paciente à pergunta "você vai?" (vazio = sem resposta)
   sol_presenca?: "vou" | "nao_vou" | null;
+  // pessoa autorizada que retirou no lugar do paciente (vazio = o próprio)
+  sol_retirado_por_nome?: string | null;
   paciente: Paciente;
   posto: Posto;
   insumos: InsumoNoAgendamento[];
@@ -126,6 +128,16 @@ export interface AtendimentoAgendamento {
   // "hoje" no fuso de Brasília, segundo o servidor
   hoje: string;
   insumos: { ins_id: number; ins_nome: string; quantidade: number; estoque: number }[];
+  // quem pode retirar no lugar do paciente (CPF parcial, para conferir o documento)
+  autorizados?: AutorizadoBalcao[];
+  sol_retirado_por_nome?: string | null;
+}
+
+export interface AutorizadoBalcao {
+  pau_id: number;
+  pau_nome: string;
+  pau_cpf_parcial: string | null;
+  pau_parentesco: string | null;
 }
 
 export interface ResultadoLeituraQR {

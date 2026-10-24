@@ -139,3 +139,72 @@ export async function conferirPrioridade(pac_id: number, conferida: boolean) {
   const { data } = await api.patch(`/pacientes/${pac_id}/prioridade`, { conferida }, { headers: cabecalho("ADMIN") });
   return data as { message: string; prioridade: Prioridade };
 }
+
+// ---------------------------------------------------------
+// PESSOAS AUTORIZADAS A RETIRAR
+// ---------------------------------------------------------
+
+export interface PessoaAutorizada {
+  pau_id: number;
+  pau_nome: string;
+  pau_cpf: string;
+  pau_parentesco: string | null;
+  pau_telefone: string | null;
+  pau_criado_em: string;
+}
+
+export interface DadosPessoaAutorizada {
+  nome: string;
+  cpf: string;
+  parentesco: string;
+  telefone: string;
+}
+
+export async function listarAutorizados(pac_id: number) {
+  const { data } = await api.get(`/pacientes/${pac_id}/autorizados`, { headers: cabecalho("ADMIN") });
+  return data as { autorizados: PessoaAutorizada[]; pode_editar: boolean; limite: number };
+}
+
+export async function salvarAutorizado(pac_id: number, dados: DadosPessoaAutorizada, pau_id?: number) {
+  const { data } = pau_id
+    ? await api.put(`/pacientes/${pac_id}/autorizados/${pau_id}`, dados, { headers: cabecalho("ADMIN") })
+    : await api.post(`/pacientes/${pac_id}/autorizados`, dados, { headers: cabecalho("ADMIN") });
+  return data as PessoaAutorizada;
+}
+
+export async function removerAutorizado(pac_id: number, pau_id: number) {
+  await api.delete(`/pacientes/${pac_id}/autorizados/${pau_id}`, { headers: cabecalho("ADMIN") });
+}
+
+export async function listarMeusAutorizados(): Promise<PessoaAutorizada[]> {
+  const { data } = await api.get("/meus-autorizados", { headers: cabecalho("PACIENTE") });
+  return data;
+}
+
+// ---------------------------------------------------------
+// MEUS INSUMOS (paciente)
+// ---------------------------------------------------------
+
+export interface MeuInsumo {
+  ins_id: number;
+  ins_nome: string;
+  ins_marca: string | null;
+  quantidade: number;
+  situacao: "disponivel" | "indisponivel";
+}
+
+export interface PrescricaoEmUso {
+  sol_id: number;
+  posto: { pos_id: number; pos_nome: string; pos_endereco: string | null; pos_whatsapp: string | null };
+  sol_data_vencimento: string | null;
+  sol_periodicidade_dias: number | null;
+  retiradas_concluidas: number;
+  proxima_retirada: string | null;
+  agendamento: { sol_id: number; data: string; turno: Turno | null } | null;
+  itens: MeuInsumo[];
+}
+
+export async function listarMeusInsumos(): Promise<PrescricaoEmUso[]> {
+  const { data } = await api.get("/meus-insumos", { headers: cabecalho("PACIENTE") });
+  return data;
+}

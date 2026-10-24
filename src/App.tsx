@@ -39,6 +39,8 @@ import Acessibilidade from './components/universais/Acessibilidade';
 import NavInferior from './components/universais/NavInferior';
 import Equipe from './Administrador/Equipe';
 import HorariosUnidade from './Administrador/HorariosUnidade';
+import PontoColetaDetalhe from './pages/PontoColetaDetalhe';
+import MeusInsumos from './pages/MeusInsumos';
 import TrocarSenha from './pages/TrocarSenha';
 
 function App() {
@@ -154,6 +156,8 @@ function App() {
         path="/pontos-coleta"
         element={<PontosColeta />}
       />
+      <Route path="/pontos-coleta/:id" element={<PontoColetaDetalhe />} />
+      <Route path="/meus-insumos" element={<MeusInsumos />} />
 
       <Route
         path="/perfil"

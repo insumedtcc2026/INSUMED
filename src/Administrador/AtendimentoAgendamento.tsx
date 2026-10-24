@@ -38,6 +38,8 @@ export default function AtendimentoAgendamento() {
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [verHistorico, setVerHistorico] = useState(false);
+  // quem está retirando: "" = o próprio paciente; senão o pau_id da pessoa autorizada
+  const [retirante, setRetirante] = useState("");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -65,6 +67,10 @@ export default function AtendimentoAgendamento() {
   async function concluir() {
     if (!ag) return;
     const itens = ag.insumos.map((i) => `${i.quantidade}x ${esc(i.ins_nome)}`).join("<br>");
+    const pessoa = ag.autorizados?.find((a) => String(a.pau_id) === retirante);
+    const quem = pessoa
+      ? `<p style="margin-top:10px">Retirado por <strong>${esc(pessoa.pau_nome)}</strong>${pessoa.pau_parentesco ? ` (${esc(pessoa.pau_parentesco)})` : ""}. Confira o documento com foto.</p>`
+      : "";
     const aviso = outroDia
       ? `<p style="margin-top:10px;color:#b45309"><strong>Atenção:</strong> esta coleta estava marcada para ${esc(formatarData(ag.sol_data_de_coleta))}.</p>`
       : "";
@@ -73,7 +79,7 @@ export default function AtendimentoAgendamento() {
       icon: "question",
       title: "Entregar e concluir?",
       html: `<p><strong>${esc(protocolo)}</strong> · ${esc(ag.paciente.pac_nome)}</p>
-             <p style="margin-top:6px">${itens}</p>${aviso}`,
+             <p style="margin-top:6px">${itens}</p>${quem}${aviso}`,
       showCancelButton: true,
       confirmButtonText: "Concluir coleta",
       cancelButtonText: "Voltar",
@@ -85,7 +91,7 @@ export default function AtendimentoAgendamento() {
 
     setEnviando(true);
     try {
-      await concluirAgendamento(ag.sol_id);
+      await concluirAgendamento(ag.sol_id, pessoa?.pau_id ?? null);
       await Swal.fire({ icon: "success", title: "Coleta concluída", text: "O estoque foi atualizado.", timer: 1600, showConfirmButton: false });
     } catch (e) {
       await Swal.fire({
@@ -219,6 +225,29 @@ export default function AtendimentoAgendamento() {
                   </p>
                 )}
 
+                {/* Quem está no balcão: o paciente ou alguém autorizado na ficha dele */}
+                {(ag.autorizados?.length ?? 0) > 0 && (
+                  <fieldset className="atendimento-retirante">
+                    <legend>Quem está retirando?</legend>
+                    <label>
+                      <input type="radio" name="retirante" value="" checked={retirante === ""} onChange={() => setRetirante("")} />
+                      <span>O próprio paciente</span>
+                    </label>
+                    {ag.autorizados!.map((a) => (
+                      <label key={a.pau_id}>
+                        <input type="radio" name="retirante" value={a.pau_id} checked={retirante === String(a.pau_id)}
+                          onChange={() => setRetirante(String(a.pau_id))} />
+                        <span>
+                          {a.pau_nome}
+                          {a.pau_parentesco ? ` (${a.pau_parentesco})` : ""}
+                          <small>CPF {a.pau_cpf_parcial ?? "—"}</small>
+                        </span>
+                      </label>
+                    ))}
+                    {retirante && <p className="atendimento-retirante-aviso">Confira o documento com foto antes de entregar.</p>}
+                  </fieldset>
+                )}
+
                 <div className="atendimento-acoes">
                   <button type="button" className="leitor-botao leitor-botao--sucesso" onClick={concluir}
                     disabled={enviando || ag.prescricao_vencida || semEstoque.length > 0}>
@@ -233,7 +262,8 @@ export default function AtendimentoAgendamento() {
 
             {ag.status !== "agendado" && (
               <p className="leitor-aviso">
-                {ag.status === "concluido" && "Esta coleta já foi concluída."}
+                {ag.status === "concluido" &&
+                  `Esta coleta já foi concluída${ag.sol_retirado_por_nome ? `, retirada por ${ag.sol_retirado_por_nome}` : ""}.`}
                 {ag.status === "cancelado" && `Este agendamento foi cancelado${ag.sol_motivo_cancelamento ? `: ${ag.sol_motivo_cancelamento}` : "."}`}
                 {ag.status === "nao_compareceu" && "Este agendamento foi registrado como \"não compareceu\". Crie um novo agendamento na página Agendamentos."}
               </p>

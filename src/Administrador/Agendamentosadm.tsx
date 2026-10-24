@@ -7,6 +7,7 @@ import Footer from "../components/universais/Footer";
 import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCard";
 import NovoAgendamentoModal from "../components/usuario-1/agendamentos/NovoagendamentoModal";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
+import { confirmarEntrega } from "../components/universais/acoesAdmin";
 import {
   listarAgendamentosPaginado,
   concluirAgendamento,
@@ -165,20 +166,18 @@ useEffect(() => {
   }
 
   async function handleConcluir(sol_id: number) {
-    const confirmacao = await Swal.fire({
-      icon: "question",
-      title: "Concluir coleta?",
-      text: `O protocolo ${protocoloDe(sol_id)} será marcado como concluído e os insumos serão descontados do estoque.`,
-      showCancelButton: true,
-      confirmButtonText: "Concluir",
-      cancelButtonText: "Voltar",
-      confirmButtonColor: "#32D74B",
-      reverseButtons: true,
+    const ag = agendamentos.find((a) => a.sol_id === sol_id);
+    const confirmacao = await confirmarEntrega({
+      pac_id: ag?.paciente.pac_id,
+      protocolo: protocoloDe(sol_id),
+      paciente: ag?.paciente.pac_nome ?? "",
+      linhas: ["Os insumos serão descontados do estoque."],
+      textoConfirmar: "Concluir",
     });
-    if (!confirmacao.isConfirmed) return;
+    if (!confirmacao) return;
 
     try {
-      await concluirAgendamento(sol_id);
+      await concluirAgendamento(sol_id, confirmacao.retirado_por);
       Swal.fire({
         icon: "success",
         title: "Coleta concluída!",

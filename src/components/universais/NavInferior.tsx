@@ -40,6 +40,7 @@ const MENUS: Record<Perfil, Menu> = {
       { label: 'Enviar', path: '/EnviarSolicitacao', icon: Upload },
     ],
     mais: [
+      { label: 'Meus insumos', path: '/meus-insumos', icon: Package },
       { label: 'Pontos de coleta', path: '/pontos-coleta', icon: MdAddLocation },
       { label: 'Meu perfil', path: '/perfil', icon: IoPersonSharp },
     ],
@@ -84,7 +85,7 @@ const MENUS: Record<Perfil, Menu> = {
 
 // Qual perfil a página pertence (as rotas do sistema não têm prefixo comum).
 const ROTAS: Record<Perfil, string[]> = {
-  PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil'],
+  PACIENTE: ['/home', '/agendamentos', '/prescricoes', '/enviarsolicitacao', '/pontos-coleta', '/perfil', '/meus-insumos'],
   ADMIN: [
     '/homeadmin', '/agendamentosadm', '/coletas-hoje', '/versolicitaçoes', '/historicodaprescricao',
     '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode', '/horarios-unidade',
