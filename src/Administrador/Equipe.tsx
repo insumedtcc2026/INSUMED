@@ -5,7 +5,7 @@ import { Copy, KeyRound, Link2, MessageCircle, UserPlus } from "lucide-react";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
-import BotaoVoltar from "../components/universais/BotaoVoltar";
+import { AbasUnidade } from "../components/universais/AdminUI";
 import { MensagemErro } from "../components/universais/ForcaSenha";
 import { useValidarToken } from "../hook/Validartoken";
 import { API_URL } from "../config";
@@ -233,11 +233,10 @@ export default function Equipe() {
       <Sidebaradm isOpen={sidebarOpen} onClose={() => setSidebarOpen((v) => !v)} />
       <HeaderAdm onMenuClick={() => setSidebarOpen((v) => !v)} />
 
-      <div className="barra-voltar barra-voltar--logado">
-        <BotaoVoltar para="/homeadmin" />
-      </div>
-
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="compensa-header mx-auto max-w-5xl px-4 pb-8 sm:px-6">
+        <div className="pt-6">
+          <AbasUnidade />
+        </div>
         <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">Equipe da rede</h1>

@@ -4,7 +4,11 @@ import Swal from "sweetalert2";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
-import AgendamentoCard from "../components/usuario-1/agendamentos/AgendamentoCard";
+import TabelaAgendamentos from "../components/usuario-1/agendamentos/TabelaAgendamentos";
+import { AbasAdmin, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, CabecalhoAdmin, EstadoLista, FiltrosAdmin, type AbaAdmin } from "../components/universais/AdminUI";
+import { atualizarContadoresAdmin } from "../hook/useContadoresAdmin";
+import { CalendarPlus, CalendarSync, ClipboardCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import NovoAgendamentoModal from "../components/usuario-1/agendamentos/NovoagendamentoModal";
 import { cancelarComMotivo } from "../components/usuario-1/agendamentos/cancelarComMotivo";
 import { confirmarEntrega } from "../components/universais/acoesAdmin";
@@ -14,13 +18,13 @@ import {
 } from "../services/AgendamentoService";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
 import type { Agendamento, ItemNovoAgendamento, StatusAgendamento } from "../types/agendamento";
-import BotaoVoltar from "../components/universais/BotaoVoltar";
 import { useValidarToken } from "../hook/Validartoken";
 import { mensagemErroApi } from "../utils/validacoes";
 import axios from "axios";
 import { API_URL } from "../config";
 
 type FiltroStatus = "todos" | StatusAgendamento;
+type Aba = FiltroStatus | "pedidos";
 
 const POR_PAGINA = 20;
 
@@ -33,6 +37,7 @@ const POR_PAGINA = 20;
 export default function Agendamentosadm() {
   const { verificando } = useValidarToken("ADMIN");
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const cpfUrl = searchParams.get("cpf");
   const solIdUrl = searchParams.get("sol_id");
@@ -42,6 +47,7 @@ export default function Agendamentosadm() {
   // aba "Pedidos de outra data" (link do sino: ?aba=pedidos)
   const [abaPedidos, setAbaPedidos] = useState(searchParams.get("aba") === "pedidos");
   const [totalPedidos, setTotalPedidos] = useState(0);
+  const [totalAgendados, setTotalAgendados] = useState<number | null>(null);
   // "Novo Agendamento" no menu lateral chega aqui com ?novo=1
   const [modalAberto, setModalAberto] = useState(searchParams.get("novo") === "1");
 
@@ -73,7 +79,7 @@ const [quantidadeInicial, setQuantidadeInicial] = useState(0);
     setCarregando(true);
     setErro(null);
     try {
-      const [dados, pedidos] = await Promise.all([
+      const [dados, pedidos, agendados] = await Promise.all([
         listarAgendamentosPaginado({
           status: abaPedidos ? "todos" : statusFiltro,
           busca,
@@ -82,7 +88,9 @@ const [quantidadeInicial, setQuantidadeInicial] = useState(0);
           ...(abaPedidos ? { pedido: "pendente" as const } : {}),
         }, pagina, POR_PAGINA),
         listarAgendamentosPaginado({ status: "todos", pedido: "pendente" }, 1, 1),
+        listarAgendamentosPaginado({ status: "agendado", busca, dataInicio, dataFim }, 1, 1),
       ]);
+      setTotalAgendados(agendados.total);
       setAgendamentos(dados.itens);
       setTotal(dados.total);
       setTotalPaginas(dados.totalPaginas);
@@ -193,6 +201,7 @@ useEffect(() => {
       });
     } finally {
       carregar();
+      atualizarContadoresAdmin();
     }
   }
 
@@ -200,6 +209,27 @@ useEffect(() => {
   async function handleCancelar(sol_id: number) {
     await cancelarComMotivo(sol_id, protocoloDe(sol_id));
     carregar();
+    atualizarContadoresAdmin();
+  }
+
+  const abaAtual: Aba = abaPedidos ? "pedidos" : statusFiltro;
+  const ABAS: AbaAdmin<Aba>[] = [
+    { id: "agendado", rotulo: "Agendados", numero: totalAgendados },
+    { id: "pedidos", rotulo: "Pedidos de outra data", Icone: CalendarSync, numero: totalPedidos, atencao: true },
+    { id: "concluido", rotulo: "Concluídos" },
+    { id: "cancelado", rotulo: "Cancelados" },
+    { id: "nao_compareceu", rotulo: "Não compareceu" },
+    { id: "todos", rotulo: "Todos" },
+  ];
+
+  function mudarAba(aba: Aba) {
+    if (aba === "pedidos") {
+      setAbaPedidos(true);
+    } else {
+      setAbaPedidos(false);
+      setStatusFiltro(aba);
+    }
+    setPagina(1);
   }
 
   if (verificando) {
@@ -215,177 +245,84 @@ useEffect(() => {
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
       <HeaderAdm onMenuClick={toggleSidebar} />
 
-      <div className="barra-voltar barra-voltar--logado">
-        <BotaoVoltar para="/homeadmin" />
-      </div>
-
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800">Agendamentos</h1>
-            <p className="text-sm text-gray-500">
-              Busque, filtre por status e veja todos os agendamentos de coleta.
-            </p>
-          </div>
-
-          {/* Botão no fluxo da página (antes era flutuante e cobria o rodapé) */}
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="botao-novo-agendamento"
-          >
-            <span className="text-lg leading-none" aria-hidden="true">+</span> Novo Agendamento
-          </button>
-        </header>
-
-        {/* Abas: todos os agendamentos | pedidos de outra data do paciente */}
-        <div className="mb-4 flex gap-2 overflow-x-auto" role="tablist" aria-label="Tipo de lista">
-          {[
-            { id: false, texto: "Agendamentos" },
-            { id: true, texto: "Pedidos de outra data" },
-          ].map((aba) => {
-            const ativa = abaPedidos === aba.id;
-            return (
-              <button
-                key={aba.texto}
-                type="button"
-                role="tab"
-                aria-selected={ativa}
-                onClick={() => { setAbaPedidos(aba.id); setPagina(1); }}
-                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition ${
-                  ativa ? "border-blue-700 bg-blue-700 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {aba.texto}
-                {aba.id && totalPedidos > 0 && (
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${ativa ? "bg-white text-blue-800" : "bg-amber-100 text-amber-900"}`}>
-                    {totalPedidos}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Busca */}
-        <div className="mb-4 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <span className="text-gray-400" aria-hidden="true">⌕</span>
-          <input
-            type="search"
-            value={busca}
-            onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
-            placeholder="Buscar por nome, CPF ou protocolo"
-            aria-label="Buscar por nome, CPF ou protocolo"
-            className="min-h-9 w-full text-base focus:outline-none focus:ring-0 sm:text-sm"
+      <main className="compensa-header mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="pt-6">
+          <CabecalhoAdmin
+            titulo="Agendamentos"
+            subtitulo="Todos os agendamentos de coleta da unidade, agrupados por dia."
+            acoes={
+              <>
+                <button type="button" className={BOTAO_SECUNDARIO} onClick={() => navigate("/coletas-hoje")}>
+                  <ClipboardCheck size={17} aria-hidden="true" /> Coletas de hoje
+                </button>
+                <button type="button" className={BOTAO_PRIMARIO} onClick={() => setModalAberto(true)}>
+                  <CalendarPlus size={17} aria-hidden="true" /> Novo agendamento
+                </button>
+              </>
+            }
           />
-        </div>
 
-        {/* Filtros */}
-        <div className="mb-2 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
-          {!abaPedidos && (
-          <select
-            value={statusFiltro}
-            onChange={(e) => { setStatusFiltro(e.target.value as FiltroStatus); setPagina(1); }}
-            aria-label="Filtrar por status"
-            className="min-h-11 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:text-sm"
-          >
-            <option value="todos">Todos os status</option>
-            <option value="agendado">Agendado</option>
-            <option value="concluido">Concluído</option>
-            <option value="cancelado">Cancelado</option>
-            <option value="nao_compareceu">Não compareceu</option>
-          </select>
+          <AbasAdmin abas={ABAS} ativa={abaAtual} onMudar={mudarAba} rotulo="Tipo de lista" />
+
+          <FiltrosAdmin
+            busca={busca}
+            onBusca={(v) => { setBusca(v); setPagina(1); }}
+            placeholder="Buscar por nome, CPF ou protocolo"
+            inicio={dataInicio}
+            fim={dataFim}
+            onInicio={(v) => { setDataInicio(v); setPagina(1); }}
+            onFim={(v) => { setDataFim(v); setPagina(1); }}
+            onLimpar={() => { setBusca(""); setDataInicio(""); setDataFim(""); setPagina(1); }}
+          />
+
+          {intervaloInvalido && (
+            <p className="mb-4 text-sm text-rose-600" role="alert">
+              A data inicial não pode ser maior que a data final.
+            </p>
           )}
 
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex">
-            <input
-              type="date"
-              value={dataInicio}
-              onChange={(e) => { setDataInicio(e.target.value); setPagina(1); }}
-              aria-label="Data inicial"
-              className="min-h-11 w-full min-w-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:w-auto sm:text-sm"
+          <section className="adm-cartao">
+            <EstadoLista
+              carregando={carregando}
+              erro={erro}
+              onTentarNovamente={carregar}
+              vazio={!intervaloInvalido && agendamentos.length === 0}
+              mensagemVazio={abaPedidos ? "Nenhum pedido de outra data esperando resposta." : "Nenhum agendamento encontrado com esses filtros."}
             />
-            <span className="text-sm text-gray-400">até</span>
-            <input
-              type="date"
-              value={dataFim}
-              min={dataInicio || undefined}
-              onChange={(e) => { setDataFim(e.target.value); setPagina(1); }}
-              aria-label="Data final"
-              className="min-h-11 w-full min-w-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base focus:outline-none focus:ring-0 sm:w-auto sm:text-sm"
-            />
-          </div>
+            {!carregando && !erro && !intervaloInvalido && agendamentos.length > 0 && (
+              <>
+                <TabelaAgendamentos
+                  agendamentos={agendamentos}
+                  onConcluir={handleConcluir}
+                  onCancelar={handleCancelar}
+                  onAtualizar={() => { carregar(); atualizarContadoresAdmin(); }}
+                />
+                <div className="flex flex-col items-center justify-between gap-2 border-t border-gray-200 px-4 py-2 sm:flex-row">
+                  <p className="text-sm text-gray-500" role="status">
+                    {total <= POR_PAGINA
+                      ? (total === 1 ? "1 agendamento" : `${total} agendamentos`)
+                      : `Mostrando ${(pagina - 1) * POR_PAGINA + 1}–${(pagina - 1) * POR_PAGINA + agendamentos.length} de ${total} agendamentos`}
+                  </p>
+                  <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
+                </div>
+              </>
+            )}
+          </section>
         </div>
-
-        {intervaloInvalido && (
-          <p className="mb-4 text-sm text-rose-600" role="alert">
-            A data inicial não pode ser maior que a data final.
-          </p>
-        )}
-
-        {!carregando && !erro && !intervaloInvalido && total > 0 && (
-          <p className="mb-3 text-sm text-gray-500" role="status">
-            {total === 1 ? "1 agendamento" : `${total} agendamentos`}
-          </p>
-        )}
-
-        <div className="mb-4" />
-
-        {/* Lista */}
-        {carregando && (
-          <p className="py-10 text-center text-gray-400" role="status">Carregando agendamentos…</p>
-        )}
-
-        {!carregando && erro && (
-          <div className="py-10 text-center" role="alert">
-            <p className="text-rose-500">{erro}</p>
-            <button
-              type="button"
-              onClick={carregar}
-              className="mt-3 min-h-11 rounded-full border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Tentar novamente
-            </button>
-          </div>
-        )}
-
-        {!carregando && !erro && !intervaloInvalido && agendamentos.length === 0 && (
-          <p className="py-10 text-center text-gray-400">
-            {abaPedidos
-              ? "Nenhum pedido de outra data esperando resposta."
-              : "Nenhum agendamento encontrado com esses filtros."}
-          </p>
-        )}
-
-        {!carregando && !erro && !intervaloInvalido && agendamentos.length > 0 && (
-          <div className="flex flex-col gap-4">
-            {agendamentos.map((agendamento) => (
-              <AgendamentoCard
-                key={agendamento.sol_id}
-                agendamento={agendamento}
-                showActions
-                onConcluir={handleConcluir}
-                onCancelar={handleCancelar}
-                onAtualizar={carregar}
-              />
-            ))}
-            <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
-          </div>
-        )}
       </main>
 
       {modalAberto && (
-
         <NovoAgendamentoModal
-        cpfInicial={cpfUrl || ""}
-         insumoInicial={insumoInicial}
-  quantidadeInicial={quantidadeInicial}
+          cpfInicial={cpfUrl || ""}
+          insumoInicial={insumoInicial}
+          quantidadeInicial={quantidadeInicial}
           itensIniciais={itensIniciais}
           solOrigemId={solIdUrl ? Number(solIdUrl) : undefined}
           onClose={() => setModalAberto(false)}
           onSuccess={() => {
             setModalAberto(false);
             carregar();
+            atualizarContadoresAdmin();
           }}
         />
       )}

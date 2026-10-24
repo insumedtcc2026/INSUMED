@@ -53,3 +53,12 @@ export async function listarEstoqueDoPosto(pos_id: number): Promise<InsumoEstoqu
   });
   return resposta.data.filter((i) => Number(i.pos_id) === Number(pos_id));
 }
+
+/** Estoque que o admin enxerga (a própria unidade; o universal, todas). */
+export async function listarEstoqueAdmin(): Promise<InsumoEstoque[]> {
+  const token = localStorage.getItem("token_admin");
+  const resposta = await axios.get<InsumoEstoque[]>(`${API_URL}/insumos/listar`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return resposta.data;
+}
