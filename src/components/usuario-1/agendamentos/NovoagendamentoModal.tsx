@@ -7,6 +7,7 @@ import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agenda
 import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 
 import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
+import { listarEstoqueDoPosto, type InsumoEstoque } from "../../../services/InsumosServices";
 import { API_URL } from "../../../config";
 
 
@@ -31,10 +32,11 @@ interface NovoAgendamentoModalProps {
 /**
  * Página 1: "Novo Agendamento" (cadastro). Renderizada como modal.
  *
- * Suporta MÚLTIPLOS insumos por agendamento. O produto NÃO é buscado num
- * catálogo existente — o admin digita o nome do produto direto (não há
- * seleção de um item já cadastrado). O backend decide, ao salvar, se
- * reaproveita um insumo já existente com esse nome ou cria um novo.
+ * Suporta MÚLTIPLOS insumos por agendamento. Cada insumo é escolhido no
+ * estoque da unidade selecionada, mostrando quanto está disponível (estoque
+ * menos o já reservado em outras coletas agendadas). Pedir mais do que o
+ * disponível é permitido depois de uma confirmação, porque o insumo pode
+ * chegar até a data da coleta.
  */
 export default function NovoAgendamentoModal({ onClose, onSuccess,   cpfInicial = "",  insumoInicial = "",
   quantidadeInicial = 0, solOrigemId }: NovoAgendamentoModalProps) {
@@ -53,18 +55,17 @@ useEffect(() => {
     setBuscaPaciente(cpfInicial);
   }
 
-  if (insumoInicial) {
-    setNomeProduto(insumoInicial);
-  }
 
   if (quantidadeInicial > 0) {
     setQuantidade(String(quantidadeInicial));
   }
 }, [cpfInicial, insumoInicial, quantidadeInicial]);
 
-  // --- produto sendo adicionado no momento (digitado, não buscado) ---
-  const [nomeProduto, setNomeProduto] = useState("");
+  // --- insumo sendo adicionado (escolhido no estoque da unidade) ---
+  const [insumoEscolhido, setInsumoEscolhido] = useState("");
   const [quantidade, setQuantidade] = useState("");
+  const [estoque, setEstoque] = useState<InsumoEstoque[]>([]);
+  const [carregandoEstoque, setCarregandoEstoque] = useState(false);
 
   // --- lista de itens já adicionados ao agendamento ---
   const [itens, setItens] = useState<ItemNovoAgendamento[]>([]);
@@ -92,6 +93,32 @@ useEffect(() => {
       ativo = false;
     };
   }, [postoSelecionado]);
+
+  // estoque da unidade escolhida; itens já adicionados são ligados ao insumo
+  // de mesmo nome desta unidade (ou ficam sem ins_id, e o aviso aparece)
+  useEffect(() => {
+    setEstoque([]);
+    if (!postoSelecionado) return;
+    let ativo = true;
+    setCarregandoEstoque(true);
+    listarEstoqueDoPosto(postoSelecionado.pos_id)
+      .then((lista) => {
+        if (!ativo) return;
+        setEstoque(lista);
+        const porNome = (nome: string) =>
+          lista.find((i) => i.ins_nome.trim().toLowerCase() === nome.trim().toLowerCase());
+        setItens((prev) => prev.map((item) => ({ ...item, ins_id: porNome(item.ins_nome)?.ins_id })));
+        // insumo da prescrição já vem escolhido
+        if (insumoInicial) setInsumoEscolhido(String(porNome(insumoInicial)?.ins_id ?? ""));
+      })
+      .catch(() => ativo && setErro("Não foi possível carregar o estoque desta unidade."))
+      .finally(() => ativo && setCarregandoEstoque(false));
+    return () => {
+      ativo = false;
+    };
+  }, [postoSelecionado, insumoInicial]);
+
+  const insumoPorId = (id?: number) => estoque.find((i) => i.ins_id === id);
 
   // --- envio ---
   const [enviando, setEnviando] = useState(false);
@@ -146,9 +173,9 @@ useEffect(() => {
 
   function adicionarItem() {
     setErro(null);
-    const nome = nomeProduto.trim();
-    if (!nome) {
-      setErro("Informe o nome do produto antes de adicionar.");
+    const insumo = insumoPorId(Number(insumoEscolhido));
+    if (!insumo) {
+      setErro("Escolha o insumo no estoque da unidade antes de adicionar.");
       return;
     }
     const qtd = Number(quantidade);
@@ -156,8 +183,15 @@ useEffect(() => {
       setErro("Informe uma quantidade inteira maior que zero.");
       return;
     }
-    setItens((prev) => [...prev, { ins_nome: nome, quantidade: qtd }]);
-    setNomeProduto("");
+    // o mesmo insumo duas vezes vira uma linha só
+    setItens((prev) => {
+      const existente = prev.find((i) => i.ins_id === insumo.ins_id);
+      if (existente) {
+        return prev.map((i) => (i.ins_id === insumo.ins_id ? { ...i, quantidade: i.quantidade + qtd } : i));
+      }
+      return [...prev, { ins_id: insumo.ins_id, ins_nome: insumo.ins_nome, quantidade: qtd }];
+    });
+    setInsumoEscolhido("");
     setQuantidade("");
   }
 
@@ -165,13 +199,17 @@ useEffect(() => {
     setItens((prev) => prev.filter((_, i) => i !== index));
   }
 
-  async function handleSalvar() {
+  async function handleSalvar(confirmarSemEstoque = false) {
     setErro(null);
     if (!paciente) return setErro("Selecione um paciente.");
     if (itens.length === 0) return setErro("Adicione ao menos um produto.");
     if (!dataColeta) return setErro("Informe a data da coleta.");
     if (dataColeta < hojeISO()) return setErro("A data da coleta não pode estar no passado.");
     if (!postoSelecionado) return setErro("Selecione o posto de coleta.");
+    const semEstoque = itens.find((i) => !i.ins_id);
+    if (semEstoque) {
+      return setErro(`"${semEstoque.ins_nome}" não está no estoque de ${postoSelecionado.pos_nome}. Remova o item ou cadastre o insumo nesta unidade.`);
+    }
     if (enviando) return;
 
     setEnviando(true);
@@ -182,6 +220,7 @@ useEffect(() => {
         posto: postoSelecionado,
         itens,
         ...(solOrigemId ? { sol_origem_id: solOrigemId } : {}),
+        ...(confirmarSemEstoque ? { confirmar_sem_estoque: true } : {}),
       });
 
       Swal.fire({
@@ -193,6 +232,27 @@ useEffect(() => {
 
       onSuccess?.();
     } catch (e) {
+      // estoque disponível menor que o pedido: pergunta antes de agendar
+      const dados = axios.isAxiosError(e) ? e.response?.data : undefined;
+      if (axios.isAxiosError(e) && e.response?.status === 409 && dados?.codigo === "ESTOQUE_INSUFICIENTE") {
+        setEnviando(false);
+        const lista = (dados.itens as { ins_nome: string; pedido: number; disponivel: number }[])
+          .map((i) => `${i.ins_nome}: pedido ${i.pedido}, disponível ${i.disponivel}`)
+          .join("\n");
+        const resposta = await Swal.fire({
+          icon: "warning",
+          title: "Estoque disponível insuficiente",
+          text: `${lista}\n\nO disponível já desconta o que está reservado para outras coletas. Agendar mesmo assim? Lembre de repor o estoque até a data.`,
+          showCancelButton: true,
+          confirmButtonText: "Agendar mesmo assim",
+          cancelButtonText: "Voltar",
+          confirmButtonColor: "#d97706",
+          reverseButtons: true,
+        });
+        if (resposta.isConfirmed) return handleSalvar(true);
+        return;
+      }
+
       const mensagem = mensagemErroApi(e, "Não foi possível salvar o agendamento. Tente novamente.");
       setErro(mensagem);
 
@@ -317,17 +377,25 @@ useEffect(() => {
             </div>
           )}
 
-          {/* Produto (digitado, não buscado) */}
+          {/* Insumo: escolhido no estoque da unidade selecionada */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-600">Insumo *</label>
-            <input
-              type="text"
-              value={nomeProduto}
-              readOnly
-              onChange={(e) => setNomeProduto(e.target.value)}
-              placeholder="Digite o nome do produto"
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-            />
+            <label htmlFor="insumo-agendamento" className="mb-1 block text-sm font-medium text-gray-600">Insumo *</label>
+            <select
+              id="insumo-agendamento"
+              value={insumoEscolhido}
+              disabled={!postoSelecionado || carregandoEstoque}
+              onChange={(e) => setInsumoEscolhido(e.target.value)}
+              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none disabled:bg-gray-50 sm:text-sm"
+            >
+              <option value="">
+                {!postoSelecionado ? "Escolha o posto primeiro" : carregandoEstoque ? "Carregando estoque…" : estoque.length ? "Selecione o insumo" : "Nenhum insumo nesta unidade"}
+              </option>
+              {estoque.map((i) => (
+                <option key={i.ins_id} value={i.ins_id}>
+                  {i.ins_nome}{i.ins_marca ? ` (${i.ins_marca})` : ""} · disponível {i.ins_disponivel}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Quantidade + adicionar */}
@@ -358,11 +426,19 @@ useEffect(() => {
           <ul className="mt-4 flex flex-col gap-2">
             {itens.map((item, index) => (
               <li
-                key={`${item.ins_nome}-${index}`}
+                key={`${item.ins_id ?? item.ins_nome}-${index}`}
                 className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700"
               >
                 <span>
                   {item.quantidade}x {item.ins_nome}
+                  {(() => {
+                    const noEstoque = insumoPorId(item.ins_id);
+                    if (!item.ins_id) return <span className="ml-2 text-rose-600">· não está no estoque desta unidade</span>;
+                    if (noEstoque && item.quantidade > noEstoque.ins_disponivel) {
+                      return <span className="ml-2 text-amber-700">· disponível {noEstoque.ins_disponivel}</span>;
+                    }
+                    return null;
+                  })()}
                 </span>
                 <button
                   type="button"
@@ -388,7 +464,7 @@ useEffect(() => {
           </button>
           <button
             type="button"
-            onClick={handleSalvar}
+            onClick={() => handleSalvar()}
             disabled={enviando}
             className="min-h-11 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >

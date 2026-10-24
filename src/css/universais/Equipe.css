@@ -1,0 +1,280 @@
+/* Página "Equipe da rede" (admin universal), aviso do convite nos
+   cadastros da equipe e troca de senha. Cores de tema.css. */
+
+.equipe-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--cor-primaria);
+  background: var(--cor-primaria);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.equipe-botao:hover,
+.equipe-botao:focus-visible {
+  background: var(--cor-primaria-hover);
+  border-color: var(--cor-primaria-hover);
+}
+
+.equipe-botao:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.equipe-botao--secundario {
+  background: var(--cor-superficie);
+  color: var(--cor-primaria);
+}
+
+.equipe-botao--secundario:hover,
+.equipe-botao--secundario:focus-visible {
+  background: var(--cor-primaria-clara);
+  color: var(--cor-primaria);
+}
+
+.equipe-botao--perigo {
+  background: var(--cor-superficie);
+  border-color: var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+.equipe-botao--perigo:hover,
+.equipe-botao--perigo:focus-visible {
+  background: var(--cor-erro);
+  border-color: var(--cor-erro);
+  color: #fff;
+}
+
+.equipe-botao--whats {
+  background: #128c4b;
+  border-color: #128c4b;
+}
+
+.equipe-botao--whats:hover,
+.equipe-botao--whats:focus-visible {
+  background: #0e6f3b;
+  border-color: #0e6f3b;
+}
+
+.equipe-painel {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.equipe-painel h2,
+.equipe-subtitulo {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.equipe-subtitulo {
+  margin: 28px 0 12px;
+}
+
+.equipe-ajuda {
+  font-size: 0.9rem;
+  color: var(--cor-texto-suave);
+}
+
+.equipe-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.equipe-campos label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.equipe-campos input,
+.equipe-campos select,
+.equipe-link {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: var(--cor-superficie);
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+}
+
+.equipe-campos input:focus,
+.equipe-campos select:focus,
+.equipe-link:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px var(--cor-foco);
+}
+
+.equipe-campos .input-erro {
+  border-color: var(--cor-erro);
+}
+
+.equipe-resultado {
+  background: var(--cor-primaria-clara);
+  border: 1px solid var(--cor-primaria-borda);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--cor-texto);
+}
+
+.equipe-link {
+  width: 100%;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+}
+
+.equipe-senha {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--cor-superficie);
+  border: 1px dashed var(--cor-primaria);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+}
+
+.equipe-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.equipe-filtros button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  color: var(--cor-texto-suave);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.equipe-filtros button.ativo {
+  background: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: #fff;
+}
+
+.equipe-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.equipe-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+}
+
+.equipe-item--inativo {
+  background: var(--cor-superficie-suave);
+}
+
+.equipe-item--inativo .equipe-item-nome {
+  color: var(--cor-texto-claro);
+}
+
+.equipe-item-dados {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.equipe-item-nome {
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.equipe-item-detalhe {
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.equipe-selo {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.equipe-selo--ok {
+  background: #dcfce7;
+  color: var(--cor-sucesso-escura);
+}
+
+.equipe-selo--alerta {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.equipe-selo--neutro {
+  background: var(--cor-superficie-suave);
+  color: var(--cor-texto-suave);
+}
+
+.equipe-vazio {
+  padding: 16px;
+  text-align: center;
+  color: var(--cor-texto-suave);
+  list-style: none;
+}
+
+/* aviso no lugar do formulário de cadastro sem convite válido */
+.aviso-convite {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--cor-primaria-clara);
+  border: 1px solid var(--cor-primaria-borda);
+  color: var(--cor-texto);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.aviso-convite--erro {
+  background: #fff5f5;
+  border-color: #f5b5b5;
+}

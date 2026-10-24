@@ -33,6 +33,8 @@ export interface InsumoAgendado {
 // existe um ins_id — o backend decide, ao salvar, se reaproveita um insumo
 // já existente com esse nome ou cria um novo.
 export interface ItemNovoAgendamento {
+  // insumo escolhido no estoque da unidade (o nome fica para exibir)
+  ins_id?: number;
   ins_nome: string;
   quantidade: number;
 }
@@ -68,6 +70,8 @@ export interface NovoAgendamentoPayload {
   posto?: Posto;
   itens: ItemNovoAgendamento[];
   sol_origem_id?: number;
+  // agendar mesmo com estoque disponível menor que o pedido
+  confirmar_sem_estoque?: boolean;
 }
 
 export interface ResultadoPaginado<T> {

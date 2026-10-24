@@ -11,6 +11,7 @@ import {
   ClipboardCheck,
   History,
   UserCog,
+  UsersRound,
   Files,
   LogOut,
   Package,
@@ -35,6 +36,14 @@ export default function Sidebar({
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const universal = (() => {
+    try {
+      return Boolean(JSON.parse(localStorage.getItem('usuario_admin') ?? '{}').tp_universal);
+    } catch {
+      return false;
+    }
+  })();
 
   const menuItems = [
     {
@@ -91,6 +100,10 @@ export default function Sidebar({
       label: 'Atividades da unidade',
       path: '/atividades',
     },
+    // só o admin universal gerencia a equipe da rede
+    ...(universal
+      ? [{ icon: UsersRound, label: 'Equipe', path: '/equipe' }]
+      : []),
     {
       icon: UserCog,
       label: 'Meu perfil',

@@ -42,26 +42,24 @@ export function useValidarToken(tipo: TipoUsuario) {
             },
           }
         );
-const tipoRecebido = (
-  response.data?.session?.tipo ??
-  response.data?.tipo ??
-  response.data?.usuario?.tipo
-)?.toString().toUpperCase();
+        // a resposta traz os dados da sessão: não vai para o console
+        const tipoRecebido = (
+          response.data?.session?.tipo ??
+          response.data?.tipo ??
+          response.data?.usuario?.tipo
+        )?.toString().toUpperCase();
 
-console.log("TIPO ESPERADO:", tipo);
-console.log("RESPOSTA DA VALIDAÇÃO:", response.data);
-console.log("TIPO RECEBIDO:", tipoRecebido);
-
-if (tipoRecebido !== tipo) {
-  throw new Error(
-    `Perfil incorreto. Esperado: ${tipo}; recebido: ${tipoRecebido ?? "não informado"}`
-  );
-}
+        if (tipoRecebido !== tipo) {
+          throw new Error(
+            `Perfil incorreto. Esperado: ${tipo}; recebido: ${tipoRecebido ?? "não informado"}`
+          );
+        }
         if (!cancelado) {
           setVerificando(false);
         }
       } catch (error) {
-        console.error("Erro ao validar o token:", error);
+        // só a mensagem: o objeto do erro do axios carrega o token no cabeçalho
+        console.error("Erro ao validar o token:", error instanceof Error ? error.message : error);
 
         if (!cancelado) {
           localStorage.removeItem(chavesToken[tipo]);

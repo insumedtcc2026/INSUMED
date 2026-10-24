@@ -145,3 +145,32 @@ input {
 .icone-olho1:hover {
   opacity: 1;
 }
+/* escolha do perfil quando o mesmo CPF tem conta de paciente e de funcionário */
+.login-escolher-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+
+.login-escolher-perfil p {
+  font-size: 0.9rem;
+  color: var(--cor-texto, #1f2937);
+  margin: 0 0 4px;
+}
+
+.login-escolher-perfil .btn-perfil {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--cor-primaria, #0042EC);
+  background: #fff;
+  color: var(--cor-primaria, #0042EC);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-escolher-perfil .btn-perfil:hover,
+.login-escolher-perfil .btn-perfil:focus-visible {
+  background: var(--cor-primaria, #0042EC);
+  color: #fff;
+}

@@ -733,3 +733,8 @@
   .ins-modal-fundo,
   .ins-modal { animation: none; }
 }
+
+/* disponível zerado (tudo reservado ou sem estoque) */
+.ins-disp-zerado {
+  color: var(--cor-erro, #dc2626);
+}

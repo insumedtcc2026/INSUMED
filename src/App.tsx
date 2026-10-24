@@ -37,6 +37,8 @@ import VerPrescricaoNaoAutorizada from
 import './index.css';
 import Acessibilidade from './components/universais/Acessibilidade';
 import NavInferior from './components/universais/NavInferior';
+import Equipe from './Administrador/Equipe';
+import TrocarSenha from './pages/TrocarSenha';
 
 function App() {
   return (
@@ -177,6 +179,9 @@ function App() {
       <Route path="/leitor-qrcode" element={<LeitorQRCode />} />
       <Route path="/leitor-qrcode/agendamento/:id" element={<AtendimentoAgendamento />} />
       <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
+      {/* equipe da rede (admin universal) e troca da própria senha */}
+      <Route path="/equipe" element={<Equipe />} />
+      <Route path="/trocar-senha" element={<TrocarSenha />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
 
