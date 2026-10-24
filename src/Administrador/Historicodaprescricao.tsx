@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Files, Repeat } from "lucide-react";
 
 import { buscarHistoricoPrescricoes } from "../services/PrescricaoService";
 import type { HistoricoPrescricao } from "../services/PrescricaoService";
@@ -7,23 +8,26 @@ import type { HistoricoPrescricao } from "../services/PrescricaoService";
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
-import BotaoVoltar from "../components/universais/BotaoVoltar";
-import PaginaLista, { FiltroPeriodo, SelectFiltro } from "../components/universais/PaginaLista";
-import CartaoPrescricao from "../components/universais/CartaoPrescricao";
+import { SeloPrescricao } from "../components/universais/CartaoPrescricao";
+import {
+  AbasAdmin, AvatarIniciais, BOTAO_SECUNDARIO, CabecalhoAdmin, EstadoLista, FiltrosAdmin, type AbaAdmin,
+} from "../components/universais/AdminUI";
 import { useValidarToken } from "../hook/Validartoken";
 import Pagination from "../components/usuario-1/agendamentos/pagination";
-import { mensagemErroApi } from "../utils/validacoes";
+import { exibirCPF, hojeISO, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
 import { resumoInsumos } from "../utils/itensPrescricao";
 
 const POR_PAGINA = 20;
 
-const OPCOES_STATUS: [string, string][] = [
-  ["TODOS", "Todos os status"],
-  ["Revisado", "Revisado"],
-  ["Reenvio", "Reenvio"],
-  ["Nao Autorizado", "Não autorizado"],
-];
+type Status = "TODOS" | "Revisado" | "Reenvio" | "Nao Autorizado";
+const STATUS: Status[] = ["TODOS", "Revisado", "Reenvio", "Nao Autorizado"];
+const ROTULO: Record<Status, string> = {
+  TODOS: "Todas",
+  Revisado: "Revisado",
+  Reenvio: "Reenvio",
+  "Nao Autorizado": "Não autorizado",
+};
 
 const MOTIVO_REENVIO: Record<string, string> = {
   FOTO_SEM_QUALIDADE: "Foto sem qualidade",
@@ -34,7 +38,8 @@ const MOTIVO_REENVIO: Record<string, string> = {
 
 /**
  * Histórico da prescrição (admin): prescrições já analisadas pela
- * unidade, no mesmo padrão visual da página de Agendamentos.
+ * unidade, numa tabela com abas por status (com a quantidade de cada um),
+ * insumos, validade e o motivo do reenvio ou da não autorização.
  */
 export default function Historico() {
   const navigate = useNavigate();
@@ -47,10 +52,11 @@ export default function Historico() {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [contagem, setContagem] = useState<Partial<Record<Status, number>>>({});
 
   const [busca, setBusca] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
-  const [statusFiltro, setStatusFiltro] = useState("TODOS");
+  const [statusFiltro, setStatusFiltro] = useState<Status>("TODOS");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
@@ -93,18 +99,36 @@ export default function Historico() {
     return () => clearTimeout(t);
   }, [verificando, carregar]);
 
+  // quantidade de cada status com a busca e o período atuais (só o total)
+  useEffect(() => {
+    if (verificando) return;
+    let ativo = true;
+    Promise.all(
+      STATUS.map((status) =>
+        buscarHistoricoPrescricoes({ busca: buscaAplicada, status, data_inicio: dataInicio, data_fim: dataFim, page: 1, porPagina: 1 })
+          .then((r) => [status, r.total] as const)
+          .catch(() => [status, undefined] as const),
+      ),
+    ).then((pares) => ativo && setContagem(Object.fromEntries(pares.filter(([, n]) => n != null)) as Record<Status, number>));
+    return () => {
+      ativo = false;
+    };
+  }, [verificando, buscaAplicada, dataInicio, dataFim]);
+
   // filtro novo volta para a primeira página
   const mudarFiltro = (aplicar: () => void) => {
     aplicar();
     setPagina(1);
   };
 
-  const filtradas = prescricoes;
-
   function abrir(p: HistoricoPrescricao) {
     if (p.sol_status === "Nao Autorizado") navigate(`/administrador/prescricao/nao-autorizada/${p.sol_id}`);
     else navigate(`/administrador/prescricao/autorizarprescricao/${p.sol_id}`);
   }
+
+  const ABAS: AbaAdmin<Status>[] = STATUS.map((s) => ({ id: s, rotulo: ROTULO[s], numero: contagem[s] ?? null }));
+  const hoje = hojeISO();
+  const inicioLista = (pagina - 1) * POR_PAGINA + 1;
 
   if (verificando) {
     return (
@@ -119,64 +143,131 @@ export default function Historico() {
       <Sidebaradm isOpen={sidebarOpen} onClose={() => setSidebarOpen((v) => !v)} />
       <HeaderAdm onMenuClick={() => setSidebarOpen((v) => !v)} />
 
-      <div className="barra-voltar barra-voltar--logado">
-        <BotaoVoltar para="/homeadmin" />
-      </div>
-
-      <PaginaLista
-        titulo="Histórico da prescrição"
-        subtitulo="Prescrições já analisadas pela unidade: revisadas, com reenvio pedido ou não autorizadas."
-        busca={busca}
-        onBusca={setBusca}
-        placeholderBusca="Buscar por nome, CPF ou código"
-        filtros={
-          <>
-            <SelectFiltro valor={statusFiltro} onMudar={(v) => mudarFiltro(() => setStatusFiltro(v))} rotulo="Filtrar por status" opcoes={OPCOES_STATUS} />
-            <FiltroPeriodo
-              inicio={dataInicio}
-              fim={dataFim}
-              onInicio={(v) => mudarFiltro(() => setDataInicio(v))}
-              onFim={(v) => mudarFiltro(() => setDataFim(v))}
-            />
-          </>
-        }
-        carregando={carregando}
-        erro={erro}
-        onTentarNovamente={carregar}
-        vazio={filtradas.length === 0}
-        mensagemVazio="Nenhuma prescrição encontrada com esses filtros."
-        contagem={total === 1 ? "1 prescrição" : `${total} prescrições`}
-      >
-        {filtradas.map((p) => (
-          <CartaoPrescricao
-            key={p.sol_id}
-            pac_nome={p.pac_nome}
-            pac_cpf={p.pac_cpf}
-            codigo={p.sol_id}
-            tituloInfo={resumoInsumos(p) ? "Insumos e datas" : "Datas"}
-            linhasInfo={[
-              resumoInsumos(p),
-              p.sol_periodicidade_dias ? `Uso contínuo: a cada ${p.sol_periodicidade_dias} dias` : null,
-              `Enviada em ${formatarData(p.sol_data_solicitacao)}`,
-              p.sol_data_vencimento && `Vence em ${formatarData(p.sol_data_vencimento)}`,
-            ]}
-            status={p.sol_status}
-            acaoTexto="Ver mais"
-            onAcao={() => abrir(p)}
-            rodape={
-              (p.sol_status === "Reenvio" && p.sol_motivo_reenvio) || (p.sol_status === "Nao Autorizado" && p.sol_motivo_nao_autorizado) ? (
-                <p className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                  <span className="font-medium">Motivo:</span>{" "}
-                  {p.sol_status === "Reenvio"
-                    ? MOTIVO_REENVIO[p.sol_motivo_reenvio ?? ""] ?? p.sol_motivo_reenvio
-                    : p.sol_motivo_nao_autorizado}
-                </p>
-              ) : undefined
+      <main className="compensa-header mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="pt-6">
+          <CabecalhoAdmin
+            titulo="Histórico da prescrição"
+            subtitulo="Prescrições já analisadas pela unidade: revisadas, com reenvio pedido ou não autorizadas."
+            acoes={
+              <button type="button" className={BOTAO_SECUNDARIO} onClick={() => navigate("/VerSolicitaçoes")}>
+                <Files size={17} aria-hidden="true" /> Voltar às solicitações
+              </button>
             }
           />
-        ))}
-        <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
-      </PaginaLista>
+
+          <AbasAdmin abas={ABAS} ativa={statusFiltro} onMudar={(s) => mudarFiltro(() => setStatusFiltro(s))} rotulo="Status" />
+
+          <FiltrosAdmin
+            busca={busca}
+            onBusca={setBusca}
+            placeholder="Buscar por nome, CPF ou código"
+            rotuloPeriodo="Enviada de"
+            inicio={dataInicio}
+            fim={dataFim}
+            onInicio={(v) => mudarFiltro(() => setDataInicio(v))}
+            onFim={(v) => mudarFiltro(() => setDataFim(v))}
+            onLimpar={() => mudarFiltro(() => {
+              setBusca("");
+              setDataInicio("");
+              setDataFim("");
+            })}
+          />
+
+          <section className="adm-cartao">
+            <EstadoLista
+              carregando={carregando}
+              erro={erro}
+              onTentarNovamente={carregar}
+              vazio={prescricoes.length === 0}
+              mensagemVazio="Nenhuma prescrição encontrada com esses filtros."
+            />
+            {!carregando && !erro && prescricoes.length > 0 && (
+              <>
+                <table className="adm-tabela">
+                  <thead>
+                    <tr>
+                      <th>Paciente</th>
+                      <th>Código</th>
+                      <th>Insumos</th>
+                      <th>Enviada</th>
+                      <th>Validade</th>
+                      <th>Situação e motivo</th>
+                      <th className="adm-col-acao"><span className="sr-only">Ação</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {prescricoes.map((p) => {
+                      const motivo =
+                        p.sol_status === "Reenvio" && p.sol_motivo_reenvio
+                          ? MOTIVO_REENVIO[p.sol_motivo_reenvio] ?? p.sol_motivo_reenvio
+                          : p.sol_status === "Nao Autorizado"
+                            ? p.sol_motivo_nao_autorizado
+                            : null;
+                      const vencida = Boolean(p.sol_data_vencimento && p.sol_data_vencimento.slice(0, 10) < hoje);
+                      return (
+                        <tr key={p.sol_id}>
+                          <td>
+                            <div className="flex items-center gap-3">
+                              <AvatarIniciais nome={p.pac_nome} />
+                              <div className="min-w-0">
+                                <p className="font-semibold text-gray-900">{p.pac_nome}</p>
+                                <p className="text-xs text-gray-500">CPF {exibirCPF(p.pac_cpf)}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td data-rotulo="Código" className="whitespace-nowrap">nº {p.sol_id}</td>
+                          <td data-rotulo="Insumos">
+                            {resumoInsumos(p) || "—"}
+                            {p.sol_periodicidade_dias ? (
+                              <span className="flex items-center gap-1 text-xs text-gray-500">
+                                <Repeat size={12} aria-hidden="true" /> Uso contínuo · a cada {p.sol_periodicidade_dias} dias
+                              </span>
+                            ) : null}
+                          </td>
+                          <td data-rotulo="Enviada" className="whitespace-nowrap">{formatarData(p.sol_data_solicitacao)}</td>
+                          <td data-rotulo="Validade" className="whitespace-nowrap">
+                            {p.sol_data_vencimento ? (
+                              <span className={vencida ? "font-semibold text-red-700" : ""}>
+                                {formatarData(p.sol_data_vencimento)}
+                                {vencida && <span className="block text-xs font-normal text-gray-500 max-md:inline max-md:before:content-['_·_']">vencida</span>}
+                              </span>
+                            ) : "—"}
+                          </td>
+                          <td>
+                            <SeloPrescricao status={p.sol_status} />
+                            {motivo && (
+                              <span className="mt-1.5 block max-w-64 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-900">
+                                {motivo}
+                              </span>
+                            )}
+                          </td>
+                          <td className="adm-col-acao">
+                            <button
+                              type="button"
+                              onClick={() => abrir(p)}
+                              className={BOTAO_SECUNDARIO}
+                              aria-label={`Ver prescrição nº ${p.sol_id} de ${p.pac_nome}`}
+                            >
+                              Ver
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div className="flex flex-col items-center justify-between gap-2 border-t border-gray-200 px-4 py-2 sm:flex-row">
+                  <p className="text-sm text-gray-500" role="status">
+                    Mostrando <strong>{inicioLista}–{inicioLista + prescricoes.length - 1}</strong> de <strong>{total}</strong>{" "}
+                    {total === 1 ? "prescrição" : "prescrições"}
+                  </p>
+                  <Pagination paginaAtual={pagina} totalPaginas={totalPaginas} onMudarPagina={setPagina} />
+                </div>
+              </>
+            )}
+          </section>
+        </div>
+      </main>
 
       <Footer />
     </div>

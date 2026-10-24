@@ -4,7 +4,8 @@ import Swal from "sweetalert2";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
 import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
-import { exibirCPF, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
+import { exibirCPF, exibirTelefone, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
+import { AvatarIniciais } from "../../universais/AdminUI";
 
 import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
 import { listarEstoqueDoPosto, type InsumoEstoque } from "../../../services/InsumosServices";
@@ -197,6 +198,16 @@ useEffect(() => {
     setItens((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // botões − / + da tabela de insumos (mínimo 1)
+  function alterarQuantidade(index: number, delta: number) {
+    setItens((prev) => prev.map((item, i) => (i === index ? { ...item, quantidade: Math.max(1, item.quantidade + delta) } : item)));
+  }
+
+  function trocarPaciente() {
+    setPaciente(null);
+    setBuscaPaciente("");
+  }
+
   async function handleSalvar(confirmarSemEstoque = false) {
     setErro(null);
     if (!paciente) return setErro("Selecione um paciente.");
@@ -273,238 +284,391 @@ useEffect(() => {
   const semVagaNoDia = Boolean(dataColeta && ultimaOpcao && dataColeta <= ultimaOpcao && opcoesDoDia.length === 0);
   const sugeridasTurnos = sugestoes?.sugeridas_turnos ?? [];
 
+  const campo =
+    "adm-campo min-h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-base focus:border-blue-500 focus:outline-none disabled:bg-gray-50 sm:text-sm";
+  const rotulo = "mb-1.5 block text-xs font-semibold text-gray-600";
+  const passoFeito = (ok: boolean, n: number) => (
+    <span
+      className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-sm font-extrabold text-white ${ok ? "bg-green-600" : "bg-blue-700"}`}
+      aria-hidden="true"
+    >
+      {ok ? "✓" : n}
+    </span>
+  );
+  const acimaDoDisponivel = itens.filter((item) => {
+    const noEstoque = insumoPorId(item.ins_id);
+    return noEstoque && item.quantidade > noEstoque.ins_disponivel;
+  }).length;
+  const dataExtenso = dataColeta
+    ? new Date(`${dataColeta}T12:00:00`).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })
+    : "";
+
   return (
-    <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/70 sm:items-center sm:px-4">
+    <div className="fixed inset-0 z-[1000] flex items-start justify-center overflow-y-auto bg-black/60 sm:px-4 sm:py-8">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="titulo-novo-agendamento"
-        className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-2xl bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:rounded-2xl sm:p-8"
+        className="adm-novo-agendamento w-full max-w-5xl bg-slate-50 pb-[env(safe-area-inset-bottom)] shadow-xl sm:rounded-2xl"
       >
-        <div className="mb-6 flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-sm text-white">
-            +
-          </span>
-          <h2 id="titulo-novo-agendamento" className="text-lg font-semibold text-gray-800">Novo Agendamento</h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {/* Paciente */}
-          <div className="relative">
-            <label className="mb-1 block text-sm font-medium text-gray-600">Paciente *</label>
-            <input
-              type="text"
-              value={buscaPaciente}
-              onChange={(e) => {
-                setBuscaPaciente(e.target.value);
-                setPaciente(null);
-              }}
-              placeholder="Busque por CPF"
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-            />
-            {resultadosPaciente.length > 0 && (
-              <ul className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
-                {resultadosPaciente.map((p) => (
-                  <li
-                    key={p.pac_id}
-                    onClick={() => selecionarPaciente(p)}
-                    className="cursor-pointer px-3 py-2 text-sm hover:bg-indigo-50"
-                  >
-                    {p.pac_nome} — {exibirCPF(p.pac_cpf)}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Data da coleta */}
+        <div className="flex items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 sm:rounded-t-2xl sm:px-6">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-600">Data da Coleta *</label>
-            <input
-              type="date"
-              value={dataColeta}
-              min={hojeISO()}
-              aria-label="Data da coleta"
-              onChange={(e) => setDataColeta(e.target.value)}
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-            />
-            {semVagaNoDia && (
-              <p className="mt-1 text-sm text-amber-700" role="status">
-                Sem vaga neste dia (unidade fechada, lotada ou sem atendimento). Escolha outra data.
-              </p>
-            )}
+            <h2 id="titulo-novo-agendamento" className="text-2xl font-bold text-blue-700">Novo agendamento</h2>
+            <p className="text-sm text-gray-500">Três passos: paciente, quando e onde, e os insumos. O resumo mostra o que será agendado.</p>
           </div>
-
-          {/* Posto de coleta */}
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-600">Posto de Coleta *</label>
-            <select
-              value={postoSelecionado?.pos_id ?? ""}
-              onChange={(e) => {
-                const posto = postos.find((p) => p.pos_id === Number(e.target.value)) ?? null;
-                setPostoSelecionado(posto);
-              }}
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-            >
-              <option value="" disabled>
-                Selecione o posto
-              </option>
-              {postos.map((posto) => (
-                <option key={posto.pos_id} value={posto.pos_id}>
-                  {posto.pos_nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Turno: manhã ou tarde, com as vagas livres no dia escolhido */}
-          <div>
-            <label htmlFor="turno-agendamento" className="mb-1 block text-sm font-medium text-gray-600">Turno</label>
-            <select
-              id="turno-agendamento"
-              value={turno}
-              onChange={(e) => setTurno(e.target.value as Turno | "")}
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-            >
-              <option value="">Primeiro turno com vaga</option>
-              {TURNOS.map((t) => {
-                const op = opcoesDoDia.find((o) => o.turno === t);
-                const rotulo = ROTULO_TURNO[t][0].toUpperCase() + ROTULO_TURNO[t].slice(1);
-                return (
-                  <option key={t} value={t}>
-                    {rotulo}
-                    {op ? ` (${op.abre} às ${op.fecha}) · ${textoVagas(op.livres)}` : ""}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-
-          {/* Sugestões: os turnos mais vazios do posto escolhido */}
-          {postoSelecionado && sugeridasTurnos.length > 0 && (
-            <div className="sm:col-span-2">
-              <p className="mb-2 text-sm font-medium text-gray-600">
-                Turnos com mais vagas em {postoSelecionado.pos_nome}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {sugeridasTurnos.map((op) => {
-                  const ativa = dataColeta === op.data && turno === op.turno;
-                  return (
-                    <button
-                      key={`${op.data}-${op.turno}`}
-                      type="button"
-                      onClick={() => {
-                        setDataColeta(op.data);
-                        setTurno(op.turno);
-                      }}
-                      aria-pressed={ativa}
-                      className={`min-h-11 rounded-full border px-4 text-sm transition ${
-                        ativa
-                          ? "border-blue-600 bg-blue-600 text-white"
-                          : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
-                      }`}
-                    >
-                      {diaCurto(op.data)} · {ROTULO_TURNO[op.turno]} · {textoVagas(op.livres)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Insumo: escolhido no estoque da unidade selecionada */}
-          <div>
-            <label htmlFor="insumo-agendamento" className="mb-1 block text-sm font-medium text-gray-600">Insumo *</label>
-            <select
-              id="insumo-agendamento"
-              value={insumoEscolhido}
-              disabled={!postoSelecionado || carregandoEstoque}
-              onChange={(e) => setInsumoEscolhido(e.target.value)}
-              className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none disabled:bg-gray-50 sm:text-sm"
-            >
-              <option value="">
-                {!postoSelecionado ? "Escolha o posto primeiro" : carregandoEstoque ? "Carregando estoque…" : estoque.length ? "Selecione o insumo" : "Nenhum insumo nesta unidade"}
-              </option>
-              {estoque.map((i) => (
-                <option key={i.ins_id} value={i.ins_id}>
-                  {i.ins_nome}{i.ins_marca ? ` (${i.ins_marca})` : ""} · disponível {i.ins_disponivel}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Quantidade + adicionar */}
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-600">Quantidade *</label>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                min="1"
-                value={quantidade}
-                onChange={(e) => setQuantidade(e.target.value)}
-                placeholder="Insira a quantidade"
-                className="min-h-11 w-full rounded-lg border border-gray-200 px-3 py-2 text-base focus:border-indigo-400 focus:outline-none sm:text-sm"
-              />
-              <button
-                type="button"
-                onClick={adicionarItem}
-                className="whitespace-nowrap rounded-lg bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-100"
-              >
-                Adicionar
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Lista de itens adicionados (permite múltiplos insumos por agendamento) */}
-        {itens.length > 0 && (
-          <ul className="mt-4 flex flex-col gap-2">
-            {itens.map((item, index) => (
-              <li
-                key={`${item.ins_id ?? item.ins_nome}-${index}`}
-                className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700"
-              >
-                <span>
-                  {item.quantidade}x {item.ins_nome}
-                  {(() => {
-                    const noEstoque = insumoPorId(item.ins_id);
-                    if (!item.ins_id) return <span className="ml-2 text-rose-600">· não está no estoque desta unidade</span>;
-                    if (noEstoque && item.quantidade > noEstoque.ins_disponivel) {
-                      return <span className="ml-2 text-amber-700">· disponível {noEstoque.ins_disponivel}</span>;
-                    }
-                    return null;
-                  })()}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removerItem(index)}
-                  className="text-rose-500 hover:text-rose-600"
-                >
-                  Remover
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {erro && <p className="mt-4 text-sm text-rose-500" role="alert">{erro}</p>}
-
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="min-h-11 rounded-full border border-gray-200 px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-600 hover:bg-gray-50"
           >
-            ✕ Cancelar
+            ✕ <span className="hidden sm:inline">Cancelar</span>
           </button>
-          <button
-            type="button"
-            onClick={() => handleSalvar()}
-            disabled={enviando}
-            className="min-h-11 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {enviando ? "Salvando…" : " Agendar"}
-          </button>
+        </div>
+
+        <div className="p-4 sm:p-6">
+          {solOrigemId && (
+            <p className="mb-4 rounded-xl bg-blue-50 px-4 py-2.5 text-sm text-blue-900">
+              Agendando a <strong>prescrição nº {solOrigemId}</strong>, já autorizada. Paciente e insumos vieram preenchidos.
+            </p>
+          )}
+
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px]">
+            <div className="adm-cartao divide-y divide-gray-200">
+              {/* 1. Paciente */}
+              <section className="p-5" aria-labelledby="passo-paciente">
+                <div className="mb-3 flex items-center gap-3">
+                  {passoFeito(Boolean(paciente), 1)}
+                  <div>
+                    <h3 id="passo-paciente" className="font-bold text-gray-900">Paciente</h3>
+                    <p className="text-xs text-gray-500">Busque pelo CPF</p>
+                  </div>
+                </div>
+                {paciente ? (
+                  <div className="flex flex-wrap items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                    <AvatarIniciais nome={paciente.pac_nome} />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900">{paciente.pac_nome}</p>
+                      <p className="text-xs text-gray-600">
+                        CPF {exibirCPF(paciente.pac_cpf)}
+                        {paciente.pac_telefone ? ` · ${exibirTelefone(paciente.pac_telefone)}` : ""}
+                      </p>
+                    </div>
+                    <button type="button" onClick={trocarPaciente} className="min-h-10 text-sm font-semibold text-blue-700 hover:underline">
+                      Trocar paciente
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <label htmlFor="paciente-agendamento" className="sr-only">Paciente</label>
+                    <input
+                      id="paciente-agendamento"
+                      type="text"
+                      value={buscaPaciente}
+                      onChange={(e) => {
+                        setBuscaPaciente(e.target.value);
+                        setPaciente(null);
+                      }}
+                      placeholder="Digite o CPF do paciente"
+                      autoComplete="off"
+                      className={campo}
+                    />
+                    {resultadosPaciente.length > 0 && (
+                      <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+                        {resultadosPaciente.map((p) => (
+                          <li key={p.pac_id}>
+                            <button
+                              type="button"
+                              onClick={() => selecionarPaciente(p)}
+                              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-blue-50"
+                            >
+                              <AvatarIniciais nome={p.pac_nome} />
+                              <span>
+                                <span className="block font-semibold text-gray-800">{p.pac_nome}</span>
+                                <span className="text-xs text-gray-500">CPF {exibirCPF(p.pac_cpf)}</span>
+                              </span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </section>
+
+              {/* 2. Quando e onde */}
+              <section className="p-5" aria-labelledby="passo-quando">
+                <div className="mb-3 flex items-center gap-3">
+                  {passoFeito(Boolean(postoSelecionado && dataColeta), 2)}
+                  <div>
+                    <h3 id="passo-quando" className="font-bold text-gray-900">Quando e onde</h3>
+                    <p className="text-xs text-gray-500">Posto, data e turno da coleta</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="posto-agendamento" className={rotulo}>Posto de coleta *</label>
+                    <select
+                      id="posto-agendamento"
+                      value={postoSelecionado?.pos_id ?? ""}
+                      onChange={(e) => {
+                        const posto = postos.find((p) => p.pos_id === Number(e.target.value)) ?? null;
+                        setPostoSelecionado(posto);
+                      }}
+                      className={campo}
+                    >
+                      <option value="" disabled>Selecione o posto</option>
+                      {postos.map((posto) => (
+                        <option key={posto.pos_id} value={posto.pos_id}>{posto.pos_nome}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="data-agendamento" className={rotulo}>Data da coleta *</label>
+                    <input
+                      id="data-agendamento"
+                      type="date"
+                      value={dataColeta}
+                      min={hojeISO()}
+                      onChange={(e) => setDataColeta(e.target.value)}
+                      className={campo}
+                    />
+                  </div>
+                </div>
+                {semVagaNoDia && (
+                  <p className="mt-2 text-sm text-amber-700" role="status">
+                    Sem vaga neste dia (unidade fechada, lotada ou sem atendimento). Escolha outra data.
+                  </p>
+                )}
+
+                {postoSelecionado && sugeridasTurnos.length > 0 && (
+                  <div className="mt-4">
+                    <p className={rotulo}>Turnos com mais vagas em {postoSelecionado.pos_nome}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {sugeridasTurnos.map((op) => {
+                        const ativa = dataColeta === op.data && turno === op.turno;
+                        return (
+                          <button
+                            key={`${op.data}-${op.turno}`}
+                            type="button"
+                            onClick={() => {
+                              setDataColeta(op.data);
+                              setTurno(op.turno);
+                            }}
+                            aria-pressed={ativa}
+                            className={`min-h-10 rounded-full border px-4 text-sm transition ${
+                              ativa ? "border-blue-700 bg-blue-700 text-white" : "border-blue-200 bg-blue-50 text-blue-900 hover:bg-blue-100"
+                            }`}
+                          >
+                            {diaCurto(op.data)} · {ROTULO_TURNO[op.turno]} · {textoVagas(op.livres)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <fieldset className="mt-4">
+                  <legend className={rotulo}>Turno</legend>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    {[...TURNOS, ""].map((t) => {
+                      const op = t ? opcoesDoDia.find((o) => o.turno === t) : undefined;
+                      const ativo = turno === t;
+                      const titulo = t ? (t === "manha" ? "Manhã" : "Tarde") : "Primeiro com vaga";
+                      const detalhe = t
+                        ? op ? `${op.abre} às ${op.fecha} · ${textoVagas(op.livres)}` : dataColeta ? "sem vaga neste dia" : "escolha a data"
+                        : "o sistema escolhe";
+                      return (
+                        <label
+                          key={t || "primeiro"}
+                          className={`flex cursor-pointer items-start gap-2.5 rounded-xl border px-3 py-2.5 ${
+                            ativo ? "border-2 border-blue-700 bg-blue-50/60" : "border-gray-200 bg-white hover:bg-gray-50"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="turno-agendamento"
+                            value={t}
+                            checked={ativo}
+                            onChange={() => setTurno(t as Turno | "")}
+                            className="adm-radio mt-1"
+                          />
+                          <span>
+                            <span className="block text-sm font-semibold text-gray-900">{titulo}</span>
+                            <span className="block text-xs text-gray-500">{detalhe}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              </section>
+
+              {/* 3. Insumos */}
+              <section className="p-5" aria-labelledby="passo-insumos">
+                <div className="mb-3 flex items-center gap-3">
+                  {passoFeito(itens.length > 0, 3)}
+                  <div>
+                    <h3 id="passo-insumos" className="font-bold text-gray-900">Insumos</h3>
+                    <p className="text-xs text-gray-500">
+                      Escolhidos no estoque {postoSelecionado ? `de ${postoSelecionado.pos_nome}` : "da unidade"} (o disponível já desconta o reservado)
+                    </p>
+                  </div>
+                </div>
+
+                {itens.length > 0 && (
+                  <ul className="mb-3 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                    {itens.map((item, index) => {
+                      const noEstoque = insumoPorId(item.ins_id);
+                      const acima = noEstoque && item.quantidade > noEstoque.ins_disponivel;
+                      return (
+                        <li key={`${item.ins_id ?? item.ins_nome}-${index}`} className="flex flex-wrap items-center gap-3 px-3 py-2.5">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-gray-900">{item.ins_nome}</p>
+                            {!item.ins_id ? (
+                              <p className="text-xs text-rose-600">Não está no estoque desta unidade</p>
+                            ) : noEstoque ? (
+                              <p className={`text-xs ${acima ? "text-amber-700" : "text-gray-500"}`}>
+                                Disponível: {noEstoque.ins_disponivel}
+                                {acima ? " · pedido maior que o disponível (você poderá confirmar ao agendar)" : ""}
+                              </p>
+                            ) : null}
+                          </div>
+                          <div className="inline-flex items-center overflow-hidden rounded-lg border border-gray-200">
+                            <button
+                              type="button"
+                              onClick={() => alterarQuantidade(index, -1)}
+                              className="h-9 w-9 bg-slate-50 font-bold text-blue-700 hover:bg-blue-50"
+                              aria-label={`Diminuir ${item.ins_nome}`}
+                            >
+                              −
+                            </button>
+                            <span className="min-w-10 text-center text-sm font-bold" aria-live="polite">{item.quantidade}</span>
+                            <button
+                              type="button"
+                              onClick={() => alterarQuantidade(index, 1)}
+                              className="h-9 w-9 bg-slate-50 font-bold text-blue-700 hover:bg-blue-50"
+                              aria-label={`Aumentar ${item.ins_nome}`}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removerItem(index)}
+                            className="min-h-9 rounded-lg px-2 text-sm font-medium text-rose-600 hover:bg-rose-50"
+                          >
+                            Remover
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_130px_auto]">
+                  <div>
+                    <label htmlFor="insumo-agendamento" className="sr-only">Insumo</label>
+                    <select
+                      id="insumo-agendamento"
+                      value={insumoEscolhido}
+                      disabled={!postoSelecionado || carregandoEstoque}
+                      onChange={(e) => setInsumoEscolhido(e.target.value)}
+                      className={campo}
+                    >
+                      <option value="">
+                        {!postoSelecionado
+                          ? "Escolha o posto primeiro"
+                          : carregandoEstoque
+                            ? "Carregando estoque…"
+                            : estoque.length
+                              ? itens.length ? "Adicionar outro insumo do estoque…" : "Selecione o insumo"
+                              : "Nenhum insumo nesta unidade"}
+                      </option>
+                      {estoque.map((i) => (
+                        <option key={i.ins_id} value={i.ins_id}>
+                          {i.ins_nome}{i.ins_marca ? ` (${i.ins_marca})` : ""} · disponível {i.ins_disponivel}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="quantidade-agendamento" className="sr-only">Quantidade</label>
+                    <input
+                      id="quantidade-agendamento"
+                      type="number"
+                      min="1"
+                      value={quantidade}
+                      onChange={(e) => setQuantidade(e.target.value)}
+                      placeholder="Quantidade"
+                      className={campo}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={adicionarItem}
+                    className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-blue-300 bg-white px-4 text-sm font-bold text-blue-700 hover:bg-blue-50"
+                  >
+                    + Adicionar
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            {/* Resumo */}
+            <aside className="adm-cartao h-fit p-5 lg:sticky lg:top-6" aria-label="Resumo do agendamento">
+              <h3 className="mb-1 font-bold text-gray-900">Resumo</h3>
+              <dl className="divide-y divide-gray-100 text-sm">
+                <div className="py-2.5">
+                  <dt className="text-xs text-gray-500">Paciente</dt>
+                  <dd className="font-semibold text-gray-900">{paciente?.pac_nome ?? <span className="font-normal text-gray-400">não escolhido</span>}</dd>
+                </div>
+                <div className="py-2.5">
+                  <dt className="text-xs text-gray-500">Posto</dt>
+                  <dd className="font-semibold text-gray-900">
+                    {postoSelecionado?.pos_nome ?? <span className="font-normal text-gray-400">não escolhido</span>}
+                    {postoSelecionado?.pos_endereco && <span className="block text-xs font-normal text-gray-500">{postoSelecionado.pos_endereco}</span>}
+                  </dd>
+                </div>
+                <div className="py-2.5">
+                  <dt className="text-xs text-gray-500">Data e turno</dt>
+                  <dd className="font-semibold text-gray-900 first-letter:uppercase">
+                    {dataColeta ? `${dataExtenso} · ${turno ? ROTULO_TURNO[turno] : "primeiro turno com vaga"}` : <span className="font-normal text-gray-400">não escolhida</span>}
+                  </dd>
+                </div>
+                <div className="py-2.5">
+                  <dt className="text-xs text-gray-500">Insumos ({itens.length})</dt>
+                  <dd className="font-semibold text-gray-900">
+                    {itens.length ? itens.map((i) => <span key={`${i.ins_id ?? i.ins_nome}`} className="block">{i.quantidade}x {i.ins_nome}</span>) : <span className="font-normal text-gray-400">nenhum</span>}
+                  </dd>
+                </div>
+              </dl>
+
+              {acimaDoDisponivel > 0 && (
+                <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                  {acimaDoDisponivel === 1 ? "1 insumo acima" : `${acimaDoDisponivel} insumos acima`} do disponível. Lembre de repor o estoque até a data.
+                </p>
+              )}
+
+              {erro && <p className="mt-3 text-sm text-rose-600" role="alert">{erro}</p>}
+
+              <button
+                type="button"
+                onClick={() => handleSalvar()}
+                disabled={enviando}
+                className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#001ed3] via-[#0042ec] to-[#0192fe] px-4 text-base font-bold text-white shadow-[0_6px_16px_rgba(0,66,236,0.25)] hover:brightness-110 disabled:opacity-60 [font-family:var(--fonte-botao)]"
+              >
+                {enviando ? "Salvando…" : "Agendar coleta"}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-2 min-h-11 w-full rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <p className="mt-2 text-center text-xs text-gray-500">O protocolo aparece assim que o agendamento é criado.</p>
+            </aside>
+          </div>
         </div>
       </div>
     </div>
