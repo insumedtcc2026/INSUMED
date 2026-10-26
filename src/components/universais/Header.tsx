@@ -11,7 +11,8 @@ interface UserBadgeProps {
   cpf: string;
 }
 
-function UserBadge({ nome, cpf }: UserBadgeProps) {
+/** Cápsula azul com nome e CPF (mesma no paciente, no admin e no autorizador). */
+export function UserBadge({ nome, cpf }: UserBadgeProps) {
   return (
     <div className="user-badge">
       <div className="user-badge-icon">

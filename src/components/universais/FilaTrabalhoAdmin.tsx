@@ -12,90 +12,50 @@ import { carregarContadoresAdmin, type ContadoresAdmin } from "../../hook/useCon
 import type { Agendamento } from "../../types/agendamento";
 import { formatarData } from "../../utils/status";
 import { hojeISO } from "../../utils/validacoes";
-import { nomeCurto, primeiroNome } from "../../utils/nome";
+import { nomeCurto } from "../../utils/nome";
 import { ACOES_HISTORICO, formatarDataHora } from "../../utils/acoesHistorico";
 import { AvatarIniciais, BOTAO_SECUNDARIO } from "./AdminUI";
 
-export interface CartaoPainel<P, K extends keyof P> {
-  chave: K;
-  titulo: (n: number, painel: P) => string;
-  detalhe?: (painel: P) => string | null;
-  vazio: string;
-  link: string;
-  Icone: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  cor: string;
-}
-
-/** Cartões com número e atalho (usado nas Homes do admin e do autorizador). */
-export function CartoesPainel<P, K extends keyof P>({
-  cartoes, painel, destaque = false,
-}: { cartoes: CartaoPainel<P, K>[]; painel: P | null; destaque?: boolean }) {
-  return (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {cartoes.map(({ chave, titulo, detalhe, vazio, link, Icone, cor }) => {
-        const n = painel ? Number(painel[chave]) : undefined;
-        const extra = painel && detalhe ? detalhe(painel) : null;
-        return (
-          <li key={String(chave)}>
-            <Link
-              to={link}
-              className={`flex h-full items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 ${
-                destaque && n ? "ring-blue-200" : "ring-gray-100"
-              }`}
-            >
-              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${cor}`}>
-                <Icone className="h-6 w-6" aria-hidden={true} />
-              </span>
-              <span className="min-w-0">
-                {painel && n === 0 ? (
-                  <span className="block text-sm text-gray-500">{vazio}</span>
-                ) : (
-                  <>
-                    <span className="block text-3xl font-bold leading-none text-gray-900">{painel ? n : "…"}</span>
-                    <span className="mt-1 block text-sm text-gray-600">{painel ? titulo(n ?? 0, painel) : "carregando"}</span>
-                    {extra && <span className="mt-0.5 block text-xs font-medium text-amber-700">{extra}</span>}
-                  </>
-                )}
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-/** Faixa de boas-vindas das Homes da equipe (data, nome e unidade). */
-export function BoasVindasEquipe({ nome, subtitulo }: { nome?: string; subtitulo?: string | null }) {
-  const hojeExtenso = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
-  const primeiro = primeiroNome(nome);
-  return (
-    <header className="mb-6 rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-5 text-white shadow-sm sm:p-6">
-      <p className="text-sm first-letter:uppercase opacity-90">{hojeExtenso}</p>
-      <h2 id="painel-titulo" className="mt-1 text-2xl font-semibold sm:text-3xl">
-        {primeiro ? `Olá, ${primeiro}!` : "Olá!"}
-      </h2>
-      {subtitulo && <p className="mt-1 text-sm opacity-90">{subtitulo}</p>}
-    </header>
-  );
-}
-
-/** Saudação conforme a hora do dia. */
-function saudacao() {
-  const h = new Date().getHours();
-  return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
-}
-
-interface Acao {
+export interface Acao {
   n: number | null;
   rotulo: string;
   detalhe: string;
   verbo: string;
   link: string;
   Icone: React.ComponentType<{ className?: string; size?: number; "aria-hidden"?: boolean }>;
-  // cor da faixa e do ícone
+  // cor do ícone
   cor: string;
   fundo: string;
+}
+
+/** Cartões com o número, o que é e o atalho (Homes do admin e do autorizador). */
+export function CartoesAcao({ acoes }: { acoes: Acao[] }) {
+  return (
+    <ul className={`mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 ${acoes.length === 3 ? "lg:grid-cols-3" : "xl:grid-cols-4"}`}>
+      {acoes.map(({ n: num, rotulo, detalhe, verbo, link, Icone, cor, fundo }) => (
+        <li key={rotulo}>
+          <Link
+            to={link}
+            className="flex h-full flex-col gap-3 rounded-[18px] border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
+          >
+            <span className="flex items-center justify-between">
+              <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: fundo, color: cor }}>
+                <Icone size={20} aria-hidden={true} />
+              </span>
+              <span className="text-[32px] font-extrabold leading-none text-gray-900">{num ?? "…"}</span>
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-gray-900">{rotulo}</span>
+              <span className="block text-xs text-gray-500">{detalhe}</span>
+            </span>
+            <span className="mt-auto flex items-center gap-1 border-t border-gray-100 pt-2.5 text-sm font-bold text-blue-700 [font-family:var(--fonte-botao)]">
+              {verbo} <ArrowRight size={15} aria-hidden="true" />
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 const PRESENCA: Record<string, { texto: string; classe: string }> = {
@@ -123,7 +83,8 @@ function LinhaColeta({ a, concluida }: { a: Agendamento; concluida?: boolean }) 
   );
 }
 
-function Cartao({ titulo, Icone, corIcone, link, textoLink, children, extra }: {
+/** Cartão branco com título, ícone e link à direita (Homes da equipe). */
+export function Cartao({ titulo, Icone, corIcone, link, textoLink, children, extra }: {
   titulo: string;
   Icone: React.ComponentType<{ className?: string; size?: number; "aria-hidden"?: boolean }>;
   corIcone: string;
@@ -155,7 +116,7 @@ function Cartao({ titulo, Icone, corIcone, link, textoLink, children, extra }: {
  * insumos em estoque baixo) e as últimas atividades. Os números vêm do
  * banco, já limitados à unidade do administrador.
  */
-export default function FilaTrabalhoAdmin({ nome }: { nome?: string }) {
+export default function FilaTrabalhoAdmin() {
   const [contadores, setContadores] = useState<ContadoresAdmin | null>(null);
   const [erro, setErro] = useState(false);
   const [abertas, setAbertas] = useState<Agendamento[] | null>(null);
@@ -188,7 +149,6 @@ export default function FilaTrabalhoAdmin({ nome }: { nome?: string }) {
   const painel = contadores?.painel ?? null;
   const n = (v: number | undefined) => (painel ? v ?? 0 : null);
   const totalHoje = (abertas?.length ?? 0) + concluidas.length;
-  const tarefas = painel ? painel.pendentes + painel.autorizadasSemAgendamento + (contadores?.pedidosOutraData ?? 0) + (abertas?.length ?? painel.coletasHoje) : null;
   const limite = painel?.limiteEstoqueBaixo ?? 5;
   const insumosBaixos = baixo.filter((i) => i.ins_quantidade <= limite);
 
@@ -255,38 +215,13 @@ export default function FilaTrabalhoAdmin({ nome }: { nome?: string }) {
     return d === amanha ? `Amanhã · ${texto}` : texto;
   };
 
-  const hojeExtenso = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
-  const primeiro = primeiroNome(nome);
-
   return (
     <section className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8" aria-labelledby="painel-titulo">
-      <header className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-sm text-gray-500 first-letter:uppercase">
-            {hojeExtenso}
-            {painel?.unidade ? ` · ${painel.unidade}` : ""}
-          </p>
-          <h2 id="painel-titulo" className="mt-0.5 text-[28px] font-bold leading-tight text-gray-900">
-            {saudacao()}
-            {primeiro && (
-              <>
-                , <span className="bg-gradient-to-r from-[#001ed3] to-[#0192fe] bg-clip-text text-transparent">{primeiro}</span>
-              </>
-            )}
-          </h2>
-          {tarefas != null && (
-            <p className="text-sm text-gray-600">
-              {tarefas === 0 ? "Nenhuma tarefa esperando por você agora." : (
-                <>Você tem <strong className="text-gray-900">{tarefas} {tarefas === 1 ? "tarefa" : "tarefas"}</strong> esperando por você.</>
-              )}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Link to="/leitor-qrcode" className={BOTAO_SECUNDARIO}><QrCode size={17} aria-hidden="true" /> Ler QR Code</Link>
-          <Link to="/lista-separacao" className={BOTAO_SECUNDARIO}><ListChecks size={17} aria-hidden="true" /> Lista de separação</Link>
-        </div>
-      </header>
+      {/* a saudação e a data ficam na barra superior */}
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <Link to="/leitor-qrcode" className={BOTAO_SECUNDARIO}><QrCode size={17} aria-hidden="true" /> Ler QR Code</Link>
+        <Link to="/lista-separacao" className={BOTAO_SECUNDARIO}><ListChecks size={17} aria-hidden="true" /> Lista de separação</Link>
+      </div>
 
       {erro && (
         <p className="mb-4 text-sm text-rose-600" role="alert">
@@ -294,32 +229,8 @@ export default function FilaTrabalhoAdmin({ nome }: { nome?: string }) {
         </p>
       )}
 
-      <h3 className="mb-3 text-base font-bold text-gray-800">Precisa da sua ação</h3>
-      <ul className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {ACOES.map(({ n: num, rotulo, detalhe, verbo, link, Icone, cor, fundo }) => (
-          <li key={rotulo}>
-            <Link
-              to={link}
-              className="relative flex h-full flex-col gap-3 overflow-hidden rounded-[18px] border border-gray-200 bg-white p-4 pl-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
-            >
-              <span className="absolute inset-y-0 left-0 w-1" style={{ background: cor }} aria-hidden="true" />
-              <span className="flex items-center justify-between">
-                <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: fundo, color: cor }}>
-                  <Icone size={20} aria-hidden={true} />
-                </span>
-                <span className="text-[32px] font-extrabold leading-none text-gray-900">{num ?? "…"}</span>
-              </span>
-              <span>
-                <span className="block text-sm font-semibold text-gray-900">{rotulo}</span>
-                <span className="block text-xs text-gray-500">{detalhe}</span>
-              </span>
-              <span className="mt-auto flex items-center gap-1 border-t border-gray-100 pt-2.5 text-sm font-bold text-blue-700 [font-family:var(--fonte-botao)]">
-                {verbo} <ArrowRight size={15} aria-hidden="true" />
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h2 id="painel-titulo" className="sr-only">Painel da unidade</h2>
+      <CartoesAcao acoes={ACOES} />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.65fr_1fr]">
         <div className="flex min-w-0 flex-col gap-5">

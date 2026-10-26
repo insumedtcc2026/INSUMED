@@ -2,7 +2,7 @@ import '../../css/universais/LayoutAdmin.css';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CalendarPlus, ChevronDown, LogOut, UserCog, X } from 'lucide-react';
+import { CalendarPlus, ChevronDown, LogOut, Pin, PinOff, UserCog, X } from 'lucide-react';
 
 import logo from '../../assets/home/Logo.webp';
 import { sairDoPerfil } from './sessao';
@@ -28,11 +28,24 @@ const TOM_CONTADOR: Record<string, string> = {
   estoqueBaixo: 'adm-contador--alerta',
 };
 
+// preferência do administrador: menu fixo (sempre aberto) ou abre pelo ☰
+const CHAVE_FIXO = 'adm_menu_fixo';
+
+function lerFixo(): boolean {
+  try {
+    return localStorage.getItem(CHAVE_FIXO) !== 'nao';
+  } catch {
+    return true;
+  }
+}
+
 /**
- * Menu lateral do administrador. No computador (a partir de 1024px) fica
- * sempre aberto ao lado do conteúdo; no tablet e no celular continua como
- * gaveta aberta pelo ☰. As funções ficam agrupadas pelo tipo de trabalho e
- * "Atividades da unidade" (registro, horários e equipe) fica recolhida.
+ * Menu lateral do administrador. No tablet e no computador ele empurra a
+ * página para o lado (não fica por cima dela) e o administrador escolhe,
+ * pelo alfinete, se ele fica fixo ou se abre e fecha pelo ☰. No celular a
+ * navegação é a barra inferior. As funções ficam agrupadas pelo tipo de
+ * trabalho e "Atividades da unidade" (registro, horários e equipe) fica
+ * recolhida, com "Insumos" logo abaixo.
  */
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
@@ -40,11 +53,34 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const contadores = useContadoresAdmin();
   const universal = adminUniversal();
 
-  // o body ganha a classe que abre espaço para o menu fixo
+  const [fixo, setFixo] = useState(lerFixo);
+
+  // classes no body: layout do admin, menu fixo e menu aberto pelo ☰
   useEffect(() => {
     document.body.classList.add('layout-admin');
-    return () => document.body.classList.remove('layout-admin');
+    return () => document.body.classList.remove('layout-admin', 'adm-menu-fixo', 'adm-menu-aberto');
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('adm-menu-fixo', fixo);
+  }, [fixo]);
+
+  useEffect(() => {
+    document.body.classList.toggle('adm-menu-aberto', isOpen);
+  }, [isOpen]);
+
+  function alternarFixo() {
+    const novo = !fixo;
+    setFixo(novo);
+    try {
+      localStorage.setItem(CHAVE_FIXO, novo ? 'sim' : 'nao');
+    } catch {
+      /* sem armazenamento: vale só nesta tela */
+    }
+    // ao soltar, o menu continua aberto até a pessoa fechar
+    // (nas páginas, onClose alterna o estado; aqui ele abre)
+    if (!novo && !isOpen) onClose();
+  }
 
   const grupoUnidade = GRUPOS_MENU_ADMIN.find((g) => g.recolhivel);
   const unidadeAtiva = Boolean(grupoUnidade?.itens.some((i) => itemAtivo(i, pathname)));
@@ -86,9 +122,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside className={`adm-lateral ${isOpen ? 'adm-lateral--aberta' : ''}`} aria-label="Menu do administrador">
         <div className="adm-lateral-topo">
           <img src={logo} alt="Logo Insumed" className="adm-lateral-logo" />
-          <button onClick={onClose} className="adm-lateral-fechar" aria-label="Fechar menu">
-            <X aria-hidden="true" />
-          </button>
+          <div className="adm-lateral-acoes">
+            <button
+              type="button"
+              onClick={alternarFixo}
+              className="adm-lateral-fixar"
+              aria-pressed={fixo}
+              aria-label={fixo ? 'Soltar o menu (abrir pelo botão ☰)' : 'Fixar o menu aberto'}
+              title={fixo ? 'Soltar o menu' : 'Fixar o menu'}
+            >
+              {fixo ? <PinOff aria-hidden="true" size={18} /> : <Pin aria-hidden="true" size={18} />}
+            </button>
+            <button onClick={onClose} className="adm-lateral-fechar" aria-label="Fechar menu">
+              <X aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         <button type="button" className="adm-novo" onClick={() => ir('/Agendamentosadm?novo=1')}>
@@ -116,6 +164,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <ChevronDown className={`adm-seta ${unidadeAberta ? 'adm-seta--aberta' : ''}`} aria-hidden="true" />
                   </button>
                   {unidadeAberta && itens.map((item) => renderItem(item, true))}
+                  {grupo.depois?.map((item) => renderItem(item))}
                 </div>
               );
             }
@@ -132,7 +181,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           {renderItem({ rotulo: 'Meu perfil', caminho: '/perfil-admin', Icone: UserCog })}
           <button
             type="button"
-            className="adm-item adm-item--discreto"
+            className="adm-item adm-item--sair"
             onClick={() => {
               sairDoPerfil('ADMIN');
               ir('/login');

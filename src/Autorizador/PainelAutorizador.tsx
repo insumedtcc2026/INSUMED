@@ -1,60 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ClipboardCheck, FilePlus2, XCircle } from "lucide-react";
+import { ArrowRight, CheckCircle2, ClipboardCheck, FilePlus2, Gavel, ListOrdered, XCircle } from "lucide-react";
 import { buscarPainelAutorizador, type PainelAutorizador as Painel } from "../services/PainelService";
-import { BoasVindasEquipe, CartoesPainel, type CartaoPainel } from "../components/universais/FilaTrabalhoAdmin";
+import { Cartao, CartoesAcao, type Acao } from "../components/universais/FilaTrabalhoAdmin";
+import { AvatarIniciais } from "../components/universais/AdminUI";
 import { formatarData } from "../utils/status";
 import { formatarDataHora } from "../utils/acoesHistorico";
 import { nomeCurto } from "../utils/nome";
 import SeloPrioridade from "../components/universais/SeloPrioridade";
 import { resumoInsumos } from "../utils/itensPrescricao";
 
-type Numero = keyof Pick<Painel, "aguardando" | "comNovaVersao" | "autorizadas30" | "naoAutorizadas30">;
-
-const ANALISE: CartaoPainel<Painel, Numero>[] = [
-  {
-    chave: "aguardando",
-    titulo: (n) => (n === 1 ? "prescrição aguardando sua análise" : "prescrições aguardando sua análise"),
-    vazio: "Nenhuma prescrição aguardando análise",
-    link: "/verprescricoesaprovadas",
-    Icone: ClipboardCheck,
-    cor: "text-amber-600 bg-amber-50",
-  },
-  {
-    chave: "comNovaVersao",
-    titulo: (n) => (n === 1 ? "com nova versão enviada pelo paciente" : "com novas versões enviadas pelo paciente"),
-    vazio: "Nenhuma prescrição com nova versão",
-    link: "/verprescricoesaprovadas",
-    Icone: FilePlus2,
-    cor: "text-blue-700 bg-blue-50",
-  },
-];
-
-const DECISOES: CartaoPainel<Painel, Numero>[] = [
-  {
-    chave: "autorizadas30",
-    titulo: (n) => (n === 1 ? "autorizada por você (30 dias)" : "autorizadas por você (30 dias)"),
-    vazio: "Nenhuma autorização sua nos últimos 30 dias",
-    link: "/verprescricoesaprovadas?status=Autorizado",
-    Icone: CheckCircle2,
-    cor: "text-green-700 bg-green-50",
-  },
-  {
-    chave: "naoAutorizadas30",
-    titulo: (n) => (n === 1 ? "não autorizada por você (30 dias)" : "não autorizadas por você (30 dias)"),
-    vazio: "Nenhuma não autorização sua nos últimos 30 dias",
-    link: "/verprescricoesaprovadas?status=Nao%20Autorizado",
-    Icone: XCircle,
-    cor: "text-rose-700 bg-rose-50",
-  },
-];
-
 /**
- * Home do autorizador: o que espera a decisão dele (a fila, da mais antiga
- * para a mais nova), o que chegou com nova versão e as próprias decisões
- * recentes. Os números vêm do banco (/painel/autorizador).
+ * Home do autorizador, no mesmo padrão da Home do administrador: três
+ * cartões com o que espera a decisão dele, a fila (da prioridade legal e
+ * da mais antiga para a mais nova) e as decisões recentes. A saudação e a
+ * data ficam na barra superior. Os números vêm do banco (/painel/autorizador).
  */
-export default function PainelAutorizador({ nome }: { nome?: string }) {
+export default function PainelAutorizador() {
   const [painel, setPainel] = useState<Painel | null>(null);
   const [erro, setErro] = useState(false);
 
@@ -62,9 +24,45 @@ export default function PainelAutorizador({ nome }: { nome?: string }) {
     buscarPainelAutorizador().then(setPainel).catch(() => setErro(true));
   }, []);
 
+  const n = (v: number | undefined) => (painel ? v ?? 0 : null);
+  const decididas = painel ? painel.autorizadas30 + painel.naoAutorizadas30 : null;
+
+  const ACOES: Acao[] = [
+    {
+      n: n(painel?.aguardando),
+      rotulo: "Aguardando sua análise",
+      detalhe: "Já revisadas pela unidade",
+      verbo: "Analisar agora",
+      link: "/verprescricoesaprovadas",
+      Icone: ClipboardCheck,
+      cor: "#d97706",
+      fundo: "#fef3c7",
+    },
+    {
+      n: n(painel?.comNovaVersao),
+      rotulo: "Com nova versão",
+      detalhe: "O paciente reenviou a prescrição",
+      verbo: "Ver na fila",
+      link: "/verprescricoesaprovadas",
+      Icone: FilePlus2,
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
+    },
+    {
+      n: decididas,
+      rotulo: "Suas decisões em 30 dias",
+      detalhe: painel ? `${painel.autorizadas30} autorizadas · ${painel.naoAutorizadas30} não autorizadas` : "Autorizadas e não autorizadas",
+      verbo: "Ver histórico",
+      link: "/verprescricoesaprovadas?status=Todos",
+      Icone: Gavel,
+      cor: "#16a34a",
+      fundo: "#dcfce7",
+    },
+  ];
+
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6" aria-labelledby="painel-titulo">
-      <BoasVindasEquipe nome={nome} subtitulo="Análise de prescrições" />
+    <section className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8" aria-labelledby="painel-aut-titulo">
+      <h2 id="painel-aut-titulo" className="sr-only">Painel do autorizador</h2>
 
       {erro && (
         <p className="mb-4 text-sm text-rose-600" role="alert">
@@ -72,61 +70,72 @@ export default function PainelAutorizador({ nome }: { nome?: string }) {
         </p>
       )}
 
-      <h3 className="mb-3 text-lg font-semibold text-gray-800">Para analisar</h3>
-      <CartoesPainel cartoes={ANALISE} painel={painel} destaque />
+      <CartoesAcao acoes={ACOES} />
 
-      <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100" aria-labelledby="proximas-fila">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <h3 id="proximas-fila" className="text-lg font-semibold text-gray-800">Próximas da fila</h3>
-            <Link to="/verprescricoesaprovadas" className="inline-flex min-h-10 items-center text-sm font-semibold text-blue-700 hover:underline">
-              Ver todas
-            </Link>
-          </div>
-          {!painel && !erro && <p className="text-sm text-gray-400" role="status">Carregando…</p>}
-          {painel && painel.fila.length === 0 && <p className="text-sm text-gray-500">A fila está vazia.</p>}
-          <ul className="divide-y divide-gray-100">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.65fr_1fr]">
+        <Cartao titulo="Próximas da fila" Icone={ListOrdered} corIcone="text-amber-600" link="/verprescricoesaprovadas" textoLink="Ver todas">
+          {!painel && !erro && <p className="px-5 py-6 text-sm text-gray-400" role="status">Carregando…</p>}
+          {painel && painel.fila.length === 0 && (
+            <p className="px-5 py-6 text-sm text-gray-500">A fila está vazia. Nenhuma prescrição esperando a sua decisão.</p>
+          )}
+          <ul className="px-5 py-1">
             {painel?.fila.map((p) => (
               <li key={p.sol_id}>
-                <Link to={`/autorizador/solicitacao/${p.sol_id}`} className="flex min-h-12 items-center justify-between gap-3 rounded-lg px-1 py-2 hover:bg-gray-50">
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium text-gray-800">
-                      Nº {p.sol_id} · {nomeCurto(p.pac_nome)}
-                      {p.prioridade?.motivo ? <span className="ml-2 align-middle"><SeloPrioridade prioridade={p.prioridade} /></span> : null}
+                <Link
+                  to={`/autorizador/solicitacao/${p.sol_id}`}
+                  className="flex min-h-14 items-center gap-3 border-b border-gray-100 py-2.5 last:border-b-0 hover:bg-gray-50"
+                >
+                  <AvatarIniciais nome={p.pac_nome} />
+                  <span className="min-w-0 flex-1">
+                    <span className="flex flex-wrap items-center gap-2 text-sm font-semibold text-gray-800">
+                      {nomeCurto(p.pac_nome)}
+                      {p.prioridade?.motivo ? <SeloPrioridade prioridade={p.prioridade} /> : null}
+                      {p.versoes_anteriores > 0 && (
+                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-800">Nova versão</span>
+                      )}
                     </span>
-                    <span className="block text-xs text-gray-500">
-                      Enviada em {formatarData(p.sol_data_solicitacao)}
+                    <span className="block truncate text-xs text-gray-500">
+                      nº {p.sol_id} · enviada em {formatarData(p.sol_data_solicitacao)}
                       {resumoInsumos(p) ? ` · ${resumoInsumos(p)}` : ""}
                     </span>
-                    {p.versoes_anteriores > 0 && (
-                      <span className="mt-0.5 block text-xs font-medium text-blue-700">Nova versão do paciente</span>
-                    )}
                   </span>
-                  <span className="shrink-0 text-sm font-semibold text-blue-700">Analisar →</span>
+                  <span className="flex shrink-0 items-center gap-1 text-sm font-bold text-blue-700 [font-family:var(--fonte-botao)]">
+                    Analisar <ArrowRight size={15} aria-hidden="true" />
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
-        </section>
+        </Cartao>
 
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100" aria-labelledby="minhas-decisoes">
-          <h3 id="minhas-decisoes" className="mb-3 text-lg font-semibold text-gray-800">Suas decisões</h3>
-          <CartoesPainel cartoes={DECISOES} painel={painel} />
-          {painel && painel.recentes.length > 0 && (
-            <ul className="mt-4 divide-y divide-gray-100">
-              {painel.recentes.map((r) => (
+        <Cartao titulo="Decisões recentes" Icone={Gavel} corIcone="text-blue-700" link="/verprescricoesaprovadas?status=Todos" textoLink="Ver tudo">
+          {!painel && !erro && <p className="px-5 py-6 text-sm text-gray-400" role="status">Carregando…</p>}
+          {painel && painel.recentes.length === 0 && (
+            <p className="px-5 py-6 text-sm text-gray-500">Você ainda não decidiu nenhuma prescrição.</p>
+          )}
+          <ol className="px-5 py-1">
+            {painel?.recentes.map((r) => {
+              const autorizada = r.acao === "autorizada";
+              const Icone = autorizada ? CheckCircle2 : XCircle;
+              return (
                 <li key={`${r.sol_id}-${r.quando}`}>
-                  <Link to={`/autorizador/solicitacao/${r.sol_id}`} className="flex min-h-11 items-center justify-between gap-3 rounded-lg px-1 py-1.5 text-sm hover:bg-gray-50">
-                    <span>
-                      Nº {r.sol_id} · {r.acao === "autorizada" ? "Autorizada" : "Não autorizada"}
+                  <Link
+                    to={`/autorizador/solicitacao/${r.sol_id}`}
+                    className="flex min-h-12 items-center gap-3 border-b border-gray-100 py-2.5 last:border-b-0 hover:bg-gray-50"
+                  >
+                    <Icone size={19} className={`shrink-0 ${autorizada ? "text-green-600" : "text-rose-600"}`} aria-hidden="true" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-gray-800">
+                        {autorizada ? "Autorizada" : "Não autorizada"} · nº {r.sol_id}
+                      </span>
+                      <span className="block text-xs text-gray-500">{formatarDataHora(r.quando)}</span>
                     </span>
-                    <span className="text-xs text-gray-500">{formatarDataHora(r.quando)}</span>
                   </Link>
                 </li>
-              ))}
-            </ul>
-          )}
-        </section>
+              );
+            })}
+          </ol>
+        </Cartao>
       </div>
     </section>
   );

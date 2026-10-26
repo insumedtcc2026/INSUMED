@@ -120,7 +120,7 @@ export default function Sidebar({
                   location.pathname === path
                     ? 'sidebar-item-active'
                     : ''
-                }`}
+                } ${label === 'Sair' ? 'sidebar-item-sair' : ''}`}
               >
                 <Icon className="sidebar-item-icon" />
 

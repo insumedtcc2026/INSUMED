@@ -1,7 +1,6 @@
 import Footer from '../components/universais/Footer.tsx';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
-import { useDadosAutorizador } from '../hook/DadosuserAut.tsx';
 import SidebarAut from '../components/universais/SidebarAut.tsx';
 import HeaderAut from '../components/universais/HeaderAut.tsx';
 import PainelAutorizador from './PainelAutorizador.tsx';
@@ -14,7 +13,6 @@ export default function HomeAut() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { verificando } = useValidarToken("AUTORIZADOR");
-  const autorizador = useDadosAutorizador();
 
   if (verificando) {
     return (
@@ -35,7 +33,7 @@ export default function HomeAut() {
       <SidebarAut isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <main className="compensa-header pb-10">
-        <PainelAutorizador nome={autorizador.nome} />
+        <PainelAutorizador />
       </main>
 
       <Footer />

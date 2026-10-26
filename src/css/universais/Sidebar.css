@@ -160,11 +160,16 @@
   color: var(--cor-texto-suave, #64748b);
 }
 
-/* "Sair" separado das opções de navegação */
+/* "Sair" separado das opções de navegação e em vermelho */
 .sidebar-item-sair {
   margin-top: 12px;
   border-top: 1px solid rgba(0, 66, 236, 0.12);
   border-radius: 0 0 var(--raio-md, 14px) var(--raio-md, 14px);
+  color: var(--cor-erro, #d30000);
+}
+
+.sidebar-item.sidebar-item-sair:hover {
+  background: #fef2f2;
 }
 
 .sidebar-item:focus-visible,

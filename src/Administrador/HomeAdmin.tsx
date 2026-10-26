@@ -1,7 +1,6 @@
 import Footer from '../components/universais/Footer.tsx';
 import { useState } from 'react';
 import { useValidarToken } from '../hook/Validartoken.tsx';
-import { useDadosAdmin } from '../hook/DadosuserAdm.tsx';
 import Sidebaradm from '../components/universais/Siderbaradm.tsx';
 import HeaderAdm from '../components/universais/HeaderAdm.tsx';
 import FilaTrabalhoAdmin from '../components/universais/FilaTrabalhoAdmin.tsx';
@@ -15,7 +14,6 @@ export default function HomeAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { verificando } = useValidarToken('ADMIN');
-  const admin = useDadosAdmin();
 
   if (verificando) {
     return (
@@ -36,7 +34,7 @@ export default function HomeAdmin() {
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <main className="compensa-header pb-10">
-        <FilaTrabalhoAdmin nome={admin.nome} />
+        <FilaTrabalhoAdmin />
       </main>
 
       <Footer />
