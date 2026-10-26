@@ -57,8 +57,8 @@ export default function DeclaracaoPrioridade() {
   }
 
   return (
-    <section className="mx-auto mb-6 max-w-7xl px-6" aria-labelledby="titulo-prioridade">
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+    <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 sm:p-6" aria-labelledby="titulo-prioridade">
+      <div>
         <h2 id="titulo-prioridade" className="text-lg font-semibold text-gray-900">Atendimento prioritário</h2>
         <p className="mt-1 text-sm text-gray-600">
           Pessoas com deficiência e gestantes têm prioridade na análise das prescrições. Quem tem 60 anos ou mais já tem
@@ -88,7 +88,7 @@ export default function DeclaracaoPrioridade() {
             type="button"
             onClick={salvar}
             disabled={salvando}
-            className="mt-4 min-h-11 rounded-full bg-blue-700 px-6 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+            className="botao-novo-agendamento mt-4 disabled:opacity-50"
           >
             {salvando ? "Salvando…" : "Salvar"}
           </button>

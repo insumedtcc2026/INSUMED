@@ -1,14 +1,28 @@
 /* =====================================================
    ÁREA DO ADMINISTRADOR
-   Menu lateral fixo (computador) / gaveta (tablet e celular),
-   barra superior com o caminho da página e os componentes comuns
-   das telas de lista (abas, tabela, menu de ações).
+   Menu lateral, barra superior (no padrão da do paciente), trilha de
+   navegação abaixo dela e os componentes comuns das telas de lista
+   (abas, tabela, menu de ações).
+
+   Menu lateral:
+   - celular (até 767px): gaveta por cima da tela, aberta pelo ☰;
+   - tablet e computador: o menu empurra a página para o lado. O
+     administrador escolhe se ele fica fixo (sempre aberto) ou se abre
+     e fecha pelo ☰ (botão de alfinete no topo do menu).
 ===================================================== */
 
 body.layout-admin {
   --largura-menu-admin: 264px;
-  --logged-header-height: 68px;
+  /* altura da barra superior (igual à do paciente) e da trilha */
+  --adm-topo-altura: 84px;
+  --adm-trilha-altura: 0px;
+  /* as páginas usam esta soma para descer abaixo da barra e da trilha */
+  --logged-header-height: calc(var(--adm-topo-altura) + var(--adm-trilha-altura));
   background: var(--cor-fundo, #f5f7fb);
+}
+
+body.layout-admin.adm-com-trilha {
+  --adm-trilha-altura: 46px;
 }
 
 /* ---------- menu lateral ---------- */
@@ -53,6 +67,31 @@ body.layout-admin {
 .adm-lateral-logo {
   height: 40px;
   width: auto;
+}
+
+.adm-lateral-acoes {
+  display: flex;
+  gap: 2px;
+}
+
+/* fixar ou soltar o menu (só no computador e no tablet) */
+.adm-lateral-fixar {
+  display: none;
+  padding: 6px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cor-texto-suave, #5b6475);
+  cursor: pointer;
+}
+
+.adm-lateral-fixar:hover {
+  background: var(--cor-primaria-clara, #e8f0ff);
+  color: var(--cor-primaria, #0042ec);
+}
+
+.adm-lateral-fixar[aria-pressed="true"] {
+  color: var(--cor-primaria, #0042ec);
 }
 
 .adm-lateral-fechar {
@@ -155,7 +194,6 @@ body.layout-admin {
 .adm-item--ativo:hover {
   background: var(--cor-primaria-clara, #e8f0ff);
   color: var(--cor-primaria, #0042ec);
-  box-shadow: inset 3px 0 0 var(--cor-primaria, #0042ec);
 }
 
 .adm-item--sub {
@@ -167,6 +205,16 @@ body.layout-admin {
 .adm-item--discreto,
 .adm-item--discreto .adm-item-icone {
   color: var(--cor-texto-suave, #5b6475);
+}
+
+/* "Sair" em vermelho (o mesmo nos menus do paciente e do autorizador) */
+.adm-item--sair,
+.adm-item--sair .adm-item-icone {
+  color: var(--cor-erro, #d30000);
+}
+
+.adm-item--sair:hover {
+  background: #fef2f2;
 }
 
 .adm-contador {
@@ -219,56 +267,129 @@ body.layout-admin {
 }
 
 /* ---------- barra superior ---------- */
-.adm-topo {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* usa o .header do paciente (Header.css); aqui só o que muda */
+.header.adm-topo {
   right: 0;
   width: auto;
-  z-index: 999;
-  height: var(--logged-header-height, 68px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  height: var(--adm-topo-altura);
+  min-height: 0;
+  padding: 0 28px;
   gap: 16px;
-  padding: 0 24px;
-  box-sizing: border-box;
-  background: var(--cor-superficie, #fff);
-  border-bottom: 1px solid var(--cor-borda, #dfe3ea);
+  transition: left 0.25s ease;
 }
 
 .adm-topo-esq,
 .adm-topo-dir {
-  display: flex;
-  align-items: center;
-  gap: 14px;
   min-width: 0;
 }
 
-.adm-topo-menu {
-  display: inline-flex;
-  padding: 6px;
-  border: none;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--cor-texto, #1f2430);
-  font-size: 28px;
-  cursor: pointer;
+.adm-topo-esq {
+  gap: 18px;
 }
 
-.adm-topo-menu:hover {
-  background: var(--cor-primaria-clara, #e8f0ff);
+.adm-topo-dir {
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.adm-saudacao {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.adm-topo .header-title {
+  font-size: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-data {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cor-texto-suave, #5b6475);
+}
+
+.adm-data::first-letter {
+  text-transform: uppercase;
+}
+
+/* unidade com o cargo embaixo */
+.adm-unidade {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 12px;
+  border: 1px solid var(--cor-borda, #dfe3ea);
+  border-radius: 999px;
+  color: var(--cor-texto-suave, #5b6475);
+  white-space: nowrap;
+}
+
+.adm-unidade svg {
+  flex-shrink: 0;
   color: var(--cor-primaria, #0042ec);
 }
 
+.adm-unidade-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.adm-unidade-texto strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto, #1f2430);
+}
+
+.adm-unidade-texto small {
+  font-size: 11.5px;
+}
+
+/* ---------- trilha de navegação (abaixo da barra, dentro da página) ---------- */
 .adm-trilha {
+  position: absolute;
+  top: var(--adm-topo-altura);
+  left: 0;
+  right: 0;
+  width: auto;
+  height: var(--adm-trilha-altura);
+  display: flex;
+  align-items: flex-end;
+  transition: left 0.25s ease;
+}
+
+.adm-trilha-conteudo {
   display: flex;
   align-items: center;
   gap: 6px;
-  min-width: 0;
-  font-size: 14px;
+  width: 100%;
+  /* alinhada ao conteúdo das telas de lista (max-w-6xl) */
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-size: 13.5px;
   color: var(--cor-texto-claro, #8a93a3);
   white-space: nowrap;
+}
+
+.adm-trilha-conteudo svg {
+  flex-shrink: 0;
+}
+
+.adm-trilha a {
+  color: var(--cor-texto-suave, #5b6475);
+  text-decoration: none;
+}
+
+.adm-trilha a:hover {
+  color: var(--cor-primaria, #0042ec);
+  text-decoration: underline;
 }
 
 .adm-trilha strong {
@@ -278,109 +399,104 @@ body.layout-admin {
   text-overflow: ellipsis;
 }
 
-.adm-unidade {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid var(--cor-borda, #dfe3ea);
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--cor-texto-suave, #5b6475);
-  white-space: nowrap;
-}
-
-.adm-topo .notification-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.adm-usuario {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 16px 5px 5px;
-  border-radius: 999px;
-  background: var(--gradiente-primario);
-  color: #fff;
-}
-
-.adm-usuario-avatar {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.adm-usuario-texto {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  font-family: var(--fonte-botao);
-}
-
-.adm-usuario-texto strong {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.adm-usuario-texto small {
-  font-size: 11px;
-  opacity: 0.85;
-}
-
-/* computador: menu sempre aberto e conteúdo ao lado */
-@media (min-width: 1024px) {
+/* ---------- tablet e computador: o menu empurra a página ---------- */
+@media (min-width: 768px) {
   body.layout-admin #root {
+    transition: padding-left 0.25s ease;
+  }
+
+  .adm-lateral {
+    box-shadow: none;
+    z-index: 999; /* abaixo dos modais (z-index 1000) */
+  }
+
+  .adm-lateral-fundo {
+    display: none;
+  }
+
+  .adm-lateral-fixar {
+    display: inline-flex;
+  }
+
+  /* menu fixo: sempre aberto, sem ☰ nem X */
+  body.adm-menu-fixo .adm-lateral {
+    transform: none;
+  }
+
+  body.adm-menu-fixo .adm-lateral-fechar,
+  body.adm-menu-fixo .adm-topo-menu {
+    display: none;
+  }
+
+  /* menu aberto (fixo ou pelo ☰): página, barra e trilha vão para o lado */
+  body.adm-menu-fixo #root,
+  body.adm-menu-aberto #root {
     padding-left: var(--largura-menu-admin, 264px);
   }
 
-  /* fixo no desktop: fica abaixo dos modais (z-index 1000) */
-  .adm-lateral {
-    transform: none;
-    box-shadow: none;
-    z-index: 999;
-  }
-
-  .adm-lateral-fundo,
-  .adm-lateral-fechar,
-  .adm-topo-menu {
-    display: none;
-  }
-
-  .adm-topo {
+  body.adm-menu-fixo .adm-topo,
+  body.adm-menu-aberto .adm-topo,
+  body.adm-menu-fixo .adm-trilha,
+  body.adm-menu-aberto .adm-trilha {
     left: var(--largura-menu-admin, 264px);
-    padding: 0 28px;
   }
 
   /* botão "Aa" encostado no menu, não por cima dele */
-  body.layout-admin .acessibilidade {
+  body.adm-menu-fixo .acessibilidade,
+  body.adm-menu-aberto .acessibilidade {
     left: var(--largura-menu-admin, 264px);
-    z-index: 998; /* abaixo dos modais do admin */
+    z-index: 998;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   body.layout-admin {
-    --logged-header-height: 60px;
+    --adm-topo-altura: 76px;
   }
 
-  .adm-topo {
+  .header.adm-topo {
+    padding: 0 20px;
+  }
+
+  .adm-topo .header-title {
+    font-size: 26px;
+  }
+
+  .adm-unidade {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .adm-data {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  body.layout-admin {
+    --adm-topo-altura: 64px;
+  }
+
+  body.layout-admin.adm-com-trilha {
+    --adm-trilha-altura: 38px;
+  }
+
+  .header.adm-topo {
     padding: 0 12px;
   }
 
-  .adm-unidade,
-  .adm-usuario-texto {
-    display: none;
+  .adm-topo-esq {
+    gap: 8px;
   }
 
-  .adm-usuario {
-    padding: 4px;
+  .adm-topo .header-title {
+    font-size: 20px;
+  }
+
+  .adm-trilha-conteudo {
+    padding: 0 16px;
+    font-size: 12.5px;
   }
 }
 

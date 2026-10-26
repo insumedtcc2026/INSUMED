@@ -3,8 +3,8 @@ import '../../css/universais/NavInferior.css';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Activity, CalendarClock, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, History, ListChecks, LogOut,
-  MoreHorizontal, Package, QrCode, ShieldCheck, TrendingUp, Upload, UserCog, Users, X,
+  Activity, CalendarClock, CalendarPlus, ClipboardCheck, ClipboardList, FileText, HelpCircle, ListChecks, LogOut,
+  MoreHorizontal, Package, QrCode, ShieldCheck, Upload, UserCog, Users, X,
 } from 'lucide-react';
 import { MdAddLocation } from 'react-icons/md';
 import { IoPersonSharp } from 'react-icons/io5';
@@ -54,19 +54,17 @@ const MENUS: Record<Perfil, Menu> = {
         label: 'Solicitações',
         path: '/VerSolicitaçoes',
         icon: ClipboardList,
-        ativoEm: ['/administrador/prescricao'],
+        ativoEm: ['/administrador/prescricao', '/historicodaprescricao'],
       },
     ],
     mais: [
       { label: 'Ler QR Code', path: '/leitor-qrcode', icon: QrCode },
       { label: 'Lista de separação', path: '/lista-separacao', icon: ListChecks },
       { label: 'Novo agendamento', path: '/Agendamentosadm?novo=1', icon: CalendarPlus },
-      { label: 'Histórico da prescrição', path: '/Historicodaprescricao', icon: History },
       { label: 'Pacientes', path: '/Pacientesadm', icon: Users },
-      { label: 'Insumos', path: '/insumos', icon: Package },
-      { label: 'Previsão de demanda', path: '/previsao-demanda', icon: TrendingUp },
       { label: 'Horários da unidade', path: '/horarios-unidade', icon: CalendarClock },
       { label: 'Atividades da unidade', path: '/atividades', icon: Activity },
+      { label: 'Insumos', path: '/insumos', icon: Package },
       { label: 'Meu perfil', path: '/perfil-admin', icon: UserCog },
     ],
   },
@@ -91,7 +89,7 @@ const ROTAS: Record<Perfil, string[]> = {
   ADMIN: [
     '/homeadmin', '/agendamentosadm', '/coletas-hoje', '/versolicitaçoes', '/historicodaprescricao',
     '/pacientesadm', '/atividades', '/perfil-admin', '/administrador/', '/leitor-qrcode', '/horarios-unidade',
-    '/lista-separacao', '/previsao-demanda',
+    '/lista-separacao',
   ],
   AUTORIZADOR: ['/homeaut', '/verprescricoesaprovadas', '/autorizador/', '/perfil-autorizador'],
 };

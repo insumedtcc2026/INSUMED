@@ -4,12 +4,10 @@ import {
   CalendarDays,
   ClipboardCheck,
   Files,
-  History,
   House,
   ListChecks,
   Package,
   QrCode,
-  TrendingUp,
   Users,
   UsersRound,
   type LucideIcon,
@@ -25,6 +23,8 @@ export interface ItemMenuAdmin {
   contador?: ChaveContador;
   // outras rotas que pertencem a este item (telas de detalhe)
   ativoEm?: string[];
+  // nome da tela de detalhe na trilha (ex.: Pacientes › Ficha do paciente)
+  rotuloDetalhe?: string;
   soUniversal?: boolean;
 }
 
@@ -33,6 +33,8 @@ export interface GrupoMenuAdmin {
   itens: ItemMenuAdmin[];
   // grupo recolhido que abre ao clicar (Atividades da unidade)
   recolhivel?: { rotulo: string; Icone: LucideIcon };
+  // itens comuns mostrados logo abaixo do grupo recolhido (Insumos)
+  depois?: ItemMenuAdmin[];
 }
 
 export const INICIO_ADMIN: ItemMenuAdmin = { rotulo: "Início", caminho: "/HomeAdmin", Icone: House };
@@ -44,28 +46,21 @@ export const GRUPOS_MENU_ADMIN: GrupoMenuAdmin[] = [
       { rotulo: "Coletas de hoje", caminho: "/coletas-hoje", Icone: ClipboardCheck, contador: "coletasHoje" },
       { rotulo: "Agendamentos", caminho: "/Agendamentosadm", Icone: CalendarDays, contador: "pedidosOutraData" },
       { rotulo: "Lista de separação", caminho: "/lista-separacao", Icone: ListChecks },
-      { rotulo: "Ler QR Code", caminho: "/leitor-qrcode", Icone: QrCode, ativoEm: ["/leitor-qrcode/"] },
+      { rotulo: "Ler QR Code", caminho: "/leitor-qrcode", Icone: QrCode, ativoEm: ["/leitor-qrcode/"], rotuloDetalhe: "Atendimento no balcão" },
     ],
   },
   {
-    titulo: "Prescrições",
+    titulo: "Prescrições e pacientes",
     itens: [
       {
         rotulo: "Solicitações",
         caminho: "/VerSolicitaçoes",
         Icone: Files,
         contador: "pendentes",
-        ativoEm: ["/administrador/prescricao/"],
+        // o histórico da prescrição fica dentro de Solicitações
+        ativoEm: ["/administrador/prescricao/", "/historicodaprescricao"],
       },
-      { rotulo: "Histórico da prescrição", caminho: "/Historicodaprescricao", Icone: History },
-    ],
-  },
-  {
-    titulo: "Pacientes e estoque",
-    itens: [
-      { rotulo: "Pacientes", caminho: "/Pacientesadm", Icone: Users, ativoEm: ["/pacientesadm/"] },
-      { rotulo: "Insumos", caminho: "/insumos", Icone: Package, contador: "estoqueBaixo" },
-      { rotulo: "Previsão de demanda", caminho: "/previsao-demanda", Icone: TrendingUp },
+      { rotulo: "Pacientes", caminho: "/Pacientesadm", Icone: Users, ativoEm: ["/pacientesadm/"], rotuloDetalhe: "Ficha do paciente" },
     ],
   },
   {
@@ -76,13 +71,24 @@ export const GRUPOS_MENU_ADMIN: GrupoMenuAdmin[] = [
       { rotulo: "Horários e vagas", caminho: "/horarios-unidade", Icone: CalendarClock },
       { rotulo: "Equipe da rede", caminho: "/equipe", Icone: UsersRound, soUniversal: true },
     ],
+    depois: [{ rotulo: "Insumos", caminho: "/insumos", Icone: Package, contador: "estoqueBaixo" }],
   },
 ];
 
-// Páginas fora do menu, só para o caminho ("Atendimento › ...") da barra superior
-const OUTRAS_PAGINAS: { prefixo: string; trilha: string[] }[] = [
-  { prefixo: "/perfil-admin", trilha: ["Meu perfil"] },
-  { prefixo: "/notificacoes-admin", trilha: ["Notificações"] },
+// Uma parte da trilha "Início › Solicitações › ..." (com caminho = clicável)
+export interface ParteTrilha {
+  rotulo: string;
+  caminho?: string;
+}
+
+const SOLICITACOES: ParteTrilha = { rotulo: "Solicitações", caminho: "/VerSolicitaçoes" };
+
+// Páginas fora do menu, só para a trilha de navegação
+const OUTRAS_PAGINAS: { prefixo: string; trilha: ParteTrilha[] }[] = [
+  { prefixo: "/historicodaprescricao", trilha: [SOLICITACOES, { rotulo: "Histórico da prescrição" }] },
+  { prefixo: "/administrador/prescricao/", trilha: [SOLICITACOES, { rotulo: "Prescrição" }] },
+  { prefixo: "/perfil-admin", trilha: [{ rotulo: "Meu perfil" }] },
+  { prefixo: "/notificacoes-admin", trilha: [{ rotulo: "Notificações" }] },
 ];
 
 /** Caminho sem codificação e em minúsculas (as rotas não diferenciam). */
@@ -102,17 +108,26 @@ export function itemAtivo(item: ItemMenuAdmin, pathname: string): boolean {
   return atual === base || Boolean(item.ativoEm?.some((r) => atual.startsWith(r.toLowerCase())));
 }
 
-/** Trilha da barra superior para a página atual (ex.: ["Prescrições", "Solicitações"]). */
-export function trilhaAdmin(pathname: string): string[] {
-  if (itemAtivo(INICIO_ADMIN, pathname)) return ["Início"];
-  for (const grupo of GRUPOS_MENU_ADMIN) {
-    const item = grupo.itens.find((i) => itemAtivo(i, pathname));
-    if (item) {
-      return grupo.recolhivel ? [grupo.recolhivel.rotulo, item.rotulo] : [grupo.titulo, item.rotulo];
-    }
-  }
+/**
+ * Trilha mostrada logo abaixo da barra superior, começando em "Início"
+ * (ex.: Início › Atividades da unidade › Horários e vagas). Na Home fica vazia.
+ */
+export function trilhaAdmin(pathname: string): ParteTrilha[] {
+  if (itemAtivo(INICIO_ADMIN, pathname)) return [];
+  const inicio: ParteTrilha = { rotulo: INICIO_ADMIN.rotulo, caminho: INICIO_ADMIN.caminho };
   const atual = normalizarCaminho(pathname);
-  return OUTRAS_PAGINAS.find((p) => atual.startsWith(p.prefixo))?.trilha ?? [];
+  const outra = OUTRAS_PAGINAS.find((p) => atual.startsWith(p.prefixo));
+  if (outra) return [inicio, ...outra.trilha];
+  for (const grupo of GRUPOS_MENU_ADMIN) {
+    const item = [...grupo.itens, ...(grupo.depois ?? [])].find((i) => itemAtivo(i, pathname));
+    if (!item) continue;
+    // a página de detalhe (ex.: ficha do paciente) mostra o item como link
+    const detalhe = atual !== normalizarCaminho(item.caminho.split("?")[0]);
+    const parte: ParteTrilha = detalhe ? { rotulo: item.rotulo, caminho: item.caminho } : { rotulo: item.rotulo };
+    const noRecolhivel = grupo.recolhivel && grupo.itens.includes(item);
+    return [inicio, ...(noRecolhivel ? [{ rotulo: grupo.recolhivel!.rotulo }] : []), parte, ...(detalhe ? [{ rotulo: item.rotuloDetalhe ?? "Detalhes" }] : [])];
+  }
+  return [];
 }
 
 export function adminUniversal(): boolean {

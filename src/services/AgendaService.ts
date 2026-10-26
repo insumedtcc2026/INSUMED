@@ -210,7 +210,7 @@ export async function listarMeusInsumos(): Promise<PrescricaoEmUso[]> {
 }
 
 // ---------------------------------------------------------
-// GESTÃO (etapa 5): lista de separação e previsão de demanda
+// GESTÃO (etapa 5): lista de separação do dia
 // ---------------------------------------------------------
 
 export interface TotalSeparacao {
@@ -243,34 +243,4 @@ export interface UnidadeSeparacao {
 export async function buscarSeparacao(data: string): Promise<{ data: string; unidades: UnidadeSeparacao[] }> {
   const { data: r } = await api.get("/agendamentos/separacao", { params: { data }, headers: cabecalho("ADMIN") });
   return r;
-}
-
-export interface PrevisaoInsumo {
-  ins_id: number;
-  ins_nome: string;
-  ins_marca: string | null;
-  pos_id: number;
-  pos_nome: string | null;
-  estoque: number;
-  agendado: number;   // coletas já agendadas
-  recorrente: number; // próximos ciclos de uso contínuo
-  a_agendar: number;  // autorizadas esperando a 1ª retirada
-  avulso: number;     // média das retiradas avulsas
-  necessidade: number;
-  saldo: number;
-  falta: number;
-  acaba_em: string | null;
-}
-
-export interface Previsao {
-  dias: number;
-  de: string;
-  ate: string;
-  historico_dias: number;
-  insumos: PrevisaoInsumo[];
-}
-
-export async function buscarPrevisao(dias: number): Promise<Previsao> {
-  const { data } = await api.get("/indicadores/previsao", { params: { dias }, headers: cabecalho("ADMIN") });
-  return data;
 }

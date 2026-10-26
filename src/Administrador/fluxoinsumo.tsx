@@ -1,7 +1,7 @@
 import HeaderAdm from "../components/universais/HeaderAdm";
 import Sidebaradm from "../components/universais/Siderbaradm";
 import Footer from "../components/universais/Footer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useValidarToken } from '../hook/Validartoken.tsx';
 import { useDadosInsumos } from "../hook/Insumosposto";
 import Swal from "sweetalert2";
@@ -30,29 +30,10 @@ export default function FluxoInsumo() {
 
   const [pagina, setPagina] = useState(1);
 
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [alturaHeader, setAlturaHeader] = useState(101);
-
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   const { verificando } = useValidarToken("ADMIN");
   const { insumos, carregarInsumos, movimentarInsumo } = useDadosInsumos();
-  const carregando = verificando || insumos === null;
-
-  useEffect(() => {
-    if (carregando) return; 
-
-    const caixa = headerRef.current;
-    const header = caixa?.querySelector("header") ?? caixa?.firstElementChild;
-    if (!(header instanceof HTMLElement)) return;
-
-    const medir = () => {
-      if (header.offsetHeight > 0) setAlturaHeader(header.offsetHeight);
-    };
-    medir();
-    window.addEventListener("resize", medir); // mede de novo se a tela mudar de tamanho
-    return () => window.removeEventListener("resize", medir);
-  }, [carregando]);
 
   useEffect(() => {
     if (!modalAberto) return;
@@ -184,13 +165,9 @@ const estoqueInsuficiente = insumoSelecionado !== undefined && estoqueDepois < 0
   return (
     <div className="ins-pagina">
       <Sidebaradm isOpen={sidebarOpen} onClose={toggleSidebar} />
-      <div ref={headerRef}>
-        <HeaderAdm onMenuClick={toggleSidebar} />
-      </div>
+      <HeaderAdm onMenuClick={toggleSidebar} />
 
-      <div style={{ height: alturaHeader }} aria-hidden="true" />
-
-      <div className="barra-voltar ">
+      <div className="barra-voltar barra-voltar--logado">
         <BotaoVoltar para="/homeadmin" />
       </div>
 

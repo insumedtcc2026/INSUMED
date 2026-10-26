@@ -40,7 +40,6 @@ import NavInferior from './components/universais/NavInferior';
 import Equipe from './Administrador/Equipe';
 import HorariosUnidade from './Administrador/HorariosUnidade';
 import ListaSeparacao from './Administrador/ListaSeparacao';
-import PrevisaoDemanda from './Administrador/PrevisaoDemanda';
 import PontoColetaDetalhe from './pages/PontoColetaDetalhe';
 import MeusInsumos from './pages/MeusInsumos';
 import TrocarSenha from './pages/TrocarSenha';
@@ -190,7 +189,6 @@ function App() {
       <Route path="/equipe" element={<Equipe />} />
       <Route path="/horarios-unidade" element={<HorariosUnidade />} />
       <Route path="/lista-separacao" element={<ListaSeparacao />} />
-      <Route path="/previsao-demanda" element={<PrevisaoDemanda />} />
       <Route path="/trocar-senha" element={<TrocarSenha />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
