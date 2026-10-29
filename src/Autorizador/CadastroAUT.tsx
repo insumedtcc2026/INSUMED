@@ -1,9 +1,8 @@
 import axios from 'axios'
-import images from "../assets/home-log/teste cadastro.webp"; 
+import BotaoOlho from "../components/universais/BotaoOlho";
+import PainelMarca from "../components/home/PainelMarca";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import olhoAberto from '../assets/home-log/olho aberto.webp';
-import olhoFechado from '../assets/home-log/olho fechado.webp';
 import { useState } from "react";
 import "../css/home/Cadastro.css"
 import BotaoVoltar from "../components/universais/BotaoVoltar";
@@ -106,9 +105,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
         <>
    <div className="login-fullscreen-container">
     
-      <div className="login-image-panel">
-        <img src={images} alt="Login Background" />
-      </div>
+      <PainelMarca />
 
 
      <div className="login-form-panel">
@@ -184,8 +181,8 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
 
 <div className="Alinha-campos">
       <div className="campo">
-        <div className="input-password">
         <label>Crie uma Senha</label>
+        <div className="campo-senha">
         <input
           type={olhoPassword? 'text': 'password'}
           placeholder="Crie sua senha"
@@ -193,19 +190,15 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
           className={classeDe("senha")}
             onChange={(e) => setPassword(e.target.value)} />
 
-          <img  src={olhoPassword ? olhoAberto : olhoFechado}
-        alt="Mostrar senha"
-        className="icone-olho"
-        onClick={() => setOlhoPassword(!olhoPassword)}
-        />
+          <BotaoOlho visivel={olhoPassword} onAlternar={() => setOlhoPassword(!olhoPassword)} />
       </div>
             <ForcaSenha senha={password} />
             <MensagemErro erro={erroDe("senha")} />
       </div>
 
       <div className="campo">
-        <div className="input-password">
         <label>Confirme sua senha</label>
+        <div className="campo-senha">
         <input
           type={showConfirmPassword? 'text': 'password'}
           placeholder="Confirme sua senha"
@@ -220,11 +213,7 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
     }
           />
 
-            <img  src={showConfirmPassword ? olhoAberto : olhoFechado}
-        alt="Mostrar senha"
-        className="icone-olho"
-        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-        />
+            <BotaoOlho visivel={showConfirmPassword} onAlternar={() => setShowConfirmPassword(!showConfirmPassword)} />
       
        </div>
         <MensagemErro erro={confirmacaodesenha || tentouEnviar ? erros.confirmacao : null} />   
@@ -259,4 +248,4 @@ const classeDe = (campo: keyof typeof erros) => (erroDe(campo) ? "input-erro" : 
 }
   
 
-export default CadastroAUT;
+export default CadastroAUT;

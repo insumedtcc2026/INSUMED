@@ -9,6 +9,8 @@ import {
 import { Upload } from 'lucide-react';
 import { SendHorizontal } from 'lucide-react';
 import { Info } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 import Sidebar from '../components/universais/Sidebar.tsx';
 import api from '../services/SoliciatcaoService';
@@ -20,6 +22,7 @@ import '../css/home/EnviarSolicitacao.css';
 import Swal from 'sweetalert2';
 import { mensagemErroApi } from '../utils/validacoes';
 import { arquivoParaBase64, erroArquivoPrescricao } from '../components/usuario-1/prescricao/arquivoPrescricao';
+import { buscarPostoSugeridoDoPaciente } from '../utils/postoSugerido';
 
 
 
@@ -71,6 +74,13 @@ function EnviarSolicitaçao() {
     const [enviando, setEnviando] =
         useState(false);
 
+    // unidade sugerida: a que veio do atalho "Enviar prescrição" de um ponto
+    // de coleta (?posto=) ou a que o paciente mais usou nas últimas coletas
+    const [searchParams] = useSearchParams();
+    const postoDoLink = Number(searchParams.get('posto')) || null;
+    const [sugerido, setSugerido] =
+        useState<{ pos_id: number; origem: 'link' | 'historico' } | null>(null);
+
 
     // ==============================
     // BUSCAR POSTOS
@@ -103,6 +113,32 @@ function EnviarSolicitaçao() {
         carregarPostos();
 
     }, []);
+
+
+    // ==============================
+    // SUGERIR UNIDADE
+    // ==============================
+
+    useEffect(() => {
+        if (!postos.length) return;
+        let ativo = true;
+
+        const aplicar = (pos_id: number | null, origem: 'link' | 'historico') => {
+            if (!ativo || !pos_id || !postos.some((p) => p.pos_id === pos_id)) return false;
+            setSugerido({ pos_id, origem });
+            // só preenche se a pessoa ainda não escolheu nada
+            setPosto((atual) => atual || String(pos_id));
+            return true;
+        };
+
+        if (!aplicar(postoDoLink, 'link')) {
+            buscarPostoSugeridoDoPaciente()
+                .then((pos_id) => aplicar(pos_id, 'historico'))
+                .catch(() => undefined);
+        }
+
+        return () => { ativo = false; };
+    }, [postos, postoDoLink]);
 
 
     // ==============================
@@ -238,7 +274,8 @@ function EnviarSolicitaçao() {
 
                 // Limpa formulário (só quando dá certo)
 
-                setPosto('');
+                // volta para a unidade sugerida (a pessoa pode trocar)
+                setPosto(sugerido ? String(sugerido.pos_id) : '');
 
                 setFile(null);
 
@@ -450,6 +487,7 @@ return (
                                             setPosto(e.target.value)
                                         }
                                         required
+                                        aria-describedby={sugerido ? 'posto-sugestao' : undefined}
                                     >
 
                                         <option value="">
@@ -463,11 +501,22 @@ return (
                                                 value={posto.pos_id}
                                             >
                                                 {posto.pos_nome}
+                                                {sugerido?.pos_id === posto.pos_id ? ' (sugerida)' : ''}
                                             </option>
 
                                         ))}
 
                                     </select>
+
+                                    {sugerido && (
+                                        <p id="posto-sugestao" className="envio-sugestao">
+                                            <Sparkles size={15} aria-hidden="true" />
+                                            {sugerido.origem === 'link'
+                                                ? 'Unidade do ponto de coleta que você estava vendo.'
+                                                : 'Sugerimos a unidade que você mais usou nas últimas coletas.'}
+                                            {' '}Você pode escolher outra.
+                                        </p>
+                                    )}
 
                                 </div>
 
@@ -569,4 +618,4 @@ return (
 );
 }
 
-export default EnviarSolicitaçao;
+export default EnviarSolicitaçao;

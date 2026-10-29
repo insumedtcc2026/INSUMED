@@ -90,17 +90,240 @@
   justify-content: center;
 }
 
-.map-wrapper {
+/* ---------- mapa interativo do RJ ---------- */
+.mapa-rj {
   position: relative;
   width: 100%;
   max-width: 730px;
+  padding-bottom: 70px;
 }
 
-.map-wrapper img {
+.mapa-rj__svg {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
-  transform: scale(1.09);
+  overflow: visible;
+}
+
+.mapa-rj__cidade {
+  fill: #0a2a9a;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: fill 0.25s ease, opacity 0.6s ease var(--atraso, 0s), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--atraso, 0s);
+}
+
+.mapa-rj--visivel .mapa-rj__cidade {
+  opacity: 1;
+  transform: none;
+}
+
+.mapa-rj__cidade--atendida {
+  fill: #0d3fd6;
+}
+
+/* com o mouse no mapa, as outras cidades ficam um pouco mais claras */
+.mapa-rj--focado .mapa-rj__cidade {
+  fill: #2546b4;
+}
+
+.mapa-rj--focado .mapa-rj__cidade--atendida {
+  fill: #1f55e6;
+}
+
+.mapa-rj__destaque {
+  fill: #0192fe;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 8px 14px rgba(0, 20, 120, 0.45));
+  animation: mapa-cidade-cresce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes mapa-cidade-cresce {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+/* pinos dos pontos de coleta */
+.mapa-rj__pino {
+  cursor: pointer;
+  outline: none;
+}
+
+.mapa-rj__pino-corpo {
+  fill: #fff;
+  stroke: #001ed3;
+  stroke-width: 2.5;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  opacity: 0;
+  transform: translateY(-30px) scale(0.6);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.mapa-rj__pino-corpo circle {
+  fill: #001ed3;
+  stroke: none;
+}
+
+.mapa-rj--visivel .mapa-rj__pino-corpo {
+  animation: mapa-pino-cai 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) var(--atraso, 1s) forwards;
+}
+
+.mapa-rj__pino:hover .mapa-rj__pino-corpo,
+.mapa-rj__pino:focus-visible .mapa-rj__pino-corpo,
+.mapa-rj__pino--ativo .mapa-rj__pino-corpo {
+  animation: none;
+  opacity: 1;
+  transform: scale(1.3);
+  fill: #ffe066;
+}
+
+.mapa-rj__pino:focus-visible .mapa-rj__pino-corpo {
+  stroke: #000;
+}
+
+@keyframes mapa-pino-cai {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mapa-rj__pino-onda {
+  fill: rgba(255, 255, 255, 0.55);
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+.mapa-rj--visivel .mapa-rj__pino-onda {
+  animation: mapa-onda 2.4s ease-out calc(var(--atraso, 1s) + 0.6s) infinite;
+}
+
+@keyframes mapa-onda {
+  0% { opacity: 0.8; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+/* balão com o nome do ponto de coleta */
+.mapa-rj__balao {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, calc(-100% - 64px));
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--cor-primaria-escura);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(0, 20, 120, 0.25);
+  pointer-events: none;
+  animation: mapa-balao 0.25s ease-out;
+}
+
+.mapa-rj__balao::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes mapa-balao {
+  from { opacity: 0; transform: translate(-50%, calc(-100% - 52px)); }
+}
+
+/* cartão de baixo: estado inteiro ou a cidade apontada */
+.mapa-rj__cartao {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: min(100%, 420px);
+  padding: 12px 22px 12px 12px;
+  border-radius: 18px;
+  background: #0a2a9a;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(0, 20, 120, 0.25);
+}
+
+.mapa-rj__cartao-icone {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #fff;
+  color: #0a2a9a;
+}
+
+.mapa-rj__cartao-icone svg {
+  width: 28px;
+  height: 28px;
+}
+
+.mapa-rj__cartao-texto {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 14px;
+  animation: mapa-cartao-troca 0.3s ease-out;
+}
+
+.mapa-rj__cartao-texto strong {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+@keyframes mapa-cartao-troca {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/* microinteração nos cards da esquerda */
+.expansion-card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.expansion-card:hover {
+  transform: translateX(6px);
+  border-color: rgba(0, 66, 236, 0.35);
+  box-shadow: 0 12px 26px rgba(0, 30, 211, 0.1);
+}
+
+.expansion-card .icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.expansion-card:hover .icon {
+  transform: rotate(-8deg) scale(1.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-rj__cidade,
+  .mapa-rj__pino-corpo {
+    opacity: 1;
+    transform: none;
+    transition: fill 0.2s ease;
+  }
+
+  .mapa-rj--visivel .mapa-rj__pino-corpo,
+  .mapa-rj--visivel .mapa-rj__pino-onda,
+  .mapa-rj__destaque {
+    animation: none;
+  }
 }
 
 /* ===========================
@@ -125,7 +348,7 @@
   }
 
   .expansion-right {
-    display: none; /* Esconde o mapa */
+    width: 100%;
   }
 
   .expansion-title {
@@ -201,4 +424,30 @@
     font-size: 14px !important;
   }
 
+}
+@media (max-width: 480px) {
+  .mapa-rj {
+    padding-bottom: 64px;
+  }
+
+  .mapa-rj__cartao {
+    gap: 12px;
+    padding: 10px 16px 10px 10px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .mapa-rj__cartao-icone {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mapa-rj__cartao-texto {
+    padding-left: 12px;
+    font-size: 13px;
+  }
+
+  .mapa-rj__cartao-texto strong {
+    font-size: 18px;
+  }
 }

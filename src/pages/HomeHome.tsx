@@ -5,8 +5,11 @@ import AppFeatures from "../components/home/AppFeatures";
 import ExpansionMap from "../components/home/ExpansionMap";
 import Footer from "../components/home/Footer";
 import "../css/home/HomeHome.css";
+import { useRolagemSuave } from "../hook/useRolagemSuave";
 
 export default function App() {
+  useRolagemSuave();
+
   return (
     <main className="homehome-page">
       <Header />
@@ -28,4 +31,4 @@ export default function App() {
       </section>
     </main>
   );
-}
+}

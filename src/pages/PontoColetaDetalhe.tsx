@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import L from "leaflet";
-import { CalendarOff, Clock, MapPin, Navigation } from "lucide-react";
+import { CalendarOff, Clock, FileUp, MapPin, Navigation } from "lucide-react";
 import Header from "../components/universais/Header";
 import Sidebar from "../components/universais/Sidebar";
 import Footer from "../components/universais/Footer";
@@ -150,6 +150,13 @@ export default function PontoColetaDetalhe() {
                   >
                     <Navigation aria-hidden="true" className="h-4 w-4" /> Como chegar
                   </a>
+                  {/* atalho: abre o envio de prescrição já com esta unidade escolhida */}
+                  <Link
+                    to={`/enviarsolicitacao?posto=${posto.pos_id}`}
+                    className="flex min-h-11 items-center justify-center gap-2 rounded-full border-2 border-blue-700 px-5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                  >
+                    <FileUp aria-hidden="true" className="h-4 w-4" /> Enviar prescrição
+                  </Link>
                   <ContatoUnidade
                     pos_nome={posto.pos_nome}
                     pos_whatsapp={posto.pos_whatsapp}

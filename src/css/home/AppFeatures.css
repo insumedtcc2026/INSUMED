@@ -10,11 +10,45 @@
   position: relative;
 }
 
+/* faixa que liga as duas telas (desenhada ao rolar) */
+.app-features__faixa {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.app-features__faixa-linha {
+  fill: none;
+  stroke: url(#faixa-gradiente);
+  stroke-width: clamp(44px, 6vw, 92px);
+  stroke-linecap: round;
+  opacity: 0.85;
+  transition: stroke-dashoffset 0.25s linear;
+}
+
+.app-features__faixa-fluxo {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-dasharray: 1 42;
+  opacity: 0;
+  animation: faixa-fluxo 2.8s linear infinite;
+}
+
+@keyframes faixa-fluxo {
+  to { stroke-dashoffset: -86; }
+}
+
 /* =============================================
    TELAS
    ============================================= */
 
 .app-features__screen {
+  position: relative;
+  z-index: 1;
   min-height: 105vh;
   width: 100%;
   display: flex;
@@ -41,7 +75,14 @@
 .app-features__phone img {
   width: 100%;
   max-width: 500px;
+  height: auto;
   display: block;
+  animation: celular-flutua 6s ease-in-out infinite;
+}
+
+@keyframes celular-flutua {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-1deg); }
 }
 
 .app-features__content {
@@ -71,6 +112,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 
   width: 180px;
   height: 60px;
@@ -90,6 +132,20 @@
   background: #fff;
   color: var(--cor-primaria-escura);
   transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.button-home i {
+  font-size: 0.9em;
+  transition: transform 0.3s ease;
+}
+
+.button-home:hover i {
+  transform: translateX(5px);
+}
+
+.button-home:active {
+  transform: translateY(0) scale(0.97);
 }
 
 /* =============================================
@@ -138,6 +194,20 @@
   margin-bottom: 22px;
 
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* microinteração: o card desliza e o ícone acende */
+.feature-card:hover {
+  transform: translateX(8px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.25);
+}
+
+.feature-card:hover .feature-icon {
+  background: #fff;
+  color: var(--cor-primaria);
+  transform: rotate(-8deg) scale(1.08);
 }
 
 .feature-icon {
@@ -155,6 +225,7 @@
 
   color: white;
   font-size: 1.3rem;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .feature-card p {
@@ -202,10 +273,22 @@
     max-width: 100%;
   }
 
-  /* Esconde as imagens dos celulares */
-  .app-features__phone,
+  /* no celular fica só o celular (menor); a foto das duas mulheres some */
+  .app-features__phone {
+    order: 2;
+    width: 100%;
+  }
+
+  .app-features__phone img {
+    max-width: 320px;
+  }
+
   .app-features__right {
     display: none;
+  }
+
+  .app-features__faixa {
+    opacity: 0.45;
   }
 
   .app-features__left {
@@ -308,4 +391,10 @@
     font-size: 0.95rem;
   }
 
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-features__phone img,
+  .app-features__faixa-fluxo {
+    animation: none;
+  }
 }

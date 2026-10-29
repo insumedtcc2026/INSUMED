@@ -144,6 +144,7 @@ export interface ItemHistoricoPaciente extends ComItensPrescricao {
   sol_motivo_reenvio: string | null;
   sol_motivo_cancelamento: string | null;
   sol_origem_id: number | null;
+  pos_id?: number | null;
   pos_nome: string | null;
   ins_nome: string | null;
   tem_prescricao: boolean;

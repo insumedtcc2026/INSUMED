@@ -1,0 +1,104 @@
+/* =====================================================
+   Entrada ao rolar (useRevelar) e microinterações gerais
+===================================================== */
+
+.revelar-ativo [data-revelar] {
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.8s ease;
+  transition-delay: var(--atraso, 0s);
+}
+
+.revelar-ativo [data-revelar]:not(.revelado) {
+  opacity: 0;
+  transform: translateY(36px);
+}
+
+.revelar-ativo [data-revelar="esquerda"]:not(.revelado) {
+  transform: translateX(-48px);
+}
+
+.revelar-ativo [data-revelar="direita"]:not(.revelado) {
+  transform: translateX(48px);
+}
+
+.revelar-ativo [data-revelar="zoom"]:not(.revelado) {
+  transform: scale(0.9);
+  filter: blur(6px);
+}
+
+/* rolagem suave em todo o site (âncoras, "voltar ao topo") */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* o Lenis (rolagem com inércia da home) cuida da rolagem sozinho */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* =====================================================
+   Microinterações do site todo
+===================================================== */
+
+/* cada página nova aparece com um leve fade (só opacidade, para não
+   mexer no header e no menu fixos) */
+#root > div {
+  animation: pagina-aparece 0.35s ease-out;
+}
+
+@keyframes pagina-aparece {
+  from { opacity: 0; }
+}
+
+/* botões "afundam" um pouco ao clicar */
+.botao-primario:active:not(:disabled),
+.botao-novo-agendamento:active:not(:disabled),
+.hero-botao:active:not(:disabled),
+.btn-entrar:active:not(:disabled),
+.btn-login:active:not(:disabled),
+.btn-ver-mais:active:not(:disabled),
+.btn-editar:active:not(:disabled),
+.equipe-botao:active:not(:disabled),
+.rvp-botao:active:not(:disabled),
+.leitor-botao:active:not(:disabled),
+.swal2-styled:active:not(:disabled) {
+  transform: scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* campos acendem a borda com suavidade ao receber o foco */
+:where(input, select, textarea) {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* ícones dentro de botões e links deslizam de leve no hover */
+:where(.botao-novo-agendamento, .botao-primario) svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:where(.botao-novo-agendamento, .botao-primario):hover svg {
+  transform: scale(1.15) rotate(-6deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root > div {
+    animation: none;
+  }
+
+  :where(.botao-novo-agendamento, .botao-primario):hover svg {
+    transform: none;
+  }
+}

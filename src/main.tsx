@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import App from './App';
 import './index.css';
+import './css/universais/Movimento.css';
 import axios from 'axios';
 import { observarAcoes } from './utils/notificacoes';
 
@@ -21,4 +22,4 @@ ReactDOM.createRoot(
       <App />
     </BrowserRouter>
   </React.StrictMode>
-);
+);

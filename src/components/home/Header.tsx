@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import '../../css/home/Header.css';
 import logo from '../../assets/home/Logo.webp';
+import { rolarAte } from '../../hook/useRolagemSuave';
 
 // Seções da própria home (ids em pages/HomeHome.tsx). Antes eram "Sobre"
 // (página que exige login) e links externos do Instagram e do YouTube,
@@ -19,7 +20,9 @@ function irParaSecao(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
   if (!alvo) return;
   e.preventDefault();
   const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  alvo.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'start' });
+  // com a rolagem com inércia ligada, ela mesma leva até a seção
+  // (110px = espaço do header, igual ao scroll-margin-top das seções)
+  if (!rolarAte(alvo, -110)) alvo.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'start' });
   alvo.focus({ preventScroll: true });
   window.history.replaceState(null, '', `#${id}`);
 }
@@ -82,4 +85,4 @@ const Header: React.FC = () => {
   );
 };
  
-export default Header;
+export default Header;

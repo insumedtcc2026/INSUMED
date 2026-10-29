@@ -1,74 +1,450 @@
-.bannercontainer {
+/* =====================================================
+   Banner da home não logada
+   O "palco" tem a proporção da arte original (1440 x 875) e cobre a
+   área do banner, como o object-fit: cover da imagem antiga. Tudo dentro
+   dele é posicionado em % e as fontes em cqw (largura do palco), então a
+   composição fica igual em qualquer tela de computador.
+===================================================== */
+
+.bannercontainer.hero {
   position: relative;
   width: 100%;
-  height: calc(100vh + 60px); 
-  
+  height: calc(100vh + 60px);
+  min-height: 560px;
   overflow: hidden;
   margin: 0;
   padding: 0;
   z-index: 1;
+  background: #0638d8;
+  color: #fff;
 }
 
-.bannerhero {
+.hero-palco {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: max(100%, calc((100vh + 60px) * 1440 / 875));
+  aspect-ratio: 1440 / 875;
+  container-type: inline-size;
+}
+
+.hero-fundo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  user-select: none;
+  /* leve "respiração" do fundo */
+  animation: hero-fundo 18s ease-in-out infinite alternate;
+}
+
+@keyframes hero-fundo {
+  to { transform: scale(1.04); }
+}
+
+/* ---------- camadas da ilustração (computador) ---------- */
+.hero-arte {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-camada {
+  position: absolute;
   display: block;
+  height: auto;
   user-select: none;
 }
-/* ---------- Versão para celular ---------- */
-/* Texto de verdade sobre o mesmo azul da arte, e a ilustração embaixo */
-.bannercontainer.banner-mobile {
-  height: auto;
-  min-height: 0;
+
+.hero-homem.hero-camada {
+  left: 55.73%;
+  top: 11.83%;
+  width: 41.74%;
+  /* a arte termina aqui: some aos poucos em vez de cortar reto */
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  animation: hero-entra-cima 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.hero-sino.hero-camada {
+}
+
+.hero-sino--1.hero-camada {
+  left: 53.8%;
+  top: 30%;
+  width: 7.4%;
+}
+
+.hero-sino--2.hero-camada {
+  left: 88.4%;
+  top: 10.6%;
+  width: 10.6%;
+}
+
+.hero-brilho {
+  mix-blend-mode: screen;
+}
+
+.hero-brilho--1 {
+  left: 53.5%;
+  top: 27.4%;
+  width: 8.8%;
+  animation: hero-brilha 3.2s ease-in-out infinite;
+}
+
+.hero-brilho--2 {
+  left: 87.5%;
+  top: 4.5%;
+  width: 12.5%;
+  animation: hero-brilha 4s ease-in-out 1.3s infinite;
+}
+
+/* sinos: entram, depois flutuam e balançam como se tocassem */
+.hero-sino {
+  transform-origin: 50% 8%;
+  animation:
+    hero-sino-entra 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both,
+    hero-flutua 6s ease-in-out 1.4s infinite,
+    hero-sino-toca 7s ease-in-out 2s infinite;
+}
+
+.hero-sino--2 {
+  animation-delay: 0.8s, 1.9s, 3.6s;
+  animation-duration: 0.8s, 7s, 8s;
+}
+
+/* avisos */
+.hero-aviso {
+  display: flex;
+  align-items: center;
+  gap: 0.8cqw;
+  width: 17cqw;
+  padding: 0.65cqw 0.9cqw;
+  border-radius: 0.9cqw;
+  background: rgba(255, 255, 255, 0.97);
+  color: #1f2430;
+  box-shadow: 0 0.6cqw 1.8cqw rgba(0, 18, 120, 0.28);
+  font-size: 0.78cqw;
+  line-height: 1.3;
+}
+
+.hero-aviso.hero-camada {
+  animation:
+    hero-aviso-entra 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    hero-flutua 4.5s ease-in-out infinite;
+}
+
+.hero-aviso--1.hero-camada {
+  left: 60%;
+  top: 24.6%;
+  animation-delay: 0.9s, 1.6s;
+}
+
+.hero-aviso--2.hero-camada {
+  left: 61.6%;
+  top: 34.4%;
+  animation-delay: 1.15s, 2.4s;
+}
+
+.hero-aviso--3.hero-camada {
+  left: 57.6%;
+  top: 44.2%;
+  animation-delay: 1.4s, 3.1s;
+}
+
+.hero-aviso__icone {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.3cqw;
+  height: 2.3cqw;
+  border-radius: 0.6cqw;
+  color: #fff;
+}
+
+.hero-aviso__icone svg {
+  width: 58%;
+  height: 58%;
+}
+
+.hero-aviso__icone--agenda { background: #0042ec; }
+.hero-aviso__icone--sucesso { background: #16a34a; }
+.hero-aviso__icone--alerta { background: #e11d48; }
+
+.hero-aviso__texto {
   display: flex;
   flex-direction: column;
-  padding: calc(var(--header-height, 72px) + 56px) 20px 0;
-  background: radial-gradient(120% 60% at 0% 0%, #166fce 0%, rgba(22, 111, 206, 0) 60%),
-    linear-gradient(180deg, #0d42c8 0%, #063bb4 100%);
-  color: #fff;
+  color: #4b5563;
 }
 
-.banner-mobile-titulo {
+.hero-aviso__texto strong {
+  color: #111827;
+  font-size: 1.08em;
+}
+
+/* ---------- texto ---------- */
+/* quando a tela é mais estreita que a arte, o palco é cortado à esquerda
+   (a ilustração fica inteira); o texto acompanha a borda visível */
+.hero-texto {
+  position: absolute;
+  left: max(4.3cqw, calc(100cqw - 100vw + 72px));
+  top: 17%;
+  width: 44cqw;
+}
+
+
+
+.bannercontainer .hero-titulo {
   margin: 0;
+  color: #fff;
   font-family: var(--fonte-botao, "Montserrat", sans-serif);
-  font-size: clamp(2rem, 9vw, 2.6rem);
+  font-size: 3.75cqw;
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.12;
   letter-spacing: 0.01em;
   text-transform: uppercase;
+  text-shadow: 0 0.3cqw 1.5cqw rgba(0, 10, 90, 0.25);
+  animation: hero-entra-cima 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
-.banner-mobile-titulo span {
+.hero-titulo span {
   display: block;
+  animation: hero-entra-cima 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 }
 
-.banner-mobile-texto {
-  margin: 16px 0 0;
-  font-size: 1rem;
-  line-height: 1.5;
+.hero-descricao {
+  max-width: 34cqw;
+  margin: 2cqw 0 0;
   color: rgba(255, 255, 255, 0.92);
+  font-size: 1.3cqw;
+  line-height: 1.6;
+  animation: hero-entra-cima 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
-.banner-mobile-imagem {
-  display: block;
-  width: calc(100% + 40px);
-  max-width: none;
-  height: auto;
-  margin: 8px -20px 0;
-  user-select: none;
+.hero-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1cqw;
+  margin-top: 2.4cqw;
+  animation: hero-entra-cima 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
 }
 
-/* o tema pinta h1 de azul; aqui o título precisa ser branco */
-.bannercontainer.banner-mobile .banner-mobile-titulo {
+.hero-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.95cqw 2.1cqw;
+  border-radius: 999px;
+  font-family: var(--fonte-botao, "Montserrat", sans-serif);
+  font-size: 1.05cqw;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.hero-botao:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.hero-botao:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.hero-botao:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.hero-botao--cheio {
+  background: #fff;
+  color: #0638d8;
+  box-shadow: 0 0.5cqw 1.6cqw rgba(0, 10, 90, 0.3);
+}
+
+.hero-botao--cheio:hover {
+  color: #001ed3;
+  box-shadow: 0 0.8cqw 2.2cqw rgba(0, 10, 90, 0.38);
+}
+
+.hero-botao--contorno {
+  border: 2px solid rgba(255, 255, 255, 0.85);
   color: #fff;
 }
 
-/* funde a borda de cima do recorte com o fundo */
-.banner-mobile-imagem {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
+.hero-botao--contorno:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hero-arte-celular {
+  display: none;
+}
+
+/* ---------- animações ---------- */
+@keyframes hero-entra-cima {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-aviso-entra {
+  from { opacity: 0; transform: translateX(40px) scale(0.92); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes hero-sino-entra {
+  from { opacity: 0; scale: 0.4; }
+  to { opacity: 1; scale: 1; }
+}
+
+@keyframes hero-flutua {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* balanço suave, como um sino que mexe de leve */
+@keyframes hero-sino-toca {
+  0%, 100% { rotate: 0deg; }
+  20% { rotate: 5deg; }
+  45% { rotate: -4deg; }
+  68% { rotate: 2.5deg; }
+  85% { rotate: -1deg; }
+}
+
+@keyframes hero-brilha {
+  0%, 100% { opacity: 0.35; scale: 0.7; rotate: 0deg; }
+  50% { opacity: 1; scale: 1.1; rotate: 20deg; }
+}
+
+/* ---------- celular ---------- */
+@media (max-width: 767px) {
+  .bannercontainer.hero {
+    height: auto;
+    min-height: 0;
+    background:
+      radial-gradient(120% 60% at 0% 0%, #166fce 0%, rgba(22, 111, 206, 0) 60%),
+      linear-gradient(180deg, #0d42c8 0%, #063bb4 100%);
+  }
+
+  .hero-palco {
+    position: relative;
+    right: auto;
+    width: 100%;
+    aspect-ratio: auto;
+    container-type: normal;
+    padding: calc(var(--header-height, 72px) + 56px) 20px 0;
+  }
+
+  .hero-fundo,
+  .hero-arte {
+    display: none;
+  }
+
+  .hero-texto {
+    position: static;
+    width: auto;
+  }
+
+
+
+  .bannercontainer .hero-titulo {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .hero-descricao {
+    max-width: none;
+    margin-top: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .hero-acoes {
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .hero-botao {
+    flex: 1 1 0;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  /* ilustração: o homem embaixo, avisos à esquerda e sinos nos cantos */
+  .hero-arte-celular {
+    position: relative;
+    display: block;
+    margin: 24px -20px 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .hero-arte-celular .hero-homem {
+    position: absolute;
+    right: -8%;
+    bottom: 0;
+    width: 92%;
+    height: auto;
+    -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  }
+
+  .hero-arte-celular .hero-sino {
+    position: absolute;
+    height: auto;
+  }
+
+  .hero-arte-celular .hero-sino--1 {
+    left: 4%;
+    top: 4%;
+    width: 16%;
+  }
+
+  .hero-arte-celular .hero-sino--2 {
+    right: 4%;
+    top: 2%;
+    width: 21%;
+  }
+
+  .hero-avisos-celular {
+    position: absolute;
+    left: 14px;
+    bottom: 6%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: min(58%, 240px);
+    /* no celular a pessoa cobriria o texto inteiro: os avisos ficam na frente */
+    z-index: 1;
+  }
+
+  .hero-avisos-celular .hero-aviso {
+    width: 100%;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    box-shadow: 0 8px 24px rgba(0, 18, 120, 0.3);
+    animation:
+      hero-aviso-entra 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+      hero-flutua 4.5s ease-in-out infinite;
+  }
+
+  .hero-avisos-celular .hero-aviso--1 { animation-delay: 0.5s, 1.2s; }
+  .hero-avisos-celular .hero-aviso--2 { animation-delay: 0.7s, 2s; margin-left: 18px; }
+  .hero-avisos-celular .hero-aviso--3 { animation-delay: 0.9s, 2.8s; }
+
+  .hero-avisos-celular .hero-aviso__icone {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bannercontainer.hero *,
+  .bannercontainer.hero {
+    animation: none !important;
+    transition: none !important;
+  }
 }
