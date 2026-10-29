@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { buscarPacientesPorCpf } from "../../../services/PacientesServices";
@@ -6,6 +6,8 @@ import { criarAgendamento } from "../../../services/AgendamentoService";
 import type { Paciente, ItemNovoAgendamento, Posto } from "../../../types/agendamento";
 import { exibirCPF, exibirTelefone, hojeISO, mensagemErroApi } from "../../../utils/validacoes";
 import { AvatarIniciais } from "../../universais/AdminUI";
+import CampoBusca, { type OpcaoBusca } from "../../universais/CampoBusca";
+import { buscarPostoHabitualDoPaciente, postoDoAdminLogado } from "../../../utils/postoSugerido";
 
 import { buscarDatasSugeridas, type DatasSugeridas } from "../../../services/PainelService";
 import { listarEstoqueDoPosto, type InsumoEstoque } from "../../../services/InsumosServices";
@@ -73,6 +75,13 @@ useEffect(() => {
   // --- posto de coleta ---
   const [postos, setPostos] = useState<Posto[]>([]);
   const [postoSelecionado, setPostoSelecionado] = useState<Posto | null>(null);
+  // sugestões de unidade: a do próprio admin e a que o paciente mais usa
+  // (o admin pode escolher qualquer outra; depois disso não trocamos sozinhos)
+  const [postoDoAdmin] = useState(postoDoAdminLogado);
+  const [habitual, setHabitual] = useState<{ pac_id: number; pos_id: number | null } | null>(null);
+  const escolheuPostoManual = useRef(false);
+  const postosRef = useRef<Posto[]>([]);
+  const habitualRef = useRef<number | null>(null);
 
   // --- datas sugeridas para o posto escolhido ---
   const [sugestoes, setSugestoes] = useState<DatasSugeridas | null>(null);
@@ -130,10 +139,16 @@ useEffect(() => {
       .get<Posto[]>(`${API_URL}/postos`)
       .then((res) => {
         setPostos(res.data);
+        postosRef.current = res.data;
         if (res.data.length === 1) setPostoSelecionado(res.data[0]);
+        // começa pela habitual do paciente (se já conhecida) ou pela unidade do admin
+        else {
+          const sugerido = res.data.find((p) => p.pos_id === (habitualRef.current ?? postoDoAdmin));
+          setPostoSelecionado((atual) => atual ?? sugerido ?? null);
+        }
       })
       .catch(() => setErro("Não foi possível carregar os postos de coleta."));
-  }, []);
+  }, [postoDoAdmin]);
 
   // Busca de paciente por CPF (debounced) — esta busca continua existindo,
   // só a de produto que foi removida.
@@ -164,6 +179,58 @@ useEffect(() => {
     ]);
   }
 }, [itensIniciais, insumoInicial, quantidadeInicial]);
+  // unidade habitual do paciente escolhido (pelas coletas e prescrições dele);
+  // ela vale mais que a do admin, enquanto o admin não escolher outra
+  useEffect(() => {
+    if (!paciente) return;
+    let ativo = true;
+    buscarPostoHabitualDoPaciente(paciente.pac_id)
+      .then((pos_id) => {
+        if (!ativo) return;
+        habitualRef.current = pos_id;
+        setHabitual({ pac_id: paciente.pac_id, pos_id });
+        const posto = postosRef.current.find((p) => p.pos_id === pos_id);
+        if (posto) setPostoSelecionado((atual) => (escolheuPostoManual.current ? atual : posto));
+      })
+      .catch(() => undefined);
+    return () => {
+      ativo = false;
+    };
+  }, [paciente]);
+  const postoHabitual = habitual && habitual.pac_id === paciente?.pac_id ? habitual.pos_id : null;
+
+  function escolherPosto(pos_id: number) {
+    escolheuPostoManual.current = true;
+    setPostoSelecionado(postos.find((p) => p.pos_id === pos_id) ?? null);
+  }
+
+  // postos para a busca, com as sugestões no topo e marcadas
+  const opcoesPosto = useMemo<OpcaoBusca[]>(() => {
+    const selo = (pos_id: number) =>
+      [pos_id === postoHabitual && "Habitual do paciente", pos_id === postoDoAdmin && "Sua unidade"].filter(Boolean).join(" · ");
+    const sugerido = (p: Posto) => (p.pos_id === postoHabitual ? 0 : p.pos_id === postoDoAdmin ? 1 : 2);
+    return [...postos]
+      .sort((a, b) => sugerido(a) - sugerido(b))
+      .map((p) => ({ valor: String(p.pos_id), rotulo: p.pos_nome, detalhe: p.pos_endereco ?? undefined, selo: selo(p.pos_id) || undefined }));
+  }, [postos, postoHabitual, postoDoAdmin]);
+
+  const sugestoesPosto = [
+    { pos_id: postoHabitual, rotulo: "Habitual do paciente" },
+    { pos_id: postoDoAdmin, rotulo: "Sua unidade" },
+  ].filter((s, i, todas) => s.pos_id && s.pos_id !== postoSelecionado?.pos_id && todas.findIndex((t) => t.pos_id === s.pos_id) === i)
+    .map((s) => ({ ...s, posto: postos.find((p) => p.pos_id === s.pos_id) }))
+    .filter((s) => s.posto);
+
+  const opcoesInsumo = useMemo<OpcaoBusca[]>(
+    () =>
+      estoque.map((i) => ({
+        valor: String(i.ins_id),
+        rotulo: `${i.ins_nome}${i.ins_marca ? ` (${i.ins_marca})` : ""}`,
+        detalhe: `disponível ${i.ins_disponivel}`,
+      })),
+    [estoque]
+  );
+
   function selecionarPaciente(p: Paciente) {
     setPaciente(p);
     setBuscaPaciente(`${p.pac_nome} — ${exibirCPF(p.pac_cpf)}`);
@@ -407,20 +474,29 @@ useEffect(() => {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label htmlFor="posto-agendamento" className={rotulo}>Posto de coleta *</label>
-                    <select
+                    <CampoBusca
                       id="posto-agendamento"
-                      value={postoSelecionado?.pos_id ?? ""}
-                      onChange={(e) => {
-                        const posto = postos.find((p) => p.pos_id === Number(e.target.value)) ?? null;
-                        setPostoSelecionado(posto);
-                      }}
-                      className={campo}
-                    >
-                      <option value="" disabled>Selecione o posto</option>
-                      {postos.map((posto) => (
-                        <option key={posto.pos_id} value={posto.pos_id}>{posto.pos_nome}</option>
-                      ))}
-                    </select>
+                      opcoes={opcoesPosto}
+                      valor={postoSelecionado ? String(postoSelecionado.pos_id) : ""}
+                      onEscolher={(v) => escolherPosto(Number(v))}
+                      placeholder="Busque ou escolha o posto"
+                      semResultado="Nenhum posto com esse nome"
+                    />
+                    {sugestoesPosto.length > 0 && (
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+                        <span className="text-gray-500">Sugestão:</span>
+                        {sugestoesPosto.map((s) => (
+                          <button
+                            key={s.pos_id}
+                            type="button"
+                            onClick={() => escolherPosto(s.pos_id!)}
+                            className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 font-semibold text-blue-800 transition hover:-translate-y-px hover:bg-blue-100"
+                          >
+                            {s.posto!.pos_nome} <span className="font-normal text-blue-700">· {s.rotulo}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="data-agendamento" className={rotulo}>Data da coleta *</label>
@@ -568,28 +644,23 @@ useEffect(() => {
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_130px_auto]">
                   <div>
                     <label htmlFor="insumo-agendamento" className="sr-only">Insumo</label>
-                    <select
+                    <CampoBusca
                       id="insumo-agendamento"
-                      value={insumoEscolhido}
-                      disabled={!postoSelecionado || carregandoEstoque}
-                      onChange={(e) => setInsumoEscolhido(e.target.value)}
-                      className={campo}
-                    >
-                      <option value="">
-                        {!postoSelecionado
+                      opcoes={opcoesInsumo}
+                      valor={insumoEscolhido}
+                      onEscolher={setInsumoEscolhido}
+                      disabled={!postoSelecionado || carregandoEstoque || !estoque.length}
+                      placeholder={
+                        !postoSelecionado
                           ? "Escolha o posto primeiro"
                           : carregandoEstoque
                             ? "Carregando estoque…"
                             : estoque.length
-                              ? itens.length ? "Adicionar outro insumo do estoque…" : "Selecione o insumo"
-                              : "Nenhum insumo nesta unidade"}
-                      </option>
-                      {estoque.map((i) => (
-                        <option key={i.ins_id} value={i.ins_id}>
-                          {i.ins_nome}{i.ins_marca ? ` (${i.ins_marca})` : ""} · disponível {i.ins_disponivel}
-                        </option>
-                      ))}
-                    </select>
+                              ? itens.length ? "Buscar outro insumo do estoque…" : "Busque ou escolha o insumo"
+                              : "Nenhum insumo nesta unidade"
+                      }
+                      semResultado="Nenhum insumo com esse nome nesta unidade"
+                    />
                   </div>
                   <div>
                     <label htmlFor="quantidade-agendamento" className="sr-only">Quantidade</label>

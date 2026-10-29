@@ -12,7 +12,8 @@
 ===================================================== */
 
 body.layout-admin {
-  --largura-menu-admin: 264px;
+  /* mesma largura do menu do paciente (Sidebar.css) */
+  --largura-menu-admin: 320px;
   /* altura da barra superior (igual à do paciente) e da trilha */
   --adm-topo-altura: 84px;
   --adm-trilha-altura: 0px;
@@ -32,17 +33,18 @@ body.layout-admin.adm-com-trilha {
   bottom: 0;
   left: 0;
   z-index: 2000;
-  width: var(--largura-menu-admin, 264px);
+  width: var(--largura-menu-admin, 320px);
   display: flex;
   flex-direction: column;
-  padding: 18px 14px 14px;
+  padding: 24px;
   box-sizing: border-box;
   background: var(--cor-superficie, #fff);
   border-right: 1px solid var(--cor-borda, #dfe3ea);
   box-shadow: 0 10px 30px rgba(16, 24, 64, 0.18);
   overflow-y: auto;
+  border-radius: 0 var(--raio-xl, 28px) var(--raio-xl, 28px) 0;
   transform: translateX(-100%);
-  transition: transform 0.25s ease;
+  transition: transform 0.3s ease;
 }
 
 .adm-lateral--aberta {
@@ -61,11 +63,11 @@ body.layout-admin.adm-com-trilha {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 2px 6px 16px;
+  margin: 0 0 28px;
 }
 
 .adm-lateral-logo {
-  height: 40px;
+  height: 48px;
   width: auto;
 }
 
@@ -113,15 +115,15 @@ body.layout-admin.adm-com-trilha {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  margin: 0 4px 12px;
+  min-height: 52px;
+  margin: 0 0 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--raio-md, 14px);
   background: var(--gradiente-primario);
   color: #fff;
   font-family: var(--fonte-botao);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   box-shadow: var(--sombra-botao);
   cursor: pointer;
   transition: filter 0.2s ease;
@@ -134,53 +136,54 @@ body.layout-admin.adm-com-trilha {
 .adm-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .adm-grupo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 14px;
 }
 
 .adm-grupo-titulo {
   margin: 0;
-  padding: 6px 12px;
+  padding: 4px 20px;
   font-family: var(--fonte-botao);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cor-texto-claro, #8a93a3);
 }
 
+/* itens com as mesmas medidas do menu do paciente (Sidebar.css) */
 .adm-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
-  min-height: 40px;
-  padding: 8px 12px;
+  min-height: 52px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--raio-md, 14px);
   background: transparent;
-  color: #33405a;
+  color: var(--cor-primaria, #0042ec);
   font-family: var(--fonte-botao);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.adm-item:hover {
-  background: var(--cor-superficie-suave, #f2f4f8);
+.adm-item:not(.adm-item--ativo):hover {
+  background: var(--cor-primaria-clara, #e8f0ff);
 }
 
 .adm-item-icone {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   color: var(--cor-primaria, #0042ec);
 }
@@ -192,13 +195,25 @@ body.layout-admin.adm-com-trilha {
 
 .adm-item--ativo,
 .adm-item--ativo:hover {
-  background: var(--cor-primaria-clara, #e8f0ff);
+  background: var(--gradiente-primario);
+  color: #fff;
+  box-shadow: var(--sombra-botao, 0 10px 20px rgba(37, 99, 235, 0.25));
+}
+
+.adm-item--ativo .adm-item-icone,
+.adm-item--ativo .adm-seta {
+  color: #fff;
+}
+
+.adm-item--ativo .adm-contador {
+  background: #fff;
   color: var(--cor-primaria, #0042ec);
 }
 
 .adm-item--sub {
-  padding-left: 44px;
-  font-size: 13.5px;
+  min-height: 46px;
+  padding: 10px 20px 10px 60px;
+  font-size: 15px;
   font-weight: 500;
 }
 
@@ -261,8 +276,11 @@ body.layout-admin.adm-com-trilha {
 }
 
 .adm-lateral-rodape {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid var(--cor-borda, #dfe3ea);
 }
 
@@ -407,6 +425,7 @@ body.layout-admin.adm-com-trilha {
 
   .adm-lateral {
     box-shadow: none;
+    border-radius: 0;
     z-index: 999; /* abaixo dos modais (z-index 1000) */
   }
 
@@ -431,20 +450,20 @@ body.layout-admin.adm-com-trilha {
   /* menu aberto (fixo ou pelo ☰): página, barra e trilha vão para o lado */
   body.adm-menu-fixo #root,
   body.adm-menu-aberto #root {
-    padding-left: var(--largura-menu-admin, 264px);
+    padding-left: var(--largura-menu-admin, 320px);
   }
 
   body.adm-menu-fixo .adm-topo,
   body.adm-menu-aberto .adm-topo,
   body.adm-menu-fixo .adm-trilha,
   body.adm-menu-aberto .adm-trilha {
-    left: var(--largura-menu-admin, 264px);
+    left: var(--largura-menu-admin, 320px);
   }
 
   /* botão "Aa" encostado no menu, não por cima dele */
   body.adm-menu-fixo .acessibilidade,
   body.adm-menu-aberto .acessibilidade {
-    left: var(--largura-menu-admin, 264px);
+    left: var(--largura-menu-admin, 320px);
     z-index: 998;
   }
 }
@@ -476,6 +495,17 @@ body.layout-admin.adm-com-trilha {
 @media (max-width: 767px) {
   body.layout-admin {
     --adm-topo-altura: 64px;
+    /* como o menu do paciente no celular */
+    --largura-menu-admin: 280px;
+  }
+
+  .adm-item {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .adm-item--sub {
+    padding-left: 56px;
   }
 
   body.layout-admin.adm-com-trilha {
@@ -497,6 +527,14 @@ body.layout-admin.adm-com-trilha {
   .adm-trilha-conteudo {
     padding: 0 16px;
     font-size: 12.5px;
+  }
+}
+
+/* celular pequeno: igual ao menu do paciente */
+@media (max-width: 480px) {
+  .adm-lateral {
+    width: min(85vw, 300px);
+    padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
   }
 }
 

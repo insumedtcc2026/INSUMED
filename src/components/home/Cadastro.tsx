@@ -1,9 +1,8 @@
 import axios from 'axios'
-import images from "../../assets/home-log/teste cadastro.webp";
+import PainelMarca from "./PainelMarca";
+import BotaoOlho from "../universais/BotaoOlho";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import olhoAberto from '../../assets/home-log/olho aberto.webp';
-import olhoFechado from '../../assets/home-log/olho fechado.webp';
 import { useState } from "react";
 import "../../css/home/Cadastro.css";
 import BotaoVoltar from "../universais/BotaoVoltar";
@@ -149,9 +148,7 @@ const limparFormulario = () => {
         <>
    <div className="login-fullscreen-container">
 
-      <div className="login-image-panel">
-        <img src={images} alt="Login Background" />
-      </div>
+      <PainelMarca />
 
 
      <div className="login-form-panel">
@@ -241,46 +238,38 @@ const limparFormulario = () => {
       </div>
 <div className="Alinha-campos">
       <div className="campo">
-        <div className="input-password">
-        <label>Crie uma Senha</label>
-        <input
-          type={olhoPassword? 'text': 'password'}
-          placeholder="Crie sua senha"
-          autoComplete="new-password"
-          maxLength={64}
-          {...propsCampo("senha")}
-          onChange={(e) => alterar("senha", e.target.value)} />
-
-          <img  src={olhoPassword ? olhoAberto : olhoFechado}
-        alt="Mostrar senha"
-        className="icone-olho"
-        onClick={() => setOlhoPassword(!olhoPassword)}
-        />
-      </div>
+        <label htmlFor="cadastro-senha">Crie uma senha</label>
+        <div className="campo-senha">
+          <input
+            id="cadastro-senha"
+            type={olhoPassword ? "text" : "password"}
+            placeholder="Crie sua senha"
+            autoComplete="new-password"
+            maxLength={64}
+            {...propsCampo("senha")}
+            onChange={(e) => alterar("senha", e.target.value)}
+          />
+          <BotaoOlho visivel={olhoPassword} onAlternar={() => setOlhoPassword((v) => !v)} />
+        </div>
         <ForcaSenha senha={form.senha} />
         <MensagemErro erro={erroDe("senha")} />
       </div>
 
       <div className="campo">
-        <div className="input-password">
-        <label>Confirme sua senha</label>
-        <input
-          type={showConfirmPassword? 'text': 'password'}
-          placeholder="Confirme sua senha"
-          autoComplete="new-password"
-          maxLength={64}
-          {...propsCampo("confirmacao")}
-          className={confirmacaoVisivel ? (erros.confirmacao ? "input-erro" : "input-correto") : ""}
-          onChange={(e)=>alterar("confirmacao", e.target.value)}
+        <label htmlFor="cadastro-confirmacao">Confirme sua senha</label>
+        <div className="campo-senha">
+          <input
+            id="cadastro-confirmacao"
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="Confirme sua senha"
+            autoComplete="new-password"
+            maxLength={64}
+            {...propsCampo("confirmacao")}
+            className={confirmacaoVisivel ? (erros.confirmacao ? "input-erro" : "input-correto") : ""}
+            onChange={(e) => alterar("confirmacao", e.target.value)}
           />
-
-            <img  src={showConfirmPassword ? olhoAberto : olhoFechado}
-        alt="Mostrar senha"
-        className="icone-olho"
-        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-        />
-
-       </div>
+          <BotaoOlho visivel={showConfirmPassword} onAlternar={() => setShowConfirmPassword((v) => !v)} />
+        </div>
         <MensagemErro erro={confirmacaoVisivel ? erros.confirmacao : null} />
       </div>
 

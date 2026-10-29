@@ -270,6 +270,27 @@
   box-shadow: 0 0 0 4px var(--cor-foco);
 }
 
+/* aviso da unidade sugerida, logo abaixo do campo */
+.solicitacao-page .envio-sugestao {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: var(--cor-primaria);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  animation: envio-sugestao-entra 0.4s ease-out;
+}
+
+.solicitacao-page .envio-sugestao svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+@keyframes envio-sugestao-entra {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+
 .solicitacao-page .envio-campo textarea::placeholder {
   color: var(--cor-texto-claro);
 }

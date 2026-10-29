@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "../../css/home/CareSection.css";
+import { useRevelar } from "../../hook/useRevelar";
  
 import calendarIcon from "../../assets/home/calendar.webp";
 import seloIcon from "../../assets/home/selo.webp";
@@ -15,22 +16,23 @@ const cards: CardProps[] = [
   {
     icon: calendarIcon,
     title: "Agendamento",
-    description: "Veja as datas de retirada e as últimas coletas em um único sistema digital.",
+    description: "A unidade marca dia, turno e local da retirada, e você recebe um lembrete antes da coleta.",
   },
   {
     icon: seloIcon,
     title: "Gestão de Insumos",
-    description: "Controle e a distribuição de insumos médicos de forma mais organizada e eficiente.",
+    description: "O estoque é controlado e seus insumos são separados antes de você chegar à unidade.",
   },
   {
     icon: comunicacaoIcon,
     title: "Comunicação",
-    description: "Reduza falhas de comunicação entre pacientes e unidades de saúde.",
+    description: "Prescrição autorizada, coleta marcada ou insumo em falta: você fica sabendo pelo site.",
   },
 ];
  
 const CareSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  useRevelar(sectionRef);
   const pathRef = useRef<SVGPathElement>(null);
 
   useEffect(() => {
@@ -71,11 +73,12 @@ const CareSection: React.FC = () => {
   return (
     <section className="care-section" ref={sectionRef}>
       <div className="care-section__content">
-        <h2 className="care-section__title">
+        <h2 className="care-section__title" data-revelar="">
           Nós nos preocupamos <br /> com você
         </h2>
-        <p className="care-section__subtitle">
-          Controle e a distribuição de insumos médicos de forma mais organizada e eficiente.
+        <p className="care-section__subtitle" data-revelar="" style={{ "--atraso": "120ms" } as React.CSSProperties}>
+          Do envio da prescrição até a retirada dos insumos, você e a sua unidade de saúde acompanham
+          cada etapa juntos, sem filas e sem viagens perdidas.
         </p>
  
         <div className="care-section__cards-wrapper">
@@ -109,7 +112,12 @@ const CareSection: React.FC = () => {
 
           <div className="care-section__cards">
             {cards.map((card, index) => (
-              <div className="care-card" key={index}>
+              <div
+                className="care-card"
+                key={index}
+                data-revelar=""
+                style={{ "--atraso": `${index * 140}ms` } as React.CSSProperties}
+              >
                 <div className="care-card__icon-wrapper">
                   <img
                     src={card.icon}
@@ -128,4 +136,4 @@ const CareSection: React.FC = () => {
   );
 };
  
-export default CareSection;
+export default CareSection;

@@ -1,0 +1,43 @@
+/* Campo de senha com o botão de mostrar/ocultar dentro do input */
+.campo-senha {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.campo-senha input {
+  width: 100%;
+  padding-right: 48px !important;
+}
+
+.botao-olho {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-texto-suave, #5b6475);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.botao-olho:hover {
+  color: var(--cor-primaria, #0042ec);
+  background: var(--cor-primaria-clara, #e8f0ff);
+}
+
+.botao-olho:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.botao-olho:focus-visible {
+  outline: 2px solid var(--cor-primaria, #0042ec);
+  outline-offset: 1px;
+}

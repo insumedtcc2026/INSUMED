@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MensagemErro } from "../universais/ForcaSenha";
 import { mascaraCPF, mensagemErroApi, somenteDigitos, validarCPF, validarEmail } from "../../utils/validacoes";
-import olhoAberto from '../../assets/home-log/olho aberto.webp'
-import olhoFechado from '../../assets/home-log/olho fechado.webp'
 
-import images from "../../assets/home-log/teste login.webp"; 
+import PainelMarca from "./PainelMarca";
+import BotaoOlho from "../universais/BotaoOlho";
 import BotaoVoltar from "../universais/BotaoVoltar";
 import { API_URL } from "../../config";
 
@@ -173,9 +172,7 @@ const handleSignUp = () => { navigate("/cadastro"); };
     <div className="login-fullscreen-container">
       
       
-      <div className="login-image-panel">
-        <img src={images} alt="Login Background" />
-      </div>
+      <PainelMarca />
 
    
       <div className="login-form-panel">
@@ -214,24 +211,21 @@ const handleSignUp = () => { navigate("/cadastro"); };
             </div>
             
             <div className="login-inputs">
-              <div className="input-password1">
-              <label>Senha</label>
-              <input 
-                type={olhoPassword? 'text': 'password'}
-                placeholder="Digite sua senha"
-                value={password}
-                autoComplete="current-password"
-                maxLength={128}
-                className={erroSenha ? "input-erro" : ""}
-                aria-invalid={Boolean(erroSenha)}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-               <img  src={olhoPassword ? olhoAberto : olhoFechado}
-        alt="Mostrar senha"
-        className="icone-olho1"
-        onClick={() => setOlhoPassword(!olhoPassword)}
-        />
-        </div>
+              <label htmlFor="login-senha">Senha</label>
+              <div className="campo-senha">
+                <input
+                  id="login-senha"
+                  type={olhoPassword ? "text" : "password"}
+                  placeholder="Digite sua senha"
+                  value={password}
+                  autoComplete="current-password"
+                  maxLength={128}
+                  className={erroSenha ? "input-erro" : ""}
+                  aria-invalid={Boolean(erroSenha)}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <BotaoOlho visivel={olhoPassword} onAlternar={() => setOlhoPassword((v) => !v)} />
+              </div>
               <MensagemErro erro={erroSenha} />
             </div>
             
@@ -268,4 +262,4 @@ const handleSignUp = () => { navigate("/cadastro"); };
   );
 }
 
-export default Loginteste;
+export default Loginteste;

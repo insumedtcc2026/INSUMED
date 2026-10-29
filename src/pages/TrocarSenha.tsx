@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import images from "../assets/home-log/teste login.webp";
+import PainelMarca from "../components/home/PainelMarca";
 import ForcaSenha, { MensagemErro } from "../components/universais/ForcaSenha";
 import { useValidarToken } from "../hook/Validartoken";
 import { sairDoPerfil } from "../components/universais/sessao";
@@ -64,9 +64,7 @@ export default function TrocarSenha() {
 
   return (
     <div className="login-fullscreen-container">
-      <div className="login-image-panel">
-        <img src={images} alt="" />
-      </div>
+      <PainelMarca />
       <div className="login-form-panel">
         <div className="form-wrapper">
           <div className="login-left">Crie sua senha</div>

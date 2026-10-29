@@ -21,7 +21,8 @@
 .footer-home .footer-top{
     min-height:170px;
     display:flex;
-    align-items:flex-start;
+    /* logo, ícones e links na mesma linha, centralizados na altura */
+    align-items:center;
     gap: 32px;
     padding:38px 95px 0 95px;
 }
@@ -46,7 +47,6 @@
     width:310px;
     display:flex;
     justify-content:space-between;
-    margin-top:50px;
     font-size:36px;
 }
 
@@ -74,7 +74,6 @@
     flex-wrap: nowrap;
     justify-content:flex-end;
     gap: clamp(40px, 5vw, 110px);
-    margin-top:12px;
 }
 
 .footer-home .footer-links div{
@@ -120,10 +119,10 @@
     color:white;
     margin-top: 60px;
     font-family: var(--fonte-texto);
-    transform: translateX(-65px);
-    font-size:310px;
+    /* ocupa a largura da tela inteira (a palavra mede ~4,4x o tamanho da fonte) */
+    font-size: 21.8vw;
     font-weight:900;
-    letter-spacing:-16px;
+    letter-spacing: -0.05em;
     line-height:.77;
     white-space:nowrap;
     user-select:none;
@@ -148,9 +147,7 @@
     }
 
     .footer-home .footer-title{
-        transform: none;
-        font-size: 20vw;
-        letter-spacing: -0.04em;
+        margin-top: 40px;
     }
 }
 
@@ -201,6 +198,5 @@
 
     .footer-home .footer-title{
         margin-top: 32px;
-        font-size: 20vw;
     }
 }
