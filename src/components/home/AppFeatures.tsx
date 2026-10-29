@@ -36,7 +36,6 @@ function caminhoFaixa(w: number, h: number) {
 const AppFeatures = () => {
   const secao = useRef<HTMLElement>(null);
   const faixa = useRef<SVGPathElement>(null);
-  const fluxo = useRef<SVGPathElement>(null);
   const [tamanho, setTamanho] = useState({ w: 0, h: 0 });
   useRevelar(secao);
 
@@ -61,7 +60,6 @@ const AppFeatures = () => {
     path.style.strokeDasharray = `${total}`;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       path.style.strokeDashoffset = "0";
-      fluxo.current?.style.setProperty("opacity", "0");
       return;
     }
     let quadro = 0;
@@ -70,8 +68,6 @@ const AppFeatures = () => {
       const vh = window.innerHeight;
       const progresso = Math.max(0, Math.min(1, (vh * 0.85 - top) / (height * 0.85)));
       path.style.strokeDashoffset = `${total * (1 - progresso)}`;
-      // os pontinhos de luz só aparecem quando a faixa está quase toda desenhada
-      fluxo.current?.style.setProperty("opacity", String(Math.max(0, progresso - 0.75) * 4));
     };
     const aoRolar = () => {
       cancelAnimationFrame(quadro);
@@ -100,14 +96,13 @@ const AppFeatures = () => {
         >
           <defs>
             <linearGradient id="faixa-gradiente" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#1f6bff" />
-              <stop offset="55%" stopColor="#0a4dff" />
-              <stop offset="100%" stopColor="#2f86ff" />
+              {/* paleta do site: azul principal até o azul claro */}
+              <stop offset="0%" stopColor="#0042ec" />
+              <stop offset="60%" stopColor="#0042ec" />
+              <stop offset="100%" stopColor="#0192fe" />
             </linearGradient>
           </defs>
           <path ref={faixa} className="app-features__faixa-linha" d={d} />
-          {/* pontinhos de luz correndo pela faixa */}
-          <path ref={fluxo} className="app-features__faixa-fluxo" d={d} />
         </svg>
       )}
 

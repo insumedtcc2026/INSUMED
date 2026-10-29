@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Stethoscope } from "lucide-react";
+import { Hospital } from "lucide-react";
 import "../../css/home/ExpansionMap.css";
 import { API_URL } from "../../config";
 import { useRevelar } from "../../hook/useRevelar";
@@ -21,7 +21,8 @@ const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um :
 /**
  * Mapa do estado do Rio com as 92 cidades. Passando o mouse (ou tocando),
  * a cidade acende e cresce um pouco, e o cartão de baixo mostra quantos
- * pontos de coleta ela tem. Os pinos são os pontos de coleta cadastrados.
+ * pontos de coleta ela tem. Os pinos são ilustrativos: no máximo um por
+ * cidade, para o mapa não ficar poluído (o cartão conta todos).
  */
 const ExpansionMap: React.FC = () => {
   const secao = useRef<HTMLElement>(null);
@@ -90,6 +91,20 @@ const ExpansionMap: React.FC = () => {
     const m = new Map<string, number>();
     for (const p of pinos) if (p.cidade) m.set(p.cidade, (m.get(p.cidade) ?? 0) + 1);
     return m;
+  }, [pinos]);
+
+  // um pino por cidade; pontos sem cidade só aparecem se não houver outro perto
+  const pinosNoMapa = useMemo(() => {
+    const vistos = new Set<string>();
+    const lista: Pino[] = [];
+    for (const p of pinos) {
+      if (p.cidade) {
+        if (vistos.has(p.cidade)) continue;
+        vistos.add(p.cidade);
+      } else if (lista.some((q) => Math.hypot(q.x - p.x, q.y - p.y) < 40)) continue;
+      lista.push(p);
+    }
+    return lista;
   }, [pinos]);
 
   const ativa = CIDADES_RJ.find((c) => c.id === cidadeAtiva) ?? null;
@@ -170,7 +185,7 @@ const ExpansionMap: React.FC = () => {
               )}
 
               <g className="mapa-rj__pinos">
-                {pinos.map((p, i) => (
+                {pinosNoMapa.map((p, i) => (
                   <Link
                     key={p.id}
                     to={`/pontos-coleta/${p.id}`}
@@ -207,12 +222,15 @@ const ExpansionMap: React.FC = () => {
                 role="status"
               >
                 {pino.nome}
+                {pino.cidade && (postosPorCidade.get(pino.cidade) ?? 0) > 1
+                  ? ` e mais ${(postosPorCidade.get(pino.cidade) ?? 0) - 1}`
+                  : ""}
               </div>
             )}
 
             <div className="mapa-rj__cartao" aria-live="polite">
               <span className="mapa-rj__cartao-icone">
-                <Stethoscope aria-hidden="true" />
+                <Hospital aria-hidden="true" />
               </span>
               <span className="mapa-rj__cartao-texto" key={ativa?.id ?? "rj"}>
                 <strong>{ativa ? ativa.nome : "Rio de Janeiro"}</strong>

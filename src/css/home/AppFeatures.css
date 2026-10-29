@@ -28,20 +28,6 @@
   transition: stroke-dashoffset 0.25s linear;
 }
 
-.app-features__faixa-fluxo {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.55);
-  stroke-width: 5px;
-  stroke-linecap: round;
-  stroke-dasharray: 1 42;
-  opacity: 0;
-  animation: faixa-fluxo 2.8s linear infinite;
-}
-
-@keyframes faixa-fluxo {
-  to { stroke-dashoffset: -86; }
-}
-
 /* =============================================
    TELAS
    ============================================= */
@@ -393,8 +379,7 @@
 
 }
 @media (prefers-reduced-motion: reduce) {
-  .app-features__phone img,
-  .app-features__faixa-fluxo {
+  .app-features__phone img {
     animation: none;
   }
 }
