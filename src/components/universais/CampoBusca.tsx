@@ -17,6 +17,8 @@ interface CampoBuscaProps {
   valor: string;
   onEscolher: (valor: string) => void;
   placeholder?: string;
+  // id de um texto de ajuda ligado ao campo (aria-describedby)
+  descricao?: string;
   disabled?: boolean;
   // texto quando a busca não encontra nada
   semResultado?: string;
@@ -38,6 +40,7 @@ export default function CampoBusca({
   valor,
   onEscolher,
   placeholder = "Digite para buscar",
+  descricao,
   disabled = false,
   semResultado = "Nada encontrado",
   className = "",
@@ -126,6 +129,7 @@ export default function CampoBusca({
         aria-expanded={aberto}
         aria-controls={lista}
         aria-autocomplete="list"
+        aria-describedby={descricao}
         aria-activedescendant={aberto && filtradas[ativa] ? `${lista}-${ativa}` : undefined}
         autoComplete="off"
         disabled={disabled}

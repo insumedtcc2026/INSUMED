@@ -17,6 +17,7 @@ import { exibirCPF, mensagemErroApi } from "../utils/validacoes";
 import { FREQUENCIAS, retiradasAteVencer, type ItemPrescricao } from "../utils/itensPrescricao";
 import { Plus, X } from "lucide-react";
 import { API_URL } from "../config";
+import CampoBusca from "../components/universais/CampoBusca";
 
 
  
@@ -441,22 +442,20 @@ const enviarSolicitacao = async () => {
                   <li key={indice} className="rvp-item-linha">
                     <div className="rvp-campo">
                       <label className="rvp-rotulo" htmlFor={`rvp-insumo-${indice}`}>Insumo {itens.length > 1 ? indice + 1 : ""}</label>
-                      <select
+                      {/* dá para digitar parte do nome ou só abrir a lista e escolher */}
+                      <CampoBusca
                         id={`rvp-insumo-${indice}`}
-                        className="rvp-input"
-                        value={item.ins_id}
-                        onChange={(e) => alterarItem(indice, { ins_id: e.target.value })}
+                        opcoes={opcoesInsumo.map((insumo) => ({
+                          valor: String(insumo.ins_id),
+                          rotulo: `${insumo.ins_nome}${insumo.ins_marca ? ` - ${insumo.ins_marca}` : ""}`,
+                          detalhe: insumo.ins_disponivel != null ? `disponível ${insumo.ins_disponivel}` : undefined,
+                        }))}
+                        valor={String(item.ins_id ?? "")}
+                        onEscolher={(v) => alterarItem(indice, { ins_id: v })}
                         disabled={somenteVisualizacao}
-                      >
-                        <option value="">Selecione o insumo</option>
-                        {opcoesInsumo.map((insumo) => (
-                          <option key={insumo.ins_id} value={insumo.ins_id}>
-                            {insumo.ins_nome}
-                            {insumo.ins_marca ? ` - ${insumo.ins_marca}` : ""}
-                            {insumo.ins_disponivel != null ? ` (disponível ${insumo.ins_disponivel})` : ""}
-                          </option>
-                        ))}
-                      </select>
+                        placeholder="Busque ou escolha o insumo"
+                        semResultado="Nenhum insumo com esse nome"
+                      />
                     </div>
 
                     <div className="rvp-campo">

@@ -23,6 +23,7 @@ import Swal from 'sweetalert2';
 import { mensagemErroApi } from '../utils/validacoes';
 import { arquivoParaBase64, erroArquivoPrescricao } from '../components/usuario-1/prescricao/arquivoPrescricao';
 import { buscarPostoSugeridoDoPaciente } from '../utils/postoSugerido';
+import CampoBusca from '../components/universais/CampoBusca';
 
 
 
@@ -480,33 +481,20 @@ return (
                                         Unidade de saúde
                                     </label>
 
-                                    <select
+                                    {/* dá para digitar parte do nome ou só abrir a lista e escolher */}
+                                    <CampoBusca
                                         id="posto"
-                                        value={posto}
-                                        onChange={e =>
-                                            setPosto(e.target.value)
-                                        }
-                                        required
-                                        aria-describedby={sugerido ? 'posto-sugestao' : undefined}
-                                    >
-
-                                        <option value="">
-                                            Selecione uma unidade
-                                        </option>
-
-                                        {postos.map(posto => (
-
-                                            <option
-                                                key={posto.pos_id}
-                                                value={posto.pos_id}
-                                            >
-                                                {posto.pos_nome}
-                                                {sugerido?.pos_id === posto.pos_id ? ' (sugerida)' : ''}
-                                            </option>
-
-                                        ))}
-
-                                    </select>
+                                        opcoes={postos.map((p) => ({
+                                            valor: String(p.pos_id),
+                                            rotulo: p.pos_nome,
+                                            selo: sugerido?.pos_id === p.pos_id ? 'Sugerida' : undefined,
+                                        }))}
+                                        valor={posto}
+                                        onEscolher={setPosto}
+                                        placeholder="Busque ou escolha a unidade"
+                                        semResultado="Nenhuma unidade com esse nome"
+                                        descricao={sugerido ? 'posto-sugestao' : undefined}
+                                    />
 
                                     {sugerido && (
                                         <p id="posto-sugestao" className="envio-sugestao">
