@@ -162,8 +162,8 @@ export default function FilaTrabalhoAdmin() {
       verbo: "Revisar agora",
       link: "/VerSolicitaçoes?status=Pendente",
       Icone: ClipboardList,
-      cor: "#d97706",
-      fundo: "#fef3c7",
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
     },
     {
       n: n(painel?.autorizadasSemAgendamento),
@@ -182,8 +182,8 @@ export default function FilaTrabalhoAdmin() {
       verbo: "Responder",
       link: "/Agendamentosadm?aba=pedidos",
       Icone: CalendarSync,
-      cor: "#ea580c",
-      fundo: "#ffedd5",
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
     },
     {
       n: abertas ? abertas.length : n(painel?.coletasHoje),
@@ -192,8 +192,8 @@ export default function FilaTrabalhoAdmin() {
       verbo: "Abrir balcão",
       link: "/coletas-hoje",
       Icone: ClipboardCheck,
-      cor: "#16a34a",
-      fundo: "#dcfce7",
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
     },
   ];
 
@@ -234,7 +234,7 @@ export default function FilaTrabalhoAdmin() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.65fr_1fr]">
         <div className="flex min-w-0 flex-col gap-5">
-          <Cartao titulo="Coletas de hoje" Icone={ClipboardCheck} corIcone="text-green-600" link="/coletas-hoje" textoLink="Abrir balcão">
+          <Cartao titulo="Coletas de hoje" Icone={ClipboardCheck} corIcone="text-blue-700" link="/coletas-hoje" textoLink="Abrir balcão">
             {!abertas ? (
               <p className="px-5 py-6 text-sm text-gray-400" role="status">Carregando…</p>
             ) : totalHoje === 0 ? (
@@ -317,11 +317,11 @@ export default function FilaTrabalhoAdmin() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
-          <Cartao titulo="Em acompanhamento" Icone={Eye} corIcone="text-gray-500">
+          <Cartao titulo="Em acompanhamento" Icone={Eye} corIcone="text-blue-700">
             <ul className="px-5 py-1">
               <li>
                 <Link to="/Historicodaprescricao" className="flex min-h-14 items-center gap-3 border-b border-gray-100 py-2.5 hover:bg-gray-50">
-                  <RotateCcw size={19} className="shrink-0 text-orange-600" aria-hidden="true" />
+                  <RotateCcw size={19} className="shrink-0 text-blue-700" aria-hidden="true" />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold text-gray-800">Reenvios aguardando o paciente</span>
                     <span className="block text-xs text-gray-500">Pedido de nova prescrição ou foto</span>
@@ -331,7 +331,7 @@ export default function FilaTrabalhoAdmin() {
               </li>
               <li>
                 <Link to="/Agendamentosadm" className="flex min-h-14 items-center gap-3 border-b border-gray-100 py-2.5 hover:bg-gray-50">
-                  <CalendarClock size={19} className="shrink-0 text-indigo-600" aria-hidden="true" />
+                  <CalendarClock size={19} className="shrink-0 text-blue-700" aria-hidden="true" />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold text-gray-800">Coletas nos próximos 7 dias</span>
                     <span className="block text-xs text-gray-500">Inclui retiradas de uso contínuo</span>
@@ -341,7 +341,7 @@ export default function FilaTrabalhoAdmin() {
               </li>
               <li>
                 <Link to="/insumos" className="flex items-start gap-3 py-3 hover:bg-gray-50">
-                  <PackageX size={19} className="mt-0.5 shrink-0 text-rose-600" aria-hidden="true" />
+                  <PackageX size={19} className="mt-0.5 shrink-0 text-blue-700" aria-hidden="true" />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold text-gray-800">Estoque baixo (até {limite} unidades)</span>
                     {insumosBaixos.length > 0 ? (

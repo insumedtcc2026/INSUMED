@@ -151,54 +151,6 @@
     font-size: 14px;
   }
 
-  /* ---------- TUTORIAL (HOME) ---------- */
-  .pagina-paciente .tutorial-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: end;
-    gap: 0 12px;
-    padding: 32px 16px 0;
-  }
-
-  .pagina-paciente .tutorial-left {
-    display: contents;
-  }
-
-  .pagina-paciente .tutorial-title {
-    grid-column: 1 / -1;
-    font-size: 26px;
-    line-height: 1;
-    margin-bottom: 10px;
-  }
-
-  .pagina-paciente .tutorial-description {
-    grid-column: 1 / -1;
-    font-size: 15px;
-    margin-bottom: 16px;
-  }
-
-  .pagina-paciente .tutorial-video-wrapper {
-    width: 100%;
-    align-self: center;
-    margin-bottom: 24px;
-    border-radius: var(--raio-md);
-  }
-
-  .pagina-paciente .tutorial-video {
-    height: auto;
-    aspect-ratio: 16 / 10;
-  }
-
-  .pagina-paciente .tutorial-right {
-    justify-content: flex-end;
-  }
-
-  .pagina-paciente .tutorial-image {
-    width: 100%;
-    max-width: 220px;
-    margin: 0 -16px -5px 0;
-  }
-
   /* ---------- AGENDAMENTOS ---------- */
   .pagina-paciente .pagina-conteudo {
     padding: 8px 16px 24px;

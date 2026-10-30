@@ -146,7 +146,7 @@
   justify-content: center;
   flex: 1;
 
-  gap: 50px;
+  gap: 40px;
 
   opacity: 0;
   transform: translateY(10px);
@@ -317,7 +317,21 @@
     display: none;
   }
 
-  .header-inner {
-    padding: 10px 10px 10px 20px;
+  /* logo e "Entrar" cabem inteiros na pílula, mesmo em telas de 360px */
+  .insumed-header {
+    width: calc(100% - 32px);
   }
-}
+
+  .header-inner {
+    gap: 12px;
+    padding: 8px 8px 8px 18px;
+  }
+
+  .logo-image {
+    height: 30px;
+  }
+
+  .header-cta {
+    padding: 10px 26px;
+  }
+}

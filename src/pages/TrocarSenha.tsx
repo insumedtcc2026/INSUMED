@@ -12,7 +12,7 @@ import "../css/universais/Equipe.css";
 
 const INICIO: Record<PerfilEquipe, string> = {
   ADMIN: "/homeadmin",
-  AUTORIZADOR: "/verprescricoesaprovadas",
+  AUTORIZADOR: "/homeaut",
 };
 
 /**

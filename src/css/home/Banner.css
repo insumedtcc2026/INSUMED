@@ -370,18 +370,20 @@
     white-space: nowrap;
   }
 
-  /* ilustração: o homem embaixo, avisos à esquerda e sinos nos cantos */
+  /* ilustração: o homem à direita, os avisos no espaço livre à esquerda
+     (acima do notebook) e os sinos numa linha acima deles, longe do rosto */
   .hero-arte-celular {
     position: relative;
     display: block;
-    margin: 24px -20px 0;
-    aspect-ratio: 1 / 1;
+    margin: 20px -20px 0;
+    aspect-ratio: 1 / 1.08;
     overflow: hidden;
   }
 
   .hero-arte-celular .hero-homem {
     position: absolute;
-    right: -8%;
+    z-index: 1;
+    right: -14%;
     bottom: 0;
     width: 92%;
     height: auto;
@@ -392,30 +394,31 @@
   .hero-arte-celular .hero-sino {
     position: absolute;
     height: auto;
+    z-index: 2;
   }
 
   .hero-arte-celular .hero-sino--1 {
-    left: 4%;
-    top: 4%;
-    width: 16%;
+    left: 6%;
+    top: 1%;
+    width: 12%;
   }
 
   .hero-arte-celular .hero-sino--2 {
-    right: 4%;
-    top: 2%;
-    width: 21%;
+    left: 44%;
+    top: 3%;
+    width: 15%;
   }
 
   .hero-avisos-celular {
     position: absolute;
     left: 14px;
-    bottom: 6%;
+    top: 16%;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: min(58%, 240px);
-    /* no celular a pessoa cobriria o texto inteiro: os avisos ficam na frente */
-    z-index: 1;
+    width: min(56%, 236px);
+    /* atrás da pessoa, como no computador */
+    z-index: 0;
   }
 
   .hero-avisos-celular .hero-aviso {

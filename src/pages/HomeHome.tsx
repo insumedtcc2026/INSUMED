@@ -3,6 +3,7 @@ import Banner from "../components/home/Banner";
 import CareSection from "../components/home/CareSection";
 import AppFeatures from "../components/home/AppFeatures";
 import ExpansionMap from "../components/home/ExpansionMap";
+import DuvidasFrequentes from "../components/home/DuvidasFrequentes";
 import Footer from "../components/home/Footer";
 import "../css/home/HomeHome.css";
 import { useRolagemSuave } from "../hook/useRolagemSuave";
@@ -25,6 +26,9 @@ export default function App() {
       </section>
       <section id="onde-estamos" tabIndex={-1} aria-label="Onde estamos" className="homehome-section homehome-ancora">
         <ExpansionMap />
+      </section>
+      <section id="duvidas" tabIndex={-1} aria-label="Dúvidas frequentes" className="homehome-section homehome-ancora">
+        <DuvidasFrequentes />
       </section>
       <section className="homehome-section">
         <Footer />

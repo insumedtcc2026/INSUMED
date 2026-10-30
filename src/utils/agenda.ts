@@ -19,6 +19,16 @@ export function diaCurto(data: string) {
   return `${semana}, ${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}`;
 }
 
+// Quantos dias faltam para a coleta ("é hoje", "é amanhã", "em 5 dias")
+export function faltamParaColeta(data: string | null | undefined, hoje: string) {
+  if (!data) return "";
+  const dias = Math.round((Date.parse(data.slice(0, 10) + "T12:00:00") - Date.parse(hoje + "T12:00:00")) / 86400000);
+  if (dias < 0) return "data já passou";
+  if (dias === 0) return "é hoje";
+  if (dias === 1) return "é amanhã";
+  return `em ${dias} dias`;
+}
+
 // "30/10/2026, manhã"
 export function dataComTurno(data?: string | null, turno?: string | null) {
   if (!data) return "Data não informada";

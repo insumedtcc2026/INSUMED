@@ -35,8 +35,8 @@ export default function PainelAutorizador() {
       verbo: "Analisar agora",
       link: "/verprescricoesaprovadas",
       Icone: ClipboardCheck,
-      cor: "#d97706",
-      fundo: "#fef3c7",
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
     },
     {
       n: n(painel?.comNovaVersao),
@@ -55,8 +55,8 @@ export default function PainelAutorizador() {
       verbo: "Ver histórico",
       link: "/verprescricoesaprovadas?status=Todos",
       Icone: Gavel,
-      cor: "#16a34a",
-      fundo: "#dcfce7",
+      cor: "#0042ec",
+      fundo: "#e8f0ff",
     },
   ];
 
@@ -73,7 +73,7 @@ export default function PainelAutorizador() {
       <CartoesAcao acoes={ACOES} />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.65fr_1fr]">
-        <Cartao titulo="Próximas da fila" Icone={ListOrdered} corIcone="text-amber-600" link="/verprescricoesaprovadas" textoLink="Ver todas">
+        <Cartao titulo="Próximas da fila" Icone={ListOrdered} corIcone="text-blue-700" link="/verprescricoesaprovadas" textoLink="Ver todas">
           {!painel && !erro && <p className="px-5 py-6 text-sm text-gray-400" role="status">Carregando…</p>}
           {painel && painel.fila.length === 0 && (
             <p className="px-5 py-6 text-sm text-gray-500">A fila está vazia. Nenhuma prescrição esperando a sua decisão.</p>

@@ -1,5 +1,7 @@
 import Footer from '../components/universais/Footer.tsx';
 import { useState } from 'react';
+import Banner from '../components/home-log/Banner.tsx';
+import bannerAutorizador from '../assets/home-log/banner-autorizador.webp';
 import { useValidarToken } from '../hook/Validartoken.tsx';
 import SidebarAut from '../components/universais/SidebarAut.tsx';
 import HeaderAut from '../components/universais/HeaderAut.tsx';
@@ -33,6 +35,9 @@ export default function HomeAut() {
       <SidebarAut isOpen={sidebarOpen} onClose={toggleSidebar} />
 
       <main className="compensa-header pb-10">
+        <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+          <Banner imageUrl={bannerAutorizador} alt="INSUMED: facilitando a coleta de insumos médicos" className="banner--painel" />
+        </div>
         <PainelAutorizador />
       </main>
 

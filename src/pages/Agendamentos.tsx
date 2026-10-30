@@ -11,23 +11,12 @@ import Pagination from "../components/usuario-1/agendamentos/pagination";
 import type { Agendamento } from "../types/agendamento";
 import { hojeISO, mensagemErroApi } from "../utils/validacoes";
 import { formatarData } from "../utils/status";
-import { textoTurno } from "../utils/agenda";
+import { faltamParaColeta, textoTurno } from "../utils/agenda";
 
 const ITENS_POR_PAGINA = 4;
 
 type Aba = "proximos" | "anteriores";
 
-// Quantos dias faltam para a coleta ("hoje", "amanhã", "em 5 dias")
-function faltam(data: string | null) {
-  if (!data) return "";
-  const alvo = Date.parse(data.slice(0, 10) + "T12:00:00");
-  const hoje = Date.parse(hojeISO() + "T12:00:00");
-  const dias = Math.round((alvo - hoje) / 86400000);
-  if (dias < 0) return "data já passou";
-  if (dias === 0) return "é hoje";
-  if (dias === 1) return "é amanhã";
-  return `em ${dias} dias`;
-}
 
 /**
  * "Meus agendamentos" do paciente, separado em "Próximos" (só coletas
@@ -161,7 +150,7 @@ export default function Agendamentos() {
               <h2 id="proxima-coleta" className="text-lg font-semibold text-gray-800">Próxima coleta</h2>
               <span className="text-sm font-semibold text-blue-700">
                 {formatarData(destaque.sol_data_de_coleta)}
-                {destaque.sol_turno ? `, ${textoTurno(destaque.sol_turno)}` : ""} · {faltam(destaque.sol_data_de_coleta)}
+                {destaque.sol_turno ? `, ${textoTurno(destaque.sol_turno)}` : ""} · {faltamParaColeta(destaque.sol_data_de_coleta, hojeISO())}
               </span>
             </div>
             <div className="rounded-[1.75rem] p-[2px]" style={{ background: "var(--gradiente-primario)" }}>

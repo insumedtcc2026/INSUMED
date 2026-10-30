@@ -11,6 +11,7 @@ const secoes = [
   { id: 'sobre', label: 'Sobre' },
   { id: 'aplicativo', label: 'Aplicativo' },
   { id: 'onde-estamos', label: 'Onde estamos' },
+  { id: 'duvidas', label: 'Dúvidas' },
 ];
 
 // Rolagem suave até a seção; quem pediu "reduzir movimento" no sistema

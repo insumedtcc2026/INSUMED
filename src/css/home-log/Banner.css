@@ -19,3 +19,13 @@
   object-fit: cover;
   display: block;
 }
+
+/* banner dentro dos painéis do administrador e do autorizador:
+   o espaço do header já vem do main (compensa-header) */
+.banner.banner--painel {
+  padding: 0;
+}
+
+.banner--painel .banner-container {
+  border-radius: 24px;
+}

@@ -3,7 +3,7 @@ import "../../css/home/AppFeatures.css";
 import { Link } from "react-router-dom";
 import { useRevelar } from "../../hook/useRevelar";
 
-import celularImg from "../../assets/home/celular.webp";
+import celularImg from "../../assets/home/celulares.webp";
 import mulheresImg from "../../assets/home/2mulheres.webp";
 
 const funcionalidades = [
@@ -109,7 +109,8 @@ const AppFeatures = () => {
       {/* PRIMEIRA TELA */}
       <div className="app-features__screen app-features__screen--top">
         <div className="app-features__phone" data-revelar="esquerda">
-          <img src={celularImg} alt="Tela Meus agendamentos do INSUMED no celular" width={1288} height={1714} loading="lazy" />
+          <span className="app-features__circulo" aria-hidden="true" />
+          <img src={celularImg} alt="Celulares com o comprovante de agendamento e a tela Meus agendamentos do INSUMED" width={826} height={1094} loading="lazy" />
         </div>
 
         <div className="app-features__content">

@@ -127,19 +127,39 @@
 }
 
 @media (max-width: 768px) {
+  /* no celular: título menor, vídeo na largura toda em 16:9 e sem a foto */
+  .tutorial-container {
+    padding: 32px 16px 40px;
+  }
+
+  .tutorial-left {
+    width: 100%;
+    padding-left: 0;
+  }
+
   .tutorial-title {
-    font-size: 36px;
+    font-size: 26px;
+    line-height: 1.05;
+    margin-bottom: 10px;
   }
 
   .tutorial-description {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+
+  .tutorial-video-wrapper {
+    width: 100%;
+    border-radius: 18px;
   }
 
   .tutorial-video {
-    height: 220px;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
-  .tutorial-image {
-    max-width: 360px;
+  .tutorial-right {
+    display: none;
   }
 }

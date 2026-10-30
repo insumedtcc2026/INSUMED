@@ -53,12 +53,26 @@
 }
 
 .app-features__phone {
+  position: relative;
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
+/* círculo azul-claro atrás dos celulares (mesmo efeito das Dúvidas frequentes) */
+.app-features__circulo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(78%, 440px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #8ec3ff, var(--cor-secundaria, #0192fe));
+  transform: translate(-50%, -50%);
+}
+
 .app-features__phone img {
+  position: relative;
   width: 100%;
   max-width: 500px;
   height: auto;
@@ -259,7 +273,7 @@
     max-width: 100%;
   }
 
-  /* no celular fica só o celular (menor); a foto das duas mulheres some */
+  /* no tablet fica só o celular (menor); a foto das duas mulheres some */
   .app-features__phone {
     order: 2;
     width: 100%;
@@ -335,6 +349,27 @@
     width: 170px;
     height: 54px;
     font-size: 1rem;
+  }
+
+  /* no celular sai a imagem dos celulares e as duas mulheres fecham a
+     segunda tela, apoiadas no fim da seção */
+  .app-features__phone {
+    display: none;
+  }
+
+  .app-features__right {
+    display: flex;
+    width: 100%;
+    margin-top: -10px;
+  }
+
+  .app-features__right img {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .app-features__screen.app-features__screen--bottom {
+    padding-bottom: 0;
   }
 
 }

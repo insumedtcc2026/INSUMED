@@ -38,11 +38,14 @@ import './index.css';
 import Acessibilidade from './components/universais/Acessibilidade';
 import NavInferior from './components/universais/NavInferior';
 import Equipe from './Administrador/Equipe';
-import HorariosUnidade from './Administrador/HorariosUnidade';
-import ListaSeparacao from './Administrador/ListaSeparacao';
+import HorariosUnidade from './Administrador/HorariosUnidade';
+
+import ListaSeparacao from './Administrador/ListaSeparacao';
+
 import PontoColetaDetalhe from './pages/PontoColetaDetalhe';
 import MeusInsumos from './pages/MeusInsumos';
 import TrocarSenha from './pages/TrocarSenha';
+import MaisOpcoes from './pages/MaisOpcoes';
 
 function App() {
   return (
@@ -187,8 +190,10 @@ function App() {
       <Route path="/pacientesadm/:id" element={<FichaPaciente />} />
       {/* equipe da rede (admin universal) e troca da própria senha */}
       <Route path="/equipe" element={<Equipe />} />
-      <Route path="/horarios-unidade" element={<HorariosUnidade />} />
-      <Route path="/lista-separacao" element={<ListaSeparacao />} />
+      <Route path="/horarios-unidade" element={<HorariosUnidade />} />
+
+      <Route path="/lista-separacao" element={<ListaSeparacao />} />
+
       <Route path="/trocar-senha" element={<TrocarSenha />} />
       <Route path="/perfil-admin" element={<PerfilEquipe tipo="ADMIN" />} />
       <Route path="/perfil-autorizador" element={<PerfilEquipe tipo="AUTORIZADOR" />} />
@@ -197,6 +202,11 @@ function App() {
       <Route path="/notificacoes" element={<Notificacoes perfil="PACIENTE" />} />
       <Route path="/notificacoes-admin" element={<Notificacoes perfil="ADMIN" />} />
       <Route path="/notificacoes-autorizador" element={<Notificacoes perfil="AUTORIZADOR" />} />
+
+      {/* "Mais" da barra do celular, um por perfil */}
+      <Route path="/mais" element={<MaisOpcoes perfil="PACIENTE" />} />
+      <Route path="/administrador/mais" element={<MaisOpcoes perfil="ADMIN" />} />
+      <Route path="/autorizador/mais" element={<MaisOpcoes perfil="AUTORIZADOR" />} />
 
       {/* Páginas jurídicas (públicas, linkadas no footer) */}
       <Route path="/termos" element={<TermosDeUso />} />
@@ -209,4 +219,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;

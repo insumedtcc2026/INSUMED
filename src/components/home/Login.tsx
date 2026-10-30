@@ -123,7 +123,7 @@ const Loginteste: React.FC = () => {
                 "usuario_autorizador",
                 JSON.stringify(usuario)
             );
-            navigate(response.data.trocar_senha ? "/trocar-senha?perfil=AUTORIZADOR" : "/verprescricoesaprovadas");
+            navigate(response.data.trocar_senha ? "/trocar-senha?perfil=AUTORIZADOR" : "/homeaut");
 
         } else if (tipo === "PACIENTE") {
             localStorage.setItem("token_paciente", token);
