@@ -69,6 +69,55 @@
   display: block;
 }
 
+/* capa do tutorial: no lugar da miniatura do YouTube até o clique */
+.tutorial-capa {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: 0;
+  background: #0042ec;
+  cursor: pointer;
+}
+
+.tutorial-capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tutorial-capa__play {
+  /* em cima do círculo dos celulares, sem cobrir o título da capa */
+  position: absolute;
+  left: 74%;
+  top: 50%;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--cor-primaria, #0042ec);
+  box-shadow: 0 12px 30px rgba(0, 10, 80, 0.35);
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease;
+}
+
+.tutorial-capa__play svg {
+  width: 32px;
+  height: 32px;
+  margin-left: 4px;
+  fill: currentColor;
+}
+
+.tutorial-capa:hover .tutorial-capa__play,
+.tutorial-capa:focus-visible .tutorial-capa__play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
 .tutorial-right {
   flex: 1;
 
@@ -157,6 +206,11 @@
   .tutorial-video {
     height: auto;
     aspect-ratio: 16 / 9;
+  }
+
+  .tutorial-capa__play {
+    width: 58px;
+    height: 58px;
   }
 
   .tutorial-right {
