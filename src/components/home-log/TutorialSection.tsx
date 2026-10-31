@@ -6,7 +6,7 @@ import { Play } from 'lucide-react';
 import elderlyImage from '../../assets/home-log/idosa.webp';
 import capaTutorial from '../../assets/home-log/capa-tutorial.webp';
 
-const VIDEO = 'https://www.youtube.com/embed/Vgx6l-WaNnU';
+const VIDEO = 'https://www.youtube.com/embed/qZGMgdx0Lck';
 
 export default function TutorialSection() {
   // até a pessoa clicar, aparece a nossa capa (e não a miniatura do YouTube)
