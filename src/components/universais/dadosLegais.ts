@@ -5,7 +5,7 @@
 
 /** Canal oficial para dúvidas e pedidos do titular dos dados (LGPD, art. 41).
  *  Troque pelo e-mail real do projeto antes de publicar. */
-export const EMAIL_CONTATO = '[e-mail de contato do INSUMED]';
+export const EMAIL_CONTATO = 'insumedtcc@gmail.com';
 
 /** Data da última revisão dos documentos. */
 export const DATA_ATUALIZACAO = '07/10/2026';
