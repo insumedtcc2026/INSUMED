@@ -28,9 +28,9 @@ export const linksAtendimento: LinkExterno[] = [
 ];
 
 export const redesSociais = {
-  instagram: 'https://instagram.com/lucasliberatto?obrf=MTR0bG9mNTltbGtrZw%3D%3D&utm_source=qr',
+  instagram: 'https://www.instagram.com/insumedtcc',
   youtube: 'https://www.youtube.com/@Insumed-y7h',
-  linkedin: 'https://www.linkedin.com/in/lucas-liberatto/?locale=pt-BR',
+  github: 'https://github.com/insumedtcc2026',
 };
 
 // Abertura externa segura: nova aba sem acesso ao window.opener

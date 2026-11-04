@@ -3,7 +3,7 @@ import logo from "../../assets/home/logopb.webp";
 
 import {
   FaInstagram,
-  FaLinkedinIn,
+  FaGithub,
   FaYoutube,
 } from "react-icons/fa";
 
@@ -18,7 +18,7 @@ import {
 export default function Footer() {
   const redes = [
     { nome: "Instagram", href: redesSociais.instagram, Icone: FaInstagram },
-    { nome: "LinkedIn", href: redesSociais.linkedin, Icone: FaLinkedinIn },
+    { nome: "GitHub", href: redesSociais.github, Icone: FaGithub },
     { nome: "YouTube", href: redesSociais.youtube, Icone: FaYoutube },
   ];
 

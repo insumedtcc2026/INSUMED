@@ -2,7 +2,7 @@ import '../../css/universais/Footer.css';
 import { useLocation } from 'react-router-dom';
 import {
   FaInstagram,
-  FaLinkedinIn,
+  FaGithub,
   FaYoutube,
 } from 'react-icons/fa';
 
@@ -136,12 +136,12 @@ export default function Footer() {
             </a>
 
             <a
-              href={redesSociais.linkedin}
-              aria-label="LinkedIn do Insumed (abre em nova aba)"
+              href={redesSociais.github}
+              aria-label="GitHub do Insumed (abre em nova aba)"
               {...propsLinkExterno}
             >
-              <FaLinkedinIn size={18} aria-hidden="true" />
-              LinkedIn
+              <FaGithub size={18} aria-hidden="true" />
+              GitHub
             </a>
 
             <a
