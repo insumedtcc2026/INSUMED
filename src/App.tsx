@@ -46,10 +46,12 @@ import PontoColetaDetalhe from './pages/PontoColetaDetalhe';
 import MeusInsumos from './pages/MeusInsumos';
 import TrocarSenha from './pages/TrocarSenha';
 import MaisOpcoes from './pages/MaisOpcoes';
+import SeoMetadata from './components/universais/SeoMetadata';
 
 function App() {
   return (
     <>
+    <SeoMetadata />
     {/* pular para o conteúdo, tamanho do texto e alto contraste (todas as páginas) */}
     <Acessibilidade />
     <Routes>
