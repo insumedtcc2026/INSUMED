@@ -526,7 +526,7 @@ const formatarCep = (valor: string) => {
 )}
 
                   <div className="tags">
-                    <span>Privado</span>
+                    <span>Público</span>
                     <span>Municipal</span>
                   </div>
 

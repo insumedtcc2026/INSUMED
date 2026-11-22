@@ -144,6 +144,52 @@ const limparFormulario = () => {
   setTentouEnviar(false);
 };
 
+
+const buscarCep = async (cep: string) => {
+  const cepLimpo = cep.replace(/\D/g, "");
+
+  if (cepLimpo.length !== 8) return;
+
+  try {
+    const resposta = await axios.get(
+      `https://viacep.com.br/ws/${cepLimpo}/json/`
+    );
+
+    const dados = resposta.data;
+
+    if (dados.erro) {
+      Swal.fire({
+        icon: "warning",
+        title: "CEP não encontrado",
+        text: "Verifique o CEP informado."
+      });
+      return;
+    }
+
+    const enderecoCep = [
+      dados.bairro && `Bairro: ${dados.bairro}`,
+      dados.localidade && `Cidade: ${dados.localidade}`,
+      dados.uf && `Estado: ${dados.uf}`
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    setForm((f) => ({
+      ...f,
+      endereco: enderecoCep ? `${enderecoCep}, Rua: ` : f.endereco
+    }));
+
+  } catch (erro) {
+    console.error("Erro ao buscar CEP:", erro);
+
+    Swal.fire({
+      icon: "error",
+      title: "Erro ao consultar CEP",
+      text: "Não foi possível buscar o endereço. Tente novamente."
+    });
+  }
+};
+
       return(
         <>
    <div className="login-fullscreen-container">
@@ -280,9 +326,11 @@ const limparFormulario = () => {
 <div className="Alinha-campos">
 
       <div className="campo">
-
+          
         <label className='text'>Raça/Cor <span className="rotulo-opcional">(opcional)</span></label>
+        
          <select
+          
           {...propsCampo("cor")}
           onChange={(e) => alterar("cor", e.target.value)}
 >
@@ -295,18 +343,27 @@ const limparFormulario = () => {
           <option>Prefiro não responder</option>
         </select>
         <MensagemErro erro={erroDe("cor")} />
+        
       </div>
 
 
       <div className="campo">
         <label>CEP</label>
-        <input
-          type="text"
-          placeholder="00000-000"
-          inputMode="numeric"
-          autoComplete="postal-code"
-          {...propsCampo("cep")}
-          onChange={(e) => alterar("cep", mascaraCEP(e.target.value))} />
+         <input
+    type="text"
+    placeholder="00000-000"
+    inputMode="numeric"
+    autoComplete="postal-code"
+    {...propsCampo("cep")}
+    onBlur={(e) => {
+      sair("cep");
+      buscarCep(e.target.value);
+    }}
+    onChange={(e) =>
+      alterar("cep", mascaraCEP(e.target.value))
+    }
+  />
+
         <MensagemErro erro={erroDe("cep")} />
         </div>
         </div>
@@ -315,11 +372,11 @@ const limparFormulario = () => {
        <label>Endereço</label>
         <input
           type="text"
-          placeholder=" Ex: rua blabla, n123 cidade, estado"
-          autoComplete="street-address"
-          maxLength={200}
-          {...propsCampo("endereco")}
-          onChange={(e) => alterar("endereco", e.target.value)} />
+          placeholder="Complete com a rua, número e complemento"
+  autoComplete="street-address"
+  maxLength={200}
+  {...propsCampo("endereco")}
+  onChange={(e) => alterar("endereco", e.target.value)}/>
         <MensagemErro erro={erroDe("endereco")} />
 </div>
       </div>

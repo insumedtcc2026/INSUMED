@@ -114,18 +114,17 @@
 
 
 .formulario select {
-  width: 100%;
-  min-height: 50px;
-  padding: 12px 11px;
+ width: 100%;
+  min-height: 40px;
+  padding: 24px 11px;
   border: 2px solid transparent;
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 18px;
   font-family: inherit;
   outline: none;
   background:
     linear-gradient(white, white) padding-box,
     linear-gradient(90deg, rgba(17, 9, 164, 1) 0%, rgba(2, 144, 253, 1) 100%) border-box;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
 .campo label:has(+ input),
 .campo label:has(+ select) {
